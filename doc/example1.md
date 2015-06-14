@@ -13,6 +13,6 @@
 
 ###Build and run
 ````bash
-    > g++ -std=c++14 expample1.cpp -lThorSerialize14
+    > g++ -std=c++14 expample1.cpp -lThorMySQL
     > ./a.out
 ````
