@@ -116,7 +116,7 @@ std::vector<char> ConectReader::lengthEncodedBlob()
     read(&result[0], size);
     return result;
 }
-time_t ConectReader::readDate()
+std::time_t ConectReader::readDate()
 {
     MySQLTimeBag    timeBag = readDateIntoTimeBag();
     tm              time;
@@ -160,15 +160,15 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
     return timeBag;
 }
 
-unsigned long ConectReader::readRel()
+std::time_t ConectReader::readRel()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return timeBag.day * (60*60*24) + timeBag.hour * (60*60) + timeBag.minute * (60) + timeBag.second;
+    return timeBag.day * (60LL*60*24) + timeBag.hour * (60LL*60) + timeBag.minute * (60LL) + timeBag.second;
 }
-unsigned long ConectReader::readRelMicro()
+unsigned long long ConectReader::readRelMicro()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return timeBag.day * (1000*60*60*24) + timeBag.hour * (1000*60*60) + timeBag.minute * (1000*60) + timeBag.second * (1000) + timeBag.uSecond;
+    return timeBag.day * (1000LL*60*60*24) + timeBag.hour * (1000LL*60*60) + timeBag.minute * (1000LL*60) + timeBag.second * (1000LL) + timeBag.uSecond;
 }
 MySQLTimeBag ConectReader::readTimeIntoTimeBag()
 {

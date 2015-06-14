@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <ctime>
 
 #include "MySQLConfig.h"
 #if     defined(THOR_ENDIAN_SML)
@@ -85,9 +86,9 @@ class ConectReader
         std::string     restOfPacketString();
 
         std::vector<char> lengthEncodedBlob();
-        time_t            readDate();
-        unsigned long     readRel();
-        unsigned long     readRelMicro();
+        std::time_t       readDate();
+        std::time_t       readRel();
+        unsigned long long readRelMicro();
         MySQLTimeBag      readDateIntoTimeBag();
         MySQLTimeBag      readTimeIntoTimeBag();
 };

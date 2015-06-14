@@ -309,7 +309,7 @@ TEST(ConectReaderTest, readRelMicro)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    unsigned long value = reader.readRelMicro();
+    unsigned long long value = reader.readRelMicro();
     ASSERT_EQ(1429944522004, value);
 }
 
@@ -341,7 +341,7 @@ TEST(ConectReaderTest, readTimeIntoTimeBag8)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    unsigned long value = reader.readRelMicro();
+    unsigned long long value = reader.readRelMicro();
     ASSERT_EQ(1429944522000,    value);
 }
 TEST(ConectReaderTest, readTimeIntoTimeBagFail)
@@ -365,7 +365,7 @@ TEST(ConectReaderTest, readTimeIntoTimeBagNegative)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    unsigned long value = reader.readRelMicro();
+    unsigned long long value = reader.readRelMicro();
     ASSERT_EQ(1429944522000,    value);
 }
 TEST(ConectReaderTest, readTimeIntoTimeBagNegativeFail)
