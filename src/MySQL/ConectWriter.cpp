@@ -18,9 +18,9 @@ void ConectWriter::writeLengthEncodedInteger(unsigned long value)
      *  Val >= 2^16 < 2^24      => 0Xfd + 3byte Value
      *  Val >= 2^24 < 2^64      => 0Xfe + 8byte Value
      */
-    static char const Mark2Byte = 0xFC;
-    static char const Mark3Byte = 0xFD;
-    static char const Mark8Byte = 0xFE;
+    static char const Mark2Byte = '\xFC';
+    static char const Mark3Byte = '\xFD';
+    static char const Mark8Byte = '\xFE';
 
     if (value < 251)            {                                                               writeFixedLengthInteger<1>(value);}
     else if (value <= 0xFFFF)   {   stream.write(reinterpret_cast<char const*>(&Mark2Byte), 1); writeFixedLengthInteger<2>(value);}

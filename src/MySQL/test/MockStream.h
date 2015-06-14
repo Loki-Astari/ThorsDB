@@ -1,5 +1,7 @@
 
 #include <sstream>
+#include <stdexcept>
+
 class MockStream: public ThorsAnvil::MySQL::PackageStream
 {
     char const*   input;

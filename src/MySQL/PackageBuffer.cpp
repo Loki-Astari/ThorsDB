@@ -17,10 +17,10 @@ template ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<ThorsAnvil::MySQL::MyS
 template void PackageBufferMySQLDebugBuffer<MySQLStream>::read(char*, std::size_t);
 
 template std::string ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::readRemainingData();
-template void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::read(char*, unsigned long);
+template void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::read(char*, std::size_t);
 template void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::flush();
 template void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::reset();
-template void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::write(char const*, unsigned long);
+template void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::write(char const*, std::size_t);
 template bool ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::isEmpty();
 template ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::PackageBufferMySQLDebugBuffer(MockStream&,bool);
 

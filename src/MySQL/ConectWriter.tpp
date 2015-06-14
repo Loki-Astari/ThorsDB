@@ -1,5 +1,7 @@
 
 #include "ThorMySQL.h"
+#include <stdexcept>
+#include <typeinfo>
 
 namespace ThorsAnvil
 {
