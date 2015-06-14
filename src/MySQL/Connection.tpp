@@ -19,7 +19,7 @@ std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReade
 
     // Throws exception if cast fails.
     Resp&                   resultRef = dynamic_cast<Resp&>(*resp);
-    unusedVariable(resultRef);
+    [&resultRef](){}();
 
     // Now we know the dynamic_cast will work and not return a nullptr.
     // release it do the dynamic cast and store it in a new unique_ptr

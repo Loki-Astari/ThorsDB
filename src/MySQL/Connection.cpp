@@ -7,6 +7,7 @@
 #include "ConectReader.h"
 #include "RespPackageHandShake.h"
 #include "RequPackageHandShakeResp.h"
+#include "PrepareStatement.h"
 #include "RespPackage.h"
 #include <sstream>
 
@@ -32,20 +33,21 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
             , writer(buffer)
             , connection(username, password, database, options, reader, writer)
         {}
-        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType type) override
+        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/) override
         {
             std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
+            result.reset(new PrepareStatement(connection, statement));
+#if 0
             if (type == ThorsAnvil::SQL::OneTime) {
                 result.reset(new Statement(statement));
             }
-#if 0
             else if (type == Prepare) {
                 result.reset(new PrepareStatement(statement));
             }
-#endif
             else {
                 throw std::runtime_error("Unknown Type for MySQL");
             }
+#endif
             return result;
         }
 };
@@ -81,6 +83,8 @@ Connection::~Connection()
  * It is not part of the live code.
  */
 #include "Connection.tpp"
+
+template std::unique_ptr<ThorsAnvil::MySQL::Detail::RespPackagePrepare, std::default_delete<ThorsAnvil::MySQL::Detail::RespPackagePrepare> > ThorsAnvil::MySQL::Connection::sendMessage<ThorsAnvil::MySQL::Detail::RespPackagePrepare, ThorsAnvil::MySQL::Detail::RequPackagePrepare>(ThorsAnvil::MySQL::Detail::RequPackagePrepare const&, ThorsAnvil::MySQL::Connection::PacketContinuation, ThorsAnvil::MySQL::Connection::PacketCompletion, ThorsAnvil::MySQL::ConectReader::ResponceType);
 
 #endif
 

@@ -59,7 +59,7 @@ class ConectReader
             , capabilities(0)
             , charset(0)
         {}
-        enum ResponceType       { HandshakeOK };
+        enum ResponceType       { NotOK, HandshakeOK, PrepareOK };
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
         std::unique_ptr<RespPackage>    getNextPackage(ResponceType type);
@@ -67,6 +67,7 @@ class ConectReader
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;
 
+        unsigned long   getCapabilities()                                                   {return capabilities;}
         template<int len>
         unsigned long   fixedLengthInteger(unsigned long requiredCap)                       {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
         unsigned long   lengthEncodedInteger(unsigned long requiredCap)                     {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}

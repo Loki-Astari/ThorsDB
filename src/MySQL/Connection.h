@@ -29,11 +29,8 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
-    private:
         enum PacketContinuation { None, Reset};
         enum PacketCompletion   { OK,   EOF_OK };
-
-        template<typename V>    void unusedVariable(V const&){}
 
         template<typename Resp>
         std::unique_ptr<Resp> recvMessage(PacketCompletion comp, ConectReader::ResponceType type);

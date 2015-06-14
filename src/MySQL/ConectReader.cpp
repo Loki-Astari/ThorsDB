@@ -5,6 +5,7 @@
 #include "RespPackageERR.h"
 #include "RespPackageEOF.h"
 #include "RespPackageHandShake.h"
+#include "PrepareStatement.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -35,6 +36,8 @@ std::unique_ptr<RespPackage> ConectReader::getNextPackage(ResponceType type)
             switch(type)
             {
                 case HandshakeOK:   return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(*this));
+                case PrepareOK:     return std::unique_ptr<RespPackage>(new Detail::RespPackagePrepare(*this));
+                case NotOK: // Fall through
                 default:
                     throw std::runtime_error("ConectReader::getNextPackage: Unknown OK Package");
             }
