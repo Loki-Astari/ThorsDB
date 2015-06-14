@@ -37,8 +37,8 @@ class ConectWriter
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
 
         template<int len>
-        void        writeFixedLengthInteger(unsigned long value);
-        void        writeLengthEncodedInteger(unsigned long value);
+        void        writeFixedLengthInteger(unsigned long long value);
+        void        writeLengthEncodedInteger(unsigned long long value);
         void        writeFixedLengthString(std::string const& value, std::size_t size); // Makes sure the string is correct size
         void        writeNullTerminatedString(std::string const& value);                // Adds NULL terminator
         void        writeVariableLengthString(std::string const& value);                // Not NULL terminated.
