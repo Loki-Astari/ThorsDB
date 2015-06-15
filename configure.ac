@@ -8,7 +8,7 @@ AX_THOR_FUNC_BUILD
 AC_CONFIG_AUX_DIR([build/autotools/build])
 
 
-AC_CONFIG_SRCDIR([src/MySQL/MySQL.cpp])
+AC_CONFIG_SRCDIR([src/SQL/Connection.cpp])
 AC_PROG_CXX
 AX_THOR_PROG_COV
 LT_INIT
