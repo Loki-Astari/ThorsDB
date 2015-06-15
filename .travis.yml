@@ -25,6 +25,11 @@ before_install:
     - if [ "$TRAVIS_OS_NAME" == "linux" -a "$CXX" == "clang++" ]; then a=$(sudo find / -name llvm-cov | grep 3.5 | head -1);sudo ln -s ${a} /usr/bin/llvm-cov;fi
     - if [ "$TRAVIS_OS_NAME" == "linux" -a "$CXX" == "clang++" ]; then a=$(sudo find / -name llvm-cov | grep 3.4 | head -1);sudo mv ${a} ${a}.old;fi
     - if [ "$TRAVIS_OS_NAME" == "osx"   -a "$CXX" == "clang++" ]; then sudo ln -s /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/llvm-cov /usr/local/bin/llvm-cov; fi
+# - if [ "$TRAVIS_OS_NAME" == "linux" ];  then sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password testPassword';sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password testPassword';sudo apt-get install -qq mysql-server;fi
+# - if [ "$TRAVIS_OS_NAME" == "osx" ];    then brew install mysql;fi
+# - if [ "$TRAVIS_OS_NAME" == "osx" ];    then mysql.server start;fi
+    - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
+    - cat src/MySQL/test/data/init.sql | mysql --user=root --password=testPassword
 install:
     - ./configure
 script:

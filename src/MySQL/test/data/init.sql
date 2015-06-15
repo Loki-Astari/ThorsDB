@@ -1,0 +1,5 @@
+show databases;
+
+DROP    DATABASE IF EXISTS MySQLTest;
+CREATE  DATABASE IF NOT EXISTS MySQLTest;
+
