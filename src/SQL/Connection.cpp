@@ -28,10 +28,11 @@ Connection::Connection(std::string const& connection,
     std::string port        = hasPort ? connection.substr(hostEnd + 1) : "0";
 
     errno                   = 0;
-    int         portNumber  = std::strtol(port.c_str(), nullptr, 10);
+    char*       endPtr;
+    int         portNumber  = std::strtol(port.c_str(), &endPtr, 10);
     auto        creator     = getCreators().find(schema);
 
-    if (host == "" || errno != 0) {
+    if (host == "" || errno != 0 || *endPtr != '\0') {
         throw std::runtime_error("Connection::Connection: Failed to parse connection: " + connection);
     }
 
