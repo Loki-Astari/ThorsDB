@@ -1,7 +1,7 @@
 
 THORSANVIL_ROOT				= $(realpath ../)
 
-TARGET						= MySQL
+TARGET						= SQL MySQL
 
 include $(THORSANVIL_ROOT)/build/tools/Project.Makefile
 

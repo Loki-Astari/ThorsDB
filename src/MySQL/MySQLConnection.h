@@ -2,7 +2,7 @@
 #ifndef THORS_ANVIL_MYSQL_MYSQLCONNECTION_H
 #define THORS_ANVIL_MYSQL_MYSQLCONNECTION_H
 
-#include "SQLConnection.h"
+#include "ThorSQL/Connection.h"
 #include <string>
 #include <map>
 
@@ -11,7 +11,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class MySQLConnection: public SQL::SQLConnectionProxy
+class MySQLConnection: public SQL::ConnectionProxy
 {
     public:
         MySQLConnection(std::string const& host, int port,
