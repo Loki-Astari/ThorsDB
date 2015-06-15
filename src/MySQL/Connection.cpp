@@ -1,9 +1,11 @@
 
-#include "MySQLConnection.h"
+#include "Connection.h"
 
 using namespace ThorsAnvil::MySQL;
 
-MySQLConnection::MySQLConnection(
+ThorsAnvil::SQL::ConnectionCreatorRegister<ThorsAnvil::MySQL::Connection>    mysqlConnection("mysql");
+
+Connection::Connection(
                     std::string const& /*host*/, int /*port*/,
                     std::string const& /*username*/,
                     std::string const& /*password*/,
