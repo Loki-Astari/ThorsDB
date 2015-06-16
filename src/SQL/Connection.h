@@ -14,6 +14,8 @@ namespace ThorsAnvil
 using Options=std::map<std::string, std::string>;
 class ConnectionProxy
 {
+    public:
+        virtual ~ConnectionProxy()  = 0;
 };
 using ConnectionCreator= std::function<std::unique_ptr<ConnectionProxy>(std::string const& host, int port,
                                                                         std::string const& username,
