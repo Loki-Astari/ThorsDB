@@ -1,4 +1,5 @@
 
+#include <stdexcept>
 
 namespace ThorsAnvil
 {
