@@ -29,12 +29,16 @@ class RespPackageResultSet: public RespPackage
 {
     ConectReader&   reader;
     std::vector<RespPackageColumnDefinition> const& columns;
-    std::string nullMap;
-    int         nextColumn;
+    std::string     nullMap;
+    std::size_t     nextColumn;
 
     template<typename T>
     T readNextValue()
     {
+        if (nextColumn >= columns.size()) {
+            throw std::domain_error("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: Trying to read more parameters than exist.\n"
+                                    "This should not happen please file a bug report.");
+        }
         int currentColumn   = nextColumn;
         ++nextColumn;
         switch(columns[currentColumn].type)
@@ -69,7 +73,8 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_DATETIME2:      return readParameterValue<MYSQL_TYPE_DATETIME2, T>(reader);
             case MYSQL_TYPE_TIME2:          return readParameterValue<MYSQL_TYPE_TIME2, T>(reader);
             default:
-                throw std::runtime_error("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: Unimplemented Column Type");
+                throw std::domain_error("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: Unimplemented Column Type\n"
+                                        "This should not happen please file a bug report");
         }
     }
 
