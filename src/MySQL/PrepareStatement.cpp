@@ -1,5 +1,6 @@
 
 #include "PrepareStatement.h"
+#include "TypeReadWrite.h"
 #include "Connection.h"
 #include "ConectReader.h"
 #include "RequPackage.h"
@@ -158,6 +159,14 @@ class RespPackagePrepare: public RespPackage
                 }
                 reader.recvMessage<RespPackageEOF>();
             }
+            /* To prevent exceptions in RespPackageResultSet when two many arguments are provided
+             * We are going to push an extra fake column into the columns here.
+             *
+             * This is compensated for in Validation Stream which will detect the error
+             * and generate a more appropriate exception that will happen during validation
+             * rather than at runtime.
+             */
+             columnInfo.push_back(RespPackageColumnDefinition::getFakeColumn(MYSQL_TYPE_TINY));
         }
 
         virtual std::ostream& print(std::ostream& s)    const override
@@ -278,7 +287,10 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
 
 void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
 {
-    if (position + len > validateInfo.size()) {
+    // Because we have a fake column on the end.
+    // Any attempt to read it should result in an error.
+    // See: RespPackagePrepare::RespPackagePrepare
+    if (position + len >= validateInfo.size()) {
         errorReading    = true;
         // This causes this to unwind back to the SQL where it is caught.
         // The doExecute() will then be called where all the errors generated
@@ -296,7 +308,9 @@ bool PrepareStatement::ValidatorStream::tooMany() const
 
 bool PrepareStatement::ValidatorStream::tooFew() const
 {
-    return position != validateInfo.size();
+    // Compensate for fake column by adding +1 (MYSQL_TYPE_TINY)
+    // See: RespPackagePrepare::RespPackagePrepare
+    return (position + 1) != validateInfo.size();
 }
 
 void PrepareStatement::ValidatorStream::reset()

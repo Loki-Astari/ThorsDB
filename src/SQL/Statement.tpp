@@ -44,7 +44,7 @@ inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids
         [&list](){}();
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
-    catch(SQL::ValidationTmpError const& e) {
+    catch(ValidationTmpError const&) {
         // Drop a temporary error.
         // These are only thrown by subsystems if they know they can recover and do
         // better error messaging as a result.

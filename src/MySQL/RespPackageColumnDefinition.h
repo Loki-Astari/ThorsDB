@@ -55,6 +55,18 @@ struct RespPackageColumnDefinition
         return s;
     }
 
+    private:
+    /* Allow the creation of fake columns.
+     * But we don't want it to happen accidentally so you have to
+     * explicitly ask for one via getFakeColumn().
+     */
+    RespPackageColumnDefinition(int type)
+        : type(type)
+    {}
+    public:
+    static RespPackageColumnDefinition getFakeColumn(int type) {
+        return RespPackageColumnDefinition(type);
+    }
     RespPackageColumnDefinition(ConectReader& reader, bool getDefaultValues = false)
     {
         unsigned long capabilities  = reader.getCapabilities();

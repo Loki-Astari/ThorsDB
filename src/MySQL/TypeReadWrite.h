@@ -6,6 +6,7 @@
 #include "ConectReader.h"
 #include "ConectWriter.h"
 #include <sstream>
+#include <limits>
 
 namespace ThorsAnvil
 {
