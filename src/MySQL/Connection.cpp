@@ -8,24 +8,26 @@ using namespace ThorsAnvil::MySQL;
 
 ThorsAnvil::SQL::ConnectionCreatorRegister<ThorsAnvil::MySQL::Connection>    mysqlConnection("mysql");
 
-PackageReader   Connection::defaultPackageReader;
+PackageReader<PackageBufferMySQLDebugBuffer>   Connection::defaultPackageReader;
 
 Connection::Connection(
                     std::string const& host, int port,
                     std::string const& /*username*/,
                     std::string const& /*password*/,
                     std::map<std::string, std::string> const& /*options*/,
-                    PackageReader& packageReader)
+                    PackageReaderBase& pr)
     : socket(connect(host, port))
-    , packageReader(packageReader)
+    , packageReader(pr)
 {
+    packageReader.setSocket(socket);
+
+    packageReader.getNextPackage();
     // Send connection handshake
 }
 
 Connection::~Connection()
 {
     // Shut Down
-    packageReader.test();
 }
 
 int Connection::connect(std::string const& host, int port)
