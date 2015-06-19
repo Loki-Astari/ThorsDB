@@ -21,7 +21,8 @@ class MySQLStream: public PackageStream
 {
     int socket;
     public:
-        MySQLStream(std::string const& host, int port);
+         MySQLStream(std::string const& host, int port);
+        ~MySQLStream();
         virtual void read(char* buffer, std::size_t len) override;
 };
 
