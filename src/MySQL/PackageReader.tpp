@@ -1,6 +1,6 @@
 
-#include "PackageStream.h"
 #include "ThorMySQL.h"
+#include "PackageStream.h"
 #include <boost/lexical_cast.hpp>
 
 namespace ThorsAnvil

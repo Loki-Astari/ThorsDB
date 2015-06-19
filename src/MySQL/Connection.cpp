@@ -1,5 +1,6 @@
 
 #include "Connection.h"
+#include "ThorSQL/Connection.h"
 #include "PackageStream.h"
 #include "PackageBuffer.h"
 #include "PackageReader.h"

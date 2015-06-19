@@ -2,6 +2,7 @@
 #ifndef THORS_ANVIL_SQL_CONNECTION_H
 #define THORS_ANVIL_SQL_CONNECTION_H
 
+#include "SQLUtil.h"
 #include <string>
 #include <map>
 #include <memory>
@@ -11,12 +12,12 @@ namespace ThorsAnvil
     namespace SQL
     {
 
-using Options=std::map<std::string, std::string>;
 class ConnectionProxy
 {
     public:
         virtual ~ConnectionProxy()  = 0;
 };
+inline ConnectionProxy::~ConnectionProxy() {}
 using ConnectionCreator= std::function<std::unique_ptr<ConnectionProxy>(std::string const& host, int port,
                                                                         std::string const& username,
                                                                         std::string const& password,
