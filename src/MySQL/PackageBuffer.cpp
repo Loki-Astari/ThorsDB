@@ -12,7 +12,9 @@ using namespace ThorsAnvil::MySQL;
 #include "PackageStream.h"
 
 
+template ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<ThorsAnvil::MySQL::MySQLStream>::PackageBufferMySQLDebugBuffer(ThorsAnvil::MySQL::MySQLStream&);
 template void PackageBufferMySQLDebugBuffer<MySQLStream>::read(char*, std::size_t);
+
 
 #endif
 

@@ -13,11 +13,17 @@ namespace ThorsAnvil
 template<typename T>
 class PackageBufferMySQLDebugBuffer: public PackageStream
 {
-    T&    stream;
+    T&              stream;
+    std::size_t     currentPacketSize;
+    std::size_t     currentPacketPosition;
+    unsigned char   currentPacketSequenceID;
+    bool            hasMore;
+
+    private:
+        void nextPacket();
+
     public:
-        PackageBufferMySQLDebugBuffer(T& stream)
-            : stream(stream)
-        {}
+        PackageBufferMySQLDebugBuffer(T& stream);
         virtual void read(char* buffer, std::size_t len) override;
 };
 
