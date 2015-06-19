@@ -13,22 +13,19 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class Connection: public SQL::ConnectionProxy
+class ConnectionStream
 {
-    static PackageReader<PackageBufferMySQLDebugBuffer>   defaultPackageReader;
+};
 
-    int                 socket;
-    PackageReaderBase&  packageReader;
+class Connection
+{
+    PackageReader&  packageReader;
     public:
-        Connection(std::string const& host, int port,
-                   std::string const& username,
+        Connection(std::string const& username,
                    std::string const& password,
                    std::map<std::string, std::string> const& options,
-                   PackageReaderBase& packageReader = defaultPackageReader);
+                   PackageReader& packageReader);
         virtual ~Connection();
-
-    private:
-        static int connect(std::string const& host, int port);
 };
 
     }

@@ -1,5 +1,7 @@
 
 #include "Connection.h"
+#include "PackageStream.h"
+#include "PackageReader.h"
 
 #include "gtest/gtest.h"
 
@@ -15,11 +17,22 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
     std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://127.0.0.1", "root", "testPassword", options);
 }
+
+class DebugStream: public ThorsAnvil::MySQL::PackageStream
+{
+    public:
+        virtual void readData(char* buffer, std::size_t len) override
+        {
+        }
+};
 TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    MySQL::Connection     connection("127.0.0.1", 3306, "root", "testPassword", options);
+
+    DebugStream             stream;
+    MySQL::PackageReader    reader(stream);
+    MySQL::Connection       connection("root", "testPassword", options, reader);
 }
 
 

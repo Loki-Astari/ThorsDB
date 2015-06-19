@@ -2,19 +2,22 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
 
+#include "PackageStream.h"
+#include <cstddef>
+
 namespace ThorsAnvil
 {
     namespace MySQL
     {
 
-class PackageBufferMySQLDebugBuffer
+class PackageBufferMySQLDebugBuffer: public PackageStream
 {
-    int socket;
+    PackageStream&    stream;
     public:
-        void setSocket(int sock)
-        {
-            socket  = sock;
-        }
+        PackageBufferMySQLDebugBuffer(PackageStream& stream)
+            : stream(stream)
+        {}
+        virtual void readData(char* buffer, std::size_t len) override;
 };
 
     }
