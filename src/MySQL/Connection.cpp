@@ -10,9 +10,9 @@ using namespace ThorsAnvil::MySQL;
 class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
 {
     private:
-        MySQLStream                         stream;
-        PackageBufferMySQLDebugBuffer       buffer;
-        PackageReader                       reader;
+        MySQLStream                                 stream;
+        PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
+        PackageReader                               reader;
     public:
         DefaultMySQLConnection(std::string const& host, int port,
                                std::string const& /*username*/,

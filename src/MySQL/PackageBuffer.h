@@ -10,18 +10,23 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
+template<typename T>
 class PackageBufferMySQLDebugBuffer: public PackageStream
 {
-    PackageStream&    stream;
+    T&    stream;
     public:
-        PackageBufferMySQLDebugBuffer(PackageStream& stream)
+        PackageBufferMySQLDebugBuffer(T& stream)
             : stream(stream)
         {}
-        virtual void readData(char* buffer, std::size_t len) override;
+        virtual void read(char* buffer, std::size_t len) override;
 };
 
     }
 }
+
+#ifndef COVERAGE_TEST
+#include "PackageBuffer.tpp"
+#endif
 
 #endif
 

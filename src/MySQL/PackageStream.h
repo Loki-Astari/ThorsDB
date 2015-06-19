@@ -12,8 +12,8 @@ namespace ThorsAnvil
 class PackageStream
 {
     public:
-        virtual ~PackageStream()                                = 0;
-        virtual void readData(char* buffer, std::size_t len)    = 0;
+        virtual ~PackageStream()                            = 0;
+        virtual void read(char* buffer, std::size_t len)    = 0;
 };
 inline PackageStream::~PackageStream() {}
 
@@ -22,7 +22,7 @@ class MySQLStream: public PackageStream
     int socket;
     public:
         MySQLStream(std::string const& host, int port);
-        virtual void readData(char* buffer, std::size_t len) override;
+        virtual void read(char* buffer, std::size_t len) override;
 };
 
     }

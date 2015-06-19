@@ -30,7 +30,7 @@ MySQLStream::MySQLStream(std::string const& host, int port)
     } 
 }
 
-void MySQLStream::readData(char* /*buffer*/, std::size_t /*len*/)
+void MySQLStream::read(char* /*buffer*/, std::size_t /*len*/)
 {
 }
 

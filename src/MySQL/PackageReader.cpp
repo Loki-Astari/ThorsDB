@@ -14,10 +14,6 @@ std::unique_ptr<Package> PackageReader::getNextPackage()
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
  */
-#include "PackageReader.tpp"
-#include "Connection.h"
-#include <map>
-#include <string>
 
 #endif
 

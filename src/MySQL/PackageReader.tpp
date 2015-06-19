@@ -9,7 +9,7 @@ namespace ThorsAnvil
     {
 
 #if     1
-#define THOR_MYSQL_READ_INT(into, len)      buffer.readData(reinterpret_cast<char*>(&into), len)
+#define THOR_MYSQL_READ_INT(into, len)      buffer.read(reinterpret_cast<char*>(&into), len)
 #define THOR_MYSQL_WRITE_INT(from,len)      buffer.sendBuffer.insert(sendBuffer.end(), reinterpret_cast<char*>(&from), reinterpret_cast<char*>(&from) + len)
 
 #elif   BOOST_BIG_ENDIAN
@@ -21,9 +21,9 @@ namespace ThorsAnvil
 #endif
 
 
-inline void PackageReader::readData(char* data, std::size_t len)
+inline void PackageReader::read(char* data, std::size_t len)
 {
-    buffer.readData(data, len);
+    buffer.read(data, len);
 }
 
 template<int len>
@@ -78,9 +78,9 @@ template<> inline char          readParameterValue<MYSQL_TYPE_DECIMAL,      char
 template<> inline char          readParameterValue<MYSQL_TYPE_NEWDECIMAL,   char>(PackageReader& p)               {return boost::lexical_cast<char>(p.lengthEncodedString());}
 template<> inline char          readParameterValue<MYSQL_TYPE_TINY,         char>(PackageReader& p)               {return p.fixedLengthInteger<1>();}
 
-template<> inline double        readParameterValue<MYSQL_TYPE_DOUBLE,       double>(PackageReader& p)             {double result;p.readData(reinterpret_cast<char*>(&result), 8);return result;}
-template<> inline float         readParameterValue<MYSQL_TYPE_DOUBLE,       float>(PackageReader& p)              {double result;p.readData(reinterpret_cast<char*>(&result), 8);return result;}
-template<> inline float         readParameterValue<MYSQL_TYPE_FLOAT,        float>(PackageReader& p)              {float  result;p.readData(reinterpret_cast<char*>(&result), 4);return result;}
+template<> inline double        readParameterValue<MYSQL_TYPE_DOUBLE,       double>(PackageReader& p)             {double result;p.read(reinterpret_cast<char*>(&result), 8);return result;}
+template<> inline float         readParameterValue<MYSQL_TYPE_DOUBLE,       float>(PackageReader& p)              {double result;p.read(reinterpret_cast<char*>(&result), 8);return result;}
+template<> inline float         readParameterValue<MYSQL_TYPE_FLOAT,        float>(PackageReader& p)              {float  result;p.read(reinterpret_cast<char*>(&result), 4);return result;}
 
 template<> inline time_t        readParameterValue<MYSQL_TYPE_DATE,         time_t>(PackageReader& p)             {return p.readDate();}
 template<> inline time_t        readParameterValue<MYSQL_TYPE_DATETIME,     time_t>(PackageReader& p)             {return p.readDate();}

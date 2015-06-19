@@ -43,7 +43,7 @@ class PackageReader
         {}
         std::unique_ptr<Package>    getNextPackage();
 
-        void        readData(char* data, std::size_t len);
+        void        read(char* data, std::size_t len);
 
         template<int len>
         long        fixedLengthInteger();
