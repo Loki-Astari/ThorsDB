@@ -9,8 +9,8 @@ namespace ThorsAnvil
     {
 
 #if     1
-#define THOR_MYSQL_READ_INT(into, len)      buffer.read(reinterpret_cast<char*>(&into), len)
-#define THOR_MYSQL_WRITE_INT(from,len)      buffer.sendBuffer.insert(sendBuffer.end(), reinterpret_cast<char*>(&from), reinterpret_cast<char*>(&from) + len)
+#define THOR_MYSQL_READ_INT(into, len)      stream.read(reinterpret_cast<char*>(&into), len)
+#define THOR_MYSQL_WRITE_INT(from,len)      stream.sendBuffer.insert(sendBuffer.end(), reinterpret_cast<char*>(&from), reinterpret_cast<char*>(&from) + len)
 
 #elif   BOOST_BIG_ENDIAN
 #error  Not Tested
@@ -19,12 +19,6 @@ namespace ThorsAnvil
 #else
 #error  Unknow Endianess
 #endif
-
-
-inline void PackageReader::read(char* data, std::size_t len)
-{
-    buffer.read(data, len);
-}
 
 template<int len>
 inline long PackageReader::fixedLengthInteger()
@@ -35,7 +29,6 @@ inline long PackageReader::fixedLengthInteger()
     return result;
 }
 
-using Buffer = std::vector<char>;
 
 template<int Tv, typename T>
 inline T readParameterValue(PackageReader&)
@@ -44,6 +37,8 @@ inline T readParameterValue(PackageReader&)
     // The translations we know about are defined below.
     static_assert(true, "Undefined parameter read.");
 }
+
+using Buffer = std::vector<char>;
 
 template<> inline std::string   readParameterValue<MYSQL_TYPE_VAR_STRING,   std::string>(PackageReader& p)        {return p.lengthEncodedString();}
 template<> inline std::string   readParameterValue<MYSQL_TYPE_STRING,       std::string>(PackageReader& p)        {return p.lengthEncodedString();}

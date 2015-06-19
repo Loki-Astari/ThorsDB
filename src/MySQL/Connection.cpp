@@ -4,6 +4,7 @@
 #include "PackageStream.h"
 #include "PackageBuffer.h"
 #include "PackageReader.h"
+#include "PackageResp.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -33,7 +34,7 @@ Connection::Connection(
                     PackageReader& pr)
     : packageReader(pr)
 {
-    packageReader.getNextPackage();
+    packageReader.getNextPackage(PackageReader::HandshakeOK);
     // Send connection handshake
 }
 

@@ -24,7 +24,9 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
 
     public:
         PackageBufferMySQLDebugBuffer(T& stream);
-        virtual void read(char* buffer, std::size_t len) override;
+        virtual void        read(char* buffer, std::size_t len) override;
+        virtual bool        isEmpty()                           override;
+        virtual std::string readRemainingData()                 override;
 };
 
     }

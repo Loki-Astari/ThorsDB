@@ -31,6 +31,39 @@ inline void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::read(char* buff
 }
 
 template<typename T>
+bool ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::isEmpty()
+{
+    long remaining      = currentPacketSize - currentPacketPosition;
+    if ((remaining == 0) && hasMore)
+    {
+        nextPacket();
+        remaining      = currentPacketSize - currentPacketPosition;
+    }
+    return remaining == 0;
+}
+
+template<typename T>
+std::string ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::readRemainingData()
+{
+    std::string dst;
+    do
+    {
+        long retrieved  = dst.size();
+        long remaining  = currentPacketSize - currentPacketPosition;
+        dst.resize(retrieved + remaining);
+        read(&dst[retrieved], remaining);
+        if (hasMore) {
+            nextPacket();
+            continue;
+        }
+        break;
+    }
+    while(true);
+
+    return dst;
+}
+
+template<typename T>
 void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::nextPacket()
 {
     if (!hasMore)

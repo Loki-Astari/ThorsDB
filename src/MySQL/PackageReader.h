@@ -34,16 +34,31 @@ class Package
         virtual ~Package()  = 0;
 };
 class PackageStream;
+class PackageResp;
 class PackageReader
 {
-    PackageStream&   buffer;
+    PackageStream&   stream;
+    long             capabilities;
     public:
-        PackageReader(PackageStream& buffer)
-            : buffer(buffer)
+        PackageReader(PackageStream& stream)
+            : stream(stream)
+            , capabilities(0)
         {}
-        std::unique_ptr<Package>    getNextPackage();
+        void setCapabilities(long newCapabilities)                      {capabilities = newCapabilities;}
+        enum ResponceType { HandshakeOK };
+        std::unique_ptr<PackageResp>    getNextPackage(ResponceType type);
 
         void        read(char* data, std::size_t len);
+        bool        isEmpty() const;
+
+        template<int len>
+        long        fixedLengthInteger(long requiredCap)                {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
+        long        lengthEncodedInteger(long requiredCap)              {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
+        std::string fixedLengthString(long size, long requiredCap)      {return (requiredCap & capabilities) ? fixedLengthString(size)      : "";}
+        std::string nulTerminatedString(long requiredCap)               {return (requiredCap & capabilities) ? nulTerminatedString()        : "";}
+        std::string variableLengthString(long size, long requiredCap)   {return (requiredCap & capabilities) ? variableLengthString(size)   : "";}
+        std::string lengthEncodedString(long requiredCap)               {return (requiredCap & capabilities) ? lengthEncodedString()        : "";}
+        std::string restOfPacketString(long requiredCap)                {return (requiredCap & capabilities) ? restOfPacketString()         : "";}
 
         template<int len>
         long        fixedLengthInteger();

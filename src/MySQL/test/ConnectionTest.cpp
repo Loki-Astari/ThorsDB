@@ -22,8 +22,16 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 class DebugStream: public ThorsAnvil::MySQL::PackageStream
 {
     public:
-        virtual void read(char* buffer, std::size_t len) override
+        virtual void        read(char* buffer, std::size_t len) override
         {
+        }
+        virtual bool        isEmpty()                           override
+        {
+            return true;
+        }
+        virtual std::string readRemainingData()                 override
+        {
+            return "";
         }
 };
 TEST(ConnectionTest, Create)
