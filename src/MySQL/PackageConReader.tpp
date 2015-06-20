@@ -10,7 +10,6 @@ namespace ThorsAnvil
 
 #if     1
 #define THOR_MYSQL_READ_INT(into, len)      stream.read(reinterpret_cast<char*>(&into), len)
-#define THOR_MYSQL_WRITE_INT(from,len)      stream.sendBuffer.insert(sendBuffer.end(), reinterpret_cast<char*>(&from), reinterpret_cast<char*>(&from) + len)
 
 #elif   BOOST_BIG_ENDIAN
 #error  Not Tested

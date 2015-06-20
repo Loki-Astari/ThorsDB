@@ -16,14 +16,18 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
         MySQLStream                                 stream;
         PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
         PackageConReader                            reader;
+        PackageConWriter                            writer;
+        Connection                                  connection;
     public:
         DefaultMySQLConnection(std::string const& host, int port,
-                               std::string const& /*username*/,
-                               std::string const& /*password*/,
-                               ThorsAnvil::SQL::Options const& /*options*/)
+                               std::string const& username,
+                               std::string const& password,
+                               ThorsAnvil::SQL::Options const& options)
             : stream(host, port)
             , buffer(stream)
             , reader(buffer)
+            , writer(buffer)
+            , connection(username, password, options, reader, writer)
         {}
 };
 
@@ -33,19 +37,14 @@ Connection::Connection(
                     std::string const& /*username*/,
                     std::string const& /*password*/,
                     std::map<std::string, std::string> const& /*options*/,
-                    PackageConReader& pr)
+                    PackageConReader& pr,
+                    PackageConWriter& pw)
     : packageReader(pr)
+    , packageWriter(pw)
 {
-    std::unique_ptr<PackageResp>    initConnect = packageReader.getNextPackage(PackageConReader::HandshakeOK);
-    if (initConnect->isError())
-    {
-        std::stringstream message;
-        message << *initConnect;
-        throw std::runtime_error(message.str());
-    }
-
-    Detail::PackageRespHandShake&   handshake = dynamic_cast<Detail::PackageRespHandShake&>(*initConnect);
-    packageReader.initFromHandshake(handshake.getCapabilities(), handshake.getCharset());
+    std::unique_ptr<Detail::PackageRespHandShake>    handshake = recvMessage<Detail::PackageRespHandShake>(PackageConReader::HandshakeOK, PackageConReader::OK);
+    packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
+    packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     //HandshakeResponsePackage        handshakeresp(*this, handshage.getCharset(), username, password, database, handshake));
     //std::unique_ptr<PackageRead>    ok(handshakeresp.getResponsePackage<PackageRead>(PackageWrite::Reset, PackageWrite::OK, PackageRead::HandshakeOK));

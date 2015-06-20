@@ -13,13 +13,19 @@ class PackageConWriter
 {
     protected:
     PackageStream&   stream;
+    long             capabilities;
+    long             charset;
 
     public:
 
         PackageConWriter(PackageStream& stream)
             : stream(stream)
+            , capabilities(0)
+            , charset(0)
         {}
         virtual ~PackageConWriter() {}
+
+        void initFromHandshake(long capabilities, long charset);
 
         template<int len>
         void        writeFixedLengthInteger(long value);

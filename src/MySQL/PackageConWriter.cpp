@@ -3,6 +3,12 @@
 
 using namespace ThorsAnvil::MySQL;
 
+void PackageConWriter::initFromHandshake(long newCapabilities, long newCharset)
+{
+    capabilities    = newCapabilities;
+    charset         = newCharset;
+}
+
 void PackageConWriter::writeLengthEncodedInteger(long value)
 {
     /*
@@ -44,4 +50,18 @@ void PackageConWriter::writeLengthEncodedString(std::string const& value)
     writeLengthEncodedInteger(value.size());
     writeVariableLengthString(value);
 }
+
+#ifdef COVERAGE_TEST
+/*
+ * This code is only compiled into the unit tests for code coverage purposes
+ * It is not part of the live code.
+ */
+#include "PackageConWriter.tpp"
+
+template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<1>(long);
+template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<2>(long);
+template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<3>(long);
+template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<8>(long);
+
+#endif
 
