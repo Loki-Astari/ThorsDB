@@ -3,7 +3,7 @@
 #include "ThorSQL/Connection.h"
 #include "PackageStream.h"
 #include "PackageBuffer.h"
-#include "PackageReader.h"
+#include "PackageConReader.h"
 #include "PackageRespHandShake.h"
 #include "PackageResp.h"
 #include <sstream>
@@ -15,7 +15,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
     private:
         MySQLStream                                 stream;
         PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
-        PackageReader                               reader;
+        PackageConReader                            reader;
     public:
         DefaultMySQLConnection(std::string const& host, int port,
                                std::string const& /*username*/,
@@ -33,10 +33,10 @@ Connection::Connection(
                     std::string const& /*username*/,
                     std::string const& /*password*/,
                     std::map<std::string, std::string> const& /*options*/,
-                    PackageReader& pr)
+                    PackageConReader& pr)
     : packageReader(pr)
 {
-    std::unique_ptr<PackageResp>    initConnect = packageReader.getNextPackage(PackageReader::HandshakeOK);
+    std::unique_ptr<PackageResp>    initConnect = packageReader.getNextPackage(PackageConReader::HandshakeOK);
     if (initConnect->isError())
     {
         std::stringstream message;

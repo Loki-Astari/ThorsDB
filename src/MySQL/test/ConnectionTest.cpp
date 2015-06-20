@@ -1,7 +1,7 @@
 
 #include "Connection.h"
 #include "ThorSQL/Connection.h"
-#include "PackageReader.h"
+#include "PackageConReader.h"
 #include "PackageBuffer.h"
 #include "PackageStream.h"
 
@@ -43,7 +43,7 @@ TEST(ConnectionTest, Create)
 
     MySQL::MySQLStream      stream("127.0.0.1", 0);
     Buffer                  buffer(stream);
-    MySQL::PackageReader    reader(buffer);
+    MySQL::PackageConReader reader(buffer);
     MySQL::Connection       connection("root", "testPassword", options, reader);
 }
 

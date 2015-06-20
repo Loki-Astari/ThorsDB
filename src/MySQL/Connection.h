@@ -3,7 +3,7 @@
 #define THORS_ANVIL_MYSQL_CONNECTION_H
 
 #include "ThorSQL/SQLUtil.h"
-#include "PackageReader.h"
+#include "PackageConReader.h"
 #include <string>
 #include <map>
 
@@ -16,12 +16,12 @@ using ThorsAnvil::SQL::Options;
 
 class Connection
 {
-    PackageReader&  packageReader;
+    PackageConReader&  packageReader;
     public:
         Connection(std::string const& username,
                    std::string const& password,
                    Options const& options,
-                   PackageReader& packageReader);
+                   PackageConReader& packageReader);
         virtual ~Connection();
 };
 

@@ -2,7 +2,7 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
 
 #include "PackageResp.h"
-#include "PackageReader.h"
+#include "PackageConReader.h"
 
 namespace ThorsAnvil
 {
@@ -16,7 +16,7 @@ class PackageRespEOF: public PackageResp
     long    warningCount;
     long    statusFlag;
     public:
-        PackageRespEOF(PackageReader& reader)
+        PackageRespEOF(PackageConReader& reader)
             : PackageResp(reader)
             , warningCount(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
             , statusFlag(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))

@@ -4,7 +4,7 @@
 
 using namespace ThorsAnvil::MySQL::Detail;
 
-PackageRespHandShake::PackageRespHandShake(PackageReader& reader)
+PackageRespHandShake::PackageRespHandShake(PackageConReader& reader)
     : PackageResp(reader)
     , serverVersion(reader.nulTerminatedString())
     , connectionID(reader.fixedLengthInteger<4>())

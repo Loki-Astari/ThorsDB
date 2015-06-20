@@ -2,7 +2,7 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 
 #include "PackageResp.h"
-#include "PackageReader.h"
+#include "PackageConReader.h"
 
 namespace ThorsAnvil
 {
@@ -27,7 +27,7 @@ class PackageRespHandShake: public PackageResp
     char            charset;
 
     public:
-        PackageRespHandShake(PackageReader& reader);
+        PackageRespHandShake(PackageConReader& reader);
         virtual std::ostream& print(std::ostream& s) const;
         long                getCapabilities()   const                   {return capabilities;}
         long                getCharset()        const                   {return charset;}
