@@ -33,8 +33,8 @@ class Connection
 
         template<typename Resp>
         std::unique_ptr<Resp> recvMessage(PackageConReader::ResponceType type, PackageConReader::PacketCompletion comp);
-        template<typename Requ, typename ...Args>
-        void sendMessage(Args... arg);
+        template<typename Resp, typename Requ>
+        std::unique_ptr<Resp> sendMessage(Requ const& request, PackageConReader::ResponceType type, PackageConReader::PacketCompletion comp);
 };
 
 template<typename Resp>
@@ -56,10 +56,11 @@ std::unique_ptr<Resp> Connection::recvMessage(PackageConReader::ResponceType typ
     return result;
 }
 
-template<typename Requ, typename ...Args>
-void Connection::sendMessage(Args... /*arg*/)
+template<typename Resp, typename Requ>
+std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PackageConReader::ResponceType type, PackageConReader::PacketCompletion comp)
 {
-    packageWriter.writeFixedLengthInteger<1>(4);
+    request.send(packageWriter);
+    return recvMessage<Resp>(type, comp);
 }
     }
 }

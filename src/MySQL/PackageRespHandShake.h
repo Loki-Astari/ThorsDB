@@ -28,9 +28,11 @@ class PackageRespHandShake: public PackageResp
 
     public:
         PackageRespHandShake(PackageConReader& reader);
-        virtual std::ostream& print(std::ostream& s) const;
-        long                getCapabilities()   const                   {return capabilities;}
-        long                getCharset()        const                   {return charset;}
+        virtual std::ostream& print(std::ostream& s)    const;
+        long                getCapabilities()           const   {return capabilities;}
+        long                getCharset()                const   {return charset;}
+        std::string const&  getAuthPluginName()         const   {return authPluginName;}
+        std::string const&  getAuthPluginData()         const   {return authPluginData;}
 };
 
         }
