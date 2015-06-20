@@ -39,12 +39,14 @@ class PackageReader
 {
     PackageStream&   stream;
     long             capabilities;
+    long             charset;
     public:
         PackageReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
+            , charset(0)
         {}
-        void setCapabilities(long newCapabilities)                      {capabilities = newCapabilities;}
+        void initFromHandshake(long capabilities, long charset);
         enum ResponceType { HandshakeOK };
         std::unique_ptr<PackageResp>    getNextPackage(ResponceType type);
 

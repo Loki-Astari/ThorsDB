@@ -4,7 +4,9 @@
 #include "PackageStream.h"
 #include "PackageBuffer.h"
 #include "PackageReader.h"
+#include "PackageRespHandShake.h"
 #include "PackageResp.h"
+#include <sstream>
 
 using namespace ThorsAnvil::MySQL;
 
@@ -34,8 +36,19 @@ Connection::Connection(
                     PackageReader& pr)
     : packageReader(pr)
 {
-    packageReader.getNextPackage(PackageReader::HandshakeOK);
-    // Send connection handshake
+    std::unique_ptr<PackageResp>    initConnect = packageReader.getNextPackage(PackageReader::HandshakeOK);
+    if (initConnect->isError())
+    {
+        std::stringstream message;
+        message << *initConnect;
+        throw std::runtime_error(message.str());
+    }
+
+    Detail::PackageRespHandShake&   handshake = dynamic_cast<Detail::PackageRespHandShake&>(*initConnect);
+    packageReader.initFromHandshake(handshake.getCapabilities(), handshake.getCharset());
+
+    //HandshakeResponsePackage        handshakeresp(*this, handshage.getCharset(), username, password, database, handshake));
+    //std::unique_ptr<PackageRead>    ok(handshakeresp.getResponsePackage<PackageRead>(PackageWrite::Reset, PackageWrite::OK, PackageRead::HandshakeOK));
 }
 
 Connection::~Connection()

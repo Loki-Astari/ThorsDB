@@ -1,8 +1,9 @@
 
 #include "Connection.h"
 #include "ThorSQL/Connection.h"
-#include "PackageStream.h"
 #include "PackageReader.h"
+#include "PackageBuffer.h"
+#include "PackageStream.h"
 
 #include "gtest/gtest.h"
 
@@ -37,10 +38,12 @@ class DebugStream: public ThorsAnvil::MySQL::PackageStream
 TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
+    using Buffer=MySQL::PackageBufferMySQLDebugBuffer<MySQL::MySQLStream>;
     std::map<std::string, std::string>      options;
 
-    DebugStream             stream;
-    MySQL::PackageReader    reader(stream);
+    MySQL::MySQLStream      stream("127.0.0.1", 0);
+    Buffer                  buffer(stream);
+    MySQL::PackageReader    reader(buffer);
     MySQL::Connection       connection("root", "testPassword", options, reader);
 }
 

@@ -8,6 +8,12 @@
 
 using namespace ThorsAnvil::MySQL;
 
+void PackageReader::initFromHandshake(long newCapabilities, long newCharset)
+{
+    capabilities    = newCapabilities;
+    charset         = newCharset;
+}
+
 void PackageReader::read(char* data, std::size_t len)
 {
     stream.read(data, len);

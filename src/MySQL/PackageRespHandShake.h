@@ -29,7 +29,9 @@ class PackageRespHandShake: public PackageResp
     public:
         PackageRespHandShake(PackageReader& reader);
         virtual std::ostream& print(std::ostream& s) const;
-        long                getCapabilities()   const                   {return capabilities;}};
+        long                getCapabilities()   const                   {return capabilities;}
+        long                getCharset()        const                   {return charset;}
+};
 
         }
     }
