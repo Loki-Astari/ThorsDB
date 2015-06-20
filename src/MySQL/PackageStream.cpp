@@ -43,8 +43,6 @@ MySQLStream::~MySQLStream()
 
 void MySQLStream::read(char* buffer, std::size_t len)
 {
-    static std::size_t const ErrorResult = static_cast<std::size_t>(-1);
-
     std::size_t     readSoFar    = 0;
     while(readSoFar != len)
     {
@@ -66,6 +64,31 @@ void MySQLStream::read(char* buffer, std::size_t len)
         }
 
         readSoFar += read;
+    }
+}
+void MySQLStream::write(char const* buffer, std::size_t len)
+{
+    std::size_t     writenSoFar    = 0;
+    while(writenSoFar != len)
+    {
+        std::size_t writen = ::write(socket, buffer + writenSoFar, len - writenSoFar);
+        if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR)) {
+            /* Recoverable error. Try again. */
+            continue;
+        }
+        else if (writen == 0) {
+            std::stringstream msg;
+            msg << "ThorsAnvil::MySQLStream::write: Write fail. Tried to write " << len << "bytes but only found " << writenSoFar << " before EOF";
+            throw std::runtime_error(msg.str());
+        }
+        else if (writen == ErrorResult)
+        {
+            std::stringstream msg;
+            msg << "ThorsAnvil::MySQLStream::write: Write fail. errno=" << errno << " Message=" << strerror(errno);
+            throw std::runtime_error(msg.str());
+        }
+
+        writenSoFar += writen;
     }
 }
 
