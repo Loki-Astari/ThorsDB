@@ -8,6 +8,7 @@ using namespace ThorsAnvil::SQL;
 Connection::Connection(std::string const& connection,
                        std::string const& username,
                        std::string const& password,
+                       std::string const& database,
                        Options const& options)
 {
     std::size_t     schemaEnd   = connection.find(':');
@@ -39,7 +40,7 @@ Connection::Connection(std::string const& connection,
     if (creator == getCreators().end()) {
         throw std::runtime_error("Connection::Conection: Schema for unregister DB type: " + schema + " From: " + connection);
     }
-    proxy   = creator->second(host, portNumber, username, password, options);
+    proxy   = creator->second(host, portNumber, username, password, database, options);
 }
 
 std::map<std::string, ConnectionCreator>& Connection::getCreators()

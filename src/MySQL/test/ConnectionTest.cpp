@@ -17,7 +17,7 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    SQL::Connection     connection("mysql://127.0.0.1", "root", "testPassword", options);
+    SQL::Connection     connection("mysql://127.0.0.1", "root", "testPassword", "test", options);
 }
 
 class DebugStream: public ThorsAnvil::MySQL::PackageStream
@@ -45,7 +45,7 @@ TEST(ConnectionTest, Create)
     Buffer                  buffer(stream);
     MySQL::PackageConReader reader(buffer);
     MySQL::PackageConWriter writer(buffer);
-    MySQL::Connection       connection("root", "testPassword", "Bob", options, reader, writer);
+    MySQL::Connection       connection("root", "testPassword", "test", options, reader, writer);
 }
 
 

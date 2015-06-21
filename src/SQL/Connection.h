@@ -21,6 +21,7 @@ inline ConnectionProxy::~ConnectionProxy() {}
 using ConnectionCreator= std::function<std::unique_ptr<ConnectionProxy>(std::string const& host, int port,
                                                                         std::string const& username,
                                                                         std::string const& password,
+                                                                        std::string const& database,
                                                                         Options const& options)>;
 class Connection
 {
@@ -32,6 +33,7 @@ class Connection
         Connection(std::string const& connection,
                       std::string const& username,
                       std::string const& password,
+                      std::string const& database,
                       Options const& options = Options{});
 
         static void registerConnectionType(std::string const& schema, ConnectionCreator creator);
@@ -46,9 +48,10 @@ class ConnectionCreatorRegister
             Connection::registerConnectionType(schema, [](std::string const& host, int port,
                                                           std::string const& username,
                                                           std::string const& password,
+                                                          std::string const& database,
                                                           Options const& options)
                     {
-                        return std::unique_ptr<ConnectionProxy>(new T(host, port , username, password, options));
+                        return std::unique_ptr<ConnectionProxy>(new T(host, port , username, password, database, options));
                     });
         }
 };
