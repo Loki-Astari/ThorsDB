@@ -58,3 +58,12 @@ Connection::~Connection()
     // Shut Down
 }
 
+#ifdef COVERAGE_TEST
+/*
+ * This code is only compiled into the unit tests for code coverage purposes
+ * It is not part of the live code.
+ */
+#include "Connection.tpp"
+
+#endif
+

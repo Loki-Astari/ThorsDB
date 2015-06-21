@@ -2,9 +2,13 @@
 #include <algorithm>
 #include <arpa/inet.h>
 
+namespace ThorsAnvil
+{
+    namespace MySQL
+    {
 
 template<typename T>
-ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::PackageBufferMySQLDebugBuffer(T& stream)
+PackageBufferMySQLDebugBuffer<T>::PackageBufferMySQLDebugBuffer(T& stream)
     : stream(stream)
     , readCurrentPacketSize(0)
     , readCurrentPacketPosition(0)
@@ -15,7 +19,7 @@ ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::PackageBufferMySQLDebugBuff
 }
 
 template<typename T>
-inline void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::read(char* buffer, std::size_t len)
+inline void PackageBufferMySQLDebugBuffer<T>::read(char* buffer, std::size_t len)
 {
     std::size_t retrieved = 0;
     do
@@ -33,7 +37,7 @@ inline void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::read(char* buff
 }
  
 template<typename T>
-bool ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::isEmpty()
+bool PackageBufferMySQLDebugBuffer<T>::isEmpty()
 {
     long remaining      = readCurrentPacketSize - readCurrentPacketPosition;
     if ((remaining == 0) && hasMore)
@@ -45,7 +49,7 @@ bool ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::isEmpty()
 }
 
 template<typename T>
-std::string ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::readRemainingData()
+std::string PackageBufferMySQLDebugBuffer<T>::readRemainingData()
 {
     std::string dst;
     do
@@ -66,7 +70,7 @@ std::string ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::readRemainingDa
 }
 
 template<typename T>
-void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::nextPacket()
+void PackageBufferMySQLDebugBuffer<T>::nextPacket()
 {
     if (!hasMore)
     {   throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: No more data expected from server");
@@ -91,7 +95,7 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::nextPacket()
 }
 
 template<typename T>
-void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len)
+void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len)
 {
     std::size_t   currentSize = sendBuffer.size();
     if (currentSize + len > 0xFFFFFF)
@@ -118,7 +122,7 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::write(char const* buff
 }
 
 template<typename T>
-void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush()
+void PackageBufferMySQLDebugBuffer<T>::flush()
 {
     std::size_t   currentSize = sendBuffer.size();
 
@@ -128,7 +132,7 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush()
 }
 
 template<typename T>
-void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset()
+void PackageBufferMySQLDebugBuffer<T>::reset()
 {
     if (!sendBuffer.empty()) {
         throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was sent");
@@ -146,7 +150,7 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset()
 }
 
 template<typename T>
-void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::writePackageHeader(std::size_t size)
+void PackageBufferMySQLDebugBuffer<T>::writePackageHeader(std::size_t size)
 {
     ++currentPacketSequenceID;
     stream.write(reinterpret_cast<char const*>(&size), 3);
@@ -154,8 +158,11 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::writePackageHeader(std
 }
 
 template<typename T>
-void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::writeStream(char const* buffer, std::size_t len)
+void PackageBufferMySQLDebugBuffer<T>::writeStream(char const* buffer, std::size_t len)
 {
     stream.write(buffer, len);
+}
+
+    }
 }
  
