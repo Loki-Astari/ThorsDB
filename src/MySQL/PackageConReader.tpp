@@ -8,17 +8,6 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-#if     1
-#define THOR_MYSQL_READ_INT(into, len)      stream.read(reinterpret_cast<char*>(&into), len)
-
-#elif   BOOST_BIG_ENDIAN
-#error  Not Tested
-#elif   BOOST_PDP_ENDIAN
-#error  Not Tested
-#else
-#error  Unknow Endianess
-#endif
-
 template<int len>
 inline long PackageConReader::fixedLengthInteger()
 {

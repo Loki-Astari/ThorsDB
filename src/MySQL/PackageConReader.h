@@ -2,9 +2,19 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_READER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_READER_H
 
+
 #include <memory>
 #include <vector>
 #include <string>
+
+#include "MySQLConfig.h"
+#if     defined(THOR_ENDIAN_SML)
+#define THOR_MYSQL_READ_INT(into, len)      stream.read(reinterpret_cast<char*>(&into), len)
+#elif   defined(THOR_ENDIAN_BIG)
+#error  Have not defined this for large endian systems.
+#else
+#error  Unknow Endianess
+#endif
 
 namespace ThorsAnvil
 {

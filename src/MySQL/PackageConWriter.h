@@ -4,6 +4,15 @@
 
 #include "PackageStream.h"
 
+#include "MySQLConfig.h"
+#if     defined(THOR_ENDIAN_SML)
+#define THOR_MYSQL_WRITE_INT(from,len)      stream.write(reinterpret_cast<char const*>(&from), len)
+#elif   defined(THOR_ENDIAN_BIG)
+#error  Have not defined this for large endian systems.
+#else
+#error  Unknow Endianess
+#endif
+
 namespace ThorsAnvil
 {
     namespace MySQL
@@ -43,16 +52,6 @@ class PackageConWriter
     }
 }
 
-#if 1
-#define THOR_MYSQL_WRITE_INT(from,len)      stream.write(reinterpret_cast<char const*>(&from), len)
-
-#elif   BOOST_BIG_ENDIAN
-#error  Not Tested
-#elif   BOOST_PDP_ENDIAN
-#error  Not Tested
-#else
-#error  Unknow Endianess
-#endif
 
 
 #ifndef COVERAGE_TEST
