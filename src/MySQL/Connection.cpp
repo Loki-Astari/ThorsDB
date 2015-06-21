@@ -5,6 +5,7 @@
 #include "PackageBuffer.h"
 #include "PackageConReader.h"
 #include "PackageRespHandShake.h"
+#include "PackageRequHandShakeResp.h"
 #include "PackageResp.h"
 #include <sstream>
 
@@ -27,27 +28,28 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
             , buffer(stream)
             , reader(buffer)
             , writer(buffer)
-            , connection(username, password, options, reader, writer)
+            , connection(username, password, "Bob", options, reader, writer)
         {}
 };
 
 ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");
 
 Connection::Connection(
-                    std::string const& /*username*/,
-                    std::string const& /*password*/,
-                    std::map<std::string, std::string> const& /*options*/,
+                    std::string const& username,
+                    std::string const& password,
+                    std::string const& database,
+                    std::map<std::string, std::string> const& options,
                     PackageConReader& pr,
                     PackageConWriter& pw)
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::PackageRespHandShake>    handshake = recvMessage<Detail::PackageRespHandShake>(PackageConReader::HandshakeOK, PackageConReader::OK);
+    std::unique_ptr<Detail::PackageRespHandShake>    handshake = recvMessage<Detail::PackageRespHandShake>(OK, PackageConReader::HandshakeOK);
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
-    //HandshakeResponsePackage        handshakeresp(*this, handshage.getCharset(), username, password, database, handshake));
-    //std::unique_ptr<PackageRead>    ok(handshakeresp.getResponsePackage<PackageRead>(PackageWrite::Reset, PackageWrite::OK, PackageRead::HandshakeOK));
+    Detail::PackageRequHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
+    std::unique_ptr<PackageResp>            ok = sendMessage<PackageResp>(handshakeresp, Reset, OK, PackageConReader::HandshakeOK);
 }
 
 Connection::~Connection()

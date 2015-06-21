@@ -45,7 +45,7 @@ TEST(ConnectionTest, Create)
     Buffer                  buffer(stream);
     MySQL::PackageConReader reader(buffer);
     MySQL::PackageConWriter writer(buffer);
-    MySQL::Connection       connection("root", "testPassword", options, reader, writer);
+    MySQL::Connection       connection("root", "testPassword", "Bob", options, reader, writer);
 }
 
 

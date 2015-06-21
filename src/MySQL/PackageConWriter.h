@@ -34,6 +34,9 @@ class PackageConWriter
         void        writeNullTerminatedString(std::string const& value);            // Adds NULL terminator
         void        writeVariableLengthString(std::string const& value);            // Not NULL terminated.
         void        writeLengthEncodedString(std::string const& value);
+
+        void        flush();
+        void        reset();
 };
 
 

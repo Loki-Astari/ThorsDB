@@ -51,6 +51,15 @@ void PackageConWriter::writeLengthEncodedString(std::string const& value)
     writeVariableLengthString(value);
 }
 
+void PackageConWriter::flush()
+{
+    stream.flush();
+}
+void PackageConWriter::reset()
+{
+    stream.reset();
+}
+
 #ifdef COVERAGE_TEST
 /*
  * This code is only compiled into the unit tests for code coverage purposes
@@ -61,6 +70,7 @@ void PackageConWriter::writeLengthEncodedString(std::string const& value)
 template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<1>(long);
 template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<2>(long);
 template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<3>(long);
+template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<4>(long);
 template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<8>(long);
 
 #endif

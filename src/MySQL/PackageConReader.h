@@ -47,7 +47,6 @@ class PackageConReader
             , charset(0)
         {}
         enum ResponceType       { HandshakeOK };
-        enum PacketCompletion   { OK, EOF_OK };
 
         void initFromHandshake(long capabilities, long charset);
         std::unique_ptr<PackageResp>    getNextPackage(ResponceType type);

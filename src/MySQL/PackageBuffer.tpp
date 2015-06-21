@@ -8,8 +8,7 @@ ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::PackageBufferMySQLDebugBuff
     : stream(stream)
     , readCurrentPacketSize(0)
     , readCurrentPacketPosition(0)
-    , readCurrentPacketSequenceID(-1)
-    , writCurrentPacketSequenceID(-1)
+    , currentPacketSequenceID(-1)
     , hasMore(true)
 {
     sendBuffer.reserve(0xFFFFFF/*16MByte*/);
@@ -74,7 +73,7 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::nextPacket()
     }
     readCurrentPacketSize       = 0;
     readCurrentPacketPosition   = 0;
-    readCurrentPacketSequenceID++;
+    currentPacketSequenceID++;
 
     std::uint32_t    packetBufferSize = 0;
     stream.read(reinterpret_cast<char*>(&packetBufferSize), 3);
@@ -84,8 +83,8 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::nextPacket()
     char actualSequenceID;
     stream.read(&actualSequenceID, 1);
 
-    if (readCurrentPacketSequenceID != actualSequenceID)
-    {   throw std::runtime_error(std::string("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: readCurrentPacketSequenceID(") + std::to_string(readCurrentPacketSequenceID) + ") != actual sequence on input stream(" + std::to_string(actualSequenceID) + ")");
+    if (currentPacketSequenceID != actualSequenceID)
+    {   throw std::runtime_error(std::string("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: currentPacketSequenceID(") + std::to_string(currentPacketSequenceID) + ") != actual sequence on input stream(" + std::to_string(actualSequenceID) + ")");
     }
 
     hasMore = readCurrentPacketSize == 0xFFFFFF;
@@ -126,15 +125,32 @@ void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush()
     writePackageHeader(currentSize);
     writeStream(&sendBuffer[0], currentSize);
     sendBuffer.clear();
-    writCurrentPacketSequenceID = -1;
+}
+
+template<typename T>
+void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset()
+{
+    if (!sendBuffer.empty()) {
+        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was sent");
+    }
+    std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
+    if (readDataAvailable == 0 && hasMore) {
+        nextPacket();
+        readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
+    }
+    if (readDataAvailable != 0) {
+        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was read");
+    }
+
+    hasMore                     = true; // Will allow us to start reading the next packet
 }
 
 template<typename T>
 void ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::writePackageHeader(std::size_t size)
 {
-    ++writCurrentPacketSequenceID;
+    ++currentPacketSequenceID;
     stream.write(reinterpret_cast<char const*>(&size), 3);
-    stream.write(reinterpret_cast<char const*>(&writCurrentPacketSequenceID), 1);
+    stream.write(reinterpret_cast<char const*>(&currentPacketSequenceID), 1);
 }
 
 template<typename T>

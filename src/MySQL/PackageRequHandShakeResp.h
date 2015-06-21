@@ -3,6 +3,7 @@
 #define THORSANVIL_MYSQL_PACKAGE_REQU_HANDSHAKE_RESPONSE_H
 
 #include "PackageRequ.h"
+#include "ThorSQL/SQLUtil.h"
 
 namespace ThorsAnvil
 {
@@ -11,25 +12,26 @@ namespace ThorsAnvil
         namespace Detail
         {
 
+using Options=SQL::Options;
 class PackageRespHandShake;
 class PackageRequHandShakeResponse: public PackageRequ
 {
-    std::string username;
-    std::string authResponse;
-    std::string database;
-    std::string authPluginName;
-    long        capabilities;
-    //std::map<std::string,std::string>   keyValueStore;
+    std::string const& username;
+    std::string        authResponse;
+    Options const&     options;
+    std::string const& database;
+    std::string const& authPluginName;
+    long               capabilities;
 
     public:
         PackageRequHandShakeResponse(std::string const& username,
                                  std::string const& password,
+                                 Options const& options,
                                  std::string const& database,
-                                 long capabilities,
                                  PackageRespHandShake const& handshake);
 
         virtual  std::ostream& print(std::ostream& s)   const override;
-        virtual  void send(PackageConWriter& writer)    const override;
+        virtual  void build(PackageConWriter& writer)   const override;
 };
 
         }

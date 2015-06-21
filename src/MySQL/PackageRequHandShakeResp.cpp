@@ -7,28 +7,30 @@
 using namespace ThorsAnvil::MySQL::Detail;
 
 PackageRequHandShakeResponse::PackageRequHandShakeResponse(std::string const& username,
-                                                   std::string const& password,
-                                                   std::string const& database,
-                                                   long capabilities,
-                                                   PackageRespHandShake const& handshake)
+                                                           std::string const& password,
+                                                           Options const&     options,
+                                                           std::string const& database,
+                                                           PackageRespHandShake const& handshake)
     : PackageRequ("PackageRequHandShakeResponse")
     , username(username)
+    , options(options)
     , database(database)
-    , capabilities(capabilities)
+    , authPluginName(handshake.getAuthPluginName())
+    , capabilities(handshake.getCapabilities())
 {
-    if (handshake.getAuthPluginName() == "mysql_old_password")
+    if (authPluginName == "mysql_old_password")
     {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: mysql_old_password: not supported");
     }
-    else if (handshake.getAuthPluginName() == "mysql_clear_password")
+    else if (authPluginName == "mysql_clear_password")
     {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: mysql_clear_password: not supported");
     }
-    else if (handshake.getAuthPluginName() == "authentication_windows_client")
+    else if (authPluginName == "authentication_windows_client")
     {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: authentication_windows_client: not supported");
     }
-    else if (handshake.getAuthPluginName() == "sha256_password")
+    else if (authPluginName == "sha256_password")
     {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: sha256_password: not supported");
     }
-    else if (handshake.getAuthPluginName() == "mysql_native_password")
+    else if (authPluginName == "mysql_native_password")
     {
         // Requires CLIENT_SECURE_CONNECTION
         // SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
@@ -48,14 +50,13 @@ PackageRequHandShakeResponse::PackageRequHandShakeResponse(std::string const& us
             extendedHash[loop] = extendedHash[loop] ^ stage1[loop];
         }
         authResponse    = std::string(extendedHash, extendedHash + SHA_DIGEST_LENGTH);
-        authPluginName  = handshake.getAuthPluginName();
     }
     else
-    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: UNKNOWN authentication method(" + handshake.getAuthPluginName() + "): not supported");
+    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: UNKNOWN authentication method(" + authPluginName + "): not supported");
     }
 }
 
-void PackageRequHandShakeResponse::send(PackageConWriter& writer) const
+void PackageRequHandShakeResponse::build(PackageConWriter& writer) const
 {
     // These capabilities mirror the `mysql` tool.
     // We will leave this for now but it may change
@@ -106,14 +107,18 @@ void PackageRequHandShakeResponse::send(PackageConWriter& writer) const
     }
 
     // TODO Add Key Values
+    // For now empty the optins
     if (capabilities & CLIENT_CONNECT_ATTRS)
     {
-        writer.writeLengthEncodedInteger(0);
-        /*
-          Integer Length encoded  length of all key-values        (if connection.getCapabilities() & CLIENT_CONNECT_ATTRS)
-          String Len Encoded      Key                             (if connection.getCapabilities() & CLIENT_CONNECT_ATTRS)
-          String Len Encoded      Value                           (if connection.getCapabilities() & CLIENT_CONNECT_ATTRS)
-        */
+        std::size_t size = 0;
+        for(auto const& loop: options) {
+            size    += loop.first.size() + loop.second.size();
+        }
+        writer.writeLengthEncodedInteger(size);
+        for(auto const& loop: options) {
+            writer.writeLengthEncodedString(loop.first);
+            writer.writeLengthEncodedString(loop.second);
+        }
     }
 }
 

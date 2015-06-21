@@ -17,8 +17,7 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
     T&                  stream;
     std::size_t         readCurrentPacketSize;
     std::size_t         readCurrentPacketPosition;
-    unsigned char       readCurrentPacketSequenceID;
-    unsigned char       writCurrentPacketSequenceID;
+    unsigned char       currentPacketSequenceID;
     bool                hasMore;
     std::vector<char>   sendBuffer;
 
@@ -33,6 +32,7 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
         virtual void        write(char const* buffer, std::size_t len)  override;
         virtual bool        isEmpty()                                   override;
         virtual void        flush()                                     override;
+        virtual void        reset()                                     override;
         virtual std::string readRemainingData()                         override;
 };
 

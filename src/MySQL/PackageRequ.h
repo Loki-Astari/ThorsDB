@@ -19,7 +19,12 @@ class PackageRequ
         {}
         virtual ~PackageRequ()  {}
         virtual  std::ostream& print(std::ostream& s)   const = 0;
-        virtual  void send(PackageConWriter& writer)    const = 0;
+        virtual  void build(PackageConWriter& writer)   const = 0;
+        void send(PackageConWriter& writer) const
+        {
+            this->build(writer);
+            writer.flush();
+        }
 
         friend std::ostream& operator<<(std::ostream& s, PackageRequ const& data)
         {

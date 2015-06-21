@@ -16,6 +16,7 @@ class PackageStream
         virtual void        read(char* buffer, std::size_t len)         = 0;
         virtual void        write(char const* buffer, std::size_t len)  = 0;
         virtual void        flush()                                     = 0;
+        virtual void        reset()                                     = 0;
         virtual bool        isEmpty()                                   = 0;
         virtual std::string readRemainingData()                         = 0;
 };
@@ -32,6 +33,7 @@ class MySQLStream: public PackageStream
         virtual void        read(char* buffer, std::size_t len)         override;
         virtual void        write(char const* buffer, std::size_t len)  override;
         virtual void        flush()                                     override {}
+        virtual void        reset()                                     override {}
         virtual bool        isEmpty()                                   override {return true;}
         virtual std::string readRemainingData()                         override {return "";}
 };
