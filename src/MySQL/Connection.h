@@ -5,7 +5,7 @@
 #include "ThorSQL/SQLUtil.h"
 #include "PackageConReader.h"
 #include "PackageConWriter.h"
-#include "PackageResp.h"
+#include "RespPackage.h"
 #include <string>
 #include <map>
 

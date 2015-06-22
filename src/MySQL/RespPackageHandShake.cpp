@@ -1,11 +1,11 @@
 
-#include "PackageRespHandShake.h"
+#include "RespPackageHandShake.h"
 #include <sstream>
 
 using namespace ThorsAnvil::MySQL::Detail;
 
-PackageRespHandShake::PackageRespHandShake(PackageConReader& reader)
-    : PackageResp(reader)
+RespPackageHandShake::RespPackageHandShake(PackageConReader& reader)
+    : RespPackage(reader)
     , serverVersion(reader.nulTerminatedString())
     , connectionID(reader.fixedLengthInteger<4>())
     , authPluginData(reader.fixedLengthString(8))
@@ -44,7 +44,7 @@ PackageRespHandShake::PackageRespHandShake(PackageConReader& reader)
     authPluginData  = (authPluginData + authPluginData2).substr(0, authPluginLength-1);
 }
 
-std::ostream& PackageRespHandShake::print(std::ostream& s) const
+std::ostream& RespPackageHandShake::print(std::ostream& s) const
 {
     std::stringstream reservedDecoded;
     for(char x: reserved)
@@ -57,7 +57,7 @@ std::ostream& PackageRespHandShake::print(std::ostream& s) const
         authPluginDataDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
     }
 
-    return s << "PackageRespHandShake: "
+    return s << "RespPackageHandShake: "
              << "serverVersion(" << serverVersion << ") "
              << "connectionID(" << connectionID << ") "
              << "authPluginData(" << authPluginDataDecoded.str() << ") "

@@ -1,7 +1,7 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 
-#include "PackageResp.h"
+#include "RespPackage.h"
 #include "PackageConReader.h"
 
 namespace ThorsAnvil
@@ -11,7 +11,7 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-class PackageRespHandShake: public PackageResp
+class RespPackageHandShake: public RespPackage
 {
     std::string     serverVersion;
     long            connectionID;
@@ -27,7 +27,7 @@ class PackageRespHandShake: public PackageResp
     char            charset;
 
     public:
-        PackageRespHandShake(PackageConReader& reader);
+        RespPackageHandShake(PackageConReader& reader);
         virtual std::ostream& print(std::ostream& s)    const;
         long                getCapabilities()           const   {return capabilities;}
         long                getCharset()                const   {return charset;}

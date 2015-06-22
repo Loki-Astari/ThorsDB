@@ -1,6 +1,6 @@
 
 #include "RequPackageHandShakeResp.h"
-#include "PackageRespHandShake.h"
+#include "RespPackageHandShake.h"
 #include "ThorMySQL.h"
 #include "ThorCryptWrapper.h"
 
@@ -10,7 +10,7 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
                                                            std::string const& password,
                                                            Options const&     options,
                                                            std::string const& database,
-                                                           PackageRespHandShake const& handshake)
+                                                           RespPackageHandShake const& handshake)
     : RequPackage("RequPackageHandShakeResponse")
     , username(username)
     , options(options)

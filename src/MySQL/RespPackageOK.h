@@ -1,7 +1,7 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
 
-#include "PackageResp.h"
+#include "RespPackage.h"
 #include "PackageConReader.h"
 
 namespace ThorsAnvil
@@ -11,15 +11,15 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-class PackageRespOK: public PackageResp
+class RespPackageOK: public RespPackage
 {
     long    affectedRows;
     long    lastInsertID;
     long    statusFlags;
     long    warningFlags;
     public:
-        PackageRespOK(PackageConReader& reader)
-            : PackageResp(reader)
+        RespPackageOK(PackageConReader& reader)
+            : RespPackage(reader)
             , affectedRows(reader.lengthEncodedInteger())
             , lastInsertID(reader.lengthEncodedInteger())
             , statusFlags(reader.fixedLengthInteger<2>())

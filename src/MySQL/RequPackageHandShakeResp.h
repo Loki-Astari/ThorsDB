@@ -13,7 +13,7 @@ namespace ThorsAnvil
         {
 
 using Options=SQL::Options;
-class PackageRespHandShake;
+class RespPackageHandShake;
 class RequPackageHandShakeResponse: public RequPackage
 {
     std::string const& username;
@@ -28,7 +28,7 @@ class RequPackageHandShakeResponse: public RequPackage
                                  std::string const& password,
                                  Options const& options,
                                  std::string const& database,
-                                 PackageRespHandShake const& handshake);
+                                 RespPackageHandShake const& handshake);
 
         virtual  std::ostream& print(std::ostream& s)   const override;
         virtual  void build(PackageConWriter& writer)   const override;

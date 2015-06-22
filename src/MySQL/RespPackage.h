@@ -10,7 +10,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class PackageResp
+class RespPackage
 {
     protected:
         PackageConReader&   reader;
@@ -19,13 +19,13 @@ class PackageResp
         bool                eof;
         std::string         humanMessage;
     public:
-        PackageResp(PackageConReader& reader)
+        RespPackage(PackageConReader& reader)
             : reader(reader)
             , ok(false)
             , error(false)
             , eof(false)
         {}
-        virtual ~PackageResp() {}
+        virtual ~RespPackage() {}
         virtual  std::ostream& print(std::ostream& s) const = 0;
 
         bool                isOK()              const                   {return ok;}
@@ -33,7 +33,7 @@ class PackageResp
         bool                isEOF()             const                   {return eof;}
         std::string const&  message()           const                   {return humanMessage;}
 
-        friend std::ostream& operator<<(std::ostream& s, PackageResp const& data)
+        friend std::ostream& operator<<(std::ostream& s, RespPackage const& data)
         {
             return data.print(s)
                     << "humanMessage(" << data.humanMessage << ") ";

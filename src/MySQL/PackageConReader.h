@@ -44,7 +44,7 @@ class Package
         virtual ~Package()  = 0;
 };
 class PackageStream;
-class PackageResp;
+class RespPackage;
 class PackageConReader
 {
     PackageStream&   stream;
@@ -59,7 +59,7 @@ class PackageConReader
         enum ResponceType       { HandshakeOK };
 
         void initFromHandshake(long capabilities, long charset);
-        std::unique_ptr<PackageResp>    getNextPackage(ResponceType type);
+        std::unique_ptr<RespPackage>    getNextPackage(ResponceType type);
 
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;

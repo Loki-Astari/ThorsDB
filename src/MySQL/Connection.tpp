@@ -8,7 +8,7 @@ namespace ThorsAnvil
 template<typename Resp>
 std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, PackageConReader::ResponceType type)
 {
-    std::unique_ptr<PackageResp>    resp = packageReader.getNextPackage(type);
+    std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(type);
     if (resp->isError()) {
         throw std::runtime_error(resp->message());;
     }

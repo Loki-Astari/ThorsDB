@@ -4,9 +4,9 @@
 #include "PackageStream.h"
 #include "PackageBuffer.h"
 #include "PackageConReader.h"
-#include "PackageRespHandShake.h"
+#include "RespPackageHandShake.h"
 #include "RequPackageHandShakeResp.h"
-#include "PackageResp.h"
+#include "RespPackage.h"
 #include <sstream>
 
 using namespace ThorsAnvil::MySQL;
@@ -45,12 +45,12 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::PackageRespHandShake>    handshake = recvMessage<Detail::PackageRespHandShake>(OK, PackageConReader::HandshakeOK);
+    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(OK, PackageConReader::HandshakeOK);
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<PackageResp>            ok = sendMessage<PackageResp>(handshakeresp, Reset, OK, PackageConReader::HandshakeOK);
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, Reset, OK, PackageConReader::HandshakeOK);
 }
 
 Connection::~Connection()

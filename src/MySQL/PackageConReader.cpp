@@ -1,10 +1,10 @@
 
 #include "PackageStream.h"
 #include "PackageConReader.h"
-#include "PackageRespOK.h"
-#include "PackageRespERR.h"
-#include "PackageRespEOF.h"
-#include "PackageRespHandShake.h"
+#include "RespPackageOK.h"
+#include "RespPackageERR.h"
+#include "RespPackageEOF.h"
+#include "RespPackageHandShake.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -24,7 +24,7 @@ bool PackageConReader::isEmpty() const
     return stream.isEmpty();
 }
 
-std::unique_ptr<PackageResp> PackageConReader::getNextPackage(ResponceType type)
+std::unique_ptr<RespPackage> PackageConReader::getNextPackage(ResponceType type)
 {
     unsigned char    packageType;
     read(reinterpret_cast<char*>(&packageType), 1);
@@ -34,14 +34,14 @@ std::unique_ptr<PackageResp> PackageConReader::getNextPackage(ResponceType type)
         {
             switch(type)
             {
-                case HandshakeOK:   return std::unique_ptr<PackageResp>(new Detail::PackageRespOK(*this));
+                case HandshakeOK:   return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(*this));
                 default:
                     throw std::runtime_error("PackageConReader::getNextPackage: Unknown OK Package");
             }
         }
-        case 0x0A:  return std::unique_ptr<PackageResp>(new Detail::PackageRespHandShake(*this));
-        case 0xFF:  return std::unique_ptr<PackageResp>(new Detail::PackageRespERR(*this));
-        case 0xFE:  return std::unique_ptr<PackageResp>(new Detail::PackageRespEOF(*this));
+        case 0x0A:  return std::unique_ptr<RespPackage>(new Detail::RespPackageHandShake(*this));
+        case 0xFF:  return std::unique_ptr<RespPackage>(new Detail::RespPackageERR(*this));
+        case 0xFE:  return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(*this));
         default:
         {
             throw std::runtime_error(std::string("PackageConReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));

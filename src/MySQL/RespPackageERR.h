@@ -1,7 +1,7 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_ERR_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_ERR_H
 
-#include "PackageResp.h"
+#include "RespPackage.h"
 #include "PackageConReader.h"
 #include "ThorMySQL.h"
 
@@ -12,14 +12,14 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-class PackageRespERR: public PackageResp
+class RespPackageERR: public RespPackage
 {
     long        errorCode;
     std::string hash;
     std::string SQLState;
     public:
-        PackageRespERR(PackageConReader& reader)
-            : PackageResp(reader)
+        RespPackageERR(PackageConReader& reader)
+            : RespPackage(reader)
             , errorCode(reader.fixedLengthInteger<2>())
             , hash(reader.fixedLengthString(1, CLIENT_PROTOCOL_41))
             , SQLState(reader.fixedLengthString(5, CLIENT_PROTOCOL_41))
