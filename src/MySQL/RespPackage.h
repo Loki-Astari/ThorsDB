@@ -1,7 +1,7 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
-#include "PackageConReader.h"
+#include "ConectReader.h"
 #include <ostream>
 #include <iomanip>
 
@@ -13,13 +13,13 @@ namespace ThorsAnvil
 class RespPackage
 {
     protected:
-        PackageConReader&   reader;
+        ConectReader&   reader;
         bool                ok;
         bool                error;
         bool                eof;
         std::string         humanMessage;
     public:
-        RespPackage(PackageConReader& reader)
+        RespPackage(ConectReader& reader)
             : reader(reader)
             , ok(false)
             , error(false)

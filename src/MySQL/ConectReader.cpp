@@ -1,6 +1,6 @@
 
 #include "PackageStream.h"
-#include "PackageConReader.h"
+#include "ConectReader.h"
 #include "RespPackageOK.h"
 #include "RespPackageERR.h"
 #include "RespPackageEOF.h"
@@ -8,23 +8,23 @@
 
 using namespace ThorsAnvil::MySQL;
 
-void PackageConReader::initFromHandshake(long newCapabilities, long newCharset)
+void ConectReader::initFromHandshake(long newCapabilities, long newCharset)
 {
     capabilities    = newCapabilities;
     charset         = newCharset;
 }
 
-void PackageConReader::read(char* data, std::size_t len)
+void ConectReader::read(char* data, std::size_t len)
 {
     stream.read(data, len);
 }
 
-bool PackageConReader::isEmpty() const
+bool ConectReader::isEmpty() const
 {
     return stream.isEmpty();
 }
 
-std::unique_ptr<RespPackage> PackageConReader::getNextPackage(ResponceType type)
+std::unique_ptr<RespPackage> ConectReader::getNextPackage(ResponceType type)
 {
     unsigned char    packageType;
     read(reinterpret_cast<char*>(&packageType), 1);
@@ -36,7 +36,7 @@ std::unique_ptr<RespPackage> PackageConReader::getNextPackage(ResponceType type)
             {
                 case HandshakeOK:   return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(*this));
                 default:
-                    throw std::runtime_error("PackageConReader::getNextPackage: Unknown OK Package");
+                    throw std::runtime_error("ConectReader::getNextPackage: Unknown OK Package");
             }
         }
         case 0x0A:  return std::unique_ptr<RespPackage>(new Detail::RespPackageHandShake(*this));
@@ -44,19 +44,19 @@ std::unique_ptr<RespPackage> PackageConReader::getNextPackage(ResponceType type)
         case 0xFE:  return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(*this));
         default:
         {
-            throw std::runtime_error(std::string("PackageConReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
+            throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
         }
     }
 }
 
-long PackageConReader::lengthEncodedInteger()
+long ConectReader::lengthEncodedInteger()
 {
     unsigned char    type;
     read(reinterpret_cast<char*>(&type), 1);
     return lengthEncodedIntegerUsingSize(type);
 }
 
-long PackageConReader::lengthEncodedIntegerUsingSize(unsigned char type)
+long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
 {
     long result;
     switch(type)
@@ -72,14 +72,14 @@ long PackageConReader::lengthEncodedIntegerUsingSize(unsigned char type)
     return result;
 }
 
-std::string PackageConReader::fixedLengthString(long size)
+std::string ConectReader::fixedLengthString(long size)
 {
     std::string result(size, ' ');
     read(&result[0], size);
     return result;
 }
 
-std::string PackageConReader::nulTerminatedString()
+std::string ConectReader::nulTerminatedString()
 {
     std::string result;
     char x;
@@ -91,12 +91,12 @@ std::string PackageConReader::nulTerminatedString()
     return result;
 }
 
-std::string PackageConReader::variableLengthString(long size)
+std::string ConectReader::variableLengthString(long size)
 {
     return fixedLengthString(size);
 }
 
-std::string PackageConReader::lengthEncodedString()
+std::string ConectReader::lengthEncodedString()
 {
     long size = lengthEncodedInteger();
     std::string result(size, '\0');
@@ -104,7 +104,7 @@ std::string PackageConReader::lengthEncodedString()
     return result;
 }
 
-std::string PackageConReader::restOfPacketString()
+std::string ConectReader::restOfPacketString()
 {
     return stream.readRemainingData();
 }
@@ -114,12 +114,12 @@ std::string PackageConReader::restOfPacketString()
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
  */
-#include "PackageConReader.tpp"
+#include "ConectReader.tpp"
 
-template long ThorsAnvil::MySQL::PackageConReader::fixedLengthInteger<1>();
-template long ThorsAnvil::MySQL::PackageConReader::fixedLengthInteger<2>();
-template long ThorsAnvil::MySQL::PackageConReader::fixedLengthInteger<3>();
-template long ThorsAnvil::MySQL::PackageConReader::fixedLengthInteger<4>();
+template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
+template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
+template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
+template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
 
 #endif
 

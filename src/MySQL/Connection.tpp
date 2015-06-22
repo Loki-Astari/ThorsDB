@@ -6,7 +6,7 @@ namespace ThorsAnvil
     {
 
 template<typename Resp>
-std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, PackageConReader::ResponceType type)
+std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReader::ResponceType type)
 {
     std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(type);
     if (resp->isError()) {
@@ -29,7 +29,7 @@ std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, PackageConR
 }
 
 template<typename Resp, typename Requ>
-std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, PackageConReader::ResponceType type)
+std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type)
 {
     if (cont == Reset) {
         packageWriter.reset();

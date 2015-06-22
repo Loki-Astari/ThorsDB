@@ -3,7 +3,7 @@
 #include "ThorSQL/Connection.h"
 #include "PackageStream.h"
 #include "PackageBuffer.h"
-#include "PackageConReader.h"
+#include "ConectReader.h"
 #include "RespPackageHandShake.h"
 #include "RequPackageHandShakeResp.h"
 #include "RespPackage.h"
@@ -16,7 +16,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
     private:
         MySQLStream                                 stream;
         PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
-        PackageConReader                            reader;
+        ConectReader                            reader;
         PackageConWriter                            writer;
         Connection                                  connection;
     public:
@@ -40,17 +40,17 @@ Connection::Connection(
                     std::string const& password,
                     std::string const& database,
                     std::map<std::string, std::string> const& options,
-                    PackageConReader& pr,
+                    ConectReader& pr,
                     PackageConWriter& pw)
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(OK, PackageConReader::HandshakeOK);
+    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(OK, ConectReader::HandshakeOK);
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, Reset, OK, PackageConReader::HandshakeOK);
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, Reset, OK, ConectReader::HandshakeOK);
 }
 
 Connection::~Connection()

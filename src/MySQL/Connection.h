@@ -3,7 +3,7 @@
 #define THORS_ANVIL_MYSQL_CONNECTION_H
 
 #include "ThorSQL/SQLUtil.h"
-#include "PackageConReader.h"
+#include "ConectReader.h"
 #include "PackageConWriter.h"
 #include "RespPackage.h"
 #include <string>
@@ -18,14 +18,14 @@ using ThorsAnvil::SQL::Options;
 
 class Connection
 {
-    PackageConReader&   packageReader;
+    ConectReader&   packageReader;
     PackageConWriter&   packageWriter;
     public:
         Connection(std::string const& username,
                    std::string const& password,
                    std::string const& database,
                    Options const& options,
-                   PackageConReader& packageReader,
+                   ConectReader& packageReader,
                    PackageConWriter& packageWriter);
         virtual ~Connection();
 
@@ -36,9 +36,9 @@ class Connection
         template<typename V>    void unusedVariable(V const&){}
 
         template<typename Resp>
-        std::unique_ptr<Resp> recvMessage(PacketCompletion comp, PackageConReader::ResponceType type);
+        std::unique_ptr<Resp> recvMessage(PacketCompletion comp, ConectReader::ResponceType type);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, PackageConReader::ResponceType type);
+        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type);
 };
 
     }

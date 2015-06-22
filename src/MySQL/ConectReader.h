@@ -45,13 +45,13 @@ class Package
 };
 class PackageStream;
 class RespPackage;
-class PackageConReader
+class ConectReader
 {
     PackageStream&   stream;
     long             capabilities;
     long             charset;
     public:
-        PackageConReader(PackageStream& stream)
+        ConectReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
             , charset(0)
@@ -96,7 +96,7 @@ class PackageConReader
 }
 
 #ifndef COVERAGE_TEST
-#include "PackageConReader.tpp"
+#include "ConectReader.tpp"
 #endif
 
 #endif

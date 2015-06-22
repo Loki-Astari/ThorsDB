@@ -2,7 +2,7 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
 
 #include "RespPackage.h"
-#include "PackageConReader.h"
+#include "ConectReader.h"
 
 namespace ThorsAnvil
 {
@@ -18,7 +18,7 @@ class RespPackageOK: public RespPackage
     long    statusFlags;
     long    warningFlags;
     public:
-        RespPackageOK(PackageConReader& reader)
+        RespPackageOK(ConectReader& reader)
             : RespPackage(reader)
             , affectedRows(reader.lengthEncodedInteger())
             , lastInsertID(reader.lengthEncodedInteger())
