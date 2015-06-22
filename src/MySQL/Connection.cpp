@@ -5,7 +5,7 @@
 #include "PackageBuffer.h"
 #include "PackageConReader.h"
 #include "PackageRespHandShake.h"
-#include "PackageRequHandShakeResp.h"
+#include "RequPackageHandShakeResp.h"
 #include "PackageResp.h"
 #include <sstream>
 
@@ -49,7 +49,7 @@ Connection::Connection(
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
-    Detail::PackageRequHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
+    Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
     std::unique_ptr<PackageResp>            ok = sendMessage<PackageResp>(handshakeresp, Reset, OK, PackageConReader::HandshakeOK);
 }
 

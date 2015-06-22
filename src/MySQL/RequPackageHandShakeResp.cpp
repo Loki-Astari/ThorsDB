@@ -1,17 +1,17 @@
 
-#include "PackageRequHandShakeResp.h"
+#include "RequPackageHandShakeResp.h"
 #include "PackageRespHandShake.h"
 #include "ThorMySQL.h"
 #include "ThorCryptWrapper.h"
 
 using namespace ThorsAnvil::MySQL::Detail;
 
-PackageRequHandShakeResponse::PackageRequHandShakeResponse(std::string const& username,
+RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& username,
                                                            std::string const& password,
                                                            Options const&     options,
                                                            std::string const& database,
                                                            PackageRespHandShake const& handshake)
-    : PackageRequ("PackageRequHandShakeResponse")
+    : RequPackage("RequPackageHandShakeResponse")
     , username(username)
     , options(options)
     , database(database)
@@ -56,7 +56,7 @@ PackageRequHandShakeResponse::PackageRequHandShakeResponse(std::string const& us
     }
 }
 
-void PackageRequHandShakeResponse::build(PackageConWriter& writer) const
+void RequPackageHandShakeResponse::build(PackageConWriter& writer) const
 {
     // These capabilities mirror the `mysql` tool.
     // We will leave this for now but it may change
@@ -122,7 +122,7 @@ void PackageRequHandShakeResponse::build(PackageConWriter& writer) const
     }
 }
 
-std::ostream& PackageRequHandShakeResponse::print(std::ostream& s) const
+std::ostream& RequPackageHandShakeResponse::print(std::ostream& s) const
 {
     return s;
 }

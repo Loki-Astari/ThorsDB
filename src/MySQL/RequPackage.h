@@ -10,14 +10,14 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class PackageRequ
+class RequPackage
 {
     std::string     humanMessage;
     public:
-        PackageRequ(std::string const& humanMessage)
+        RequPackage(std::string const& humanMessage)
             : humanMessage(humanMessage)
         {}
-        virtual ~PackageRequ()  {}
+        virtual ~RequPackage()  {}
         virtual  std::ostream& print(std::ostream& s)   const = 0;
         virtual  void build(PackageConWriter& writer)   const = 0;
         void send(PackageConWriter& writer) const
@@ -26,7 +26,7 @@ class PackageRequ
             writer.flush();
         }
 
-        friend std::ostream& operator<<(std::ostream& s, PackageRequ const& data)
+        friend std::ostream& operator<<(std::ostream& s, RequPackage const& data)
         {
             return data.print(s)
                     << "humanMessage(" << data.humanMessage << ") ";
