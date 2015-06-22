@@ -31,7 +31,7 @@ class RequPackageHandShakeResponse: public RequPackage
                                  RespPackageHandShake const& handshake);
 
         virtual  std::ostream& print(std::ostream& s)   const override;
-        virtual  void build(PackageConWriter& writer)   const override;
+        virtual  void build(ConectWriter& writer)       const override;
 };
 
         }

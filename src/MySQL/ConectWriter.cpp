@@ -1,15 +1,15 @@
 
-#include "PackageConWriter.h"
+#include "ConectWriter.h"
 
 using namespace ThorsAnvil::MySQL;
 
-void PackageConWriter::initFromHandshake(long newCapabilities, long newCharset)
+void ConectWriter::initFromHandshake(long newCapabilities, long newCharset)
 {
     capabilities    = newCapabilities;
     charset         = newCharset;
 }
 
-void PackageConWriter::writeLengthEncodedInteger(long value)
+void ConectWriter::writeLengthEncodedInteger(long value)
 {
     /*
      * Length encoded integers.
@@ -28,34 +28,34 @@ void PackageConWriter::writeLengthEncodedInteger(long value)
     else                        {   stream.write(reinterpret_cast<char const*>(&Mark8Byte), 1); writeFixedLengthInteger<8>(value);}
 }
 
-void PackageConWriter::writeFixedLengthString(std::string const& value, long size)
+void ConectWriter::writeFixedLengthString(std::string const& value, long size)
 {
     std::string  output(value);
     output.resize(size);
     writeVariableLengthString(output);
 }
 
-void PackageConWriter::writeNullTerminatedString(std::string const& value)
+void ConectWriter::writeNullTerminatedString(std::string const& value)
 {
     stream.write(value.c_str(), value.size() + 1);
 }
 
-void PackageConWriter::writeVariableLengthString(std::string const& value)
+void ConectWriter::writeVariableLengthString(std::string const& value)
 {
     stream.write(&value[0], value.size());
 }
 
-void PackageConWriter::writeLengthEncodedString(std::string const& value)
+void ConectWriter::writeLengthEncodedString(std::string const& value)
 {
     writeLengthEncodedInteger(value.size());
     writeVariableLengthString(value);
 }
 
-void PackageConWriter::flush()
+void ConectWriter::flush()
 {
     stream.flush();
 }
-void PackageConWriter::reset()
+void ConectWriter::reset()
 {
     stream.reset();
 }
@@ -65,13 +65,13 @@ void PackageConWriter::reset()
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
  */
-#include "PackageConWriter.tpp"
+#include "ConectWriter.tpp"
 
-template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<1>(long);
-template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<2>(long);
-template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<3>(long);
-template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<4>(long);
-template void ThorsAnvil::MySQL::PackageConWriter::writeFixedLengthInteger<8>(long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<1>(long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<2>(long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<3>(long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(long);
 
 #endif
 

@@ -18,7 +18,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class PackageConWriter
+class ConectWriter
 {
     protected:
     PackageStream&   stream;
@@ -27,12 +27,12 @@ class PackageConWriter
 
     public:
 
-        PackageConWriter(PackageStream& stream)
+        ConectWriter(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
             , charset(0)
         {}
-        virtual ~PackageConWriter() {}
+        virtual ~ConectWriter() {}
 
         void initFromHandshake(long capabilities, long charset);
 
@@ -55,7 +55,7 @@ class PackageConWriter
 
 
 #ifndef COVERAGE_TEST
-#include "PackageConWriter.tpp"
+#include "ConectWriter.tpp"
 #endif
 
 #endif

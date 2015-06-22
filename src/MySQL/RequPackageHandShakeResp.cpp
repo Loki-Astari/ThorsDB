@@ -56,7 +56,7 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
     }
 }
 
-void RequPackageHandShakeResponse::build(PackageConWriter& writer) const
+void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 {
     // These capabilities mirror the `mysql` tool.
     // We will leave this for now but it may change

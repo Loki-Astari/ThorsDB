@@ -44,7 +44,7 @@ TEST(ConnectionTest, Create)
     MySQL::MySQLStream      stream("127.0.0.1", 0);
     Buffer                  buffer(stream);
     MySQL::ConectReader     reader(buffer);
-    MySQL::PackageConWriter writer(buffer);
+    MySQL::ConectWriter     writer(buffer);
     MySQL::Connection       connection("root", "testPassword", "test", options, reader, writer);
 }
 

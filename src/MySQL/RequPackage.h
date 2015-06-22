@@ -1,7 +1,7 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
 
-#include "PackageConWriter.h"
+#include "ConectWriter.h"
 #include <ostream>
 #include <iomanip>
 
@@ -19,8 +19,8 @@ class RequPackage
         {}
         virtual ~RequPackage()  {}
         virtual  std::ostream& print(std::ostream& s)   const = 0;
-        virtual  void build(PackageConWriter& writer)   const = 0;
-        void send(PackageConWriter& writer) const
+        virtual  void build(ConectWriter& writer)       const = 0;
+        void send(ConectWriter& writer) const
         {
             this->build(writer);
             writer.flush();

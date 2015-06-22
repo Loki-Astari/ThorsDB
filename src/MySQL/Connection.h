@@ -4,7 +4,7 @@
 
 #include "ThorSQL/SQLUtil.h"
 #include "ConectReader.h"
-#include "PackageConWriter.h"
+#include "ConectWriter.h"
 #include "RespPackage.h"
 #include <string>
 #include <map>
@@ -19,14 +19,14 @@ using ThorsAnvil::SQL::Options;
 class Connection
 {
     ConectReader&   packageReader;
-    PackageConWriter&   packageWriter;
+    ConectWriter&   packageWriter;
     public:
         Connection(std::string const& username,
                    std::string const& password,
                    std::string const& database,
                    Options const& options,
                    ConectReader& packageReader,
-                   PackageConWriter& packageWriter);
+                   ConectWriter& packageWriter);
         virtual ~Connection();
 
     private:

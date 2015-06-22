@@ -16,8 +16,8 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
     private:
         MySQLStream                                 stream;
         PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
-        ConectReader                            reader;
-        PackageConWriter                            writer;
+        ConectReader                                reader;
+        ConectWriter                                writer;
         Connection                                  connection;
     public:
         DefaultMySQLConnection(std::string const& host, int port,
@@ -41,7 +41,7 @@ Connection::Connection(
                     std::string const& database,
                     std::map<std::string, std::string> const& options,
                     ConectReader& pr,
-                    PackageConWriter& pw)
+                    ConectWriter& pw)
     : packageReader(pr)
     , packageWriter(pw)
 {
