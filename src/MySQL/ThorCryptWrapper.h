@@ -1,9 +1,14 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_THOR_CRYPTO_WRAPPER_H
 #define THORSANVIL_MYSQL_DETAILS_THOR_CRYPTO_WRAPPER_H
 
-#if  1
-
+#ifdef  __APPLE__
+#define COMMON_DIGEST_FOR_OPENSSL
+#include <CommonCrypto/CommonDigest.h>
+#define THOR_SHA1(data, len, dst)   CC_SHA1(data, len, dst)
+#else
 #include <openssl/sha.h>
+#define THOR_SHA1(data, len, dst)   SHA1(data, len, dst)
+#endif
 
 namespace ThorsAnvil
 {
@@ -13,19 +18,15 @@ namespace ThorsAnvil
 typedef unsigned char           ThorSHADigestStore[SHA_DIGEST_LENGTH];
 inline void thorSHA1(ThorSHADigestStore& dest, ThorSHADigestStore& src)
 {
-    SHA1(src, SHA_DIGEST_LENGTH, dest);
+    THOR_SHA1(src, SHA_DIGEST_LENGTH, dest);
 }
 inline void thorSHA1(ThorSHADigestStore& dest, std::string const& src)
 {
-    SHA1(reinterpret_cast<const unsigned char*>(&src[0]), src.length(), dest);
+    THOR_SHA1(reinterpret_cast<const unsigned char*>(&src[0]), src.length(), dest);
 }
 
     }
 }
-
-#else
-#error  "SSL CRYPTO Library not defined"
-#endif
 
 #endif
 

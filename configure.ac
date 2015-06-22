@@ -13,6 +13,22 @@ AC_PROG_CXX
 AX_THOR_PROG_COV
 AC_C_BIGENDIAN([AC_DEFINE([THOR_ENDIAN_BIG], [1], [Set for Big Endian Systems])],
                [AC_DEFINE([THOR_ENDIAN_SML], [1], [Set for small Endian Systems])])
+AC_CHECK_LIB(
+            [crypto],
+            [SHA1_Init],
+            [],
+            [AC_MSG_ERROR([
+
+The MySQL library requires SSH1 crypto to generate the password hash used in authentication.
+Please install libcrypto on your machine.
+
+            ])])
+ 
+Error: Could not find libyaml
+
+You can solve this by installing libyaml
+    see http://pyyaml.org/wiki/LibYAML
+
 LT_INIT
 
 AX_CHECK_COMPILE_FLAG([-ansi], [AC_SUBST([CXXFLAGS], ["$CXXFLAGS -ansi"])])
