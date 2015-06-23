@@ -25,14 +25,14 @@ struct MySQLTimeBag
 {
     enum TimeType {Absolute, RelativeNegative, RelativePositive};
  
-    TimeType    type;
-    long        year;
-    long        month;
-    long        day;
-    long        hour;
-    long        minute;
-    long        second;
-    long        uSecond;
+    TimeType             type;
+    unsigned long        year;
+    unsigned long        month;
+    unsigned long        day;
+    unsigned long        hour;
+    unsigned long        minute;
+    unsigned long        second;
+    unsigned long        uSecond;
     MySQLTimeBag()
         : type(Absolute), year(0), month(0), day(0), hour(0), minute(0), second(0), uSecond(0)
     {}
@@ -48,8 +48,10 @@ class RespPackage;
 class ConectReader
 {
     PackageStream&   stream;
-    long             capabilities;
-    long             charset;
+    unsigned long    capabilities;
+    unsigned long    charset;
+
+    unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
     public:
         ConectReader(PackageStream& stream)
             : stream(stream)
@@ -58,35 +60,34 @@ class ConectReader
         {}
         enum ResponceType       { HandshakeOK };
 
-        void initFromHandshake(long capabilities, long charset);
+        void initFromHandshake(unsigned long capabilities, unsigned long charset);
         std::unique_ptr<RespPackage>    getNextPackage(ResponceType type);
 
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;
 
         template<int len>
-        long        fixedLengthInteger(long requiredCap)                    {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
-        long        lengthEncodedInteger(long requiredCap)                  {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
-        std::string fixedLengthString(std::size_t size, long requiredCap)   {return (requiredCap & capabilities) ? fixedLengthString(size)      : "";}
-        std::string nulTerminatedString(long requiredCap)                   {return (requiredCap & capabilities) ? nulTerminatedString()        : "";}
-        std::string variableLengthString(std::size_t size, long requiredCap){return (requiredCap & capabilities) ? variableLengthString(size)   : "";}
-        std::string lengthEncodedString(long requiredCap)                   {return (requiredCap & capabilities) ? lengthEncodedString()        : "";}
-        std::string restOfPacketString(long requiredCap)                    {return (requiredCap & capabilities) ? restOfPacketString()         : "";}
+        unsigned long   fixedLengthInteger(unsigned long requiredCap)                       {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
+        unsigned long   lengthEncodedInteger(unsigned long requiredCap)                     {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
+        std::string     fixedLengthString(std::size_t size, unsigned long requiredCap)      {return (requiredCap & capabilities) ? fixedLengthString(size)      : "";}
+        std::string     nulTerminatedString(unsigned long requiredCap)                      {return (requiredCap & capabilities) ? nulTerminatedString()        : "";}
+        std::string     variableLengthString(std::size_t size, unsigned long requiredCap)   {return (requiredCap & capabilities) ? variableLengthString(size)   : "";}
+        std::string     lengthEncodedString(unsigned long requiredCap)                      {return (requiredCap & capabilities) ? lengthEncodedString()        : "";}
+        std::string     restOfPacketString(unsigned long requiredCap)                       {return (requiredCap & capabilities) ? restOfPacketString()         : "";}
 
         template<int len>
-        long        fixedLengthInteger();
-        long        lengthEncodedInteger();
-        long        lengthEncodedIntegerUsingSize(unsigned char size);
-        std::string fixedLengthString(std::size_t size);
-        std::string nulTerminatedString();
-        std::string variableLengthString(std::size_t size);
-        std::string lengthEncodedString();
-        std::string restOfPacketString();
+        unsigned long   fixedLengthInteger();
+        unsigned long   lengthEncodedInteger();
+        std::string     fixedLengthString(std::size_t size);
+        std::string     nulTerminatedString();
+        std::string     variableLengthString(std::size_t size);
+        std::string     lengthEncodedString();
+        std::string     restOfPacketString();
 
         std::vector<char> lengthEncodedBlob();
         time_t            readDate();
-        long              readRel();
-        long              readRelMicro();
+        unsigned long     readRel();
+        unsigned long     readRelMicro();
         MySQLTimeBag      readDateIntoTimeBag();
         MySQLTimeBag      readTimeIntoTimeBag();
 };

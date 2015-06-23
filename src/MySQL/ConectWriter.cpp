@@ -3,13 +3,13 @@
 
 using namespace ThorsAnvil::MySQL;
 
-void ConectWriter::initFromHandshake(long newCapabilities, long newCharset)
+void ConectWriter::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
     capabilities    = newCapabilities;
     charset         = newCharset;
 }
 
-void ConectWriter::writeLengthEncodedInteger(long value)
+void ConectWriter::writeLengthEncodedInteger(unsigned long value)
 {
     /*
      * Length encoded integers.
@@ -67,11 +67,11 @@ void ConectWriter::reset()
  */
 #include "ConectWriter.tpp"
 
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<1>(long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<2>(long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<3>(long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<1>(unsigned long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<2>(unsigned long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<3>(unsigned long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsigned long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long);
 
 #endif
 

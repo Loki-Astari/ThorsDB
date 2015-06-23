@@ -7,7 +7,7 @@ namespace ThorsAnvil
     {
 
 template<int len>
-void ConectWriter::writeFixedLengthInteger(long value)
+void ConectWriter::writeFixedLengthInteger(unsigned long value)
 {
     THOR_MYSQL_WRITE_INT(value, len);
 }

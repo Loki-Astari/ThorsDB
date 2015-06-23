@@ -8,7 +8,7 @@
 
 using namespace ThorsAnvil::MySQL;
 
-void ConectReader::initFromHandshake(long newCapabilities, long newCharset)
+void ConectReader::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
     capabilities    = newCapabilities;
     charset         = newCharset;
@@ -49,16 +49,16 @@ std::unique_ptr<RespPackage> ConectReader::getNextPackage(ResponceType type)
     }
 }
 
-long ConectReader::lengthEncodedInteger()
+unsigned long ConectReader::lengthEncodedInteger()
 {
     unsigned char    type;
     read(reinterpret_cast<char*>(&type), 1);
     return lengthEncodedIntegerUsingSize(type);
 }
 
-long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
+unsigned long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
 {
-    long result;
+    unsigned long result;
     switch(type)
     {
         case 0xFA:
@@ -98,7 +98,7 @@ std::string ConectReader::variableLengthString(std::size_t size)
 
 std::string ConectReader::lengthEncodedString()
 {
-    long size = lengthEncodedInteger();
+    unsigned long size = lengthEncodedInteger();
     std::string result(size, '\0');
     read(&result[0], size);
     return result;
@@ -116,10 +116,10 @@ std::string ConectReader::restOfPacketString()
  */
 #include "ConectReader.tpp"
 
-template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
-template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
-template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
-template long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
+template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
+template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
+template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
+template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
 
 #endif
 

@@ -9,9 +9,9 @@ namespace ThorsAnvil
     {
 
 template<int len>
-inline long ConectReader::fixedLengthInteger()
+inline unsigned long ConectReader::fixedLengthInteger()
 {
-    long    result = 0;
+    unsigned long result = 0;
     THOR_MYSQL_READ_INT(result, len);
 
     return result;
