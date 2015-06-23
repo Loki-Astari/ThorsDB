@@ -72,7 +72,7 @@ long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
     return result;
 }
 
-std::string ConectReader::fixedLengthString(long size)
+std::string ConectReader::fixedLengthString(std::size_t size)
 {
     std::string result(size, ' ');
     read(&result[0], size);
@@ -91,7 +91,7 @@ std::string ConectReader::nulTerminatedString()
     return result;
 }
 
-std::string ConectReader::variableLengthString(long size)
+std::string ConectReader::variableLengthString(std::size_t size)
 {
     return fixedLengthString(size);
 }

@@ -65,21 +65,21 @@ class ConectReader
         bool        isEmpty() const;
 
         template<int len>
-        long        fixedLengthInteger(long requiredCap)                {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
-        long        lengthEncodedInteger(long requiredCap)              {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
-        std::string fixedLengthString(long size, long requiredCap)      {return (requiredCap & capabilities) ? fixedLengthString(size)      : "";}
-        std::string nulTerminatedString(long requiredCap)               {return (requiredCap & capabilities) ? nulTerminatedString()        : "";}
-        std::string variableLengthString(long size, long requiredCap)   {return (requiredCap & capabilities) ? variableLengthString(size)   : "";}
-        std::string lengthEncodedString(long requiredCap)               {return (requiredCap & capabilities) ? lengthEncodedString()        : "";}
-        std::string restOfPacketString(long requiredCap)                {return (requiredCap & capabilities) ? restOfPacketString()         : "";}
+        long        fixedLengthInteger(long requiredCap)                    {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
+        long        lengthEncodedInteger(long requiredCap)                  {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
+        std::string fixedLengthString(std::size_t size, long requiredCap)   {return (requiredCap & capabilities) ? fixedLengthString(size)      : "";}
+        std::string nulTerminatedString(long requiredCap)                   {return (requiredCap & capabilities) ? nulTerminatedString()        : "";}
+        std::string variableLengthString(std::size_t size, long requiredCap){return (requiredCap & capabilities) ? variableLengthString(size)   : "";}
+        std::string lengthEncodedString(long requiredCap)                   {return (requiredCap & capabilities) ? lengthEncodedString()        : "";}
+        std::string restOfPacketString(long requiredCap)                    {return (requiredCap & capabilities) ? restOfPacketString()         : "";}
 
         template<int len>
         long        fixedLengthInteger();
         long        lengthEncodedInteger();
         long        lengthEncodedIntegerUsingSize(unsigned char size);
-        std::string fixedLengthString(long size);
+        std::string fixedLengthString(std::size_t size);
         std::string nulTerminatedString();
-        std::string variableLengthString(long size);
+        std::string variableLengthString(std::size_t size);
         std::string lengthEncodedString();
         std::string restOfPacketString();
 

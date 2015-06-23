@@ -28,7 +28,7 @@ void ConectWriter::writeLengthEncodedInteger(long value)
     else                        {   stream.write(reinterpret_cast<char const*>(&Mark8Byte), 1); writeFixedLengthInteger<8>(value);}
 }
 
-void ConectWriter::writeFixedLengthString(std::string const& value, long size)
+void ConectWriter::writeFixedLengthString(std::string const& value, std::size_t size)
 {
     std::string  output(value);
     output.resize(size);
