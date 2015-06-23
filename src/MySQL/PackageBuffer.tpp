@@ -28,7 +28,7 @@ inline void PackageBufferMySQLDebugBuffer<T>::read(char* buffer, std::size_t len
         std::size_t remaining      = readCurrentPacketSize - readCurrentPacketPosition;
         std::size_t getFromPacket  = std::min((len - retrieved), remaining);
         stream.read(buffer + retrieved, getFromPacket);
-        retrieved               += getFromPacket;
+        retrieved                   += getFromPacket;
         readCurrentPacketPosition   += getFromPacket;
         if (retrieved != len && remaining == 0)
         {   nextPacket();
@@ -81,8 +81,8 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
     currentPacketSequenceID++;
 
     std::uint32_t    packetBufferSize = 0;
+    // TODO FIX only works on little endian
     stream.read(reinterpret_cast<char*>(&packetBufferSize), 3);
-    ntohl(readCurrentPacketSize);
     readCurrentPacketSize   = packetBufferSize;
 
     char actualSequenceID;
