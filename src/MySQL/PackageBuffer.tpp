@@ -8,12 +8,13 @@ namespace ThorsAnvil
     {
 
 template<typename T>
-PackageBufferMySQLDebugBuffer<T>::PackageBufferMySQLDebugBuffer(T& stream)
+PackageBufferMySQLDebugBuffer<T>::PackageBufferMySQLDebugBuffer(T& stream, bool flushed)
     : stream(stream)
     , readCurrentPacketSize(0)
     , readCurrentPacketPosition(0)
     , currentPacketSequenceID(-1)
     , hasMore(true)
+    , flushed(flushed)
 {
     sendBuffer.reserve(0xFFFFFF/*16MByte*/);
 }
@@ -97,8 +98,11 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len)
 {
+    if (flushed) {
+        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::write: Writting to a flushed buffer");
+    }
     std::size_t   currentSize = sendBuffer.size();
-    if (currentSize + len > 0xFFFFFF)
+    if (currentSize + len >= 0xFFFFFF)
     {
         std::size_t   available   = 0xFFFFFF - currentSize;
         writePackageHeader(0xFFFFFF);
@@ -124,6 +128,10 @@ void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::flush()
 {
+    if (flushed) {
+        throw std::runtime_error("horsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush: Already flushed\n");
+    }
+    flushed = true;
     std::size_t   currentSize = sendBuffer.size();
 
     writePackageHeader(currentSize);
@@ -134,8 +142,8 @@ void PackageBufferMySQLDebugBuffer<T>::flush()
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::reset()
 {
-    if (!sendBuffer.empty()) {
-        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was sent");
+    if (!flushed) {
+        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was sent with flush");
     }
     std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
     if (readDataAvailable == 0 && hasMore) {
@@ -146,7 +154,8 @@ void PackageBufferMySQLDebugBuffer<T>::reset()
         throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was read");
     }
 
-    hasMore                     = true; // Will allow us to start reading the next packet
+    flushed     = false;
+    hasMore     = true; // Will allow us to start reading the next packet
 }
 
 template<typename T>

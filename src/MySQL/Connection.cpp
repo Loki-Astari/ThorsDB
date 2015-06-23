@@ -26,7 +26,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
                                std::string const& database,
                                ThorsAnvil::SQL::Options const& options)
             : stream(host, port)
-            , buffer(stream)
+            , buffer(stream, true)
             , reader(buffer)
             , writer(buffer)
             , connection(username, password, database, options, reader, writer)

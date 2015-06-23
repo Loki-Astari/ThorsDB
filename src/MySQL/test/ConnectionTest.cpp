@@ -20,21 +20,6 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
     SQL::Connection     connection("mysql://127.0.0.1", "root", "testPassword", "test", options);
 }
 
-class DebugStream: public ThorsAnvil::MySQL::PackageStream
-{
-    public:
-        virtual void        read(char* buffer, std::size_t len) override
-        {
-        }
-        virtual bool        isEmpty()                           override
-        {
-            return true;
-        }
-        virtual std::string readRemainingData()                 override
-        {
-            return "";
-        }
-};
 TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
@@ -42,7 +27,7 @@ TEST(ConnectionTest, Create)
     std::map<std::string, std::string>      options;
 
     MySQL::MySQLStream      stream("127.0.0.1", 0);
-    Buffer                  buffer(stream);
+    Buffer                  buffer(stream, true);
     MySQL::ConectReader     reader(buffer);
     MySQL::ConectWriter     writer(buffer);
     MySQL::Connection       connection("root", "testPassword", "test", options, reader, writer);
