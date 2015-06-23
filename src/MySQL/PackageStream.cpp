@@ -11,6 +11,9 @@
 
 using namespace ThorsAnvil::MySQL;
 
+MySQLStream::MySQLStream(int socket)
+    : socket(socket)
+{}
 MySQLStream::MySQLStream(std::string const& host, int port)
 {
     port    = port ? port : 3306;
