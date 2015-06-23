@@ -63,7 +63,7 @@ long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
     {
         case 0xFA:
         case 0xFB:
-        case 0xFF:  throw std::runtime_error(std::string("PackageRead::lengthEncodedInteger: Invalid length encoding: ") + std::to_string(type));
+        case 0xFF:  throw std::runtime_error(std::string("ConectReader::lengthEncodedInteger: Invalid length encoding: ") + std::to_string(type));
         case 0xFC:  result  = fixedLengthInteger<2>(); break;
         case 0xFD:  result  = fixedLengthInteger<3>(); break;
         case 0xFE:  result  = fixedLengthInteger<8>(); break;
