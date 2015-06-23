@@ -109,6 +109,96 @@ std::string ConectReader::restOfPacketString()
     return stream.readRemainingData();
 }
 
+std::vector<char> ConectReader::lengthEncodedBlob()
+{
+    long size = lengthEncodedInteger();
+    std::vector<char> result(size, '\0');
+    read(&result[0], size);
+    return result;
+}
+time_t ConectReader::readDate()
+{
+    MySQLTimeBag    timeBag = readDateIntoTimeBag();
+    tm              time;
+
+    time.tm_sec     = timeBag.second;
+    time.tm_min     = timeBag.minute;
+    time.tm_hour    = timeBag.hour;
+    time.tm_mday    = timeBag.day;
+    time.tm_mon     = timeBag.month - 1;
+    time.tm_year    = timeBag.year - 1900;
+    time.tm_isdst   = false;
+    time.tm_zone    = NULL;
+    time.tm_gmtoff  = 0;
+
+    return timegm(&time);
+}
+
+MySQLTimeBag ConectReader::readDateIntoTimeBag()
+{
+    MySQLTimeBag    timeBag;
+    long    size    = fixedLengthInteger<1>();
+    if (size != 11 && size != 7 && size != 4 && size != 0)
+    {   throw std::runtime_error("ConectReader::readDate: Invalid Date Size");
+    }
+    if (size == 11 || size == 7 || size == 4)
+    {
+        timeBag.year    = fixedLengthInteger<2>();
+        timeBag.month   = fixedLengthInteger<1>();
+        timeBag.day     = fixedLengthInteger<1>();
+    }
+    if (size == 11 || size == 7)
+    {
+        timeBag.hour    = fixedLengthInteger<1>();
+        timeBag.minute  = fixedLengthInteger<1>();
+        timeBag.second  = fixedLengthInteger<1>();
+    }
+    if (size == 11)
+    {
+        timeBag.uSecond = fixedLengthInteger<4>();
+    }
+    return timeBag;
+}
+
+unsigned long ConectReader::readRel()
+{
+    MySQLTimeBag    timeBag = readTimeIntoTimeBag();
+    return timeBag.day * (60*60*24) + timeBag.hour * (60*60) + timeBag.minute * (60) + timeBag.second;
+}
+unsigned long ConectReader::readRelMicro()
+{
+    MySQLTimeBag    timeBag = readTimeIntoTimeBag();
+    return timeBag.day * (1000*60*60*24) + timeBag.hour * (1000*60*60) + timeBag.minute * (1000*60) + timeBag.second * (1000) + timeBag.uSecond;
+}
+MySQLTimeBag ConectReader::readTimeIntoTimeBag()
+{
+    MySQLTimeBag    timeBag;
+    long    size    = fixedLengthInteger<1>();
+    if (size != 12 && size != 8 && size != 0)
+    {   throw std::runtime_error("ConectReader::readTime: Invalid Time Size");
+    }
+    timeBag.type    = MySQLTimeBag::RelativePositive;
+    if (size == 12 || size == 8)
+    {
+        long    negativeTest    = fixedLengthInteger<1>();
+        if (negativeTest < 0 || negativeTest > 1)
+        {   throw std::runtime_error("ConectReader::readTime: Invalid Negative Test");
+        }
+        if (negativeTest == 1)
+        {
+            timeBag.type    = MySQLTimeBag::RelativeNegative;
+        }
+        timeBag.day     = fixedLengthInteger<4>();
+        timeBag.hour    = fixedLengthInteger<1>();
+        timeBag.minute  = fixedLengthInteger<1>();
+        timeBag.second  = fixedLengthInteger<1>();
+    }
+    if (size == 12)
+    {
+        timeBag.uSecond = fixedLengthInteger<4>();
+    }
+    return timeBag;
+}
 #ifdef COVERAGE_TEST
 /*
  * This code is only compiled into the unit tests for code coverage purposes
