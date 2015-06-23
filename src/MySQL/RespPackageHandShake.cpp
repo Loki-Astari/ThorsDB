@@ -1,6 +1,5 @@
 
 #include "RespPackageHandShake.h"
-#include <sstream>
 
 using namespace ThorsAnvil::MySQL::Detail;
 
@@ -42,32 +41,5 @@ RespPackageHandShake::RespPackageHandShake(ConectReader& reader)
     // see: mysql-5.7/sql/auth/sql_authentication.cc 538
     // the 13th byte is "\0 byte, terminating the second part of a scramble"
     authPluginData  = (authPluginData + authPluginData2).substr(0, authPluginLength-1);
-}
-
-std::ostream& RespPackageHandShake::print(std::ostream& s) const
-{
-    std::stringstream reservedDecoded;
-    for(char x: reserved)
-    {
-        reservedDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
-    }
-    std::stringstream authPluginDataDecoded;
-    for(char x: authPluginData)
-    {
-        authPluginDataDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
-    }
-
-    return s << "RespPackageHandShake: "
-             << "serverVersion(" << serverVersion << ") "
-             << "connectionID(" << connectionID << ") "
-             << "authPluginData(" << authPluginDataDecoded.str() << ") "
-             << "check(" << check << ") "
-             << "statusFlag( 0x" << std::hex << std::setw(8) << std::setfill('0') << statusFlag << ") "
-             << "authPluginLength(" << authPluginLength << ") "
-             << "reserved("  << reservedDecoded.str() << ") "
-             << "authPluginName(" << authPluginName << ") "
-             << "capabilities(" << capabilities << ") "
-             << "isV9(" << isV9 << ") "
-             << std::dec;
 }
 

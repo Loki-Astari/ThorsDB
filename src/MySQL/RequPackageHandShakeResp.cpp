@@ -122,8 +122,3 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
     }
 }
 
-std::ostream& RequPackageHandShakeResponse::print(std::ostream& s) const
-{
-    return s;
-}
-

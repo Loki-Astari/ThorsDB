@@ -3,6 +3,7 @@
 
 #include "RespPackage.h"
 #include "ConectReader.h"
+#include <sstream>
 
 namespace ThorsAnvil
 {
@@ -34,6 +35,33 @@ class RespPackageHandShake: public RespPackage
         std::string const&  getAuthPluginName()         const   {return authPluginName;}
         std::string const&  getAuthPluginData()         const   {return authPluginData;}
 };
+
+inline std::ostream& RespPackageHandShake::print(std::ostream& s) const
+{
+    std::stringstream reservedDecoded;
+    for(char x: reserved)
+    {
+        reservedDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
+    }
+    std::stringstream authPluginDataDecoded;
+    for(char x: authPluginData)
+    {
+        authPluginDataDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
+    }
+
+    return s << "RespPackageHandShake: "
+             << "serverVersion(" << serverVersion << ") "
+             << "connectionID(" << connectionID << ") "
+             << "authPluginData(" << authPluginDataDecoded.str() << ") "
+             << "check(" << check << ") "
+             << "statusFlag( 0x" << std::hex << std::setw(8) << std::setfill('0') << statusFlag << ") "
+             << "authPluginLength(" << authPluginLength << ") "
+             << "reserved("  << reservedDecoded.str() << ") "
+             << "authPluginName(" << authPluginName << ") "
+             << "capabilities(" << capabilities << ") "
+             << "isV9(" << isV9 << ") "
+             << std::dec;
+}
 
         }
     }
