@@ -12,11 +12,15 @@ namespace ThorsAnvil
     namespace SQL
     {
 
+class Statement;
+class StatementProxy;
 class ConnectionProxy
 {
     public:
         virtual ~ConnectionProxy()  = 0;
+        virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type) = 0;
 };
+
 inline ConnectionProxy::~ConnectionProxy() {}
 using ConnectionCreator= std::function<std::unique_ptr<ConnectionProxy>(std::string const& host, int port,
                                                                         std::string const& username,
@@ -28,6 +32,9 @@ class Connection
     private:
         static std::map<std::string, ConnectionCreator>&    getCreators();
 
+        friend class Statement;
+        std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type);
+
         std::unique_ptr<ConnectionProxy>  proxy;
     public:
         Connection(std::string const& connection,
@@ -35,6 +42,8 @@ class Connection
                       std::string const& password,
                       std::string const& database,
                       Options const& options = Options{});
+
+
 
         static void registerConnectionType(std::string const& schema, ConnectionCreator creator);
 };
@@ -54,11 +63,6 @@ class ConnectionCreatorRegister
                         return std::unique_ptr<ConnectionProxy>(new T(host, port , username, password, database, options));
                     });
         }
-};
-class Statement
-{
-    public:
-        virtual ~Statement()    = 0;
 };
 
     }

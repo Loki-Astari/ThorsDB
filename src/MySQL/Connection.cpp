@@ -1,5 +1,6 @@
 
 #include "Connection.h"
+#include "Statement.h"
 #include "ThorSQL/Connection.h"
 #include "PackageStream.h"
 #include "PackageBuffer.h"
@@ -31,6 +32,22 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
             , writer(buffer)
             , connection(username, password, database, options, reader, writer)
         {}
+        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType type) override
+        {
+            std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
+            if (type == ThorsAnvil::SQL::OneTime) {
+                result.reset(new Statement(statement));
+            }
+#if 0
+            else if (type == Prepare) {
+                result.reset(new PrepareStatement(statement));
+            }
+#endif
+            else {
+                throw std::runtime_error("Unknown Type for MySQL");
+            }
+            return result;
+        }
 };
 
 ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");

@@ -1,13 +1,20 @@
 
 #include "Connection.h"
+#include "Statement.h"
 
 #include "gtest/gtest.h"
 
+using ThorsAnvil::SQL::StatementProxy;
+using ThorsAnvil::SQL::StatementType;
 class MockConectionProxyRegister: public ThorsAnvil::SQL::ConnectionProxy
 {
     public:
         MockConectionProxyRegister(std::string const&, int, std::string const&, std::string const&, std::string const&, ThorsAnvil::SQL::Options const&)
         {
+        }
+        virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type) override
+        {
+            return nullptr;
         }
 };
 
