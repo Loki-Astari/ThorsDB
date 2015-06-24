@@ -5,7 +5,7 @@ TARGET						= ThorMySQL.slib
 LDLIBS						= -lcrypto
 LINK_LIBS					= ThorSQL
 UNITTEST_LINK_LIBS			= ThorSQL
-COVERAGE_REQUIRED			= 1
+NO_HEADER					= 1
 
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
