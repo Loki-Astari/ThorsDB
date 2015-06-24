@@ -6,6 +6,7 @@
 #include "PackageStream.h"
 
 #include "gtest/gtest.h"
+#include "MySQLConfig.h"
 
 
 /*
@@ -17,7 +18,11 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    SQL::Connection     connection("mysql://127.0.0.1", "root", "testPassword", "test", options);
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
 }
 
 TEST(ConnectionTest, Create)
@@ -30,7 +35,12 @@ TEST(ConnectionTest, Create)
     Buffer                  buffer(stream, true);
     MySQL::ConectReader     reader(buffer);
     MySQL::ConectWriter     writer(buffer);
-    MySQL::Connection       connection("root", "testPassword", "test", options, reader, writer);
+    MySQL::Connection       connection(THOR_TESTING_MYSQL_USER,
+                                       THOR_TESTING_MYSQL_PASS,
+                                       THOR_TESTING_MYSQL_DB,
+                                       options,
+                                       reader,
+                                       writer);
 }
 
 

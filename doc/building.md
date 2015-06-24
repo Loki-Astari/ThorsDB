@@ -32,6 +32,22 @@ libThorMySQL14D.so is build using -g and is useful for debugging purposes.
 
 The configuration processes will download the generic makefiles (using git) from [ThorMaker](https://github.com/Loki-Astari/ThorMaker) which in turn will download and build google's gtest library that is used in running the unit tests.
 
+##Configure options
+
+The test require a DB connection. By default the following are used:
+
+    Host of mysql Server:       127.0.0.1
+    mysql user                  root
+    mysql user password         testPassword
+    DB on server used           test
+
+All these options can be modified using config arguments.
+
+    --with-TestMySQLHost=<Host>
+    --with-TestMySQLUser=<User>
+    --with-TestMySQLPass=<Password>
+    --with-TestMySQLDatabase=<DB>
+
 ##Requirements
 
 This library uses features from C++14 so you will need a compiler that supports this. The generic makefile also does code coverage tests so your compiler will also need to support a code coverage tool that has an interface similar to gcov.

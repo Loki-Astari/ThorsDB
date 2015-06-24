@@ -780,6 +780,10 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+with_TestMySQLHost
+with_TestMySQLUser
+with_TestMySQLPass
+with_TestMySQLDatabase
 enable_dependency_tracking
 enable_silent_rules
 '
@@ -1438,6 +1442,18 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
+  --with-TestMySQLHost=<Host>
+                          Use an alternative mysql host for testing with
+                          Default(127.0.0.1)
+  --with-TestMySQLUser=<User>
+                          Use an alternative mysql user for testing with
+                          (root)
+  --with-TestMySQLPass=<Pass>
+                          Use an alternative mysql password for testing with
+                          (testPassword)
+  --with-TestMySQLDatabase=<DB>
+                          Use an alternative mysql database for testing with
+                          (test)
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -15838,6 +15854,71 @@ fi
 
 
 
+
+# Check whether --with-TestMySQLHost was given.
+if test "${with_TestMySQLHost+set}" = set; then :
+  withval=$with_TestMySQLHost;
+fi
+
+
+# Check whether --with-TestMySQLUser was given.
+if test "${with_TestMySQLUser+set}" = set; then :
+  withval=$with_TestMySQLUser;
+fi
+
+
+# Check whether --with-TestMySQLPass was given.
+if test "${with_TestMySQLPass+set}" = set; then :
+  withval=$with_TestMySQLPass;
+fi
+
+
+# Check whether --with-TestMySQLDatabase was given.
+if test "${with_TestMySQLDatabase+set}" = set; then :
+  withval=$with_TestMySQLDatabase;
+fi
+
+
+if test "x$have_TestMySQLHost" = "xyes"; then :
+
+$as_echo "#define THOR_TESTING_MYSQL_HOST \$with_TestMySQLHost" >>confdefs.h
+
+else
+
+$as_echo "#define THOR_TESTING_MYSQL_HOST \"127.0.0.1\"" >>confdefs.h
+
+
+fi
+if test "x$have_TestMySQLUser" = "xyes"; then :
+
+$as_echo "#define THOR_TESTING_MYSQL_USER \$with_TestMySQLUser" >>confdefs.h
+
+else
+
+$as_echo "#define THOR_TESTING_MYSQL_USER \"root\"" >>confdefs.h
+
+
+fi
+if test "x$have_TestMySQLPass" = "xyes"; then :
+
+$as_echo "#define THOR_TESTING_MYSQL_PASS \$with_TestMySQLPass" >>confdefs.h
+
+else
+
+$as_echo "#define THOR_TESTING_MYSQL_PASS \"testPassword\"" >>confdefs.h
+
+
+fi
+if test "x$have_TestMySQLDatabase" = "xyes"; then :
+
+$as_echo "#define THOR_TESTING_MYSQL_DB \$with_TestMySQLDatabase" >>confdefs.h
+
+else
+
+$as_echo "#define THOR_TESTING_MYSQL_DB \"test\"" >>confdefs.h
+
+
+fi
 
 am__api_version='1.15'
 
