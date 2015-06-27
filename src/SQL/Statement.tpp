@@ -4,19 +4,6 @@ namespace ThorsAnvil
     namespace SQL
     {
 
-// -- StatementProxy
-inline StatementProxy::~StatementProxy() {}
-
-// -- Cursor
-inline Cursor::Cursor(StatementProxy& statementProxy)
-    : statementProxy(statementProxy)
-{}
-
-inline Cursor::operator bool()
-{
-    return statementProxy.more();
-}
-
 template<typename F>
 inline void Cursor::activate(F cb)
 {
@@ -26,7 +13,7 @@ inline void Cursor::activate(F cb)
 template<typename R, typename... Args>
 inline void Cursor::activate_(std::function<R(Args...)> cb)
 {
-    std::tuple<Args...>    arguments;
+    std::tuple<typename std::decay<Args>::type...>    arguments;
     activateWithArgs(cb, arguments, std::make_index_sequence<sizeof...(Args)>());
 }
 

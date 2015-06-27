@@ -30,8 +30,10 @@ class Statement
 class StatementProxy
 {
     public:
-        virtual ~StatementProxy()   = 0;
-        virtual Cursor execute()    = 0;
+        virtual ~StatementProxy()
+        {}
+
+        virtual void   bind(char)                           = 0;
         virtual void   bind(signed char)                    = 0;
         virtual void   bind(signed short)                   = 0;
         virtual void   bind(signed int)                     = 0;
@@ -51,8 +53,11 @@ class StatementProxy
 
         // -----
 
+        Cursor execute();
+        virtual void doExecute()                            = 0;
         virtual bool more()                                 = 0;
 
+        virtual void   retrieve(char&)                      = 0;
         virtual void   retrieve(signed char&)               = 0;
         virtual void   retrieve(signed short&)              = 0;
         virtual void   retrieve(signed int&)                = 0;
@@ -68,7 +73,7 @@ class StatementProxy
         virtual void   retrieve(double&)                    = 0;
         virtual void   retrieve(long double&)               = 0;
 
-        virtual void   retrieve(std::string const&)         = 0;
+        virtual void   retrieve(std::string&)               = 0;
 };
 
 class Cursor

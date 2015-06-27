@@ -13,6 +13,10 @@ TEST(StatementTest, call)
     Connection      connection("mysql://127.0.0.1:69", "root", "testPassword", "test");
     Statement       statement(connection, "Plop");
 
-    statement.execute(Bind(15), [](int id){std::cout << "Worked " << id << "\n";});
+    statement.execute(Bind(15), [](int id, std::string const& name, short age, char sex, double height)
+                                {
+                                    std::cout << "Worked " << id << " : " << name << ": " << age << " : " << height << "\n";
+                                }
+    );
 }
 
