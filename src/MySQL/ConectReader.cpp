@@ -23,10 +23,14 @@ bool ConectReader::isEmpty() const
 
 std::unique_ptr<RespPackage> ConectReader::getNextPackage(int expectedResult, OKAction expectedResultAction)
 {
+    return std::unique_ptr<RespPackage>(getNextPackageWrap(expectedResult,expectedResultAction));
+}
+RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expectedResultAction)
+{
     unsigned char    packageType;
     read(reinterpret_cast<char*>(&packageType), 1);
     if (packageType == 0xFF) {
-        return std::unique_ptr<RespPackage>(new Detail::RespPackageERR(*this));
+        return new Detail::RespPackageERR(*this);
     }
     else if (packageType == expectedResult) {
         return expectedResultAction(*this);

@@ -40,7 +40,7 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
             paramInfo.emplace_back(reader);
             reader.reset();
         }
-        std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(reader));});
+        std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return new Detail::RespPackageEOF(reader);});
         if (mark->isError()) {
             throw std::runtime_error(std::string("Expecting EOF markere afer Param info package: ") + mark->message());
         }
@@ -51,7 +51,7 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
             columnInfo.emplace_back(reader);
             reader.reset();
         }
-        std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(reader));});
+        std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return new Detail::RespPackageEOF(reader);});
         if (mark->isError()) {
             throw std::runtime_error(std::string("Expecting EOF markere afer Column info package: ") + mark->message());
         }
@@ -139,7 +139,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
                                     RequPackagePrepare(statement),
                                     Connection::Reset,
                                     0x00,
-                                    [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackagePrepare(reader));}
+                                    [](ConectReader& reader){return new Detail::RespPackagePrepare(reader);}
                               );
 }
 

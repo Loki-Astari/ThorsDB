@@ -55,7 +55,7 @@ class ConectReader
 
     unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
     public:
-        using OKAction = std::function<std::unique_ptr<RespPackage>(ConectReader&)>;
+        using OKAction = std::function<RespPackage*(ConectReader&)>;
         ConectReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
@@ -64,6 +64,10 @@ class ConectReader
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
         std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
+    private:
+        RespPackage*    getNextPackageWrap(int expectedResult, OKAction expectedResultAction);
+    public:
+
 
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;
