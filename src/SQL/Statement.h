@@ -153,7 +153,7 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
     }
 }
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_SQL
 #include "Statement.tpp"
 #endif
 
