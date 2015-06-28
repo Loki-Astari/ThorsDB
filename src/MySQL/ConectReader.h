@@ -100,7 +100,7 @@ class ConectReader
     }
 }
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_MySQL
 #include "ConectReader.tpp"
 #endif
 

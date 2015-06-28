@@ -60,7 +60,7 @@ void ConectWriter::reset()
     stream.startNewConversation();
 }
 
-#ifdef COVERAGE_TEST
+#ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.

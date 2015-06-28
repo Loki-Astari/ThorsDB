@@ -41,7 +41,7 @@ class Connection
     }
 }
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_MySQL
 #include "Connection.tpp"
 #endif
 

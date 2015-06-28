@@ -54,7 +54,7 @@ class ConectWriter
 
 
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_MySQL
 #include "ConectWriter.tpp"
 #endif
 

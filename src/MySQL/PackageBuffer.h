@@ -41,7 +41,7 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
     }
 }
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_MySQL
 #include "PackageBuffer.tpp"
 #endif
 
