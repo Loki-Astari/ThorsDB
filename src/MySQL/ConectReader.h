@@ -63,7 +63,7 @@ class ConectReader
         {}
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
-        std::unique_ptr<RespPackage>    getNextPackage(OKAction action);
+        std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
 
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;

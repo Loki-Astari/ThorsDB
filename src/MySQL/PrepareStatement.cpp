@@ -2,6 +2,7 @@
 #include "PrepareStatement.h"
 #include "Connection.h"
 #include "ConectReader.h"
+#include "RespPackageEOF.h"
 #include "ThorMySQL.h"
 #include <stdexcept>
 
@@ -39,9 +40,9 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
             paramInfo.emplace_back(reader);
             reader.reset();
         }
-        std::unique_ptr<RespPackage> mark = reader.getNextPackage([](ConectReader&)->std::unique_ptr<RespPackage>{throw std::runtime_error("Expecting EOF");});
-        if (!mark->isEOF()) {
-            throw std::runtime_error("Expecting EOF markere afer Param info package");
+        std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(reader));});
+        if (mark->isError()) {
+            throw std::runtime_error(std::string("Expecting EOF markere afer Param info package: ") + mark->message());
         }
     }
     if (numColumns > 0) {
@@ -50,9 +51,9 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
             columnInfo.emplace_back(reader);
             reader.reset();
         }
-        std::unique_ptr<RespPackage> mark = reader.getNextPackage([](ConectReader&)->std::unique_ptr<RespPackage>{throw std::runtime_error("Expecting EOF");});
-        if (!mark->isEOF()) {
-            throw std::runtime_error("Expecting EOF markere afer Column info package");
+        std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(reader));});
+        if (mark->isError()) {
+            throw std::runtime_error(std::string("Expecting EOF markere afer Column info package: ") + mark->message());
         }
     }
 }
@@ -137,7 +138,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     PrepareResp prepareResp = connection.sendMessage<RespPackagePrepare>(
                                     RequPackagePrepare(statement),
                                     Connection::Reset,
-                                    Connection::OK,
+                                    0x00,
                                     [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackagePrepare(reader));}
                               );
 }

@@ -3,6 +3,7 @@
 
 #include "RespPackage.h"
 #include "ConectReader.h"
+#include "ThorMySQL.h"
 
 namespace ThorsAnvil
 {

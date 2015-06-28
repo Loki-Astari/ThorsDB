@@ -30,12 +30,11 @@ class Connection
         virtual ~Connection();
 
         enum PacketContinuation { None, Reset};
-        enum PacketCompletion   { OK,   EOF_OK };
 
         template<typename Resp>
-        std::unique_ptr<Resp> recvMessage(PacketCompletion comp, ConectReader::OKAction actionOnOK);
+        std::unique_ptr<Resp> recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::OKAction actionOnOK);
+        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction);
 };
 
     }

@@ -2,8 +2,6 @@
 #include "ConectReader.h"
 #include "PackageStream.h"
 #include "RespPackageERR.h"
-#include "RespPackageEOF.h"
-#include "RespPackageHandShake.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -23,20 +21,18 @@ bool ConectReader::isEmpty() const
     return stream.isEmpty();
 }
 
-std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKAction actionOnOK)
+std::unique_ptr<RespPackage> ConectReader::getNextPackage(int expectedResult, OKAction expectedResultAction)
 {
     unsigned char    packageType;
     read(reinterpret_cast<char*>(&packageType), 1);
-    switch(packageType)
-    {
-        case 0x00:  return actionOnOK(*this);
-        case 0x0A:  return std::unique_ptr<RespPackage>(new Detail::RespPackageHandShake(*this));
-        case 0xFF:  return std::unique_ptr<RespPackage>(new Detail::RespPackageERR(*this));
-        case 0xFE:  return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(*this));
-        default:
-        {
-            throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
-        }
+    if (packageType == 0xFF) {
+        return std::unique_ptr<RespPackage>(new Detail::RespPackageERR(*this));
+    }
+    else if (packageType == expectedResult) {
+        return expectedResultAction(*this);
+    }
+    else {
+        throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
     }
 }
 

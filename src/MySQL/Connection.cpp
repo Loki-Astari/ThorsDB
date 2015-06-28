@@ -65,12 +65,12 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(OK, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageHandShake(reader));});
+    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(0x0A, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageHandShake(reader));});
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, OK, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(reader));});
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(reader));});
 }
 
 Connection::~Connection()
@@ -85,7 +85,7 @@ Connection::~Connection()
  */
 #include "Connection.tpp"
 
-template std::unique_ptr<ThorsAnvil::MySQL::Detail::RespPackagePrepare> ThorsAnvil::MySQL::Connection::sendMessage<ThorsAnvil::MySQL::Detail::RespPackagePrepare, ThorsAnvil::MySQL::Detail::RequPackagePrepare>(ThorsAnvil::MySQL::Detail::RequPackagePrepare const&, ThorsAnvil::MySQL::Connection::PacketContinuation, ThorsAnvil::MySQL::Connection::PacketCompletion, std::function<std::unique_ptr<ThorsAnvil::MySQL::RespPackage>(ThorsAnvil::MySQL::ConectReader&)>);
+template std::unique_ptr<ThorsAnvil::MySQL::Detail::RespPackagePrepare> ThorsAnvil::MySQL::Connection::sendMessage<ThorsAnvil::MySQL::Detail::RespPackagePrepare, ThorsAnvil::MySQL::Detail::RequPackagePrepare>(ThorsAnvil::MySQL::Detail::RequPackagePrepare const&, ThorsAnvil::MySQL::Connection::PacketContinuation, int, std::function<std::unique_ptr<ThorsAnvil::MySQL::RespPackage>(ThorsAnvil::MySQL::ConectReader&)>);
 
 #endif
 

@@ -6,15 +6,11 @@ namespace ThorsAnvil
     {
 
 template<typename Resp>
-std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReader::OKAction actionOnOK)
+std::unique_ptr<Resp> Connection::recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction)
 {
-    std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(actionOnOK);
+    std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(expectedResult, expectedResultAction);
     if (resp->isError()) {
         throw std::runtime_error(resp->message());;
-    }
-
-    if ((comp == OK && resp->isOK()) || (comp == EOF_OK && resp->isEOF())) {
-        return nullptr;
     }
 
     // Throws exception if cast fails.
@@ -29,14 +25,14 @@ std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReade
 }
 
 template<typename Resp, typename Requ>
-std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::OKAction actionOnOK)
+std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction)
 {
     packageReader.reset();
     if (cont == Reset) {
         packageWriter.reset();
     }
     request.send(packageWriter);
-    return recvMessage<Resp>(comp, actionOnOK);
+    return recvMessage<Resp>(expectedResult, expectedResultAction);
 }
 
     }
