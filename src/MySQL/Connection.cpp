@@ -85,7 +85,8 @@ Connection::~Connection()
  */
 #include "Connection.tpp"
 
-template std::unique_ptr<ThorsAnvil::MySQL::Detail::RespPackagePrepare> ThorsAnvil::MySQL::Connection::sendMessage<ThorsAnvil::MySQL::Detail::RespPackagePrepare, ThorsAnvil::MySQL::Detail::RequPackagePrepare>(ThorsAnvil::MySQL::Detail::RequPackagePrepare const&, ThorsAnvil::MySQL::Connection::PacketContinuation, int, std::function<ThorsAnvil::MySQL::RespPackage*(ThorsAnvil::MySQL::ConectReader&)>);
+template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, int, std::function<RespPackage*(ConectReader&)>);
+template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(ConectReader&)>);
 
 #endif
 
