@@ -86,6 +86,7 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
     stream.read(reinterpret_cast<char*>(&packetBufferSize), 3);
     readCurrentPacketSize   = packetBufferSize;
 
+
     char actualSequenceID;
     stream.read(&actualSequenceID, 1);
 
@@ -94,6 +95,12 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
     }
 
     hasMore = readCurrentPacketSize == 0xFFFFFF;
+}
+
+template<typename T>
+void PackageBufferMySQLDebugBuffer<T>::startNewConversation()
+{
+    currentPacketSequenceID = -1;
 }
 
 template<typename T>
@@ -143,9 +150,6 @@ void PackageBufferMySQLDebugBuffer<T>::flush()
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::reset()
 {
-    if (!flushed) {
-        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: reset() before message was sent with flush");
-    }
     std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
     if (readDataAvailable == 0 && hasMore) {
         nextPacket();

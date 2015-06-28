@@ -202,6 +202,11 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     }
     return timeBag;
 }
+
+void ConectReader::reset()
+{
+    stream.reset();
+}
 #ifdef COVERAGE_TEST
 /*
  * This code is only compiled into the unit tests for code coverage purposes

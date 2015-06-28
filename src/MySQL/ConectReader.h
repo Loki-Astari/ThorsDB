@@ -92,6 +92,8 @@ class ConectReader
         unsigned long long readRelMicro();
         MySQLTimeBag      readDateIntoTimeBag();
         MySQLTimeBag      readTimeIntoTimeBag();
+
+        void            reset();
 };
 
 

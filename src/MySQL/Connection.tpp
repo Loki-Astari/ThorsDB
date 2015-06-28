@@ -31,6 +31,7 @@ std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReade
 template<typename Resp, typename Requ>
 std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type)
 {
+    packageReader.reset();
     if (cont == Reset) {
         packageWriter.reset();
     }

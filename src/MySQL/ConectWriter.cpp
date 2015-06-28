@@ -57,7 +57,7 @@ void ConectWriter::flush()
 }
 void ConectWriter::reset()
 {
-    stream.reset();
+    stream.startNewConversation();
 }
 
 #ifdef COVERAGE_TEST

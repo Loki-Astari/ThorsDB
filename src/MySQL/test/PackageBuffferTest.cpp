@@ -245,17 +245,6 @@ TEST(PackageBufferMySQLDebugBufferTest, flushAndWrite)
     ASSERT_EQ(4, buffer.writLen());
     ASSERT_THROW(mysqlBuffer.write("10", 2), std::runtime_error);
 }
-TEST(PackageBufferMySQLDebugBufferTest, resetWithoutFlush)
-{
-    char const      data[] = "\x00\x00\x00" // size
-                             "\x01"         // id
-                             ;
-    unsigned char   result[4];
-    MockStream      buffer(data, sizeof(data) - 1, result);
-    MySqlBuf        mysqlBuffer(buffer);
-
-    ASSERT_THROW(mysqlBuffer.reset(), std::runtime_error);
-}
 TEST(PackageBufferMySQLDebugBufferTest, resetWithFlush)
 {
     char const      data[] = "\x00\x00\x00" // size

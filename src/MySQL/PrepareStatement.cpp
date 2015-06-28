@@ -18,13 +18,14 @@ Detail::RequPackagePrepare::RequPackagePrepare(std::string const& statement)
 
 void Detail::RequPackagePrepare::build(ConectWriter& writer) const
 {
-    writer.writeFixedLengthInteger<1>(16);
+    writer.writeFixedLengthInteger<1>(0x16);
     writer.writeVariableLengthString(statement);
 }
 
 Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
     : RespPackage(reader)
 {
+    // Not We have already read 1 byte (status OK)
     statementID     = reader.fixedLengthInteger<4>();
     numColumns      = reader.fixedLengthInteger<2>();
     numParams       = reader.fixedLengthInteger<2>();
@@ -32,8 +33,10 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
     warningCount    = reader.fixedLengthInteger<2>();
 
     if (numParams > 0) {
-        for(int loop = 0;loop < numParams; ++numParams) {
+        reader.reset();
+        for(int loop = 0;loop < numParams; ++loop) {
             paramInfo.emplace_back(reader);
+            reader.reset();
         }
         std::unique_ptr<RespPackage> mark = reader.getNextPackage(ConectReader::NotOK);
         if (!mark->isEOF()) {
@@ -41,8 +44,10 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
         }
     }
     if (numColumns > 0) {
-        for(int loop = 0;loop < numParams; ++numParams) {
+        reader.reset();
+        for(int loop = 0;loop < numColumns; ++loop) {
             columnInfo.emplace_back(reader);
+            reader.reset();
         }
         std::unique_ptr<RespPackage> mark = reader.getNextPackage(ConectReader::NotOK);
         if (!mark->isEOF()) {
@@ -120,9 +125,9 @@ Detail::ColumnDefinition::ColumnDefinition(ConectReader& reader, bool getDefault
     }
 }
 
-PrepareStatement::PrepareStatement(Connection& connection, std::string const& statement)
+PrepareStatement::PrepareStatement(Connection& connectn, std::string const& statement)
     : Statement(statement)
-    , connection(connection)
+    , connection(connectn)
 {
     using Detail::RespPackagePrepare;
     using Detail::RequPackagePrepare;
