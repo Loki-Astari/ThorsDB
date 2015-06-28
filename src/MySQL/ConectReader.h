@@ -4,6 +4,7 @@
 
 
 #include <memory>
+#include <functional>
 #include <vector>
 #include <string>
 #include <ctime>
@@ -54,15 +55,15 @@ class ConectReader
 
     unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
     public:
+        using OKAction = std::function<std::unique_ptr<RespPackage>(ConectReader&)>;
         ConectReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
             , charset(0)
         {}
-        enum ResponceType       { NotOK, HandshakeOK, PrepareOK };
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
-        std::unique_ptr<RespPackage>    getNextPackage(ResponceType type);
+        std::unique_ptr<RespPackage>    getNextPackage(OKAction action);
 
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;

@@ -33,9 +33,9 @@ class Connection
         enum PacketCompletion   { OK,   EOF_OK };
 
         template<typename Resp>
-        std::unique_ptr<Resp> recvMessage(PacketCompletion comp, ConectReader::ResponceType type);
+        std::unique_ptr<Resp> recvMessage(PacketCompletion comp, ConectReader::OKAction actionOnOK);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type);
+        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::OKAction actionOnOK);
 };
 
     }

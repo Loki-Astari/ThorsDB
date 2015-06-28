@@ -3,6 +3,7 @@
 #include "Connection.h"
 #include "ConectReader.h"
 #include "ThorMySQL.h"
+#include <stdexcept>
 
 
 namespace ThorsAnvil { namespace SQL { namespace Detail {
@@ -38,7 +39,7 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
             paramInfo.emplace_back(reader);
             reader.reset();
         }
-        std::unique_ptr<RespPackage> mark = reader.getNextPackage(ConectReader::NotOK);
+        std::unique_ptr<RespPackage> mark = reader.getNextPackage([](ConectReader&)->std::unique_ptr<RespPackage>{throw std::runtime_error("Expecting EOF");});
         if (!mark->isEOF()) {
             throw std::runtime_error("Expecting EOF markere afer Param info package");
         }
@@ -49,7 +50,7 @@ Detail::RespPackagePrepare::RespPackagePrepare(ConectReader& reader)
             columnInfo.emplace_back(reader);
             reader.reset();
         }
-        std::unique_ptr<RespPackage> mark = reader.getNextPackage(ConectReader::NotOK);
+        std::unique_ptr<RespPackage> mark = reader.getNextPackage([](ConectReader&)->std::unique_ptr<RespPackage>{throw std::runtime_error("Expecting EOF");});
         if (!mark->isEOF()) {
             throw std::runtime_error("Expecting EOF markere afer Column info package");
         }
@@ -137,7 +138,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
                                     RequPackagePrepare(statement),
                                     Connection::Reset,
                                     Connection::OK,
-                                    ConectReader::PrepareOK
+                                    [](ConectReader& reader){return std::unique_ptr<RespPackage>(new Detail::RespPackagePrepare(reader));}
                               );
 }
 

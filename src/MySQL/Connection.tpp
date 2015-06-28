@@ -6,9 +6,9 @@ namespace ThorsAnvil
     {
 
 template<typename Resp>
-std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReader::ResponceType type)
+std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReader::OKAction actionOnOK)
 {
-    std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(type);
+    std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(actionOnOK);
     if (resp->isError()) {
         throw std::runtime_error(resp->message());;
     }
@@ -29,14 +29,14 @@ std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReade
 }
 
 template<typename Resp, typename Requ>
-std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type)
+std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::OKAction actionOnOK)
 {
     packageReader.reset();
     if (cont == Reset) {
         packageWriter.reset();
     }
     request.send(packageWriter);
-    return recvMessage<Resp>(comp, type);
+    return recvMessage<Resp>(comp, actionOnOK);
 }
 
     }
