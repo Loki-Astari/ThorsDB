@@ -9,6 +9,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
+class Connection;
 class Statement: public SQL::StatementProxy
 {
     public:

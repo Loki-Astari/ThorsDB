@@ -14,8 +14,13 @@ class Connection;
 class PrepareStatement: public Statement
 {
     Connection&     connection;
+    int             statementID;
     public:
         PrepareStatement(Connection& connection, std::string const& statement);
+
+        virtual void doExecute()                            override;
+        virtual bool more()                                 override;
+
 };
 
     }

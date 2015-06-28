@@ -25,6 +25,8 @@ class Statement
         Statement(Connection& connect, std::string const& selectStatement, StatementType = ThorsAnvil::SQL::Prepare);
         template<typename F, typename... R>
         void execute(BindArgs<R...> const& binds, F cb);
+        template<typename F>
+        void execute(F cb);
 };
 
 class StatementProxy
@@ -143,6 +145,15 @@ template<typename F, typename... R>
 inline void Statement::execute(BindArgs<R...> const& binds, F cb)
 {
     binds.bindTo(*statementProxy);
+    Cursor cursor = statementProxy->execute();
+    while(cursor) {
+        typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
+        cursor.activate<CBTraits>(cb);
+    }
+}
+template<typename F>
+inline void Statement::execute(F cb)
+{
     Cursor cursor = statementProxy->execute();
     while(cursor) {
         typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;

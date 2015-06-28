@@ -162,7 +162,8 @@ class RespPackagePrepare: public RespPackage
             }
         }
 
-        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual std::ostream& print(std::ostream& s)    const override  {return s;}
+        int     getStatementID()                        const           {return statementID;}
 };
 
         }
@@ -185,6 +186,65 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
                                     0x00,
                                     [](ConectReader& reader){return new Detail::RespPackagePrepare(reader);}
                               );
+    statementID = prepareResp->getStatementID();
+}
+
+namespace ThorsAnvil
+{
+    namespace MySQL
+    {
+        namespace Detail
+        {
+class RequPackageExecute: public RequPackage
+{
+    int statementID;
+    public:
+        RequPackageExecute(int statementID)
+            : RequPackage("")
+            , statementID(statementID)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual  void build(ConectWriter& writer)       const override
+        {
+            writer.writeFixedLengthInteger<1>(0x17);
+            writer.writeFixedLengthInteger<4>(statementID);
+            /*
+             *  0x00    CURSOR_TYPE_NO_CURSOR
+             *  0x01    CURSOR_TYPE_READ_ONLY
+             *  0x02    CURSOR_TYPE_FOR_UPDATE
+             *  0x04    CURSOR_TYPE_SCROLLABLE
+             */
+            writer.writeFixedLengthInteger<1>(0x01);
+            writer.writeFixedLengthInteger<4>(1);
+        }
+};
+
+class RespPackageExecute: public RespPackage
+{
+    public:
+        RespPackageExecute(ConectReader& reader)
+            : RespPackage(reader)
+        {
+        }
+        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+};
+        }
+    }
+}
+
+void PrepareStatement::doExecute()
+{
+    connection.sendMessage<Detail::RespPackageExecute>(
+                                    Detail::RequPackageExecute(statementID),
+                                    Connection::Reset,
+                                    0x05,
+                                    [](ConectReader& reader){return new Detail::RespPackageExecute(reader);}
+                              );
+}
+
+bool PrepareStatement::more()
+{
+    return false;
 }
 
 #ifdef COVERAGE_MySQL
