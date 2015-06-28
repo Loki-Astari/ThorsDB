@@ -16,22 +16,6 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-class RequPackagePrepare: public RequPackage
-{
-    std::string const& statement;
-    public:
-        RequPackagePrepare(std::string const& statement)
-            : RequPackage("RequPackagePrepare")
-            , statement(statement)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
-        virtual  void build(ConectWriter& writer)       const override
-        {
-            writer.writeFixedLengthInteger<1>(0x16);
-            writer.writeVariableLengthString(statement);
-        }
-};
-
 struct ColumnDefinition
 {
     std::string     catalog;
@@ -117,6 +101,22 @@ struct ColumnDefinition
             }
         }
     }
+};
+
+class RequPackagePrepare: public RequPackage
+{
+    std::string const& statement;
+    public:
+        RequPackagePrepare(std::string const& statement)
+            : RequPackage("RequPackagePrepare")
+            , statement(statement)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual  void build(ConectWriter& writer)       const override
+        {
+            writer.writeFixedLengthInteger<1>(0x16);
+            writer.writeVariableLengthString(statement);
+        }
 };
 
 class RespPackagePrepare: public RespPackage
