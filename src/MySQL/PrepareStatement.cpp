@@ -147,7 +147,7 @@ class RespPackagePrepare: public RespPackage
                     paramInfo.emplace_back(reader);
                     reader.reset();
                 }
-                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int, ConectReader& reader){return new Detail::RespPackageEOF(reader);});
+                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
                 if (mark->isError()) {
                     throw std::runtime_error(std::string("Expecting EOF markere afer Param info package: ") + mark->message());
                 }
@@ -158,7 +158,7 @@ class RespPackagePrepare: public RespPackage
                     columnInfo.emplace_back(reader);
                     reader.reset();
                 }
-                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int, ConectReader& reader){return new Detail::RespPackageEOF(reader);});
+                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
                 if (mark->isError()) {
                     throw std::runtime_error(std::string("Expecting EOF markere afer Column info package: ") + mark->message());
                 }

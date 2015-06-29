@@ -3,6 +3,7 @@
 
 #include "RespPackage.h"
 #include "ConectReader.h"
+#include <assert.h>
 
 namespace ThorsAnvil
 {
@@ -18,13 +19,15 @@ class RespPackageOK: public RespPackage
     long    statusFlags;
     long    warningFlags;
     public:
-        RespPackageOK(ConectReader& reader)
+        RespPackageOK(int firstByte, ConectReader& reader)
             : RespPackage(reader)
             , affectedRows(reader.lengthEncodedInteger())
             , lastInsertID(reader.lengthEncodedInteger())
             , statusFlags(reader.fixedLengthInteger<2>())
             , warningFlags(reader.fixedLengthInteger<2>())
         {
+            assert(firstByte == 0x00);
+
             ok              = true;
             humanMessage    = reader.restOfPacketString();
         }

@@ -70,7 +70,7 @@ Connection::Connection(
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](int, ConectReader& reader){return new Detail::RespPackageOK(reader);});
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](int firstByte, ConectReader& reader){return new Detail::RespPackageOK(firstByte, reader);});
 }
 
 Connection::~Connection()

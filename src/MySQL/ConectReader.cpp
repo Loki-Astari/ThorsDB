@@ -30,10 +30,10 @@ RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expec
 {
     int    packageType  = fixedLengthInteger<1>();;
     if (packageType == 0x00 && expectedResult != 0x00) {
-        return new Detail::RespPackageOK(*this);
+        return new Detail::RespPackageOK(packageType, *this);
     }
     else if (packageType == 0xFF && expectedResult != 0xFF) {
-        return new Detail::RespPackageERR(*this);
+        return new Detail::RespPackageERR(packageType, *this);
     }
     else if (packageType == expectedResult || expectedResult == -1) {
         return expectedResultAction(packageType, *this);

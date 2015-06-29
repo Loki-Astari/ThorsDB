@@ -4,6 +4,7 @@
 #include "RespPackage.h"
 #include "ConectReader.h"
 #include "ThorMySQL.h"
+#include <assert.h>
 
 namespace ThorsAnvil
 {
@@ -17,11 +18,12 @@ class RespPackageEOF: public RespPackage
     long    warningCount;
     long    statusFlag;
     public:
-        RespPackageEOF(ConectReader& reader)
+        RespPackageEOF(int firstByte, ConectReader& reader)
             : RespPackage(reader)
             , warningCount(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
             , statusFlag(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
         {
+            assert(firstByte == 0xFE);
             eof = true;
         }
         virtual  std::ostream& print(std::ostream& s) const
