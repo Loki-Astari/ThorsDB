@@ -27,7 +27,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
 
     MockStream                                                  buffer(data, sizeof(data));
     ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(reader);
+    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
@@ -64,7 +64,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_clear_password)
 
     MockStream                                                  buffer(data, sizeof(data));
     ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(reader);
+    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
@@ -102,7 +102,7 @@ TEST(RequPackageHandShakeResponseTest, Check_authentication_windows_client)
 
     MockStream                                                  buffer(data, sizeof(data));
     ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(reader);
+    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
@@ -140,7 +140,7 @@ TEST(RequPackageHandShakeResponseTest, Check_sha256_password)
 
     MockStream                                                  buffer(data, sizeof(data));
     ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(reader);
+    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
@@ -178,7 +178,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_native_password)
 
     MockStream                                                  buffer(data, sizeof(data));
     ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(reader);
+    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     ASSERT_NO_THROW(
         ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake)
@@ -206,7 +206,7 @@ TEST(RequPackageHandShakeResponseTest, Check_unknown_type)
 
     MockStream                                                  buffer(data, sizeof(data));
     ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(reader);
+    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {

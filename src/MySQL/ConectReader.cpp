@@ -1,6 +1,7 @@
 
 #include "ConectReader.h"
 #include "PackageStream.h"
+#include "RespPackageOK.h"
 #include "RespPackageERR.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -27,13 +28,15 @@ std::unique_ptr<RespPackage> ConectReader::getNextPackage(int expectedResult, OK
 }
 RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expectedResultAction)
 {
-    unsigned char    packageType;
-    read(reinterpret_cast<char*>(&packageType), 1);
-    if (packageType == 0xFF) {
+    int    packageType  = fixedLengthInteger<1>();;
+    if (packageType == 0x00 && expectedResult != 0x00) {
+        return new Detail::RespPackageOK(*this);
+    }
+    else if (packageType == 0xFF && expectedResult != 0xFF) {
         return new Detail::RespPackageERR(*this);
     }
-    else if (packageType == expectedResult) {
-        return expectedResultAction(*this);
+    else if (packageType == expectedResult || expectedResult == -1) {
+        return expectedResultAction(packageType, *this);
     }
     else {
         throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));

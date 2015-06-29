@@ -28,7 +28,7 @@ class RespPackageHandShake: public RespPackage
     char            charset;
 
     public:
-        RespPackageHandShake(ConectReader& reader);
+        RespPackageHandShake(int firstByte, ConectReader& reader);
         virtual std::ostream& print(std::ostream& s)    const;
         long                getCapabilities()           const   {return capabilities;}
         long                getCharset()                const   {return charset;}

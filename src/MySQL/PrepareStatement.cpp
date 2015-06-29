@@ -7,6 +7,7 @@
 #include "RespPackageEOF.h"
 #include "ThorMySQL.h"
 #include <stdexcept>
+#include <assert.h>
 
 
 namespace ThorsAnvil
@@ -128,9 +129,11 @@ class RespPackagePrepare: public RespPackage
     std::vector<ColumnDefinition>   paramInfo;
     std::vector<ColumnDefinition>   columnInfo;
     public:
-        RespPackagePrepare(ConectReader& reader)
+        RespPackagePrepare(int firstByte, ConectReader& reader)
             : RespPackage(reader)
         {
+            assert(firstByte == 0x00);
+
             // Not We have already read 1 byte (status OK)
             statementID     = reader.fixedLengthInteger<4>();
             numColumns      = reader.fixedLengthInteger<2>();
@@ -144,7 +147,7 @@ class RespPackagePrepare: public RespPackage
                     paramInfo.emplace_back(reader);
                     reader.reset();
                 }
-                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return new Detail::RespPackageEOF(reader);});
+                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int, ConectReader& reader){return new Detail::RespPackageEOF(reader);});
                 if (mark->isError()) {
                     throw std::runtime_error(std::string("Expecting EOF markere afer Param info package: ") + mark->message());
                 }
@@ -155,7 +158,7 @@ class RespPackagePrepare: public RespPackage
                     columnInfo.emplace_back(reader);
                     reader.reset();
                 }
-                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](ConectReader& reader){return new Detail::RespPackageEOF(reader);});
+                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int, ConectReader& reader){return new Detail::RespPackageEOF(reader);});
                 if (mark->isError()) {
                     throw std::runtime_error(std::string("Expecting EOF markere afer Column info package: ") + mark->message());
                 }
@@ -184,7 +187,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
                                     RequPackagePrepare(statement),
                                     Connection::Reset,
                                     0x00,
-                                    [](ConectReader& reader){return new Detail::RespPackagePrepare(reader);}
+                                    [](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepare(firstByte, reader);}
                               );
     statementID = prepareResp->getStatementID();
 }
@@ -222,7 +225,7 @@ class RequPackageExecute: public RequPackage
 class RespPackageExecute: public RespPackage
 {
     public:
-        RespPackageExecute(ConectReader& reader)
+        RespPackageExecute(int, ConectReader& reader)
             : RespPackage(reader)
         {
         }
@@ -238,7 +241,7 @@ void PrepareStatement::doExecute()
                                     Detail::RequPackageExecute(statementID),
                                     Connection::Reset,
                                     0x05,
-                                    [](ConectReader& reader){return new Detail::RespPackageExecute(reader);}
+                                    [](int firstByte, ConectReader& reader){return new Detail::RespPackageExecute(firstByte, reader);}
                               );
 }
 
@@ -254,7 +257,7 @@ bool PrepareStatement::more()
  */
 #include "Connection.tpp"
 
-template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, int, std::function<RespPackage*(ConectReader&)>);
+template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
 
 #endif
 

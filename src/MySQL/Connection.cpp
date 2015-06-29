@@ -65,12 +65,12 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(0x0A, [](ConectReader& reader){return new Detail::RespPackageHandShake(reader);});
+    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(0x0A, [](int firstByte, ConectReader& reader){return new Detail::RespPackageHandShake(firstByte, reader);});
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](ConectReader& reader){return new Detail::RespPackageOK(reader);});
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](int, ConectReader& reader){return new Detail::RespPackageOK(reader);});
 }
 
 Connection::~Connection()
@@ -85,8 +85,8 @@ Connection::~Connection()
  */
 #include "Connection.tpp"
 
-template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, int, std::function<RespPackage*(ConectReader&)>);
-template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(ConectReader&)>);
+template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
 
 #endif
 

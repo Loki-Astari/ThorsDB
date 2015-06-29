@@ -55,7 +55,7 @@ class ConectReader
 
     unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
     public:
-        using OKAction = std::function<RespPackage*(ConectReader&)>;
+        using OKAction = std::function<RespPackage*(int byte, ConectReader&)>;
         ConectReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)

@@ -1,9 +1,10 @@
 
 #include "RespPackageHandShake.h"
+#include <assert.h>
 
 using namespace ThorsAnvil::MySQL::Detail;
 
-RespPackageHandShake::RespPackageHandShake(ConectReader& reader)
+RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     : RespPackage(reader)
     , serverVersion(reader.nulTerminatedString())
     , connectionID(reader.fixedLengthInteger<4>())
@@ -14,6 +15,8 @@ RespPackageHandShake::RespPackageHandShake(ConectReader& reader)
     , isV9(false)
     , capabilities(0)
 {
+    assert(firstbyte = 0x0A);
+
     if (reader.isEmpty()) {
         isV9    = true;
         return;
