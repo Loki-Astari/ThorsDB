@@ -6,6 +6,7 @@
 #include "RespPackageColumnDefinition.h"
 #include "ThorSQL/Statement.h"
 #include <vector>
+#include <limits>
 #include "ThorMySQL.h"
 
 namespace ThorsAnvil

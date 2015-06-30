@@ -2,7 +2,6 @@
 #include "ThorMySQL.h"
 #include "PackageStream.h"
 #include "RespPackage.h"
-#include <limits>
 
 namespace ThorsAnvil
 {
