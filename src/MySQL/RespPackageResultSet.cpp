@@ -10,7 +10,6 @@ RespPackageResultSet::RespPackageResultSet(int firstByte, ConectReader& reader, 
     , columns(columns)
     , nextColumn(0)
 {
-    std::cerr << "RespPackageResultSet\n";
     assert(firstByte == 0x00);
 
     int nullmaplength   = (columns.size() + 7 + 2) / 8;

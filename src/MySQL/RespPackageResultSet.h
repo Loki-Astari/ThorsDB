@@ -157,10 +157,6 @@ template<typename T> inline T readNullParameter()                               
 template<> inline std::string readNullParameter<std::string>()                                 {return "";}
 template<> inline int         readNullParameter<int>()                                         {return 0;}
 
-#define QUOTEID_(x)         #x
-#define QUOTEID(x)          QUOTEID_(x)
-#define DBEUG_LOG(x)        std::cerr << "  ->" << QUOTEID(x) << "\n"
-
 class RespPackageResultSet: public RespPackage
 {
     ConectReader&   reader;
@@ -175,37 +171,36 @@ class RespPackageResultSet: public RespPackage
         ++nextColumn;
         switch(columns[currentColumn].type)
         {
-            case MYSQL_TYPE_STRING:         DBEUG_LOG(XMYSQL_TYPE_STRING);       return readParameterValue<MYSQL_TYPE_STRING, T>(reader);
-            case MYSQL_TYPE_VARCHAR:        DBEUG_LOG(XMYSQL_TYPE_VARCHAR);      return readParameterValue<MYSQL_TYPE_VARCHAR, T>(reader);
-            case MYSQL_TYPE_VAR_STRING:     DBEUG_LOG(XMYSQL_TYPE_VAR_STRING);   return readParameterValue<MYSQL_TYPE_VAR_STRING, T>(reader);
-            case MYSQL_TYPE_ENUM:           DBEUG_LOG(XMYSQL_TYPE_ENUM);         return readParameterValue<MYSQL_TYPE_ENUM, T>(reader);
-            case MYSQL_TYPE_SET:            DBEUG_LOG(XMYSQL_TYPE_SET);          return readParameterValue<MYSQL_TYPE_SET, T>(reader);
-            case MYSQL_TYPE_LONG_BLOB:      DBEUG_LOG(XMYSQL_TYPE_LONG_BLOB);    return readParameterValue<MYSQL_TYPE_LONG_BLOB, T>(reader);
-            case MYSQL_TYPE_MEDIUM_BLOB:    DBEUG_LOG(XMYSQL_TYPE_MEDIUM_BLOB);  return readParameterValue<MYSQL_TYPE_MEDIUM_BLOB, T>(reader);
-            case MYSQL_TYPE_BLOB:           DBEUG_LOG(XMYSQL_TYPE_BLOB);         return readParameterValue<MYSQL_TYPE_BLOB, T>(reader);
-            case MYSQL_TYPE_TINY_BLOB:      DBEUG_LOG(XMYSQL_TYPE_TINY_BLOB);    return readParameterValue<MYSQL_TYPE_TINY_BLOB, T>(reader);
-            case MYSQL_TYPE_GEOMETRY:       DBEUG_LOG(XMYSQL_TYPE_GEOMETRY);     return readParameterValue<MYSQL_TYPE_GEOMETRY, T>(reader);
-            case MYSQL_TYPE_BIT:            DBEUG_LOG(XMYSQL_TYPE_BIT);          return readParameterValue<MYSQL_TYPE_BIT, T>(reader);
-            case MYSQL_TYPE_DECIMAL:        DBEUG_LOG(XMYSQL_TYPE_DECIMAL);      return readParameterValue<MYSQL_TYPE_DECIMAL, T>(reader);
-            case MYSQL_TYPE_NEWDECIMAL:     DBEUG_LOG(XMYSQL_TYPE_NEWDECIMAL);   return readParameterValue<MYSQL_TYPE_NEWDECIMAL, T>(reader);
-            case MYSQL_TYPE_LONGLONG:       DBEUG_LOG(XMYSQL_TYPE_LONGLONG);     return readParameterValue<MYSQL_TYPE_LONGLONG, T>(reader);
-            case MYSQL_TYPE_LONG:           DBEUG_LOG(XMYSQL_TYPE_LONG);         return readParameterValue<MYSQL_TYPE_LONG, T>(reader);
-            case MYSQL_TYPE_INT24:          DBEUG_LOG(XMYSQL_TYPE_INT24);        return readParameterValue<MYSQL_TYPE_INT24, T>(reader);
-            case MYSQL_TYPE_SHORT:          DBEUG_LOG(XMYSQL_TYPE_SHORT);        return readParameterValue<MYSQL_TYPE_SHORT, T>(reader);
-            case MYSQL_TYPE_YEAR:           DBEUG_LOG(XMYSQL_TYPE_YEAR);         return readParameterValue<MYSQL_TYPE_YEAR, T>(reader);
-            case MYSQL_TYPE_TINY:           DBEUG_LOG(XMYSQL_TYPE_TINY);         return readParameterValue<MYSQL_TYPE_TINY, T>(reader);
-            case MYSQL_TYPE_DOUBLE:         DBEUG_LOG(XMYSQL_TYPE_DOUBLE);       return readParameterValue<MYSQL_TYPE_DOUBLE, T>(reader);
-            case MYSQL_TYPE_FLOAT:          DBEUG_LOG(XMYSQL_TYPE_FLOAT);        return readParameterValue<MYSQL_TYPE_FLOAT, T>(reader);
-            case MYSQL_TYPE_DATE:           DBEUG_LOG(XMYSQL_TYPE_DATE);         return readParameterValue<MYSQL_TYPE_DATE, T>(reader);
-            case MYSQL_TYPE_DATETIME:       DBEUG_LOG(XMYSQL_TYPE_DATETIME);     return readParameterValue<MYSQL_TYPE_DATETIME, T>(reader);
-            case MYSQL_TYPE_TIMESTAMP:      DBEUG_LOG(XMYSQL_TYPE_TIMESTAMP);    return readParameterValue<MYSQL_TYPE_TIMESTAMP, T>(reader);
-            case MYSQL_TYPE_TIME:           DBEUG_LOG(XMYSQL_TYPE_TIME);         return readParameterValue<MYSQL_TYPE_TIME, T>(reader);
-            case MYSQL_TYPE_NEWDATE:        DBEUG_LOG(XMYSQL_TYPE_NEWDATE);      return readParameterValue<MYSQL_TYPE_NEWDATE, T>(reader);
-            case MYSQL_TYPE_TIMESTAMP2:     DBEUG_LOG(XMYSQL_TYPE_TIMESTAMP2);   return readParameterValue<MYSQL_TYPE_TIMESTAMP2, T>(reader);
-            case MYSQL_TYPE_DATETIME2:      DBEUG_LOG(XMYSQL_TYPE_DATETIME2);    return readParameterValue<MYSQL_TYPE_DATETIME2, T>(reader);
-            case MYSQL_TYPE_TIME2:          DBEUG_LOG(XMYSQL_TYPE_TIME2);        return readParameterValue<MYSQL_TYPE_TIME2, T>(reader);
+            case MYSQL_TYPE_STRING:         return readParameterValue<MYSQL_TYPE_STRING, T>(reader);
+            case MYSQL_TYPE_VARCHAR:        return readParameterValue<MYSQL_TYPE_VARCHAR, T>(reader);
+            case MYSQL_TYPE_VAR_STRING:     return readParameterValue<MYSQL_TYPE_VAR_STRING, T>(reader);
+            case MYSQL_TYPE_ENUM:           return readParameterValue<MYSQL_TYPE_ENUM, T>(reader);
+            case MYSQL_TYPE_SET:            return readParameterValue<MYSQL_TYPE_SET, T>(reader);
+            case MYSQL_TYPE_LONG_BLOB:      return readParameterValue<MYSQL_TYPE_LONG_BLOB, T>(reader);
+            case MYSQL_TYPE_MEDIUM_BLOB:    return readParameterValue<MYSQL_TYPE_MEDIUM_BLOB, T>(reader);
+            case MYSQL_TYPE_BLOB:           return readParameterValue<MYSQL_TYPE_BLOB, T>(reader);
+            case MYSQL_TYPE_TINY_BLOB:      return readParameterValue<MYSQL_TYPE_TINY_BLOB, T>(reader);
+            case MYSQL_TYPE_GEOMETRY:       return readParameterValue<MYSQL_TYPE_GEOMETRY, T>(reader);
+            case MYSQL_TYPE_BIT:            return readParameterValue<MYSQL_TYPE_BIT, T>(reader);
+            case MYSQL_TYPE_DECIMAL:        return readParameterValue<MYSQL_TYPE_DECIMAL, T>(reader);
+            case MYSQL_TYPE_NEWDECIMAL:     return readParameterValue<MYSQL_TYPE_NEWDECIMAL, T>(reader);
+            case MYSQL_TYPE_LONGLONG:       return readParameterValue<MYSQL_TYPE_LONGLONG, T>(reader);
+            case MYSQL_TYPE_LONG:           return readParameterValue<MYSQL_TYPE_LONG, T>(reader);
+            case MYSQL_TYPE_INT24:          return readParameterValue<MYSQL_TYPE_INT24, T>(reader);
+            case MYSQL_TYPE_SHORT:          return readParameterValue<MYSQL_TYPE_SHORT, T>(reader);
+            case MYSQL_TYPE_YEAR:           return readParameterValue<MYSQL_TYPE_YEAR, T>(reader);
+            case MYSQL_TYPE_TINY:           return readParameterValue<MYSQL_TYPE_TINY, T>(reader);
+            case MYSQL_TYPE_DOUBLE:         return readParameterValue<MYSQL_TYPE_DOUBLE, T>(reader);
+            case MYSQL_TYPE_FLOAT:          return readParameterValue<MYSQL_TYPE_FLOAT, T>(reader);
+            case MYSQL_TYPE_DATE:           return readParameterValue<MYSQL_TYPE_DATE, T>(reader);
+            case MYSQL_TYPE_DATETIME:       return readParameterValue<MYSQL_TYPE_DATETIME, T>(reader);
+            case MYSQL_TYPE_TIMESTAMP:      return readParameterValue<MYSQL_TYPE_TIMESTAMP, T>(reader);
+            case MYSQL_TYPE_TIME:           return readParameterValue<MYSQL_TYPE_TIME, T>(reader);
+            case MYSQL_TYPE_NEWDATE:        return readParameterValue<MYSQL_TYPE_NEWDATE, T>(reader);
+            case MYSQL_TYPE_TIMESTAMP2:     return readParameterValue<MYSQL_TYPE_TIMESTAMP2, T>(reader);
+            case MYSQL_TYPE_DATETIME2:      return readParameterValue<MYSQL_TYPE_DATETIME2, T>(reader);
+            case MYSQL_TYPE_TIME2:          return readParameterValue<MYSQL_TYPE_TIME2, T>(reader);
             default:
-                std::cerr << "Type: " << columns[currentColumn].type << "\n";
                 throw std::runtime_error("Unimplemented Column Type");
         }
     }
@@ -213,7 +208,6 @@ class RespPackageResultSet: public RespPackage
     template<typename T>
     T getValue(T const& defaultValue)
     {
-        std::cerr << "Getting Column: " << nextColumn << "\n";
         int     index   = nextColumn / 8;
         int     bit     = nextColumn % 8;
         if (nullMap[index] & (1 << bit)) {

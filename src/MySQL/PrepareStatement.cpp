@@ -11,7 +11,6 @@
 #include "ThorMySQL.h"
 #include <stdexcept>
 #include <assert.h>
-#include <iostream>
 
 
 namespace ThorsAnvil
@@ -170,20 +169,13 @@ class RespPackagePrepareExecute: public RespPackage
         RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
             : RespPackage(reader)
         {
-            std::cerr << "RespPackagePrepareExecute\n";
             columnCount = firstByte;
             reader.reset();
             for(int loop = 0;loop < columnCount; ++loop) {
-                std::cerr << "    Reading Col Definition\n";
                 columnInfo.push_back(RespPackageColumnDefinition(reader));
                 reader.reset();
             }
-            std::cerr << "Done\n";
             auto mark = reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
-            std::cerr << "MArk Flags: " << std::hex << mark->getStatusFlag() << "\n";
-            std::cerr << "MArk Flags: " << std::hex << (mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS) << "\n";
-            std::cerr << "Read EOF\n";
-
             hasRows = !(mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS);
 
             // Stream now contains the data followed by an EOF token
@@ -220,33 +212,26 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
 
 PrepareStatement::~PrepareStatement()
 {
-    std::cerr << "~PrepareStatement()\n";
     connection.sendMessage(Detail::RequPackagePrepareClose(statementID), Connection::Reset);
-    std::cerr << "~PrepareStatement() DONE\n";
 }
 
 void PrepareStatement::doExecute()
 {
-    std::cerr << "doExecute\n";
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID),
                                     Connection::Reset,
                                     -1, // Does not matter what the first byte is 
                                     [this](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));}
                               );
-    std::cerr << "doExecute Done\n";
 }
 
 bool PrepareStatement::more()
 {
     connection.packageReader.reset();
     if (!prepareExec->hasDataRows()) {
-        std::cout << "No Rows Returned\n";
         return false;
     }
-    std::cout << "More\n";
     nextLine = connection.recvMessage<Detail::RespPackageResultSet>(0x00, [this](int firstByte, ConectReader& reader){return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());});
-    std::cout << "   Line: " << nextLine.get() << "\n";
     if (nextLine.get() == nullptr) {
         connection.sendMessage<Detail::RespPackageOK>(
                                     Detail::RequPackagePrepareReset(statementID),
