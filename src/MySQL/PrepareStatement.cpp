@@ -141,11 +141,11 @@ namespace ThorsAnvil
     {
         namespace Detail
         {
-class RequPackageExecute: public RequPackage
+class RequPackagePrepareExecute: public RequPackage
 {
     int statementID;
     public:
-        RequPackageExecute(int statementID)
+        RequPackagePrepareExecute(int statementID)
             : RequPackage("")
             , statementID(statementID)
         {}
@@ -165,16 +165,16 @@ class RequPackageExecute: public RequPackage
         }
 };
 
-class RespPackageExecute: public RespPackage
+class RespPackagePrepareExecute: public RespPackage
 {
     int  columnCount;
     bool hasRows;
     std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
-        RespPackageExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
+        RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
             : RespPackage(reader)
         {
-            std::cerr << "RespPackageExecute\n";
+            std::cerr << "RespPackagePrepareExecute\n";
             columnCount = firstByte;
             reader.reset();
             for(int loop = 0;loop < columnCount; ++loop) {
@@ -206,11 +206,11 @@ class RespPackageExecute: public RespPackage
 void PrepareStatement::doExecute()
 {
     std::cerr << "doExecute\n";
-    prepareExec = connection.sendMessage<Detail::RespPackageExecute>(
-                                    Detail::RequPackageExecute(statementID),
+    prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
+                                    Detail::RequPackagePrepareExecute(statementID),
                                     Connection::Reset,
                                     -1, // Does not matter what the first byte is 
-                                    [this](int firstByte, ConectReader& reader){return new Detail::RespPackageExecute(firstByte, reader, *(this->prepareResp));}
+                                    [this](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));}
                               );
     std::cerr << "doExecute Done\n";
 }
@@ -270,8 +270,8 @@ bool PrepareStatement::more()
 #include "ConectReader.tpp"
 
 template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
-template std::unique_ptr<Detail::RespPackageExecute> ConectReader::recvMessage<Detail::RespPackageExecute>(int, std::function<RespPackage*(int, ConectReader&)>);
 template std::unique_ptr<Detail::RespPackagePrepare> ConectReader::recvMessage<Detail::RespPackagePrepare>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackagePrepareExecute> ConectReader::recvMessage<Detail::RespPackagePrepareExecute>(int, std::function<RespPackage*(int, ConectReader&)>);
 
 
 #endif

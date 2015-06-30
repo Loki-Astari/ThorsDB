@@ -13,7 +13,7 @@ namespace ThorsAnvil
         namespace Detail
         {
             class RespPackagePrepare;
-            class RespPackageExecute;
+            class RespPackagePrepareExecute;
             class RespPackageResultSet;
         }
 
@@ -23,9 +23,9 @@ class PrepareStatement: public Statement
     Connection&     connection;
     int             statementID;
 
-    std::unique_ptr<Detail::RespPackagePrepare>     prepareResp;
-    std::unique_ptr<Detail::RespPackageExecute>     prepareExec;
-    std::unique_ptr<Detail::RespPackageResultSet>   nextLine;
+    std::unique_ptr<Detail::RespPackagePrepare>         prepareResp;
+    std::unique_ptr<Detail::RespPackagePrepareExecute>  prepareExec;
+    std::unique_ptr<Detail::RespPackageResultSet>       nextLine;
 
     public:
         PrepareStatement(Connection& connection, std::string const& statement);
