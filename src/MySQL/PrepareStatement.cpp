@@ -109,6 +109,38 @@ namespace ThorsAnvil
     {
         namespace Detail
         {
+class RequPackagePrepareClose: public RequPackage
+{
+    int statementID;
+    public:
+        RequPackagePrepareClose(int statementID)
+            : RequPackage("")
+            , statementID(statementID)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const {return s;}
+        virtual  void build(ConectWriter& writer)       const
+        {
+            writer.writeFixedLengthInteger<1>(0x19);
+            writer.writeFixedLengthInteger<4>(statementID);
+        }
+};
+        }
+    }
+}
+
+PrepareStatement::~PrepareStatement()
+{
+    std::cerr << "~PrepareStatement()\n";
+    connection.sendMessage(Detail::RequPackagePrepareClose(statementID), Connection::Reset);
+    std::cerr << "~PrepareStatement() DONE\n";
+}
+
+namespace ThorsAnvil
+{
+    namespace MySQL
+    {
+        namespace Detail
+        {
 class RequPackageExecute: public RequPackage
 {
     int statementID;

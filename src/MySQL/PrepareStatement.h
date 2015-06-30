@@ -29,6 +29,7 @@ class PrepareStatement: public Statement
 
     public:
         PrepareStatement(Connection& connection, std::string const& statement);
+        ~PrepareStatement();
 
         virtual void doExecute()                            override;
         virtual bool more()                                 override;
