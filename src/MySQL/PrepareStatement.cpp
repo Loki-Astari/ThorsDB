@@ -21,7 +21,6 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-
 class RequPackagePrepare: public RequPackage
 {
     std::string const& statement;
@@ -35,6 +34,62 @@ class RequPackagePrepare: public RequPackage
         {
             writer.writeFixedLengthInteger<1>(0x16);
             writer.writeVariableLengthString(statement);
+        }
+};
+
+class RequPackagePrepareClose: public RequPackage
+{
+    int statementID;
+    public:
+        RequPackagePrepareClose(int statementID)
+            : RequPackage("")
+            , statementID(statementID)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const {return s;}
+        virtual  void build(ConectWriter& writer)       const
+        {
+            writer.writeFixedLengthInteger<1>(0x19);
+            writer.writeFixedLengthInteger<4>(statementID);
+        }
+};
+
+class RequPackagePrepareExecute: public RequPackage
+{
+    int statementID;
+    public:
+        RequPackagePrepareExecute(int statementID)
+            : RequPackage("")
+            , statementID(statementID)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual  void build(ConectWriter& writer)       const override
+        {
+            writer.writeFixedLengthInteger<1>(0x17);
+            writer.writeFixedLengthInteger<4>(statementID);
+            /*
+             *  0x00    CURSOR_TYPE_NO_CURSOR
+             *  0x01    CURSOR_TYPE_READ_ONLY
+             *  0x02    CURSOR_TYPE_FOR_UPDATE
+             *  0x04    CURSOR_TYPE_SCROLLABLE
+             */
+            writer.writeFixedLengthInteger<1>(0x00);
+            writer.writeFixedLengthInteger<4>(1);
+        }
+};
+
+class RequPackagePrepareReset: public RequPackage
+{
+    int statementID;
+    public:
+        RequPackagePrepareReset(int statementID)
+            : RequPackage("")
+            , statementID(statementID)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const {return s;}
+        virtual  void build(ConectWriter& writer)       const
+        {
+            writer.writeFixedLengthInteger<1>(0x1A);
+            writer.writeFixedLengthInteger<4>(statementID);
         }
 };
 
@@ -82,89 +137,6 @@ class RespPackagePrepare: public RespPackage
         int     getStatementID()                        const           {return statementID;}
 };
 
-        }
-    }
-}
-
-using namespace ThorsAnvil::MySQL;
-
-PrepareStatement::PrepareStatement(Connection& connectn, std::string const& statement)
-    : Statement(statement)
-    , connection(connectn)
-{
-    using Detail::RespPackagePrepare;
-    using Detail::RequPackagePrepare;
-    prepareResp = connection.sendMessage<RespPackagePrepare>(
-                                    RequPackagePrepare(statement),
-                                    Connection::Reset,
-                                    0x00,
-                                    [](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepare(firstByte, reader);}
-                              );
-    statementID = prepareResp->getStatementID();
-}
-
-namespace ThorsAnvil
-{
-    namespace MySQL
-    {
-        namespace Detail
-        {
-class RequPackagePrepareClose: public RequPackage
-{
-    int statementID;
-    public:
-        RequPackagePrepareClose(int statementID)
-            : RequPackage("")
-            , statementID(statementID)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const {return s;}
-        virtual  void build(ConectWriter& writer)       const
-        {
-            writer.writeFixedLengthInteger<1>(0x19);
-            writer.writeFixedLengthInteger<4>(statementID);
-        }
-};
-        }
-    }
-}
-
-PrepareStatement::~PrepareStatement()
-{
-    std::cerr << "~PrepareStatement()\n";
-    connection.sendMessage(Detail::RequPackagePrepareClose(statementID), Connection::Reset);
-    std::cerr << "~PrepareStatement() DONE\n";
-}
-
-namespace ThorsAnvil
-{
-    namespace MySQL
-    {
-        namespace Detail
-        {
-class RequPackagePrepareExecute: public RequPackage
-{
-    int statementID;
-    public:
-        RequPackagePrepareExecute(int statementID)
-            : RequPackage("")
-            , statementID(statementID)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
-        virtual  void build(ConectWriter& writer)       const override
-        {
-            writer.writeFixedLengthInteger<1>(0x17);
-            writer.writeFixedLengthInteger<4>(statementID);
-            /*
-             *  0x00    CURSOR_TYPE_NO_CURSOR
-             *  0x01    CURSOR_TYPE_READ_ONLY
-             *  0x02    CURSOR_TYPE_FOR_UPDATE
-             *  0x04    CURSOR_TYPE_SCROLLABLE
-             */
-            writer.writeFixedLengthInteger<1>(0x00);
-            writer.writeFixedLengthInteger<4>(1);
-        }
-};
-
 class RespPackagePrepareExecute: public RespPackage
 {
     int  columnCount;
@@ -199,8 +171,31 @@ class RespPackagePrepareExecute: public RespPackage
         bool hasDataRows()    const {return hasRows;}
         std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
 };
+
         }
     }
+}
+
+using namespace ThorsAnvil::MySQL;
+
+PrepareStatement::PrepareStatement(Connection& connectn, std::string const& statement)
+    : Statement(statement)
+    , connection(connectn)
+{
+    prepareResp = connection.sendMessage<Detail::RespPackagePrepare>(
+                                    Detail::RequPackagePrepare(statement),
+                                    Connection::Reset,
+                                    0x00,
+                                    [](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepare(firstByte, reader);}
+                              );
+    statementID = prepareResp->getStatementID();
+}
+
+PrepareStatement::~PrepareStatement()
+{
+    std::cerr << "~PrepareStatement()\n";
+    connection.sendMessage(Detail::RequPackagePrepareClose(statementID), Connection::Reset);
+    std::cerr << "~PrepareStatement() DONE\n";
 }
 
 void PrepareStatement::doExecute()
@@ -213,31 +208,6 @@ void PrepareStatement::doExecute()
                                     [this](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));}
                               );
     std::cerr << "doExecute Done\n";
-}
-
-namespace ThorsAnvil
-{
-    namespace MySQL
-    {
-        namespace Detail
-        {
-class RequPackagePrepareReset: public RequPackage
-{
-    int statementID;
-    public:
-        RequPackagePrepareReset(int statementID)
-            : RequPackage("")
-            , statementID(statementID)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const {return s;}
-        virtual  void build(ConectWriter& writer)       const
-        {
-            writer.writeFixedLengthInteger<1>(0x1A);
-            writer.writeFixedLengthInteger<4>(statementID);
-        }
-};
-        }
-    }
 }
 
 bool PrepareStatement::more()
