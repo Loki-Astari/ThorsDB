@@ -8,6 +8,8 @@
 
 using ThorsAnvil::SQL::StatementProxy;
 using ThorsAnvil::SQL::StatementType;
+using ThorsAnvil::SQL::UnixTimeStamp;
+
 template<typename T>
 void getField(int& nextRow, int& nextField, T& value)
 {
@@ -73,6 +75,9 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
 
             virtual void   bind(std::string const&)             {}
 
+            virtual void   bind(std::vector<char> const&)       {}
+            virtual void   bind(UnixTimeStamp const&)           {}
+
             // -----
 
             virtual void doExecute()                            {}
@@ -95,6 +100,10 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
             virtual void   retrieve(long double& value)         {getField(nextRow, nextField, value);}
 
             virtual void   retrieve(std::string& value)         {getFieldString(nextRow, nextField, value);}
+
+            virtual void   retrieve(std::vector<char>& value)   {value=std::vector<char>();}
+
+            virtual void   retrieve(UnixTimeStamp& value)       {value=UnixTimeStamp(static_cast<std::time_t>(0));}
         };
         MockMySQLConnection(std::string const&, int, std::string const&, std::string const&, std::string const&, ThorsAnvil::SQL::Options const&)
         {

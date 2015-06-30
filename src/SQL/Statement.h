@@ -4,7 +4,9 @@
 
 #include "SQLUtil.h"
 #include <memory>
+#include <vector>
 #include <string>
+#include <ctime>
 
 namespace ThorsAnvil
 {
@@ -27,6 +29,15 @@ class Statement
         void execute(BindArgs<R...> const& binds, F cb);
         template<typename F>
         void execute(F cb);
+};
+
+struct UnixTimeStamp
+{
+    std::time_t     time;
+
+        explicit UnixTimeStamp(std::time_t time):
+            time(time)
+        {}
 };
 
 class StatementProxy
@@ -52,6 +63,9 @@ class StatementProxy
         virtual void   bind(long double)                    = 0;
 
         virtual void   bind(std::string const&)             = 0;
+        virtual void   bind(std::vector<char> const&)       = 0;
+
+        virtual void   bind(UnixTimeStamp const&)           = 0;
 
         // -----
 
@@ -76,6 +90,9 @@ class StatementProxy
         virtual void   retrieve(long double&)               = 0;
 
         virtual void   retrieve(std::string&)               = 0;
+        virtual void   retrieve(std::vector<char>&)         = 0;
+
+        virtual void   retrieve(UnixTimeStamp&)             = 0;
 };
 
 class Cursor

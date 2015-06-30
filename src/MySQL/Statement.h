@@ -3,6 +3,7 @@
 #define THORS_ANVIL_MYSQL_STATEMENT_H
 
 #include "ThorSQL/Statement.h"
+#include <vector>
 
 namespace ThorsAnvil
 {
@@ -32,6 +33,9 @@ class Statement: public SQL::StatementProxy
         virtual void   bind(long double)                    override    {}
 
         virtual void   bind(std::string const&)             override    {}
+        virtual void   bind(std::vector<char> const&)       override    {}
+
+        virtual void   bind(SQL::UnixTimeStamp const&)      override    {}
 
             // -----
 
@@ -55,6 +59,9 @@ class Statement: public SQL::StatementProxy
         virtual void   retrieve(long double& value)         override    {value=0;}
 
         virtual void   retrieve(std::string& value)         override    {value="";}
+        virtual void   retrieve(std::vector<char>& value)   override    {value=std::vector<char>();}
+
+        virtual void   retrieve(SQL::UnixTimeStamp& value)  override    {value=SQL::UnixTimeStamp(static_cast<std::time_t>(0));}
     private:
 };
 
