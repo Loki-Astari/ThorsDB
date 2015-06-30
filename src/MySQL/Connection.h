@@ -18,9 +18,10 @@ using ThorsAnvil::SQL::Options;
 
 class Connection
 {
-    ConectReader&   packageReader;
-    ConectWriter&   packageWriter;
     public:
+        ConectReader&   packageReader;
+        ConectWriter&   packageWriter;
+
         Connection(std::string const& username,
                    std::string const& password,
                    std::string const& database,

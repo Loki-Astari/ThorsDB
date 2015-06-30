@@ -5,9 +5,13 @@
 #include "RequPackage.h"
 #include "RespPackage.h"
 #include "RespPackageEOF.h"
+#include "RespPackageOK.h"
+#include "RespPackageResultSet.h"
+#include "RespPackageColumnDefinition.h"
 #include "ThorMySQL.h"
 #include <stdexcept>
 #include <assert.h>
+#include <iostream>
 
 
 namespace ThorsAnvil
@@ -17,92 +21,6 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-struct ColumnDefinition
-{
-    std::string     catalog;
-    std::string     schema;
-    std::string     table;
-    std::string     orgTable;
-    std::string     name;
-    std::string     orgName;
-    std::size_t     lengthOfFixedField;
-    int             charSet;
-    int             columnLength;
-    int             type;
-    int             flags;
-    int             decimal;
-    int             filler;
-    std::vector<std::string>    defaultValues;
-
-    ColumnDefinition(ConectReader& reader, bool getDefaultValues = false)
-    {
-        unsigned long capabilities  = reader.getCapabilities();
-        if (capabilities & CLIENT_PROTOCOL_41)
-        {
-            catalog         = reader.lengthEncodedString();
-            schema          = reader.lengthEncodedString();
-            table           = reader.lengthEncodedString();
-            orgTable        = reader.lengthEncodedString();
-            name            = reader.lengthEncodedString();
-            orgName         = reader.lengthEncodedString();
-
-            std::size_t len = reader.lengthEncodedInteger();
-            if (len != 0x0c) {
-                throw std::runtime_error("Expected 0x0c: length of fixed-length fields [0c]");
-            }
-
-            charSet         = reader.fixedLengthInteger<2>();
-            columnLength    = reader.fixedLengthInteger<4>();
-            type            = reader.fixedLengthInteger<1>();
-            flags           = reader.fixedLengthInteger<2>();
-            decimal         = reader.fixedLengthInteger<1>();
-            filler          = reader.fixedLengthInteger<2>();
-            if (filler != 0) {
-                throw std::runtime_error("Expected 0x00 for filler");
-            }
-        }
-        else
-        {
-            table           = reader.lengthEncodedString();
-            name            = reader.lengthEncodedString();
-            std::size_t len = reader.lengthEncodedInteger();
-            if (len != 0x03) {
-                throw std::runtime_error("Expected 0x03: length of the column_length field [03]");
-            }
-            columnLength    = reader.fixedLengthInteger<3>();
-            len             = reader.lengthEncodedInteger();
-            if (len != 0x01) {
-                throw std::runtime_error("Expected 0x01: length of type field [01]");
-            }
-            type            = reader.fixedLengthInteger<1>();
-
-            if (capabilities & CLIENT_LONG_FLAG)
-            {
-                len         = reader.lengthEncodedInteger();
-                if (len != 0x03) {
-                    throw std::runtime_error("Expected 0x03: length of flags+decimals fields [03]");
-                }
-                flags           = reader.fixedLengthInteger<2>();
-                decimal         = reader.fixedLengthInteger<1>();
-            }
-            else
-            {
-                len         = reader.lengthEncodedInteger();
-                if (len != 0x02) {
-                    throw std::runtime_error("Expected 0x02: length of flags+decimals fields [02]");
-                }
-                flags           = reader.fixedLengthInteger<1>();
-                decimal         = reader.fixedLengthInteger<1>();
-            }
-        }
-        if (getDefaultValues) {
-            std::size_t len = reader.lengthEncodedInteger();
-            for(std::size_t loop=0;loop < len; ++loop) {
-                defaultValues.push_back(reader.lengthEncodedString());
-            }
-        }
-    }
-};
 
 class RequPackagePrepare: public RequPackage
 {
@@ -126,8 +44,8 @@ class RespPackagePrepare: public RespPackage
     int     numColumns;
     int     numParams;
     int     warningCount;
-    std::vector<ColumnDefinition>   paramInfo;
-    std::vector<ColumnDefinition>   columnInfo;
+    std::vector<RespPackageColumnDefinition>   paramInfo;
+    std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
         RespPackagePrepare(int firstByte, ConectReader& reader)
             : RespPackage(reader)
@@ -147,10 +65,8 @@ class RespPackagePrepare: public RespPackage
                     paramInfo.emplace_back(reader);
                     reader.reset();
                 }
-                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
-                if (mark->isError()) {
-                    throw std::runtime_error(std::string("Expecting EOF markere afer Param info package: ") + mark->message());
-                }
+
+                reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
             }
             if (numColumns > 0) {
                 reader.reset();
@@ -158,10 +74,7 @@ class RespPackagePrepare: public RespPackage
                     columnInfo.emplace_back(reader);
                     reader.reset();
                 }
-                std::unique_ptr<RespPackage> mark = reader.getNextPackage(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
-                if (mark->isError()) {
-                    throw std::runtime_error(std::string("Expecting EOF markere afer Column info package: ") + mark->message());
-                }
+                reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
             }
         }
 
@@ -181,9 +94,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
 {
     using Detail::RespPackagePrepare;
     using Detail::RequPackagePrepare;
-    using PrepareResp = std::unique_ptr<RespPackagePrepare>;
-
-    PrepareResp prepareResp = connection.sendMessage<RespPackagePrepare>(
+    prepareResp = connection.sendMessage<RespPackagePrepare>(
                                     RequPackagePrepare(statement),
                                     Connection::Reset,
                                     0x00,
@@ -217,19 +128,44 @@ class RequPackageExecute: public RequPackage
              *  0x02    CURSOR_TYPE_FOR_UPDATE
              *  0x04    CURSOR_TYPE_SCROLLABLE
              */
-            writer.writeFixedLengthInteger<1>(0x01);
+            writer.writeFixedLengthInteger<1>(0x00);
             writer.writeFixedLengthInteger<4>(1);
         }
 };
 
 class RespPackageExecute: public RespPackage
 {
+    int  columnCount;
+    bool hasRows;
+    std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
-        RespPackageExecute(int, ConectReader& reader)
+        RespPackageExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
             : RespPackage(reader)
         {
+            std::cerr << "RespPackageExecute\n";
+            columnCount = firstByte;
+            reader.reset();
+            for(int loop = 0;loop < columnCount; ++loop) {
+                std::cerr << "    Reading Col Definition\n";
+                columnInfo.push_back(RespPackageColumnDefinition(reader));
+                reader.reset();
+            }
+            std::cerr << "Done\n";
+            auto mark = reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
+            std::cerr << "MArk Flags: " << std::hex << mark->getStatusFlag() << "\n";
+            std::cerr << "MArk Flags: " << std::hex << (mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS) << "\n";
+            std::cerr << "Read EOF\n";
+
+            hasRows = !(mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS);
+
+            // Stream now contains the data followed by an EOF token
+            // reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
         }
         virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+
+        int  getColumnCount() const {return columnCount;}
+        bool hasDataRows()    const {return hasRows;}
+        std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
 };
         }
     }
@@ -237,17 +173,60 @@ class RespPackageExecute: public RespPackage
 
 void PrepareStatement::doExecute()
 {
-    connection.sendMessage<Detail::RespPackageExecute>(
+    std::cerr << "doExecute\n";
+    prepareExec = connection.sendMessage<Detail::RespPackageExecute>(
                                     Detail::RequPackageExecute(statementID),
                                     Connection::Reset,
-                                    0x05,
-                                    [](int firstByte, ConectReader& reader){return new Detail::RespPackageExecute(firstByte, reader);}
+                                    -1, // Does not matter what the first byte is 
+                                    [this](int firstByte, ConectReader& reader){return new Detail::RespPackageExecute(firstByte, reader, *(this->prepareResp));}
                               );
+    std::cerr << "doExecute Done\n";
+}
+
+namespace ThorsAnvil
+{
+    namespace MySQL
+    {
+        namespace Detail
+        {
+class RequPackagePrepareReset: public RequPackage
+{
+    int statementID;
+    public:
+        RequPackagePrepareReset(int statementID)
+            : RequPackage("")
+            , statementID(statementID)
+        {}
+        virtual  std::ostream& print(std::ostream& s)   const {return s;}
+        virtual  void build(ConectWriter& writer)       const
+        {
+            writer.writeFixedLengthInteger<1>(0x1A);
+            writer.writeFixedLengthInteger<4>(statementID);
+        }
+};
+        }
+    }
 }
 
 bool PrepareStatement::more()
 {
-    return false;
+    connection.packageReader.reset();
+    if (!prepareExec->hasDataRows()) {
+        std::cout << "No Rows Returned\n";
+        return false;
+    }
+    std::cout << "More\n";
+    nextLine = connection.recvMessage<Detail::RespPackageResultSet>(0x00, [this](int firstByte, ConectReader& reader){return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());});
+    std::cout << "   Line: " << nextLine.get() << "\n";
+    if (nextLine.get() == nullptr) {
+        connection.sendMessage<Detail::RespPackageOK>(
+                                    Detail::RequPackagePrepareReset(statementID),
+                                    Connection::Reset,
+                                    -1,
+                                    [this](int, ConectReader&){return nullptr;} // Expecting an OK message.
+                                );
+    }
+    return nextLine.get() != nullptr;
 }
 
 #ifdef COVERAGE_MySQL
@@ -256,8 +235,12 @@ bool PrepareStatement::more()
  * It is not part of the live code.
  */
 #include "Connection.tpp"
+#include "ConectReader.tpp"
 
 template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackageExecute> ConectReader::recvMessage<Detail::RespPackageExecute>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackagePrepare> ConectReader::recvMessage<Detail::RespPackagePrepare>(int, std::function<RespPackage*(int, ConectReader&)>);
+
 
 #endif
 

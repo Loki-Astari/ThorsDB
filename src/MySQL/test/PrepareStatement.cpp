@@ -16,7 +16,7 @@ TEST(PrepareStatementTest, Create)
                                     options);
 
 
-    SQL::Statement      statement(connection, "SELECT * FROM PEOPLE");
+    SQL::Statement      statement(connection, "SELECT * FROM People");
 }
 TEST(PrepareStatementTest, Execute)
 {
@@ -29,9 +29,9 @@ TEST(PrepareStatementTest, Execute)
                                     options);
 
 
-    SQL::Statement      statement(connection, "SELECT * FROM PEOPLE");
+    SQL::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
     long                count = 0;
-    statement.execute([&count](int id, std::string name, short age, char sex, double height)
+    statement.execute([&count](int id, std::string name, short age, std::string sex, double height)
                         {
                             std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                             ++count;
