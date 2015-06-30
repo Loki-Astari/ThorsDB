@@ -33,10 +33,10 @@ RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expec
     if (packageType == 0x00 && expectedResult != 0x00) {
         return new Detail::RespPackageOK(packageType, *this);
     }
-    else if (packageType == 0xFE && expectedResult != 0xFE) {
+    else if (packageType == 0xFE) {
         return new Detail::RespPackageEOF(packageType, *this);
     }
-    else if (packageType == 0xFF && expectedResult != 0xFF) {
+    else if (packageType == 0xFF) {
         return new Detail::RespPackageERR(packageType, *this);
     }
     else if (packageType == expectedResult || expectedResult == -1) {

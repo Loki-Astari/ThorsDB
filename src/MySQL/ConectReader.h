@@ -65,7 +65,7 @@ class ConectReader
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
         std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
         template<typename Resp>
-        std::unique_ptr<Resp>           recvMessage(int expectedResult, OKAction expectedResultAction);
+        std::unique_ptr<Resp>           recvMessage(int expectedResult = -1, OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*{throw std::runtime_error("Failed");});
     private:
         RespPackage*    getNextPackageWrap(int expectedResult, OKAction expectedResultAction);
     public:

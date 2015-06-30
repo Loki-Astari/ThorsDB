@@ -132,7 +132,7 @@ class RespPackagePrepare: public RespPackage
                     reader.reset();
                 }
 
-                reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
+                reader.recvMessage<RespPackageEOF>();
             }
             if (numColumns > 0) {
                 reader.reset();
@@ -140,7 +140,7 @@ class RespPackagePrepare: public RespPackage
                     columnInfo.emplace_back(reader);
                     reader.reset();
                 }
-                reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
+                reader.recvMessage<RespPackageEOF>();
             }
         }
 
@@ -175,11 +175,10 @@ class RespPackagePrepareExecute: public RespPackage
                 columnInfo.push_back(RespPackageColumnDefinition(reader));
                 reader.reset();
             }
-            auto mark = reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
+            auto mark = reader.recvMessage<RespPackageEOF>(0xFE);
             hasRows = !(mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS);
 
             // Stream now contains the data followed by an EOF token
-            // reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
         }
         virtual  std::ostream& print(std::ostream& s)   const override
         {
@@ -205,7 +204,9 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
                                     Detail::RequPackagePrepare(statement),
                                     Connection::Reset,
                                     0x00,
-                                    [](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepare(firstByte, reader);}
+                                    [](int firstByte, ConectReader& reader){
+                                        return new Detail::RespPackagePrepare(firstByte, reader);
+                                    }
                               );
     statementID = prepareResp->getStatementID();
 }
@@ -221,7 +222,9 @@ void PrepareStatement::doExecute()
                                     Detail::RequPackagePrepareExecute(statementID),
                                     Connection::Reset,
                                     -1, // Does not matter what the first byte is 
-                                    [this](int firstByte, ConectReader& reader){return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));}
+                                    [this](int firstByte, ConectReader& reader){
+                                        return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));
+                                    }
                               );
 }
 
@@ -231,13 +234,16 @@ bool PrepareStatement::more()
     if (!prepareExec->hasDataRows()) {
         return false;
     }
-    nextLine = connection.recvMessage<Detail::RespPackageResultSet>(0x00, [this](int firstByte, ConectReader& reader){return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());});
+    nextLine = connection.recvMessage<Detail::RespPackageResultSet>(
+                                    0x00,
+                                    [this](int firstByte, ConectReader& reader){
+                                        return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());
+                                    });
     if (nextLine.get() == nullptr) {
         connection.sendMessage<Detail::RespPackageOK>(
                                     Detail::RequPackagePrepareReset(statementID),
                                     Connection::Reset,
-                                    -1,
-                                    [this](int, ConectReader&){return nullptr;} // Expecting an OK message.
+                                    -1 // Only looking for the OK message. Anything else will throw an exception.
                                 );
     }
     return nextLine.get() != nullptr;
