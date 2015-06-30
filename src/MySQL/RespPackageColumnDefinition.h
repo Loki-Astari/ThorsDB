@@ -32,6 +32,28 @@ struct RespPackageColumnDefinition
     int             filler;
     std::vector<std::string>    defaultValues;
 
+    friend std::ostream& operator<<(std::ostream& s, RespPackageColumnDefinition const& data) {
+        s << "RespPackageColumnDefinition:"
+          << " catalog: " << data.catalog
+          << " schema: " << data.schema
+          << " table: " << data.table
+          << " orgTable: " << data.orgTable
+          << " name: " << data.name
+          << " orgName: " << data.orgName
+          << " lengthOfFixedField: " << data.lengthOfFixedField
+          << " charSet: " << data.charSet
+          << " columnLength: " << data.columnLength
+          << " type: " << data.type
+          << " flags: " << data.flags
+          << " decimal: " << data.decimal
+          << " filler: (";
+        for(auto const& dv: data.defaultValues) {
+            s << dv << ", ";
+        }
+        s << ")\n";
+        return s;
+    }
+
     RespPackageColumnDefinition(ConectReader& reader, bool getDefaultValues = false)
     {
         unsigned long capabilities  = reader.getCapabilities();

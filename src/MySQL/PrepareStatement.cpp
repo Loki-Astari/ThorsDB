@@ -29,7 +29,10 @@ class RequPackagePrepare: public RequPackage
             : RequPackage("RequPackagePrepare")
             , statement(statement)
         {}
-        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual  std::ostream& print(std::ostream& s)   const override
+        {
+            return s << "RequPackagePrepare: statement: " << statement << "\n";
+        }
         virtual  void build(ConectWriter& writer)       const override
         {
             writer.writeFixedLengthInteger<1>(0x16);
@@ -42,10 +45,13 @@ class RequPackagePrepareClose: public RequPackage
     int statementID;
     public:
         RequPackagePrepareClose(int statementID)
-            : RequPackage("")
+            : RequPackage("RequPackagePrepareClose")
             , statementID(statementID)
         {}
-        virtual  std::ostream& print(std::ostream& s)   const {return s;}
+        virtual  std::ostream& print(std::ostream& s)   const
+        {
+            return s << "RequPackagePrepareClose: statementID: " << statementID << "\n";
+        }
         virtual  void build(ConectWriter& writer)       const
         {
             writer.writeFixedLengthInteger<1>(0x19);
@@ -58,10 +64,13 @@ class RequPackagePrepareExecute: public RequPackage
     int statementID;
     public:
         RequPackagePrepareExecute(int statementID)
-            : RequPackage("")
+            : RequPackage("RequPackagePrepareExecute")
             , statementID(statementID)
         {}
-        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual  std::ostream& print(std::ostream& s)   const override
+        {
+            return s << "RequPackagePrepareExecute: statementID: " << statementID << "\n";
+        }
         virtual  void build(ConectWriter& writer)       const override
         {
             writer.writeFixedLengthInteger<1>(0x17);
@@ -82,10 +91,13 @@ class RequPackagePrepareReset: public RequPackage
     int statementID;
     public:
         RequPackagePrepareReset(int statementID)
-            : RequPackage("")
+            : RequPackage("RequPackagePrepareReset")
             , statementID(statementID)
         {}
-        virtual  std::ostream& print(std::ostream& s)   const {return s;}
+        virtual  std::ostream& print(std::ostream& s)   const
+        {
+            return s << "RequPackagePrepareReset: statementID: " << statementID << "\n";
+        }
         virtual  void build(ConectWriter& writer)       const
         {
             writer.writeFixedLengthInteger<1>(0x1A);
@@ -133,7 +145,19 @@ class RespPackagePrepare: public RespPackage
             }
         }
 
-        virtual std::ostream& print(std::ostream& s)    const override  {return s;}
+        virtual std::ostream& print(std::ostream& s)    const override
+        {
+            s << "RespPackagePrepare: statementID" << statementID << " numColumns: " << numColumns << " numParams: " << numParams << " warningCount: " << warningCount << "\n";
+            s << "\tparamInfo:\n";
+            for(auto const& loop: paramInfo) {
+                s << "\t\t" << loop;
+            }
+            s << "\tcolumnInfo:\n";
+            for(auto const& loop: columnInfo) {
+                s << "\t\t" << loop;
+            }
+            return s;
+        }
         int     getStatementID()                        const           {return statementID;}
 };
 
@@ -165,7 +189,10 @@ class RespPackagePrepareExecute: public RespPackage
             // Stream now contains the data followed by an EOF token
             // reader.recvMessage<RespPackageEOF>(0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);});
         }
-        virtual  std::ostream& print(std::ostream& s)   const override {return s;}
+        virtual  std::ostream& print(std::ostream& s)   const override
+        {
+            return s << "RespPackagePrepareExecute: columnCount: " << columnCount << " hasRows: " << hasRows << "\n";
+        }
 
         int  getColumnCount() const {return columnCount;}
         bool hasDataRows()    const {return hasRows;}
