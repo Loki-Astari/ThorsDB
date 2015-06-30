@@ -2,6 +2,7 @@
 #include "ConectReader.h"
 #include "PackageStream.h"
 #include "RespPackageOK.h"
+#include "RespPackageEOF.h"
 #include "RespPackageERR.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -31,6 +32,9 @@ RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expec
     int    packageType  = fixedLengthInteger<1>();;
     if (packageType == 0x00 && expectedResult != 0x00) {
         return new Detail::RespPackageOK(packageType, *this);
+    }
+    else if (packageType == 0xFE && expectedResult != 0xFE) {
+        return new Detail::RespPackageEOF(packageType, *this);
     }
     else if (packageType == 0xFF && expectedResult != 0xFF) {
         return new Detail::RespPackageERR(packageType, *this);
