@@ -84,9 +84,11 @@ Connection::~Connection()
  * It is not part of the live code.
  */
 #include "Connection.tpp"
+#include "ConectReader.tpp"
 
 template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
 template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
 
 #endif
 

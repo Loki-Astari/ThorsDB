@@ -64,6 +64,8 @@ class ConectReader
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
         std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
+        template<typename Resp>
+        std::unique_ptr<Resp>           recvMessage(int expectedResult, OKAction expectedResultAction);
     private:
         RespPackage*    getNextPackageWrap(int expectedResult, OKAction expectedResultAction);
     public:

@@ -215,5 +215,8 @@ template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
 template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
 template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
 
+
+template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(int, std::function<RespPackage*(int, ConectReader&)>);
+
 #endif
 
