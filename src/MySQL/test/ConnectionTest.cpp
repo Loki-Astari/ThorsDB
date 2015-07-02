@@ -16,6 +16,7 @@
  */
 TEST(ConnectionTest, CreateMySQLOnGeneric)
 {
+#if 0
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -23,10 +24,12 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
+#endif
 }
 
 TEST(ConnectionTest, Create)
 {
+#if 0
     using namespace ThorsAnvil;
     using Buffer=MySQL::PackageBufferMySQLDebugBuffer<MySQL::MySQLStream>;
     std::map<std::string, std::string>      options;
@@ -41,6 +44,7 @@ TEST(ConnectionTest, Create)
                                        options,
                                        reader,
                                        writer);
+#endif
 }
 
 
