@@ -170,50 +170,20 @@ TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockZero)
     ASSERT_EQ(0x00, result[0xFFFFFF + 4 + 2]);
     ASSERT_EQ(0x01, result[0xFFFFFF + 4 + 3]);
 }
-TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockTen)
+
+
+TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockTenInOneGo)
 {
+    static char    hugeBlockData[0x2000002] = {0};
     char const      data[] = "";
-    unsigned char   result[4 + 0xFFFFFF + 4 + 10];
+    unsigned char   result[4 + 0xFFFFFF + 4+ 0xFFFFFF + 10];
     MockStream      buffer(data, sizeof(data), result);
     MySqlBuf        mysqlBuffer(buffer);
-    char            src[256] = {
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-    };
 
     long long w = 0;
-    for(unsigned long loop = 0; loop < 0x10101; ++loop) {
-        mysqlBuffer.write(src, 0xFF);
-        w += 0xFF;
-    }
-    mysqlBuffer.write(src, 10);
+    mysqlBuffer.write(hugeBlockData, sizeof(hugeBlockData));
     mysqlBuffer.flush();
-    ASSERT_EQ(0xFFFFFFLL + 4 + 4 + 10, buffer.writLen());
-    ASSERT_EQ(0xFF, result[0]);
-    ASSERT_EQ(0xFF, result[1]);
-    ASSERT_EQ(0xFF, result[2]);
-    ASSERT_EQ(0,    result[3]);
-    ASSERT_EQ(0x0A, result[0xFFFFFF + 4 + 0]);
-    ASSERT_EQ(0x00, result[0xFFFFFF + 4 + 1]);
-    ASSERT_EQ(0x00, result[0xFFFFFF + 4 + 2]);
-    ASSERT_EQ(0x01, result[0xFFFFFF + 4 + 3]);
+    ASSERT_EQ(4 + 0xFFFFFFLL + 4 + 0xFFFFFF + 4 + 4, buffer.writLen());
 }
 TEST(PackageBufferMySQLDebugBufferTest, flush)
 {
