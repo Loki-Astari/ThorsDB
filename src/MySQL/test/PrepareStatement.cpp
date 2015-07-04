@@ -7,7 +7,6 @@
 
 TEST(PrepareStatementTest, Create)
 {
-#if 0
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -18,11 +17,9 @@ TEST(PrepareStatementTest, Create)
 
 
     SQL::Statement      statement(connection, "SELECT * FROM People");
-#endif
 }
 TEST(PrepareStatementTest, Execute)
 {
-#if 0
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -40,6 +37,5 @@ TEST(PrepareStatementTest, Execute)
                             ++count;
                         });
     ASSERT_EQ(2, count);
-#endif
 }
 
