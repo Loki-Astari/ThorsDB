@@ -1,6 +1,8 @@
 
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageHandShake.h"
+#include "ConectReader.h"
+#include "PackageStream.h"
 #include "test/MockStream.h"
 #include <algorithm>
 

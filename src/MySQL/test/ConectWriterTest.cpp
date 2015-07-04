@@ -1,5 +1,6 @@
 
 #include "ConectWriter.h"
+#include "PackageStream.h"
 
 #include "gtest/gtest.h"
 #include "test/MockStream.h"

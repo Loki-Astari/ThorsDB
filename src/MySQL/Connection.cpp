@@ -1,16 +1,13 @@
 
 #include "Connection.h"
-#include "Statement.h"
 #include "ThorSQL/Connection.h"
 #include "PackageStream.h"
 #include "PackageBuffer.h"
-#include "ConectReader.h"
+#include "ConectWriter.h"
 #include "RespPackageHandShake.h"
 #include "RequPackageHandShakeResp.h"
 #include "PrepareStatement.h"
-#include "RespPackage.h"
 #include "RespPackageOK.h"
-#include <sstream>
 
 using namespace ThorsAnvil::MySQL;
 

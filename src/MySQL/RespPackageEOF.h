@@ -4,7 +4,7 @@
 #include "RespPackage.h"
 #include "ConectReader.h"
 #include "ThorMySQL.h"
-#include <assert.h>
+#include <cassert>
 
 namespace ThorsAnvil
 {

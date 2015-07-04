@@ -4,10 +4,7 @@
 
 #include "ThorSQL/SQLUtil.h"
 #include "ConectReader.h"
-#include "ConectWriter.h"
-#include "RespPackage.h"
 #include <string>
-#include <map>
 
 namespace ThorsAnvil
 {
@@ -16,6 +13,8 @@ namespace ThorsAnvil
 
 using ThorsAnvil::SQL::Options;
 
+class ConectWriter;
+class RespPackage;
 class Connection
 {
     public:

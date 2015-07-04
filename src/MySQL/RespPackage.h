@@ -2,7 +2,6 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
 #include <ostream>
-#include <iomanip>
 
 namespace ThorsAnvil
 {

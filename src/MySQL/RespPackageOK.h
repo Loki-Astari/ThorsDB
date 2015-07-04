@@ -3,7 +3,8 @@
 
 #include "RespPackage.h"
 #include "ConectReader.h"
-#include <assert.h>
+#include <cassert>
+#include <iomanip>
 
 namespace ThorsAnvil
 {

@@ -3,14 +3,12 @@
 #include "Connection.h"
 #include "ConectReader.h"
 #include "RequPackage.h"
-#include "RespPackage.h"
 #include "RespPackageEOF.h"
 #include "RespPackageOK.h"
 #include "RespPackageResultSet.h"
 #include "RespPackageColumnDefinition.h"
 #include "ThorMySQL.h"
-#include <stdexcept>
-#include <assert.h>
+#include <cassert>
 
 
 namespace ThorsAnvil
