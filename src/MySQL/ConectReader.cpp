@@ -43,7 +43,10 @@ RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expec
         return expectedResultAction(packageType, *this);
     }
     else {
-        throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
+        throw std::runtime_error(
+                std::string("ThorsAnvil::MySQL::ConectReader::getNextPackage: Unknown Result Type: ")
+                + std::to_string(packageType)
+              );
     }
 }
 
@@ -61,7 +64,10 @@ unsigned long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
     {
         case 0xFA:
         case 0xFB:
-        case 0xFF:  throw std::runtime_error(std::string("ConectReader::lengthEncodedInteger: Invalid length encoding: ") + std::to_string(type));
+        case 0xFF:  throw std::runtime_error(
+                                std::string("ThorsAnvil::MySQL::ConectReader::lengthEncodedInteger: Invalid length encoding: ")
+                                + std::to_string(type)
+                          );
         case 0xFC:  result  = fixedLengthInteger<2>(); break;
         case 0xFD:  result  = fixedLengthInteger<3>(); break;
         case 0xFE:  result  = fixedLengthInteger<8>(); break;

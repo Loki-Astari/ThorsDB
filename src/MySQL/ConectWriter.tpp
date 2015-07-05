@@ -15,8 +15,14 @@ void ConectWriter::writeFixedLengthInteger(unsigned long long value)
     THOR_MYSQL_WRITE_INT(value, len);
 }
 
-template<typename T> inline bool writeParameterValue(ConectWriter&, T const&)    {throw std::runtime_error(std::string("writeParameterValue: Undefined for this type ") + typeid(T).name());}
-template<typename T> inline bool writeParameterType(ConectWriter&, T const&)     {throw std::runtime_error(std::string("writeParameterType: Undefined for this type ") + typeid(T).name());}
+template<typename T> inline bool writeParameterValue(ConectWriter&, T const&)
+{
+    throw std::runtime_error(std::string("ThorsAnvil::MySQL::writeParameterValue: Undefined for this type ") + typeid(T).name());
+}
+template<typename T> inline bool writeParameterType(ConectWriter&, T const&)
+{
+    throw std::runtime_error(std::string("ThorsAnvil::MySQL::writeParameterType: Undefined for this type ") + typeid(T).name());
+}
 
 // Specializations
 template<> inline bool writeParameterValue<std::string>(ConectWriter& p, std::string const& val)     {p.writeLengthEncodedString(val);return true;}

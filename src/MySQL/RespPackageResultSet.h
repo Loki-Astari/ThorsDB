@@ -41,7 +41,7 @@ inline T stringtointeger(std::string const& t)
     std::size_t  pos;
     T            result = standardConverter<T>(t, &pos);
     if (pos != t.size()) {
-    throw std::runtime_error("Failed to convert whole integer");
+    throw std::runtime_error("ThorsAnvil::MySQL::stringtointeger: Failed to convert whole integer");
     }
     return result;
 }
@@ -51,7 +51,7 @@ inline T readParameterValue(ConectReader&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    throw std::runtime_error("Unknown conversion");
+    throw std::runtime_error("ThorsAnvil::MySQL::readParameterValue: Unknown conversion");
 }
 
 template<> inline std::string       readParameterValue<MYSQL_TYPE_VAR_STRING,   std::string>(ConectReader& p)        {return p.lengthEncodedString();}
@@ -153,7 +153,10 @@ Unknown format on stream
 */
 
 
-template<typename T> inline T readNullParameter()                                              {throw std::runtime_error(std::string("readNullParameter: Undefined for this type ") + typeid(T).name());}
+template<typename T> inline T readNullParameter()
+{
+    throw std::runtime_error(std::string("ThorsAnvil::MySQL::readNullParameter: Undefined for this type ") + typeid(T).name());
+}
 
 template<> inline std::string readNullParameter<std::string>()                                 {return "";}
 template<> inline int         readNullParameter<int>()                                         {return 0;}
@@ -202,7 +205,7 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_DATETIME2:      return readParameterValue<MYSQL_TYPE_DATETIME2, T>(reader);
             case MYSQL_TYPE_TIME2:          return readParameterValue<MYSQL_TYPE_TIME2, T>(reader);
             default:
-                throw std::runtime_error("Unimplemented Column Type");
+                throw std::runtime_error("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: Unimplemented Column Type");
         }
     }
 

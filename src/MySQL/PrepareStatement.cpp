@@ -221,38 +221,44 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
     for(auto const& col: columns) {
         switch(col.type)
         {
-            case MYSQL_TYPE_VAR_STRING:     validateInfo.append(1, '\x0');break;
-            case MYSQL_TYPE_STRING:         validateInfo.append(1, '\x0');break;
-            case MYSQL_TYPE_VARCHAR:        validateInfo.append(1, '\x0');break;
-            case MYSQL_TYPE_TINY_BLOB:      validateInfo.append(1, '\x0');break;
-            case MYSQL_TYPE_MEDIUM_BLOB:    validateInfo.append(1, '\x0');break;
-            case MYSQL_TYPE_BLOB:           validateInfo.append(1, '\x0');break;
-            case MYSQL_TYPE_LONG_BLOB:      validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_VAR_STRING:
+            case MYSQL_TYPE_STRING:
+            case MYSQL_TYPE_VARCHAR:
+            case MYSQL_TYPE_TINY_BLOB:
+            case MYSQL_TYPE_MEDIUM_BLOB:
+            case MYSQL_TYPE_BLOB:
+            case MYSQL_TYPE_LONG_BLOB:
+                validateInfo.append(1, '\x0');
+                break;
             case MYSQL_TYPE_DECIMAL:
             case MYSQL_TYPE_NEWDECIMAL:
                 validateInfo.append(1, '\x1');
                 validateInfo.append(1, '0');   // Character zero.
                 break;
             case MYSQL_TYPE_LONGLONG:
-            case MYSQL_TYPE_DOUBLE:         validateInfo.append(4, '\x0'); // 4 and fall
+            case MYSQL_TYPE_DOUBLE:
+                validateInfo.append(4, '\x0'); // 4 and fall
             case MYSQL_TYPE_LONG:
             case MYSQL_TYPE_INT24:
-            case MYSQL_TYPE_FLOAT:          validateInfo.append(2, '\x0'); // 2 and fall
-            case MYSQL_TYPE_SHORT:          validateInfo.append(1, '\x0'); // 1 and fall
-            case MYSQL_TYPE_TINY:           validateInfo.append(1, '\x0');
-                                            break;
+            case MYSQL_TYPE_FLOAT:
+                validateInfo.append(2, '\x0'); // 2 and fall
+            case MYSQL_TYPE_SHORT:
+                validateInfo.append(1, '\x0'); // 1 and fall
+            case MYSQL_TYPE_TINY:
+                validateInfo.append(1, '\x0');
+                break;
             case MYSQL_TYPE_DATE:
             case MYSQL_TYPE_DATETIME:
             case MYSQL_TYPE_TIMESTAMP:
-                 validateInfo.append(1, '\x4');
-                 validateInfo.append(4, '\x0');
-                 break;
+                validateInfo.append(1, '\x4');
+                validateInfo.append(4, '\x0');
+                break;
             case MYSQL_TYPE_TIME:
-                 validateInfo.append(1, '\x8');
-                 validateInfo.append(8, '\x0');
-                 break;
+                validateInfo.append(1, '\x8');
+                validateInfo.append(8, '\x0');
+                break;
             default:
-                throw std::runtime_error("Unknown Type");
+                throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: Unknown Type");
         }
     }
     // Buffer
@@ -261,7 +267,7 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
 void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
 {
     if (position + len > validateInfo.size()) {
-        throw std::runtime_error("No more data");
+        throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::read: No more data");
     }
     std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
     position += len;
@@ -307,7 +313,7 @@ PrepareStatement::~PrepareStatement()
 void PrepareStatement::doExecute()
 {
     if (!validatorStream.empty()) {
-        throw std::runtime_error("PrepareStatement::doExecute: Not all returned values are being used by the callback function");
+        throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all returned values are being used by the callback function");
     }
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID),

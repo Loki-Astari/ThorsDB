@@ -19,16 +19,16 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
     , capabilities(handshake.getCapabilities())
 {
     if (authPluginName == "mysql_old_password")
-    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: mysql_old_password: not supported");
+    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: mysql_old_password: not supported");
     }
     else if (authPluginName == "mysql_clear_password")
-    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: mysql_clear_password: not supported");
+    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: mysql_clear_password: not supported");
     }
     else if (authPluginName == "authentication_windows_client")
-    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: authentication_windows_client: not supported");
+    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: authentication_windows_client: not supported");
     }
     else if (authPluginName == "sha256_password")
-    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: sha256_password: not supported");
+    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: sha256_password: not supported");
     }
     else if (authPluginName == "mysql_native_password")
     {
@@ -52,7 +52,7 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
         authResponse    = std::string(extendedHash, extendedHash + SHA_DIGEST_LENGTH);
     }
     else
-    {   throw std::runtime_error("HandshakeResponsePackage::HandshakeResponsePackage: UNKNOWN authentication method(" + authPluginName + "): not supported");
+    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: UNKNOWN authentication method(" + authPluginName + "): not supported");
     }
 }
 

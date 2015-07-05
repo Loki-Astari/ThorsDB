@@ -38,7 +38,12 @@ class Connection
         template<typename Resp>
         std::unique_ptr<Resp> recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*{throw std::runtime_error("Failed");});
+        std::unique_ptr<Resp> sendMessage(Requ const&            request,
+                                          PacketContinuation     cont,
+                                          int                    expectedResult,
+                                          ConectReader::OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*
+                                                                                        {throw std::runtime_error("ThorsAnvil::MySQL::Connection::sendMessage: No result expected");}
+                                        );
         template<typename Requ>
         void                  sendMessage(Requ const& request, PacketContinuation cont);
 };

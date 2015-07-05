@@ -135,7 +135,7 @@ template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::flush()
 {
     if (flushed) {
-        throw std::runtime_error("horsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush: Already flushed\n");
+        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush: Already flushed\n");
     }
     flushed = true;
     std::size_t   currentSize = sendBuffer.size();
