@@ -146,6 +146,26 @@ void PackageBufferMySQLDebugBuffer<T>::flush()
 }
 
 template<typename T>
+void PackageBufferMySQLDebugBuffer<T>::drop()
+{
+    std::size_t dataLeft;
+    std::vector<char>   drop;
+    do
+    {
+        std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
+        drop.resize(readDataAvailable);
+        read(&drop[0], readDataAvailable);
+
+        dataLeft    = 0;
+        if (hasMore) {
+            nextPacket();
+            dataLeft = readCurrentPacketSize - readCurrentPacketPosition;
+        }
+    }
+    while(dataLeft != 0);
+}
+
+template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::reset()
 {
     std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;

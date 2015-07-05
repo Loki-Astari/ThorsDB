@@ -241,4 +241,95 @@ TEST(PackageBufferMySQLDebugBufferTest, readRemainingData)
     std::string remaining = mysqlBuffer.readRemainingData();
     ASSERT_EQ("1234567890", remaining);
 }
+TEST(PackageBufferMySQLDebugBufferTest, dropDataPreCheck)
+{
+    char const      data[] = "\x0A\x00\x00" // size
+                             "\x00"         // id
+                             "\x01" "A"     // String
+                             "1234567890"   // Remaining String
+                             ;
+    MockStream      buffer(data, sizeof(data) - 1);
+    MySqlBuf        mysqlBuffer(buffer);
+
+    char            result[4];
+    mysqlBuffer.read(result, 2);
+    ASSERT_THROW(mysqlBuffer.reset(), std::runtime_error);
+}
+TEST(PackageBufferMySQLDebugBufferTest, dropData)
+{
+    char const      data[] = "\x0A\x00\x00" // size
+                             "\x00"         // id
+                             "\x01" "A"     // String
+                             "1234567890"   // Remaining String
+                             ;
+    MockStream      buffer(data, sizeof(data) - 1);
+    MySqlBuf        mysqlBuffer(buffer);
+
+    char            result[4];
+    mysqlBuffer.read(result, 2);
+
+    // Check the test dropDataPreCheck.
+    // Because there was data left the reset causes an exception.
+    // Now we drop the data before the reset. This means we should
+    // be at the end of the package and reset is now OK
+    mysqlBuffer.drop();
+    ASSERT_NO_THROW(mysqlBuffer.reset());
+}
+TEST(PackageBufferMySQLDebugBufferTest, dropDataNoneRead)
+{
+    char const      data[] = "\x0A\x00\x00" // size
+                             "\x00"         // id
+                             "\x01" "A"     // String
+                             "1234567890"   // Remaining String
+                             ;
+    MockStream      buffer(data, sizeof(data) - 1);
+    MySqlBuf        mysqlBuffer(buffer);
+
+    mysqlBuffer.drop();
+    ASSERT_NO_THROW(mysqlBuffer.reset());
+}
+TEST(PackageBufferMySQLDebugBufferTest, dropDataFromHugePackageSecondEmpty)
+{
+    std::vector<char>      data(4 + 0xFFFFFF + 4 + 0);
+    data[0]                 = '\xFF';
+    data[1]                 = '\xFF';
+    data[2]                 = '\xFF';       // Size 0xFFFFFF
+    data[3]                 = '\x00';       // id 0
+    data[4+0xFFFFFF + 0]    = '\x00';
+    data[4+0xFFFFFF + 1]    = '\x00';
+    data[4+0xFFFFFF + 2]    = '\x00';       // Size 0x000000
+    data[4+0xFFFFFF + 3]    = '\x01';       // id 1
+
+    MockStream      buffer(&data[0], data.size());
+    MySqlBuf        mysqlBuffer(buffer);
+
+    char        temp[10];
+    mysqlBuffer.read(temp, 10);
+
+    mysqlBuffer.drop();
+    ASSERT_NO_THROW(mysqlBuffer.reset());
+    ASSERT_EQ(4 + 0xFFFFFF + 4 + 0, buffer.readLen());
+}
+TEST(PackageBufferMySQLDebugBufferTest, dropDataFromHugePackageSecondWithSome)
+{
+    std::vector<char>      data(4 + 0xFFFFFF + 4 + 10);
+    data[0]                 = '\xFF';
+    data[1]                 = '\xFF';
+    data[2]                 = '\xFF';       // Size 0xFFFFFF
+    data[3]                 = '\x00';       // id 0
+    data[4+0xFFFFFF + 0]    = '\x0A';
+    data[4+0xFFFFFF + 1]    = '\x00';
+    data[4+0xFFFFFF + 2]    = '\x00';       // Size 0x000000
+    data[4+0xFFFFFF + 3]    = '\x01';       // id 1
+
+    MockStream      buffer(&data[0], data.size());
+    MySqlBuf        mysqlBuffer(buffer);
+
+    char        temp[10];
+    mysqlBuffer.read(temp, 10);
+
+    mysqlBuffer.drop();
+    ASSERT_NO_THROW(mysqlBuffer.reset());
+    ASSERT_EQ(4 + 0xFFFFFF + 4 + 10, buffer.readLen());
+}
 

@@ -349,6 +349,14 @@ bool PrepareStatement::more()
     return moreResult;
 }
 
+void PrepareStatement::abort()
+{
+    connection.removeCurrentPackage();
+    while(more()) {
+        connection.removeCurrentPackage();
+    }
+}
+
 #ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes

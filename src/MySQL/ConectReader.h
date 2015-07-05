@@ -103,6 +103,7 @@ class ConectReader
         MySQLTimeBag      readDateIntoTimeBag();
         MySQLTimeBag      readTimeIntoTimeBag();
 
+        void            drop();
         void            reset();
 };
 

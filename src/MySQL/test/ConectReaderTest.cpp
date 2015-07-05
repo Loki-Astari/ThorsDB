@@ -406,3 +406,20 @@ TEST(ConectReaderTest, ThrowOnErrorMessage)
     }
 }
 
+TEST(ConectReaderTest, dropData)
+{
+    char const      data[] = "\x01" "A"     // String
+                             "1234567890"   // Remaining String
+                             ;
+    MockStream      buffer(data, sizeof(data) - 1);
+    ConectReader    reader(buffer);
+
+    reader.lengthEncodedString();
+    ASSERT_EQ(2, buffer.readLen());
+
+    reader.drop();
+    // Just make sure the underlying stream gets moved to the end
+    // by calling drop in it.
+    ASSERT_EQ(sizeof(data) - 1, buffer.readLen());
+}
+

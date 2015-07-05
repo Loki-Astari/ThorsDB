@@ -33,6 +33,7 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
         virtual bool        isEmpty()                                   override;
         virtual void        startNewConversation()                      override;
         virtual void        flush()                                     override;
+        virtual void        drop()                                      override;
         virtual void        reset()                                     override;
         virtual std::string readRemainingData()                         override;
 };

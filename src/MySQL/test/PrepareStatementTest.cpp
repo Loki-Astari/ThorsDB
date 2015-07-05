@@ -94,6 +94,27 @@ TEST(PrepareStatementTest, ExecuteToManyArguments)
                         {}),
         std::runtime_error);
 }
+TEST(PrepareStatementTest, ExecuteThrowWhenCalledBack)
+{
+    using namespace ThorsAnvil;
+    std::map<std::string, std::string>      options;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
+    long                count = 0;
+    ASSERT_THROW(
+        statement.execute([&count](int id, std::string name, short age, std::string sex, double height)
+                                {
+                                    throw std::runtime_error("Testing a throw");
+                                }
+                        ),
+        std::runtime_error);
+}
 
 // Printing The Helper packages.
 TEST(PrepareStatementTest, RequPackagePreparePrint)

@@ -204,6 +204,11 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     return timeBag;
 }
 
+void ConectReader::drop()
+{
+    stream.drop();
+}
+
 void ConectReader::reset()
 {
     stream.reset();

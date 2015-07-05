@@ -45,6 +45,7 @@ class StatementProxy
     public:
         virtual ~StatementProxy()
         {}
+        virtual void   abort()                              = 0;
 
         virtual void   bind(char)                           = 0;
         virtual void   bind(signed char)                    = 0;
@@ -174,8 +175,15 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
 
     binds.bindTo(*statementProxy);
     Cursor cursor = statementProxy->execute();
-    while(cursor) {
-        cursor.activate<false, CBTraits>(cb);
+    try
+    {
+        while(cursor) {
+            cursor.activate<false, CBTraits>(cb);
+        }
+    }
+    catch(...) {
+        statementProxy->abort();
+        throw;
     }
 }
 template<typename F>
@@ -190,8 +198,15 @@ inline void Statement::execute(F cb)
     validator.activate<true, CBTraits>(cb);
 
     Cursor cursor = statementProxy->execute();
-    while(cursor) {
-        cursor.activate<false, CBTraits>(cb);
+    try
+    {
+        while(cursor) {
+            cursor.activate<false, CBTraits>(cb);
+        }
+    }
+    catch(...) {
+        statementProxy->abort();
+        throw;
     }
 }
 

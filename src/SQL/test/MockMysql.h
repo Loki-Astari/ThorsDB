@@ -57,6 +57,8 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
                 : nextRow(0)
                 , nextField(0)
             {}
+            virtual void   abort()                              {}
+
             virtual void   bind(char)                           {}
             virtual void   bind(signed char)                    {}
             virtual void   bind(signed short)                   {}

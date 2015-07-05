@@ -16,7 +16,9 @@ class Statement: public SQL::StatementProxy
     public:
         Statement(std::string const& statement);
 
-        virtual void   bind(char)                           override {}
+        virtual void   abort()                              override    {}
+
+        virtual void   bind(char)                           override    {}
         virtual void   bind(signed char)                    override    {}
         virtual void   bind(signed short)                   override    {}
         virtual void   bind(signed int)                     override    {}

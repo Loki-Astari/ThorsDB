@@ -18,6 +18,7 @@ class PackageStream
         virtual void        startNewConversation()                      = 0;
         virtual void        flush()                                     = 0;
         virtual void        reset()                                     = 0;
+        virtual void        drop()                                      = 0;
         virtual bool        isEmpty()                                   = 0;
         virtual std::string readRemainingData()                         = 0;
 };
@@ -37,6 +38,7 @@ class MySQLStream: public PackageStream
         virtual void        startNewConversation()                      override {}
         virtual void        flush()                                     override {}
         virtual void        reset()                                     override {}
+        virtual void        drop()                                      override {}
         virtual bool        isEmpty()                                   override {return true;}
         virtual std::string readRemainingData()                         override {return "";}
 };

@@ -46,6 +46,7 @@ class Connection
                                         );
         template<typename Requ>
         void                  sendMessage(Requ const& request, PacketContinuation cont);
+        void                  removeCurrentPackage();
 };
 
 class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
