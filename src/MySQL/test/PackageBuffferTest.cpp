@@ -129,8 +129,8 @@ TEST(PackageBufferMySQLDebugBufferTest, writeOneBlock)
 TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockZero)
 {
     char const      data[] = "";
-    unsigned char   result[4 + 0xFFFFFF + 4];
-    MockStream      buffer(data, sizeof(data), result);
+    std::vector<unsigned char>   result(4 + 0xFFFFFF + 5, '\0');
+    MockStream      buffer(data, sizeof(data), &result[0]);
     MySqlBuf        mysqlBuffer(buffer);
     char            src[256] = {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -160,7 +160,7 @@ TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockZero)
         w += 0xFF;
     }
     mysqlBuffer.flush();
-    ASSERT_EQ(0xFFFFFFLL + 4 + 4, buffer.writLen());
+    ASSERT_EQ(4 + 0xFFFFFFLL + 4, buffer.writLen());
     ASSERT_EQ(0xFF, result[0]);
     ASSERT_EQ(0xFF, result[1]);
     ASSERT_EQ(0xFF, result[2]);
@@ -176,8 +176,8 @@ TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockTenInOneGo)
 {
     static char    hugeBlockData[0x2000002] = {0};
     char const      data[] = "";
-    unsigned char   result[4 + 0xFFFFFF + 4+ 0xFFFFFF + 10];
-    MockStream      buffer(data, sizeof(data), result);
+    std::vector<unsigned char>   result(4 + 0xFFFFFF + 4+ 0xFFFFFF + 10, '\0');
+    MockStream      buffer(data, sizeof(data), &result[0]);
     MySqlBuf        mysqlBuffer(buffer);
 
     long long w = 0;
