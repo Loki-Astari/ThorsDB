@@ -256,7 +256,6 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
         }
     }
     // Buffer
-    validateInfo.append(10,'\0');
 }
 
 void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
@@ -307,7 +306,7 @@ PrepareStatement::~PrepareStatement()
 
 void PrepareStatement::doExecute()
 {
-    if (validatorStream.empty()) {
+    if (!validatorStream.empty()) {
         throw std::runtime_error("PrepareStatement::doExecute: Not all returned values are being used by the callback function");
     }
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
