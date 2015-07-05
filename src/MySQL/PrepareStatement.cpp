@@ -167,7 +167,8 @@ class RespPackagePrepare: public RespPackage
             }
             return s;
         }
-        int     getStatementID()                        const           {return statementID;}
+        int     getStatementID()                        const               {return statementID;}
+        std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
 };
 void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader) {
     str << RespPackagePrepare(firstByte, reader);
@@ -208,6 +209,75 @@ void testPrintRespPackagePrepareExecute(std::ostream& str, int firstBytePrep, in
 }
 
         }
+
+
+PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPackageColumnDefinition> const& colu)
+    : MySQLStream(0)
+    , columns(colu)
+    , position(0)
+{
+    int nullmaplength   = (columns.size() + 7 + 2) / 8;
+    validateInfo.append(nullmaplength, '\0');
+    for(auto const& col: columns) {
+        switch(col.type)
+        {
+            case MYSQL_TYPE_VAR_STRING:     validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_STRING:         validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_VARCHAR:        validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_TINY_BLOB:      validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_MEDIUM_BLOB:    validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_BLOB:           validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_LONG_BLOB:      validateInfo.append(1, '\x0');break;
+            case MYSQL_TYPE_DECIMAL:
+            case MYSQL_TYPE_NEWDECIMAL:
+                validateInfo.append(1, '\x1');
+                validateInfo.append(1, '0');   // Character zero.
+                break;
+            case MYSQL_TYPE_LONGLONG:
+            case MYSQL_TYPE_DOUBLE:         validateInfo.append(4, '\x0'); // 4 and fall
+            case MYSQL_TYPE_LONG:
+            case MYSQL_TYPE_INT24:
+            case MYSQL_TYPE_FLOAT:          validateInfo.append(2, '\x0'); // 2 and fall
+            case MYSQL_TYPE_SHORT:          validateInfo.append(1, '\x0'); // 1 and fall
+            case MYSQL_TYPE_TINY:           validateInfo.append(1, '\x0');
+                                            break;
+            case MYSQL_TYPE_DATE:
+            case MYSQL_TYPE_DATETIME:
+            case MYSQL_TYPE_TIMESTAMP:
+                 validateInfo.append(1, '\x4');
+                 validateInfo.append(4, '\x0');
+                 break;
+            case MYSQL_TYPE_TIME:
+                 validateInfo.append(1, '\x8');
+                 validateInfo.append(8, '\x0');
+                 break;
+            default:
+                throw std::runtime_error("Unknown Type");
+        }
+    }
+    // Buffer
+    validateInfo.append(10,'\0');
+}
+
+void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
+{
+    if (position + len > validateInfo.size()) {
+        throw std::runtime_error("No more data");
+    }
+    std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
+    position += len;
+}
+
+bool PrepareStatement::ValidatorStream::empty() const
+{
+    return position == validateInfo.size();
+}
+
+void PrepareStatement::ValidatorStream::reset()
+{
+    position    = 0;
+}
+
     }
 }
 
@@ -216,17 +286,19 @@ using namespace ThorsAnvil::MySQL;
 PrepareStatement::PrepareStatement(Connection& connectn, std::string const& statement)
     : Statement(statement)
     , connection(connectn)
-{
-    prepareResp = connection.sendMessage<Detail::RespPackagePrepare>(
+    , prepareResp(connection.sendMessage<Detail::RespPackagePrepare>(
                                     Detail::RequPackagePrepare(statement),
                                     Connection::Reset,
                                     0x00,
                                     [](int firstByte, ConectReader& reader){
                                         return new Detail::RespPackagePrepare(firstByte, reader);
                                     }
-                              );
-    statementID = prepareResp->getStatementID();
-}
+                              ))
+    , statementID(prepareResp->getStatementID())
+    , validatorStream(prepareResp->getColumns())
+    , validatorReader(validatorStream)
+    , nextLine(new Detail::RespPackageResultSet(0x00, validatorReader, prepareResp->getColumns()))
+{}
 
 PrepareStatement::~PrepareStatement()
 {
@@ -235,6 +307,9 @@ PrepareStatement::~PrepareStatement()
 
 void PrepareStatement::doExecute()
 {
+    if (validatorStream.empty()) {
+        throw std::runtime_error("PrepareStatement::doExecute: Not all returned values are being used by the callback function");
+    }
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID),
                                     Connection::Reset,
@@ -256,14 +331,17 @@ bool PrepareStatement::more()
                                     [this](int firstByte, ConectReader& reader){
                                         return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());
                                     });
-    if (nextLine.get() == nullptr) {
+    bool moreResult = nextLine.get() != nullptr;
+    if (!moreResult) {
         connection.sendMessage<Detail::RespPackageOK>(
                                     Detail::RequPackagePrepareReset(statementID),
                                     Connection::Reset,
                                     -1 // Only looking for the OK message. Anything else will throw an exception.
                                 );
+        validatorStream.reset();
+        nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
     }
-    return nextLine.get() != nullptr;
+    return moreResult;
 }
 
 #ifdef COVERAGE_MySQL

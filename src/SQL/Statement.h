@@ -102,14 +102,14 @@ class Cursor
         explicit operator bool();
         Cursor(StatementProxy& statementProxy);
 
-        template<typename F>
+        template<bool ValidateOnly, typename F>
         void activate(F cb);
 
-        template<typename R, typename... Args>
+        template<bool ValidateOnly, typename R, typename... Args>
         void activate_(std::function<R(Args...)> cb);
 
-        template<typename F, typename A, std::size_t... ids>
-        void activateWithArgs(F func, A& arguments, std::index_sequence<ids...>);
+        template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
+        void activateWithArgs(F func, A& arguments, std::index_sequence<ids...> const&);
 
         template<typename V>
         int retrieve(V& value);
@@ -158,23 +158,40 @@ namespace Detail
     };
 }
 
+// This version of execute takes bind parameters.
+// The next one is identical but takes no parameters.
+// Thus in the subsequent on there is no call to `binds.bindTo()`
 template<typename F, typename... R>
 inline void Statement::execute(BindArgs<R...> const& binds, F cb)
 {
+    typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
+    // Call before calling execute.
+    // This gets the proxy to validate the conversion of the values returned
+    // by a select into the parameters used by the CB function. If it fails now
+    // we can do less tidy up work at the DB level.
+    Cursor validator(*statementProxy);
+    validator.activate<true, CBTraits>(cb);
+
     binds.bindTo(*statementProxy);
     Cursor cursor = statementProxy->execute();
     while(cursor) {
-        typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
-        cursor.activate<CBTraits>(cb);
+        cursor.activate<false, CBTraits>(cb);
     }
 }
 template<typename F>
 inline void Statement::execute(F cb)
 {
+    typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
+    // Call before calling execute.
+    // This gets the proxy to validate the conversion of the values returned
+    // by a select into the parameters used by the CB function. If it fails now
+    // we can do less tidy up work at the DB level.
+    Cursor validator(*statementProxy);
+    validator.activate<true, CBTraits>(cb);
+
     Cursor cursor = statementProxy->execute();
     while(cursor) {
-        typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
-        cursor.activate<CBTraits>(cb);
+        cursor.activate<false, CBTraits>(cb);
     }
 }
 
