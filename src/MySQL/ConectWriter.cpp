@@ -54,6 +54,11 @@ void ConectWriter::writeLengthEncodedString(std::string const& value)
     writeVariableLengthString(value);
 }
 
+void ConectWriter::writeRawData(char const* buffer, std::size_t size)
+{
+    stream.write(buffer, size);
+}
+
 void ConectWriter::flush()
 {
     stream.flush();

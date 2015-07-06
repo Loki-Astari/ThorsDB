@@ -5,6 +5,7 @@
 #include "Statement.h"
 #include "RespPackageResultSet.h"
 #include "PackageStream.h"
+#include "ConectWriter.h"
 #include <string>
 #include <vector>
 
@@ -20,6 +21,101 @@ namespace ThorsAnvil
             struct RespPackageColumnDefinition;
         }
 
+    template<int Dst, typename Src>
+    void writeParameterValue(PackageStream& dst, Src const& value)
+    {
+        dst.write(reinterpret_cast<char const*>(&value), 4);
+    }
+
+    class BindBuffer
+    {
+        class BindStream: public MySQLStream
+        {
+            std::vector<char>& dst;
+            public:
+                BindStream(std::vector<char>& dst)
+                    : MySQLStream(-1)
+                    , dst(dst)
+                {}
+                virtual void read(char*, std::size_t) override {}
+                virtual void write(char const* buffer, std::size_t len)  override
+                {
+                    dst.insert(dst.end(), buffer, buffer + len);
+                }
+        };
+        std::vector<Detail::RespPackageColumnDefinition> const& columns;
+        std::vector<char>                                       typeBuffer;
+        std::vector<char>                                       valueBuffer;
+        std::size_t                                             currentCol;
+        BindStream                                              bindStream;
+
+        
+        public:
+            BindBuffer(std::vector<Detail::RespPackageColumnDefinition> const& col)
+                : columns(col)
+                , currentCol(0)
+                , bindStream(valueBuffer)
+            {}
+            void bindToMySQL(ConectWriter& writer) const
+            {
+                if (columns.size() == 0) {
+                    return;
+                }
+                std::vector<char>  null((columns.size() + 7) / 8);
+                writer.writeRawData(&null[0], null.size());
+
+                writer.writeFixedLengthInteger<1>(1);
+                writer.writeRawData(&typeBuffer[0], typeBuffer.size());
+                writer.writeRawData(&valueBuffer[0], valueBuffer.size());
+            }
+            void reset()
+            {
+                currentCol  = 0;
+                typeBuffer.clear();
+                valueBuffer.clear();
+            }
+            template<int Dst, typename Src>
+            void bindDBValue(Src const& value)
+            {
+                typeBuffer.push_back(static_cast<unsigned int>(Dst));
+                typeBuffer.push_back(std::is_unsigned<Src>::value ? '\x80' : '\x00');
+
+                writeParameterValue<Dst>(bindStream, value);
+            }
+            template<typename Src>
+            void bindValue(Src const& value)
+            {
+                if (currentCol >= columns.size()) {
+                    throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::BindBuffer::bindValue: Too many values bound");
+                }
+                switch(columns[currentCol].type)
+                {
+                    case MYSQL_TYPE_VAR_STRING:         bindDBValue<MYSQL_TYPE_VAR_STRING>(value);  break;
+                    case MYSQL_TYPE_STRING:             bindDBValue<MYSQL_TYPE_STRING>(value);      break;
+                    case MYSQL_TYPE_VARCHAR:            bindDBValue<MYSQL_TYPE_VARCHAR>(value);     break;
+                    case MYSQL_TYPE_TINY_BLOB:          bindDBValue<MYSQL_TYPE_TINY_BLOB>(value);   break;
+                    case MYSQL_TYPE_MEDIUM_BLOB:        bindDBValue<MYSQL_TYPE_MEDIUM_BLOB>(value); break;
+                    case MYSQL_TYPE_BLOB:               bindDBValue<MYSQL_TYPE_BLOB>(value);        break;
+                    case MYSQL_TYPE_LONG_BLOB:          bindDBValue<MYSQL_TYPE_LONG_BLOB>(value);   break;
+                    case MYSQL_TYPE_DECIMAL:            bindDBValue<MYSQL_TYPE_DECIMAL>(value);     break;
+                    case MYSQL_TYPE_NEWDECIMAL:         bindDBValue<MYSQL_TYPE_NEWDECIMAL>(value);  break;
+                    case MYSQL_TYPE_LONGLONG:           bindDBValue<MYSQL_TYPE_LONGLONG>(value);    break;
+                    case MYSQL_TYPE_DOUBLE:             bindDBValue<MYSQL_TYPE_DOUBLE>(value);      break;
+                    case MYSQL_TYPE_LONG:               bindDBValue<MYSQL_TYPE_LONG>(value);        break;
+                    case MYSQL_TYPE_INT24:              bindDBValue<MYSQL_TYPE_INT24>(value);       break;
+                    case MYSQL_TYPE_FLOAT:              bindDBValue<MYSQL_TYPE_FLOAT>(value);       break;
+                    case MYSQL_TYPE_SHORT:              bindDBValue<MYSQL_TYPE_SHORT>(value);       break;
+                    case MYSQL_TYPE_TINY:               bindDBValue<MYSQL_TYPE_TINY>(value);        break;
+                    case MYSQL_TYPE_DATE:               bindDBValue<MYSQL_TYPE_DATE>(value);        break;
+                    case MYSQL_TYPE_DATETIME:           bindDBValue<MYSQL_TYPE_DATETIME>(value);    break;
+                    case MYSQL_TYPE_TIMESTAMP:          bindDBValue<MYSQL_TYPE_TIMESTAMP>(value);   break;
+                    case MYSQL_TYPE_TIME:               bindDBValue<MYSQL_TYPE_TIME>(value);        break;
+                    default:
+                        throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::BindBuffer::bindValue: Unknown Type");
+                }
+                ++currentCol;
+            }
+    };
 class Connection;
 class PrepareStatement: public Statement
 {
@@ -64,6 +160,7 @@ class PrepareStatement: public Statement
     ConectReader                                        validatorReader;
     std::unique_ptr<Detail::RespPackagePrepareExecute>  prepareExec;
     std::unique_ptr<Detail::RespPackageResultSet>       nextLine;
+    BindBuffer                                          bindBuffer;
 
     public:
         PrepareStatement(Connection& connection, std::string const& statement);
@@ -73,6 +170,27 @@ class PrepareStatement: public Statement
 
         virtual void doExecute()                            override;
         virtual bool more()                                 override;
+
+        virtual void   bind(char value)                     override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed char value)              override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed short value)             override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed int value)               override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed long value)              override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed long long value)         override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned char value)            override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned short value)           override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned int value)             override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned long value)            override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned long long value)       override    {bindBuffer.bindValue(value);}
+
+        virtual void   bind(float value)                    override    {bindBuffer.bindValue(value);}
+        virtual void   bind(double value)                   override    {bindBuffer.bindValue(value);}
+        virtual void   bind(long double value)              override    {bindBuffer.bindValue(value);}
+
+        virtual void   bind(std::string const& value)       override    {bindBuffer.bindValue(value);}
+        virtual void   bind(std::vector<char> const& value) override    {bindBuffer.bindValue(value);}
+
+        virtual void   bind(SQL::UnixTimeStamp const& value)override    {bindBuffer.bindValue(value);}
 
         virtual void   retrieve(char& value)                override    {nextLine->retrieve(value);}
         virtual void   retrieve(signed char& value)         override    {nextLine->retrieve(value);}

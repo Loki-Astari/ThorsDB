@@ -45,6 +45,8 @@ class ConectWriter
         void        writeVariableLengthString(std::string const& value);                // Not NULL terminated.
         void        writeLengthEncodedString(std::string const& value);
 
+        void        writeRawData(char const* buffer, std::size_t size);
+
         void        flush();
         void        reset();
 };

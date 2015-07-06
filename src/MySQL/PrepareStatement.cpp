@@ -64,11 +64,13 @@ void testPrintRequPackagePrepareClose(std::ostream& str) {
 
 class RequPackagePrepareExecute: public RequPackage
 {
-    int statementID;
+    int                 statementID;
+    BindBuffer const&   bindBuffer;
     public:
-        RequPackagePrepareExecute(int statementID)
+        RequPackagePrepareExecute(int statementID, BindBuffer const& bindBuffer)
             : RequPackage("RequPackagePrepareExecute")
             , statementID(statementID)
+            , bindBuffer(bindBuffer)
         {}
         virtual  std::ostream& print(std::ostream& s)   const override
         {
@@ -86,10 +88,13 @@ class RequPackagePrepareExecute: public RequPackage
              */
             writer.writeFixedLengthInteger<1>(0x00);
             writer.writeFixedLengthInteger<4>(1);
+            bindBuffer.bindToMySQL(writer);
         }
 };
 void testPrintRequPackagePrepareExecute(std::ostream& str) {
-    str << RequPackagePrepareExecute(1);
+    std::vector<Detail::RespPackageColumnDefinition>    cols;
+    BindBuffer  bindBuffer(cols);
+    str << RequPackagePrepareExecute(1, bindBuffer);
 }
 
 class RequPackagePrepareReset: public RequPackage
@@ -169,6 +174,7 @@ class RespPackagePrepare: public RespPackage
         }
         int     getStatementID()                        const               {return statementID;}
         std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
+        std::vector<RespPackageColumnDefinition> const&  getParams()  const {return paramInfo;}
 };
 void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader) {
     str << RespPackagePrepare(firstByte, reader);
@@ -303,6 +309,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     , validatorStream(prepareResp->getColumns())
     , validatorReader(validatorStream)
     , nextLine(new Detail::RespPackageResultSet(0x00, validatorReader, prepareResp->getColumns()))
+    , bindBuffer(prepareResp->getParams())
 {}
 
 PrepareStatement::~PrepareStatement()
@@ -316,7 +323,7 @@ void PrepareStatement::doExecute()
         throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all returned values are being used by the callback function");
     }
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
-                                    Detail::RequPackagePrepareExecute(statementID),
+                                    Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     Connection::Reset,
                                     -1, // Does not matter what the first byte is 
                                     [this](int firstByte, ConectReader& reader){
