@@ -2,7 +2,7 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_READER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_READER_H
 
-
+#include "MySQLUtil.h"
 #include <memory>
 #include <functional>
 #include <vector>
@@ -22,23 +22,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-
-struct MySQLTimeBag
-{
-    enum TimeType {Absolute, RelativeNegative, RelativePositive};
- 
-    TimeType             type;
-    unsigned long        year;
-    unsigned long        month;
-    unsigned long        day;
-    unsigned long        hour;
-    unsigned long        minute;
-    unsigned long        second;
-    unsigned long        uSecond;
-    MySQLTimeBag()
-        : type(Absolute), year(0), month(0), day(0), hour(0), minute(0), second(0), uSecond(0)
-    {}
-};
 
 class Package
 {

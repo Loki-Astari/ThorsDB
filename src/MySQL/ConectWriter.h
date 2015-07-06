@@ -2,7 +2,11 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 
+#include "MySQLUtil.h"
+#include "ThorSQL/Statement.h"
 #include <string>
+#include <vector>
+#include <ctime>
 
 #include "MySQLConfig.h"
 #if     defined(THOR_ENDIAN_SML)
@@ -46,6 +50,11 @@ class ConectWriter
         void        writeLengthEncodedString(std::string const& value);
 
         void        writeRawData(char const* buffer, std::size_t size);
+
+        void        writeLengthEncodedBlob(std::vector<char> const& value);
+        void        writeDate(std::time_t const& value);
+        void        writeRel(std::time_t const& value);
+        void        writeRel(unsigned long long value);
 
         void        flush();
         void        reset();

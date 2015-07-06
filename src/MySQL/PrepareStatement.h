@@ -4,6 +4,7 @@
 
 #include "Statement.h"
 #include "RespPackageResultSet.h"
+#include "TypeReadWrite.h"
 #include "PackageStream.h"
 #include "ConectWriter.h"
 #include <string>
@@ -20,12 +21,6 @@ namespace ThorsAnvil
             class RespPackageResultSet;
             struct RespPackageColumnDefinition;
         }
-
-    template<int Dst, typename Src>
-    void writeParameterValue(PackageStream& dst, Src const& value)
-    {
-        dst.write(reinterpret_cast<char const*>(&value), 4);
-    }
 
     class BindBuffer
     {
@@ -48,13 +43,14 @@ namespace ThorsAnvil
         std::vector<char>                                       valueBuffer;
         std::size_t                                             currentCol;
         BindStream                                              bindStream;
+        ConectWriter                                            bindWriter;
 
-        
         public:
             BindBuffer(std::vector<Detail::RespPackageColumnDefinition> const& col)
                 : columns(col)
                 , currentCol(0)
                 , bindStream(valueBuffer)
+                , bindWriter(bindStream)
             {}
             void bindToMySQL(ConectWriter& writer) const
             {
@@ -80,7 +76,7 @@ namespace ThorsAnvil
                 typeBuffer.push_back(static_cast<unsigned int>(Dst));
                 typeBuffer.push_back(std::is_unsigned<Src>::value ? '\x80' : '\x00');
 
-                writeParameterValue<Dst>(bindStream, value);
+                Detail::writeParameterValue<Dst>(bindWriter, value);
             }
             template<typename Src>
             void bindValue(Src const& value)
