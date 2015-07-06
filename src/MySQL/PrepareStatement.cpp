@@ -32,7 +32,7 @@ class RequPackagePrepare: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const override
         {
-            writer.writeFixedLengthInteger<1>(0x16);
+            writer.writeFixedLengthInteger<1>(COM_STMT_PREPARE);
             writer.writeVariableLengthString(statement);
         }
 };
@@ -54,7 +54,7 @@ class RequPackagePrepareClose: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const
         {
-            writer.writeFixedLengthInteger<1>(0x19);
+            writer.writeFixedLengthInteger<1>(COM_STMT_CLOSE);
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
@@ -76,7 +76,7 @@ class RequPackagePrepareExecute: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const override
         {
-            writer.writeFixedLengthInteger<1>(0x17);
+            writer.writeFixedLengthInteger<1>(COM_STMT_EXECUTE);
             writer.writeFixedLengthInteger<4>(statementID);
             /*
              *  0x00    CURSOR_TYPE_NO_CURSOR
@@ -106,7 +106,7 @@ class RequPackagePrepareReset: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const
         {
-            writer.writeFixedLengthInteger<1>(0x1A);
+            writer.writeFixedLengthInteger<1>(COM_STMT_RESET);
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
