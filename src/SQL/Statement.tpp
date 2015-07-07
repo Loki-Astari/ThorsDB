@@ -69,7 +69,7 @@ template<typename... R>
 template<std::size_t id>
 inline int BindArgs<R...>::bindTheArgument(StatementProxy& statementProxy) const
 {
-    statementProxy.bind(std::get<id>(arguments));
+    statementProxy.bind(std::get<id>(arguments).get());
     return id;
 }
 

@@ -42,4 +42,24 @@ TEST(PrepareStatementTest, Execute)
                         });
     ASSERT_EQ(2, count);
 }
+TEST(PrepareStatementTest, ExecuteWithBind)
+{
+    using namespace ThorsAnvil;
+    std::map<std::string, std::string>      options;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT * FROM People where sex=?"); //select * from People;
+    long                count = 0;
+    statement.execute(SQL::Bind("M"), [&count](int id, std::string name, short age, std::string sex, double height)
+                        {
+                            std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
+                            ++count;
+                        });
+    ASSERT_EQ(1, count);
+}
 
