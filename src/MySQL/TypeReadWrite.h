@@ -57,8 +57,8 @@ inline T readParameterValue(ConectReader&)
     // The translations we know about are defined below.
     throw std::runtime_error("ThorsAnvil::MySQL::readParameterValue: Unknown conversion");
 }
-template<int Dst, typename Src>
-void writeParameterValue(ConectWriter&, Src const&)
+template<typename Src>
+unsigned int writeParameterValue(ConectWriter&, Src const&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
@@ -121,82 +121,123 @@ template<> inline unsigned char     readParameterValue<MYSQL_TYPE_DECIMAL,      
 template<> inline unsigned char     readParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned char>(ConectReader& p)      {return stringtointeger<unsigned char>(p.lengthEncodedString());}
 template<> inline unsigned char     readParameterValue<MYSQL_TYPE_TINY,         unsigned char>(ConectReader& p)      {return p.fixedLengthInteger<1>();}
 
-// TO FIX
+// TODO FIX
 template<> inline double            readParameterValue<MYSQL_TYPE_DOUBLE,       double>(ConectReader& p)             {double result;p.read(reinterpret_cast<char*>(&result), 8);return result;}
 template<> inline float             readParameterValue<MYSQL_TYPE_DOUBLE,       float>(ConectReader& p)              {double result;p.read(reinterpret_cast<char*>(&result), 8);return result;}
 template<> inline float             readParameterValue<MYSQL_TYPE_FLOAT,        float>(ConectReader& p)              {float  result;p.read(reinterpret_cast<char*>(&result), 4);return result;}
 
+// TODO FIX
 template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_DATE,         UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readDate());}
 template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_DATETIME,     UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readDate());}
 template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_TIMESTAMP,    UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readDate());}
 template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_TIME,         UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readRel());}
 
-template<> inline void writeParameterValue<MYSQL_TYPE_VAR_STRING,   std::string>(ConectWriter& p, std::string const& v)            {p.writeLengthEncodedString(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_STRING,       std::string>(ConectWriter& p, std::string const& v)            {p.writeLengthEncodedString(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_VARCHAR,      std::string>(ConectWriter& p, std::string const& v)            {p.writeLengthEncodedString(v);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY_BLOB,    std::vector<char>>(ConectWriter& p, std::vector<char> const& v){p.writeLengthEncodedBlob(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_MEDIUM_BLOB,  std::vector<char>>(ConectWriter& p, std::vector<char> const& v){p.writeLengthEncodedBlob(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_BLOB,         std::vector<char>>(ConectWriter& p, std::vector<char> const& v){p.writeLengthEncodedBlob(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONG_BLOB,    std::vector<char>>(ConectWriter& p, std::vector<char> const& v){p.writeLengthEncodedBlob(v);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      signed long>(ConectWriter& p, signed long const& v)            {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed long>(ConectWriter& p, signed long const& v)            {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONGLONG,     signed long>(ConectWriter& p, signed long const& v)            {p.writeFixedLengthInteger<8>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONG,         signed long>(ConectWriter& p, signed long const& v)            {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_INT24,        signed long>(ConectWriter& p, signed long const& v)            {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_SHORT,        signed long>(ConectWriter& p, signed long const& v)            {p.writeFixedLengthInteger<2>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         signed long>(ConectWriter& p, signed long const& v)            {p.writeFixedLengthInteger<1>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONGLONG,     unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeFixedLengthInteger<8>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONG,         unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_INT24,        unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_SHORT,        unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeFixedLengthInteger<2>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         unsigned long>(ConectWriter& p, unsigned long const& v)        {p.writeFixedLengthInteger<1>(v);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      signed int>(ConectWriter& p, signed int const& v)              {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed int>(ConectWriter& p, signed int const& v)              {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONG,         signed int>(ConectWriter& p, signed int const& v)              {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_INT24,        signed int>(ConectWriter& p, signed int const& v)              {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_SHORT,        signed int>(ConectWriter& p, signed int const& v)              {p.writeFixedLengthInteger<2>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         signed int>(ConectWriter& p, signed int const& v)              {p.writeFixedLengthInteger<1>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      unsigned int>(ConectWriter& p, unsigned int const& v)          {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned int>(ConectWriter& p, unsigned int const& v)          {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONG,         unsigned int>(ConectWriter& p, unsigned int const& v)          {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_INT24,        unsigned int>(ConectWriter& p, unsigned int const& v)          {p.writeFixedLengthInteger<4>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_SHORT,        unsigned int>(ConectWriter& p, unsigned int const& v)          {p.writeFixedLengthInteger<2>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         unsigned int>(ConectWriter& p, unsigned int const& v)          {p.writeFixedLengthInteger<1>(v);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      signed short>(ConectWriter& p, signed short const& v)          {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed short>(ConectWriter& p, signed short const& v)          {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_SHORT,        signed short>(ConectWriter& p, signed short const& v)          {p.writeFixedLengthInteger<2>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         signed short>(ConectWriter& p, signed short const& v)          {p.writeFixedLengthInteger<1>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      unsigned short>(ConectWriter& p, unsigned short const& v)      {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned short>(ConectWriter& p, unsigned short const& v)      {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_SHORT,        unsigned short>(ConectWriter& p, unsigned short const& v)      {p.writeFixedLengthInteger<2>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         unsigned short>(ConectWriter& p, unsigned short const& v)      {p.writeFixedLengthInteger<1>(v);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      char>(ConectWriter& p, char const& v)                          {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   char>(ConectWriter& p, char const& v)                          {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONGLONG,     char>(ConectWriter& p, char const& v)                          {p.writeFixedLengthInteger<8>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         char>(ConectWriter& p, char const& v)                          {p.writeFixedLengthInteger<1>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      signed char>(ConectWriter& p, signed char const& v)            {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed char>(ConectWriter& p, signed char const& v)            {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_LONGLONG,     signed char>(ConectWriter& p, signed char const& v)            {p.writeFixedLengthInteger<8>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         signed char>(ConectWriter& p, signed char const& v)            {p.writeFixedLengthInteger<1>(v);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DECIMAL,      unsigned char>(ConectWriter& p, unsigned char const& v)        {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned char>(ConectWriter& p, unsigned char const& v)        {p.writeLengthEncodedString(std::to_string(v));}
-template<> inline void writeParameterValue<MYSQL_TYPE_TINY,         unsigned char>(ConectWriter& p, unsigned char const& v)        {p.writeFixedLengthInteger<1>(v);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_DOUBLE,       double>(ConectWriter& p, double const& v)                      {p.writeRawData(reinterpret_cast<char const*>(&v), 8);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DOUBLE,       float>(ConectWriter& p, float const& v)                        {p.writeRawData(reinterpret_cast<char const*>(&v), 8);}
-template<> inline void writeParameterValue<MYSQL_TYPE_FLOAT,        float>(ConectWriter& p, float const& v)                        {p.writeRawData(reinterpret_cast<char const*>(&v), 4);}
-
-template<> inline void writeParameterValue<MYSQL_TYPE_DATE,         UnixTimeStamp>(ConectWriter& p, UnixTimeStamp const& v)        {p.writeRawData(reinterpret_cast<char const*>(&v), 4);}
-template<> inline void writeParameterValue<MYSQL_TYPE_DATETIME,     UnixTimeStamp>(ConectWriter& p, UnixTimeStamp const& v)        {p.writeRawData(reinterpret_cast<char const*>(&v), 4);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TIMESTAMP,    UnixTimeStamp>(ConectWriter& p, UnixTimeStamp const& v)        {p.writeRawData(reinterpret_cast<char const*>(&v), 4);}
-template<> inline void writeParameterValue<MYSQL_TYPE_TIME,         UnixTimeStamp>(ConectWriter& p, UnixTimeStamp const& v)        {p.writeRawData(reinterpret_cast<char const*>(&v), 4);}
+template<>
+inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
+{   
+    p.writeLengthEncodedString(v);
+    return MYSQL_TYPE_STRING;
+}
+template<>
+inline unsigned int writeParameterValue<std::vector<char>>(ConectWriter& p, std::vector<char> const& v)
+{
+    p.writeLengthEncodedBlob(v);
+    return MYSQL_TYPE_BLOB;
+}
+template<>
+inline unsigned int writeParameterValue<signed long long>(ConectWriter& p, signed long long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
+template<>
+inline unsigned int writeParameterValue<unsigned long long>(ConectWriter& p, unsigned long long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
+template<>
+inline unsigned int writeParameterValue<signed long>(ConectWriter& p, signed long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
+template<>
+inline unsigned int writeParameterValue<unsigned long>(ConectWriter& p, unsigned long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
+template<>
+inline unsigned int writeParameterValue<signed int>(ConectWriter& p, signed int const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+template<>
+inline unsigned int writeParameterValue<unsigned int>(ConectWriter& p, unsigned int const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+template<>
+inline unsigned int writeParameterValue<signed short>(ConectWriter& p, signed short const& v)
+{
+    p.writeFixedLengthInteger<2>(v);
+    return MYSQL_TYPE_SHORT;
+}
+template<>
+inline unsigned int writeParameterValue<unsigned short>(ConectWriter& p, unsigned short const& v)
+{
+    p.writeFixedLengthInteger<2>(v);
+    return MYSQL_TYPE_SHORT;
+}
+template<>
+inline unsigned int writeParameterValue<signed char>(ConectWriter& p, signed char const& v)
+{
+    p.writeFixedLengthInteger<1>(v);
+    return MYSQL_TYPE_TINY;
+}
+template<>
+inline unsigned int writeParameterValue<unsigned char>(ConectWriter& p, unsigned char const& v)
+{
+    p.writeFixedLengthInteger<1>(v);
+    return MYSQL_TYPE_TINY;
+}
+template<>
+inline unsigned int writeParameterValue<char>(ConectWriter& p, char const& v)
+{
+    p.writeFixedLengthInteger<1>(v);
+    return MYSQL_TYPE_TINY;
+}
+// TODO FIX
+template<>
+inline unsigned int writeParameterValue<long double>(ConectWriter& p, long double const& v)
+{
+    p.writeRawData(reinterpret_cast<char const*>(&v), 8);
+    return MYSQL_TYPE_DOUBLE;
+}
+// TODO FIX
+template<>
+inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
+{
+    p.writeRawData(reinterpret_cast<char const*>(&v), 8);
+    return MYSQL_TYPE_DOUBLE;
+}
+// TODO FIX
+template<>
+inline unsigned int writeParameterValue<float>(ConectWriter& p, float const& v)
+{
+    p.writeRawData(reinterpret_cast<char const*>(&v), 4);
+    return MYSQL_TYPE_FLOAT;
+}
+// TODO FIX
+template<>
+inline unsigned int writeParameterValue<UnixTimeStamp>(ConectWriter& p, UnixTimeStamp const& v)
+{
+    p.writeRawData(reinterpret_cast<char const*>(&v), 4);
+    return MYSQL_TYPE_TIMESTAMP;
+}
 
 /*
 template<typename Enum>

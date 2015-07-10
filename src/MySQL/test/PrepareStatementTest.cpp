@@ -75,11 +75,11 @@ TEST(PrepareStatementTest, ExecuteWithBindTwo)
 
     SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
     long                count = 0;
-    statement.execute(SQL::Bind("M",28), [&count](int id, std::string name, short age, std::string sex, double height)
+    statement.execute(SQL::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
                         {
                             std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                             ++count;
                         });
-    ASSERT_EQ(1, count);
+    ASSERT_EQ(2, count);
 }
 
