@@ -322,6 +322,9 @@ void PrepareStatement::doExecute()
     if (!validatorStream.empty()) {
         throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all returned values are being used by the callback function");
     }
+    if (bindBuffer.countBoundParameters() != prepareResp->getParams().size()) {
+        throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all bind points have parameters bound");
+    }
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     Connection::Reset,

@@ -70,6 +70,10 @@ namespace ThorsAnvil
                 typeBuffer.clear();
                 valueBuffer.clear();
             }
+            std::size_t countBoundParameters() const
+            {
+                return currentCol;
+            }
             template<typename Src>
             void bindValue(Src const& value)
             {
