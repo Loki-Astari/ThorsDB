@@ -2,14 +2,10 @@
 #ifndef THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 #define THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 
-//#include "RespPackage.h"
-//#include "RespPackageColumnDefinition.h"
 #include "ThorSQL/Statement.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
-//#include <vector>
-//#include <limits>
-//#include "ThorMySQL.h"
+#include <sstream>
 
 namespace ThorsAnvil
 {
@@ -50,13 +46,82 @@ inline T stringtointeger(std::string const& t)
     return result;
 }
 
+inline std::string mapMySQLTypeToString(int mySQLType)
+{
+    static std::map<int,std::string> names {
+        {0x00,  "MYSQL_TYPE_DECIMAL"},
+        {0x01,  "MYSQL_TYPE_TINY"},
+        {0x02,  "MYSQL_TYPE_SHORT"},
+        {0x03,  "MYSQL_TYPE_LONG"},
+        {0x04,  "MYSQL_TYPE_FLOAT"},
+        {0x05,  "MYSQL_TYPE_DOUBLE"},
+        {0x06,  "MYSQL_TYPE_NULL"},
+        {0x07,  "MYSQL_TYPE_TIMESTAMP"},
+        {0x08,  "MYSQL_TYPE_LONGLONG"},
+        {0x09,  "MYSQL_TYPE_INT24"},
+        {0x0a,  "MYSQL_TYPE_DATE"},
+        {0x0b,  "MYSQL_TYPE_TIME"},
+        {0x0c,  "MYSQL_TYPE_DATETIME"},
+        {0x0d,  "MYSQL_TYPE_YEAR"},
+        {0x0e,  "MYSQL_TYPE_NEWDATE"},
+        {0x0f,  "MYSQL_TYPE_VARCHAR"},
+        {0x10,  "MYSQL_TYPE_BIT"},
+        {0x11,  "MYSQL_TYPE_TIMESTAMP2"},
+        {0x12,  "MYSQL_TYPE_DATETIME2"},
+        {0x13,  "MYSQL_TYPE_TIME2"},
+        {0xf6,  "MYSQL_TYPE_NEWDECIMAL"},
+        {0xf7,  "MYSQL_TYPE_ENUM"},
+        {0xf8,  "MYSQL_TYPE_SET"},
+        {0xf9,  "MYSQL_TYPE_TINY_BLOB"},
+        {0xfa,  "MYSQL_TYPE_MEDIUM_BLOB"},
+        {0xfb,  "MYSQL_TYPE_LONG_BLOB"},
+        {0xfc,  "MYSQL_TYPE_BLOB"},
+        {0xfd,  "MYSQL_TYPE_VAR_STRING"},
+        {0xfe,  "MYSQL_TYPE_STRING"},
+        {0xff, "MYSQL_TYPE_GEOMETRY"}};
+
+    auto find = names.find(mySQLType);
+    if (find == names.end()) {
+        return "Unknown???";
+    }
+    return find->second;
+}
+
+
+template<int Tv, typename T>
+inline std::string getErrorMessage()
+{
+    std::stringstream msg;
+    msg << "In this case:\n"
+        << "\tC++ Type:   " << typeid(T).name() << "\n"
+        << "\tMySQL Type: " << mapMySQLTypeToString(Tv) << "\n"
+        << "\n"
+        << "Note: This type of error should not happen.\n"
+        << "      I am sorry I can't detect this at compile time but once working it should not\n"
+        << "      happen again so you should fix this error during testing.\n"
+        << "\n"
+        << "      It is done so you are forced to externally decide what data loss is going to\n"
+        << "      happen and make an explicit choice (and maybe decide if that needs to be validated)\n"
+        << "\n"
+        << "      If your code was previously working and this happens it means the type of a\n"
+        << "      column in the DB has changed to an incompatible type. You may need to talk\n"
+        << "      to your DB admin.";
+    return msg.str();
+}
+
 template<int Tv, typename T>
 inline T readParameterValue(ConectReader&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    throw std::runtime_error("ThorsAnvil::MySQL::readParameterValue: Unknown conversion");
+    std::stringstream msg;
+    msg << "ThorsAnvil::MySQL::readParameterValue: Unknown conversion\n"
+        << "\n"
+        << "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n"
+        << getErrorMessage<Tv,T>();
+    throw std::logic_error(msg.str());
 }
+
 template<typename Src>
 unsigned int writeParameterValue(ConectWriter&, Src const&)
 {
