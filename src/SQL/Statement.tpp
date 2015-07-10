@@ -39,9 +39,16 @@ inline void Cursor::activate_(std::function<R(Args...)> cb)
 template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
 inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids...> const& id)
 {
-    auto list = {retrieve(std::get<ids>(arguments))...};
-    [&list](){}();
-    Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
+    try {
+        auto list = {retrieve(std::get<ids>(arguments))...};
+        [&list](){}();
+        Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
+    }
+    catch(SQL::ValidationTmpError const& e) {
+        // Drop a temporary error.
+        // These are only thrown by subsystems if they know they can recover and do
+        // better error messaging as a result.
+    }
 }
 
 template<typename V>

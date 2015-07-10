@@ -41,6 +41,14 @@ struct UnixTimeStamp
         {}
 };
 
+class ValidationTmpError: public std::runtime_error
+{
+    public:
+        ValidationTmpError(std::string const& msg)
+            : std::runtime_error(msg)
+        {}
+};
+
 class StatementProxy
 {
     public:

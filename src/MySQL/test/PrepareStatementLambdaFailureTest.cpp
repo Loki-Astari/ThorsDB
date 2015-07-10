@@ -25,7 +25,7 @@ TEST(PrepareStatementLambdaFailureTest, ExecuteToFewArguments)
     ASSERT_THROW(
         statement.execute([&count](int id, std::string name, short age, std::string sex/*, double height*/) // Not using the height
                         {}),
-        std::runtime_error);
+        std::logic_error);
 }
 TEST(PrepareStatementLambdaFailureTest, ExecuteToManyArguments)
 {
@@ -43,7 +43,7 @@ TEST(PrepareStatementLambdaFailureTest, ExecuteToManyArguments)
     ASSERT_THROW(
         statement.execute([&count](int id, std::string name, short age, std::string sex, double height, long extra) // ask for more than are available
                         {}),
-        std::runtime_error);
+        std::logic_error);
 }
 TEST(PrepareStatementLambdaFailureTest, ExecuteThrowWhenCalledBack)
 {

@@ -23,7 +23,7 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsThreeProvided)
     SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
     ASSERT_THROW(
         statement.execute(SQL::Bind("M",29,56.67), [](int id, std::string name, short age, std::string sex, double height){}),
-        std::runtime_error);
+        std::logic_error);
 }
 TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
 {
@@ -39,7 +39,7 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
     SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
     ASSERT_THROW(
         statement.execute(SQL::Bind("M"), [](int id, std::string name, short age, std::string sex, double height){}),
-        std::runtime_error);
+        std::logic_error);
 }
 TEST(PrepareStatementBindFailureTest, ZeroBindBointsTwoProvided)
 {
@@ -55,7 +55,7 @@ TEST(PrepareStatementBindFailureTest, ZeroBindBointsTwoProvided)
     SQL::Statement      statement(connection, "SELECT * FROM People where sex='M' or age=29"); //select * from People;
     ASSERT_THROW(
         statement.execute(SQL::Bind("M",29), [](int id, std::string name, short age, std::string sex, double height){}),
-        std::runtime_error);
+        std::logic_error);
 }
 
 

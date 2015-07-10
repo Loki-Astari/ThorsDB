@@ -77,9 +77,6 @@ namespace ThorsAnvil
             template<typename Src>
             void bindValue(Src const& value)
             {
-                if (currentCol >= columns.size()) {
-                    throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::BindBuffer::bindValue: Too many values bound");
-                }
                 unsigned int type = Detail::writeParameterValue(bindWriter, value);
                 typeBuffer.push_back(type);
                 typeBuffer.push_back(std::is_unsigned<Src>::value ? '\x80' : '\x00');
@@ -116,10 +113,12 @@ class PrepareStatement: public Statement
         std::vector<Detail::RespPackageColumnDefinition> const& columns;
         std::string                                     validateInfo;
         std::size_t                                     position;
+        bool                                            errorReading;
         public:
             ValidatorStream(std::vector<Detail::RespPackageColumnDefinition> const& colu);
             virtual void read(char* buffer, std::size_t len) override;
-            bool  empty() const;
+            bool  tooMany() const;
+            bool  tooFew() const;
             void  reset();
     };
 

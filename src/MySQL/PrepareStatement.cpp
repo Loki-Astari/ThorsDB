@@ -9,6 +9,7 @@
 #include "RespPackageColumnDefinition.h"
 #include "ThorMySQL.h"
 #include <cassert>
+#include <sstream>
 
 
 namespace ThorsAnvil
@@ -221,6 +222,7 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
     : MySQLStream(0)
     , columns(colu)
     , position(0)
+    , errorReading(false)
 {
     int nullmaplength   = (columns.size() + 7 + 2) / 8;
     validateInfo.append(nullmaplength, '\0');
@@ -264,7 +266,11 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
                 validateInfo.append(8, '\x0');
                 break;
             default:
-                throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: Unknown Type");
+                std::stringstream msg;
+                msg << "ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream:"
+                    << "Unknown Type returned by server. Please file a bug report.\n"
+                    << "   Type: " << std::hex << col.type;
+                throw std::runtime_error(msg.str());
         }
     }
     // Buffer
@@ -273,15 +279,24 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
 void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
 {
     if (position + len > validateInfo.size()) {
-        throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::read: No more data");
+        errorReading    = true;
+        // This causes this to unwind back to the SQL where it is caught.
+        // The doExecute() will then be called where all the errors generated
+        // during validation are checked and handeled in a single place.
+        throw SQL::ValidationTmpError("Too many parameters in callback function.");
     }
     std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
     position += len;
 }
 
-bool PrepareStatement::ValidatorStream::empty() const
+bool PrepareStatement::ValidatorStream::tooMany() const
 {
-    return position == validateInfo.size();
+    return errorReading;
+}
+
+bool PrepareStatement::ValidatorStream::tooFew() const
+{
+    return position != validateInfo.size();
 }
 
 void PrepareStatement::ValidatorStream::reset()
@@ -319,12 +334,23 @@ PrepareStatement::~PrepareStatement()
 
 void PrepareStatement::doExecute()
 {
-    if (!validatorStream.empty()) {
-        throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all returned values are being used by the callback function");
+    std::string errorMessage;
+    if (validatorStream.tooFew()) {
+        errorMessage    += "Not all returned values are being used by the callback function.";
     }
-    if (bindBuffer.countBoundParameters() != prepareResp->getParams().size()) {
-        throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all bind points have parameters bound");
+    if (validatorStream.tooMany()) {
+        errorMessage    += "You have more parameters in your callback than are specified in the select.";
     }
+    if (bindBuffer.countBoundParameters() < prepareResp->getParams().size()) {
+        errorMessage    += "Not all bind points have parameters bound.";
+    }
+    if (bindBuffer.countBoundParameters() > prepareResp->getParams().size()) {
+        errorMessage    += "Too many bound values. You have more values than '?'.";
+    }
+    if (!errorMessage.empty()) {
+        throw std::logic_error(std::string("ThrosAnvil::MySQL::PrepareStatement::doExecute: ") + errorMessage);
+    }
+
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     Connection::Reset,
