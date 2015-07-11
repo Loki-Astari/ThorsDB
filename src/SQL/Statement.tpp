@@ -41,7 +41,7 @@ inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids
 {
     try {
         auto list = {retrieve(std::get<ids>(arguments))...};
-        [&list](){}();
+        thorUnused(list);
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
     catch(ValidationTmpError const&) {
@@ -69,7 +69,7 @@ template<std::size_t... ids>
 inline void BindArgs<R...>::bindArgsTo(StatementProxy& statementProxy, std::index_sequence<ids...>const&) const
 {
     auto list = {bindTheArgument<ids>(statementProxy)...};
-    [&list](){}();
+    thorUnused(list);
 }
 
 template<typename... R>

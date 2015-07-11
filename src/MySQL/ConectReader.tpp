@@ -1,9 +1,12 @@
 
 #include "PackageStream.h"
 #include "RespPackage.h"
+#include "ThorSQL/SQLUtil.h"
 
 namespace ThorsAnvil
 {
+    using SQL::thorUnused;
+
     namespace MySQL
     {
 
@@ -26,7 +29,7 @@ std::unique_ptr<Resp> ConectReader::recvMessage(int expectedResult, OKAction exp
     else {
         // Throws exception if cast fails.
         Resp&                   resultRef = dynamic_cast<Resp&>(*resp);
-        [&resultRef](){}();
+        thorUnused(resultRef);
     }
 
     // Now we know the dynamic_cast will work and not return a nullptr.
