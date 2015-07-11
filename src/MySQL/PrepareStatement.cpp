@@ -275,11 +275,10 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
                 validateInfo.append(8, '\x0');
                 break;
             default:
-                std::stringstream msg;
-                msg << "ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream:"
-                    << "Unknown Type returned by server. Please file a bug report.\n"
-                    << "   Type: " << std::hex << col.type;
-                throw std::runtime_error(msg.str());
+                throw std::domain_error(
+                        bugReport("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: ",
+                                  "Unknown Type returned by server. Type: ", std::hex, col.type
+                      ));
         }
     }
     // Buffer
@@ -362,7 +361,8 @@ void PrepareStatement::doExecute()
         errorMessage    += "Too many bound values. You have more values than '?'.";
     }
     if (!errorMessage.empty()) {
-        throw std::logic_error(std::string("ThrosAnvil::MySQL::PrepareStatement::doExecute: ") + errorMessage);
+        throw std::logic_error(
+                errorMsg("ThrosAnvil::MySQL::PrepareStatement::doExecute: ", errorMessage));
     }
 
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(

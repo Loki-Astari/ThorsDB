@@ -5,8 +5,6 @@
 
 namespace ThorsAnvil
 {
-    using SQL::thorUnused;
-
     namespace MySQL
     {
 
@@ -15,7 +13,10 @@ std::unique_ptr<Resp> ConectReader::recvMessage(int expectedResult, OKAction exp
 {
     std::unique_ptr<RespPackage>    resp = getNextPackage(expectedResult, expectedResultAction);
     if (resp->isError()) {
-        throw std::runtime_error(resp->message());;
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ",
+                         "Error Message from Server: ", resp->message()
+              ));
     }
 
     if (expectedResult != 0xFE && resp->isEOF()) {

@@ -18,20 +18,31 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
     , authPluginName(handshake.getAuthPluginName())
     , capabilities(handshake.getCapabilities())
 {
-    if (authPluginName == "mysql_old_password")
-    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: mysql_old_password: not supported");
+    if (authPluginName == "mysql_old_password") {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                         "mysql_old_password: not supported"
+              ));
     }
-    else if (authPluginName == "mysql_clear_password")
-    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: mysql_clear_password: not supported");
+    else if (authPluginName == "mysql_clear_password") {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                         "mysql_clear_password: not supported"
+              ));
     }
-    else if (authPluginName == "authentication_windows_client")
-    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: authentication_windows_client: not supported");
+    else if (authPluginName == "authentication_windows_client") {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                         "authentication_windows_client: not supported"
+              ));
     }
-    else if (authPluginName == "sha256_password")
-    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: sha256_password: not supported");
+    else if (authPluginName == "sha256_password") {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                         "sha256_password: not supported"
+              ));
     }
-    else if (authPluginName == "mysql_native_password")
-    {
+    else if (authPluginName == "mysql_native_password") {
         // Requires CLIENT_SECURE_CONNECTION
         // SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
         ThorSHADigestStore  stage1;
@@ -51,8 +62,11 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
         }
         authResponse    = std::string(extendedHash, extendedHash + SHA_DIGEST_LENGTH);
     }
-    else
-    {   throw std::runtime_error("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: UNKNOWN authentication method(" + authPluginName + "): not supported");
+    else {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                         "UNKNOWN authentication method(", authPluginName, "): not supported"
+              ));
     }
 }
 

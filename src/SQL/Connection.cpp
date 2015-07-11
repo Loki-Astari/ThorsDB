@@ -14,7 +14,12 @@ Connection::Connection(std::string const& connection,
 {
     std::size_t     schemaEnd   = connection.find(':');
     if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/') {
-        throw std::runtime_error("Connection::Connection: Failed to find schema: " + connection);
+        throw std::logic_error(
+                errorMsg("ThorsAnvil::SQL::Connection::Connection: ",
+                         "Failed to find schema: ",
+                         connection,
+                         "\n Expected: <schema>:://<host>[:<port>]"
+              ));
     }
 
     bool        hasPort     = true;
@@ -35,11 +40,20 @@ Connection::Connection(std::string const& connection,
     auto        creator     = getCreators().find(schema);
 
     if (host == "" || errno != 0 || *endPtr != '\0') {
-        throw std::runtime_error("Connection::Connection: Failed to parse connection: " + connection);
+        throw std::logic_error(
+                errorMsg("ThorsAnvil::SQL::Connection::Connection: ",
+                         "Failed to parse connection: ",
+                         connection,
+                         "\n Expected: <schema>:://<host>[:<port>]"
+              ));
     }
 
     if (creator == getCreators().end()) {
-        throw std::runtime_error("Connection::Conection: Schema for unregister DB type: " + schema + " From: " + connection);
+        throw std::logic_error(
+                errorMsg("ThorsAnvil::SQL::Connection::Conection: ",
+                         "Schema for unregister DB type: ",
+                         schema, " From: ", connection
+              ));
     }
     proxy   = creator->second(host, portNumber, username, password, database, options);
 }

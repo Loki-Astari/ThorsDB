@@ -1,0 +1,14 @@
+std::exception:         Not throw directly.
+                        But all exceptions throw by this library will be derived from this.
+std::runtime_error      An unexpected situation.
+                        An error occurred that could not be corrected.
+                            A read/write failure.
+                            An unexpected result from the DB server
+                            etc.
+std::logic_error        An error because of a bug in user code.
+                        The library was called in a way that we can detect is erroneous in
+                        the user code. This should be fixed at your end.
+std::domain_error       Situations that should never happen.
+                        This branch of the code should never be executed. If it does then
+                        something else in this library has gone very wrong. This is a serious bug
+                        in how the library was written

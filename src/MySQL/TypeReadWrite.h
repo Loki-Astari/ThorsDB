@@ -3,6 +3,7 @@
 #define THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 
 #include "ThorSQL/Statement.h"
+#include "ThorSQL/SQLUtil.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
 #include <sstream>
@@ -42,7 +43,11 @@ inline T stringtointeger(std::string const& t)
     std::size_t  pos;
     T            result = standardConverter<T>(t, &pos);
     if (pos != t.size()) {
-    throw std::runtime_error("ThorsAnvil::MySQL::stringtointeger: Failed to convert whole integer");
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::stringtointeger: ",
+                         "Failed to convert whole integer: ", t,
+                         "\nOnly read the first ", pos, "bytes from this string."
+              ));
     }
     return result;
 }
@@ -115,12 +120,13 @@ inline T readParameterValue(ConectReader&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    std::stringstream msg;
-    msg << "ThorsAnvil::MySQL::readParameterValue: Unknown conversion\n"
-        << "\n"
-        << "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n"
-        << getErrorMessage<Tv,T>();
-    throw std::logic_error(msg.str());
+    throw std::logic_error(
+            errorMsg("ThorsAnvil::MySQL::readParameterValue: ",
+                     "Unknown conversion\n",
+                     "\n",
+                     "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n",
+                     getErrorMessage<Tv,T>()
+          ));
 }
 
 template<typename Src>
@@ -128,7 +134,10 @@ unsigned int writeParameterValue(ConectWriter&, Src const&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    throw std::runtime_error("ThorsAnvil::MySQL::writeParameterValue: Unknown conversion");
+    throw std::runtime_error(
+            errorMsg("ThorsAnvil::MySQL::writeParameterValue: ",
+                     "Unknown conversion"
+          ));
 }
 
 template<> inline std::string       readParameterValue<MYSQL_TYPE_VAR_STRING,   std::string>(ConectReader& p)        {return p.lengthEncodedString();}

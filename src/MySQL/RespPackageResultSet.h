@@ -19,7 +19,10 @@ namespace ThorsAnvil
 
 template<typename T> inline T readNullParameter()
 {
-    throw std::runtime_error(std::string("ThorsAnvil::MySQL::readNullParameter: Undefined for this type ") + typeid(T).name());
+    throw std::runtime_error(
+            errorMsg("ThorsAnvil::MySQL::readNullParameter: ",
+                     "Undefined for this type ", typeid(T).name()
+          ));
 }
 
 template<> inline std::string readNullParameter<std::string>()                                 {return "";}
@@ -36,8 +39,16 @@ class RespPackageResultSet: public RespPackage
     T readNextValue()
     {
         if (nextColumn >= columns.size()) {
-            throw std::domain_error("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: Trying to read more parameters than exist.\n"
-                                    "This should not happen please file a bug report.");
+            /* Note: This should never happen as we already validate that
+                     a user callback function has the exact parameters required
+                     for the data provided by the server.
+
+                     Because this should never happen it is a domain_error
+            */
+            throw std::domain_error(
+                    bugReport("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: ",
+                              "Trying to read more parameters than exist"
+                  ));
         }
         int currentColumn   = nextColumn;
         ++nextColumn;
@@ -73,8 +84,10 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_DATETIME2:      return readParameterValue<MYSQL_TYPE_DATETIME2, T>(reader);
             case MYSQL_TYPE_TIME2:          return readParameterValue<MYSQL_TYPE_TIME2, T>(reader);
             default:
-                throw std::domain_error("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: Unimplemented Column Type\n"
-                                        "This should not happen please file a bug report");
+                throw std::domain_error(
+                        bugReport("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: ",
+                                  "Unimplemented Column Type"
+                      ));
         }
     }
 

@@ -44,9 +44,10 @@ RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expec
     }
     else {
         throw std::runtime_error(
-                std::string("ThorsAnvil::MySQL::ConectReader::getNextPackage: Unknown Result Type: ")
-                + std::to_string(packageType)
-              );
+                errorMsg("ThorsAnvil::MySQL::ConectReader::getNextPackage: ",
+                         "Unknown Result Type: ", packageType,
+                         "\nExpecting: ", expectedResult
+              ));
     }
 }
 
@@ -65,9 +66,9 @@ unsigned long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
         case 0xFA:
         case 0xFB:
         case 0xFF:  throw std::runtime_error(
-                                std::string("ThorsAnvil::MySQL::ConectReader::lengthEncodedInteger: Invalid length encoding: ")
-                                + std::to_string(type)
-                          );
+                            errorMsg("ThorsAnvil::MySQL::ConectReader::lengthEncodedInteger: ",
+                                     "Invalid length encoding: ", type
+                          ));
         case 0xFC:  result  = fixedLengthInteger<2>(); break;
         case 0xFD:  result  = fixedLengthInteger<3>(); break;
         case 0xFE:  result  = fixedLengthInteger<8>(); break;
@@ -142,8 +143,12 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
 {
     MySQLTimeBag    timeBag;
     long    size    = fixedLengthInteger<1>();
-    if (size != 11 && size != 7 && size != 4 && size != 0)
-    {   throw std::runtime_error("ConectReader::readDate: Invalid Date Size");
+    if (size != 11 && size != 7 && size != 4 && size != 0) {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::ConectReader::readDate: ",
+                         "Invalid Date Size", size,
+                         "\nExpecting: 11/7/4/0"
+              ));
     }
     if (size == 11 || size == 7 || size == 4)
     {
@@ -178,15 +183,22 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
 {
     MySQLTimeBag    timeBag;
     long    size    = fixedLengthInteger<1>();
-    if (size != 12 && size != 8 && size != 0)
-    {   throw std::runtime_error("ConectReader::readTime: Invalid Time Size");
+    if (size != 12 && size != 8 && size != 0) {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ",
+                         "Invalid Time Size: ", size,
+                         "\nExpecting 12/8/0"
+              ));
     }
     timeBag.type    = MySQLTimeBag::RelativePositive;
     if (size == 12 || size == 8)
     {
         long    negativeTest    = fixedLengthInteger<1>();
-        if (negativeTest < 0 || negativeTest > 1)
-        {   throw std::runtime_error("ConectReader::readTime: Invalid Negative Test");
+        if (negativeTest < 0 || negativeTest > 1) {
+            throw std::runtime_error(
+                    errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ",
+                             "Invalid Negative Test"
+                  ));
         }
         if (negativeTest == 1)
         {

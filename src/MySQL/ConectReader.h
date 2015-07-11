@@ -3,6 +3,7 @@
 #define THORS_ANVIL_MYSQL_PACKAGE_READER_H
 
 #include "MySQLUtil.h"
+#include "ThorSQL/SQLUtil.h"
 #include <memory>
 #include <functional>
 #include <vector>
@@ -49,8 +50,14 @@ class ConectReader
         std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
         template<typename Resp>
         std::unique_ptr<Resp>           recvMessage(int expectedResult = -1,
-                                                    OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*
-                                                                                    {throw std::runtime_error("ThorsAnvil::MySQL::ConectReader::recvMessage: No result expected");}
+                                                    OKAction expectedResultAction =
+                                                                [](int, ConectReader&)->RespPackage*
+                                                                {
+                                                                    throw std::runtime_error(
+                                                                            errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ",
+                                                                                     "No result expected"
+                                                                          ));
+                                                                }
                                                    );
     private:
         RespPackage*    getNextPackageWrap(int expectedResult, OKAction expectedResultAction);

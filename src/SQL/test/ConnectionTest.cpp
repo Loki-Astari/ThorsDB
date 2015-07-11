@@ -24,7 +24,7 @@ TEST(ConnectionTest, BadSchema)
     using ThorsAnvil::SQL::Connection;
     ASSERT_THROW(
     Connection     connection("badschema://127.0.0.1:69", "root", "testPassword", "test"),
-    std::runtime_error
+    std::logic_error
     );
 }
 
@@ -33,7 +33,7 @@ TEST(ConnectionTest, NoSchema)
     using ThorsAnvil::SQL::Connection;
     ASSERT_THROW(
     Connection     connection("127.0.0.1:69", "root", "testPassword", "test"),
-    std::runtime_error
+    std::logic_error
     );
 }
 TEST(ConnectionTest, BadHost)
@@ -41,7 +41,7 @@ TEST(ConnectionTest, BadHost)
     using ThorsAnvil::SQL::Connection;
     ASSERT_THROW(
     Connection     connection("mysql://:69", "root", "testPassword", "test"),
-    std::runtime_error
+    std::logic_error
     );
 }
 TEST(ConnectionTest, BadPort)
@@ -49,7 +49,7 @@ TEST(ConnectionTest, BadPort)
     using ThorsAnvil::SQL::Connection;
     ASSERT_THROW(
     Connection     connection("mysql://127.0.0.1:XY", "root", "testPassword", "test"),
-    std::runtime_error
+    std::logic_error
     );
 }
 

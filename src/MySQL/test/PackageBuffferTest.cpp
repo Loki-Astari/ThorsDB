@@ -200,7 +200,7 @@ TEST(PackageBufferMySQLDebugBufferTest, flush)
     mysqlBuffer.flush();    // Flush OK after a reset
     ASSERT_EQ(8, buffer.writLen());
     // But should fail if done twice without a reset
-    ASSERT_THROW(mysqlBuffer.flush(), std::runtime_error);
+    ASSERT_THROW(mysqlBuffer.flush(), std::domain_error);
 }
 TEST(PackageBufferMySQLDebugBufferTest, flushAndWrite)
 {
@@ -213,7 +213,7 @@ TEST(PackageBufferMySQLDebugBufferTest, flushAndWrite)
 
     mysqlBuffer.flush();
     ASSERT_EQ(4, buffer.writLen());
-    ASSERT_THROW(mysqlBuffer.write("10", 2), std::runtime_error);
+    ASSERT_THROW(mysqlBuffer.write("10", 2), std::domain_error);
 }
 TEST(PackageBufferMySQLDebugBufferTest, resetWithFlush)
 {
@@ -253,7 +253,7 @@ TEST(PackageBufferMySQLDebugBufferTest, dropDataPreCheck)
 
     char            result[4];
     mysqlBuffer.read(result, 2);
-    ASSERT_THROW(mysqlBuffer.reset(), std::runtime_error);
+    ASSERT_THROW(mysqlBuffer.reset(), std::domain_error);
 }
 TEST(PackageBufferMySQLDebugBufferTest, dropData)
 {
