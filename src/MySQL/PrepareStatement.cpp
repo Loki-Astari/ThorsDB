@@ -274,11 +274,24 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
                 validateInfo.append(1, '\x8');
                 validateInfo.append(8, '\x0');
                 break;
+            case MYSQL_TYPE_BIT:
+                validateInfo.append(1, '\x0');  // Use a string length encoded string representation.
+                break;
+            case MYSQL_TYPE_NULL:
+            case MYSQL_TYPE_YEAR:
+            case MYSQL_TYPE_NEWDATE:
+            case MYSQL_TYPE_TIMESTAMP2:
+            case MYSQL_TYPE_DATETIME2:
+            case MYSQL_TYPE_TIME2:
+            case MYSQL_TYPE_ENUM:
+            case MYSQL_TYPE_SET:
+            case MYSQL_TYPE_GEOMETRY:
             default:
                 throw std::domain_error(
                         bugReport("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: ",
                                   "Unknown Type returned by server. Type: ", std::hex, col.type
                       ));
+
         }
     }
     // Buffer
