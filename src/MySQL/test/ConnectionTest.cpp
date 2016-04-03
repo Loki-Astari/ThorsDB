@@ -15,7 +15,7 @@ ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestC
 /*
  * Tests assume mysql is already up and running.
  * Default port 3306
- * Has a user called root with password testPassword
+ * Has a user called test with password testPassword
  */
 TEST(ConnectionTest, CreateMySQLOnGeneric)
 {

@@ -3,6 +3,7 @@
 #include "RespPackageHandShake.h"
 #include "ConectReader.h"
 #include "PackageStream.h"
+#include "MySQLConfig.h"
 #include "test/MockStream.h"
 #include <algorithm>
 
@@ -33,7 +34,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake);
+        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -70,7 +71,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_clear_password)
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake);
+        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -108,7 +109,7 @@ TEST(RequPackageHandShakeResponseTest, Check_authentication_windows_client)
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake);
+        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -146,7 +147,7 @@ TEST(RequPackageHandShakeResponseTest, Check_sha256_password)
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake);
+        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -183,7 +184,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_native_password)
     ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
 
     ASSERT_NO_THROW(
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake)
+        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake)
     );
 }
 
@@ -212,7 +213,7 @@ TEST(RequPackageHandShakeResponseTest, Check_unknown_type)
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp("root", "testPassword", ThorsAnvil::MySQL::Detail::Options(), "test", handShake);
+        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
