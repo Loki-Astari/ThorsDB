@@ -33,19 +33,18 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
-        enum PacketContinuation { None, Reset};
-
         template<typename Resp>
         std::unique_ptr<Resp> recvMessage(ConectReader::OKMap const& actions, bool expectedEOF = false);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const&                   request,
-                                          PacketContinuation            cont,
-                                          ConectReader::OKMap const&    actions     = {},
-                                          bool                          expectedEOF = false
-                                        );
+        std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
+        template<typename Resp, typename Requ>
+        std::unique_ptr<Resp> sendMessage(Requ const& request, ConectReader::OKMap const&    actions     = {});
         template<typename Requ>
-        void                  sendMessage(Requ const& request, PacketContinuation cont);
+        void                  sendMessage(Requ const& request);
         void                  removeCurrentPackage();
+    private:
+        template<typename Requ>
+        void sendMessageInternal(Requ const& request, bool resetWriter);
 };
 
 class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy

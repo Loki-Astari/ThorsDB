@@ -340,7 +340,6 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     , connection(connectn)
     , prepareResp(connection.sendMessage<Detail::RespPackagePrepare>(
                                     Detail::RequPackagePrepare(statement),
-                                    Connection::Reset,
                                     {{0x00, [](int firstByte, ConectReader& reader)
                                             {return new Detail::RespPackagePrepare(firstByte, reader);}
                                     }}
@@ -354,7 +353,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
 
 PrepareStatement::~PrepareStatement()
 {
-    connection.sendMessage(Detail::RequPackagePrepareClose(statementID), Connection::Reset);
+    connection.sendMessage(Detail::RequPackagePrepareClose(statementID));
 }
 
 void PrepareStatement::doExecute()
@@ -379,7 +378,6 @@ void PrepareStatement::doExecute()
 
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
-                                    Connection::Reset,
                                     {{-1, // Does not matter what the first byte is 
                                     [this](int firstByte, ConectReader& reader){
                                         return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));
@@ -400,10 +398,7 @@ bool PrepareStatement::more()
                                     }}});
     bool moreResult = nextLine.get() != nullptr;
     if (!moreResult) {
-        connection.sendMessage<Detail::RespPackageOK>(
-                                    Detail::RequPackagePrepareReset(statementID),
-                                    Connection::Reset
-                                );
+        connection.sendMessage<Detail::RespPackageOK>(Detail::RequPackagePrepareReset(statementID));
         validatorStream.reset();
         nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
     }
@@ -426,7 +421,7 @@ void PrepareStatement::abort()
 #include "Connection.tpp"
 #include "ConectReader.tpp"
 
-template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, ConectReader::OKMap const&, bool);
+template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, ConectReader::OKMap const&);
 template std::unique_ptr<Detail::RespPackagePrepare> ConectReader::recvMessage<Detail::RespPackagePrepare>(ConectReader::OKMap const&, bool);
 template std::unique_ptr<Detail::RespPackagePrepareExecute> ConectReader::recvMessage<Detail::RespPackagePrepareExecute>(ConectReader::OKMap const&, bool);
 

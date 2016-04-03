@@ -135,6 +135,7 @@ class PrepareStatement: public Statement
         PrepareStatement(Connection& connection, std::string const& statement);
         ~PrepareStatement();
 
+    private:
         virtual void abort()                                override;
 
         virtual void doExecute()                            override;
