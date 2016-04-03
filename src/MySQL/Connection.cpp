@@ -1,6 +1,7 @@
 
 #include "Connection.h"
 #include "RespPackageHandShake.h"
+#include "RespPackageAuthSwitchRequest.h"
 #include "RequPackageHandShakeResp.h"
 #include "PrepareStatement.h"
 #include "RespPackageOK.h"
@@ -54,7 +55,25 @@ Connection::Connection(
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](int firstByte, ConectReader& reader){return new Detail::RespPackageOK(firstByte, reader);});
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0xFE,
+        [](int firstByte, ConectReader& reader)
+        {
+            return new Detail::RespPackageAuthSwitchRequest(firstByte, reader);
+        });
+
+    if (!ok)
+    {
+        throw std::runtime_error("Connection::Connection: Handshake failed: Unexpected Package");
+    }
+    if (!(ok->isOK()))
+    {
+        std::cerr << "Runtime Error about to go\n";
+        // Not currently we only support "mysql_native_password" authentication.
+        // I welcome a pull request to support other authentication protocols.
+        std::stringstream message;
+        message << "Connection::Connection: Handshake failed: Got: " << (*ok);
+        throw std::runtime_error(message.str());
+    }
 }
 
 Connection::~Connection()
