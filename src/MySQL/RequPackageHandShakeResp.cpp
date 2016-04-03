@@ -75,13 +75,16 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
     // These capabilities mirror the `mysql` tool.
     // We will leave this for now but it may change
     // as the understanding of the system updates.
-    long cap  = CLIENT_SET_CLIENT | CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA | CLIENT_CONNECT_ATTRS
+    unsigned long cap  = CLIENT_SET_CLIENT | CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA | CLIENT_CONNECT_ATTRS
                  | CLIENT_PLUGIN_AUTH | CLIENT_PS_MULTI_RESULTS | CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS
                  | CLIENT_SECURE_CONNECTION | CLIENT_TRANSACTIONS
                  | CLIENT_INTERACTIVE | CLIENT_PROTOCOL_41
                  | CLIENT_LOCAL_FILES
                  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD;
-    writer.writeFixedLengthInteger<4>(cap);
+
+    // Turn off flags not supported by the server
+    unsigned long localCap = capabilities & cap;
+    writer.writeFixedLengthInteger<4>(localCap);
 
     long maxPacketSize   = 0x01000000;
     writer.writeFixedLengthInteger<4>(maxPacketSize);
@@ -94,35 +97,35 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 
     writer.writeNullTerminatedString(username);
 
-    if (capabilities & CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)
+    if (localCap & CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)
     {
         writer.writeLengthEncodedInteger(authResponse.size());
-        writer.writeVariableLengthString(authResponse);
+        writer.writeFixedLengthString(authResponse, authResponse.size());
     }
-    else if (capabilities & CLIENT_SECURE_CONNECTION)
+    else if (localCap & CLIENT_SECURE_CONNECTION)
     {
         char val = authResponse.size();
         writer.writeFixedLengthInteger<1>(val);
-        writer.writeVariableLengthString(authResponse);
+        writer.writeFixedLengthString(authResponse, authResponse.size());
     }
     else
     {
         writer.writeNullTerminatedString(authResponse);
     }
 
-    if (capabilities & CLIENT_CONNECT_WITH_DB)
+    if (localCap & CLIENT_CONNECT_WITH_DB)
     {
         writer.writeNullTerminatedString(database);
     }
 
-    if (capabilities & CLIENT_PLUGIN_AUTH)
+    if (localCap & CLIENT_PLUGIN_AUTH)
     {
         writer.writeNullTerminatedString(authPluginName);
     }
 
     // TODO Add Key Values
     // For now empty the optins
-    if (capabilities & CLIENT_CONNECT_ATTRS)
+    if (localCap & CLIENT_CONNECT_ATTRS)
     {
         std::size_t size = 0;
         for(auto const& loop: options) {
