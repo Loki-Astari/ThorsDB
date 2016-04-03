@@ -1,7 +1,12 @@
 show databases;
 
 DROP    DATABASE IF EXISTS test;
+DROP    USER 'test'@'localhost';
+
 CREATE  DATABASE IF NOT EXISTS test;
+CREATE  USER 'test'@'localhost' IDENTIFIED BY 'testPassword';
+GRANT   ALL ON test.* TO 'test'@'localhost';
+
 
 USE test;
 
