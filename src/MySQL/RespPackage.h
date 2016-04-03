@@ -25,7 +25,7 @@ class RespPackage
             , error(false)
             , eof(false)
         {
-            std::cerr << "\n<----- Resp: " << respName << "\n\n";
+            // std::cerr << "\n<----- Resp: " << respName << "\n\n";
         }
         virtual ~RespPackage() {}
         virtual  std::ostream& print(std::ostream& s) const = 0;

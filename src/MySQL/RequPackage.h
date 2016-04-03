@@ -18,7 +18,7 @@ class RequPackage
         RequPackage(std::string const& humanMessage, std::string const& requName)
             : humanMessage(humanMessage)
         {
-            std::cerr << "\n-----> Requ: " << requName << "\n\n";
+            // std::cerr << "\n-----> Requ: " << requName << "\n\n";
         }
         virtual ~RequPackage()  {}
         virtual  std::ostream& print(std::ostream& s)   const = 0;
