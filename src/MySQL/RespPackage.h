@@ -1,6 +1,7 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
+#include "ThorSQL/SQLUtil.h"
 #include <ostream>
 #include <iostream>
 
@@ -25,6 +26,7 @@ class RespPackage
             , error(false)
             , eof(false)
         {
+            thorUnused(respName);
             // std::cerr << "\n<----- Resp: " << respName << "\n\n";
         }
         virtual ~RespPackage() {}

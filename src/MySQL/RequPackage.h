@@ -2,6 +2,7 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
 
 #include "ConectWriter.h"
+#include "ThorSQL/SQLUtil.h"
 #include <ostream>
 #include <iomanip>
 #include <iostream>
@@ -18,6 +19,7 @@ class RequPackage
         RequPackage(std::string const& humanMessage, std::string const& requName)
             : humanMessage(humanMessage)
         {
+            thorUnused(requName);
             // std::cerr << "\n-----> Requ: " << requName << "\n\n";
         }
         virtual ~RequPackage()  {}
