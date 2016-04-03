@@ -50,16 +50,15 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(0x0A, [](int firstByte, ConectReader& reader){return new Detail::RespPackageHandShake(firstByte, reader);});
+    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>({{0x0A, [](int firstByte, ConectReader& reader){return new Detail::RespPackageHandShake(firstByte, reader);}}});
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0xFE,
-        [](int firstByte, ConectReader& reader)
-        {
-            return new Detail::RespPackageAuthSwitchRequest(firstByte, reader);
-        });
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None,
+        {{0xFE, [](int firstByte, ConectReader& reader)
+                {return new Detail::RespPackageAuthSwitchRequest(firstByte, reader);}
+        }});
 
     if (!ok)
     {
@@ -94,9 +93,9 @@ void Connection::removeCurrentPackage()
 #include "Connection.tpp"
 #include "ConectReader.tpp"
 
-template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
-template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
-template std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, ConectReader::OKMap const&, bool);
+template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(ConectReader::OKMap const&, bool);
+template std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>(ConectReader::OKMap const&, bool);
 
 #endif
 

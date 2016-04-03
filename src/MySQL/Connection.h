@@ -36,19 +36,12 @@ class Connection
         enum PacketContinuation { None, Reset};
 
         template<typename Resp>
-        std::unique_ptr<Resp> recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction);
+        std::unique_ptr<Resp> recvMessage(ConectReader::OKMap const& actions, bool expectedEOF = false);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const&            request,
-                                          PacketContinuation     cont,
-                                          int                    expectedResult,
-                                          ConectReader::OKAction expectedResultAction =
-                                                [](int, ConectReader&)->RespPackage*
-                                                {
-                                                    throw std::runtime_error(
-                                                            errorMsg("ThorsAnvil::MySQL::Connection::sendMessage: ",
-                                                                     "No result expected"
-                                                          ));
-                                                }
+        std::unique_ptr<Resp> sendMessage(Requ const&                   request,
+                                          PacketContinuation            cont,
+                                          ConectReader::OKMap const&    actions     = {},
+                                          bool                          expectedEOF = false
                                         );
         template<typename Requ>
         void                  sendMessage(Requ const& request, PacketContinuation cont);

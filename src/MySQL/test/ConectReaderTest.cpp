@@ -398,7 +398,7 @@ TEST(ConectReaderTest, ThrowOnErrorMessage)
 
     try
     {
-        reader.recvMessage<ThorsAnvil::MySQL::Detail::RespPackageOK>(0);
+        reader.recvMessage<ThorsAnvil::MySQL::Detail::RespPackageOK>();
         FAIL();
     }
     catch(std::runtime_error const& e) {
