@@ -29,6 +29,9 @@
 #define CLIENT_CONNECT_ATTRS                    0x00100000 
 #define CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA   0x00200000 
 #define CLIENT_SET_CLIENT                       0x00400000 
+#define CLIENT_SESSION_TRACK                    0x00800000
+
+#define CLIENT_DEPRECATE_EOF                    0x01000000
 
 
 #define SERVER_STATUS_IN_TRANS                  0x0001
@@ -43,6 +46,8 @@
 #define SERVER_STATUS_METADATA_CHANGED          0x0400
 #define SERVER_QUERY_WAS_SLOW                   0x0800
 #define SERVER_PS_OUT_PARAMS                    0x1000
+#define SERVER_STATUS_IN_TRANS_READONLY         0x2000
+#define SERVER_SESSION_STATE_CHANGED            0x4000
 
 
 

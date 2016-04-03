@@ -21,7 +21,7 @@ class RespPackageOK: public RespPackage
     long    warningFlags;
     public:
         RespPackageOK(int firstByte, ConectReader& reader)
-            : RespPackage(reader)
+            : RespPackage(reader, "OK")
             , affectedRows(reader.lengthEncodedInteger())
             , lastInsertID(reader.lengthEncodedInteger())
             , statusFlags(reader.fixedLengthInteger<2>())

@@ -25,7 +25,7 @@ class RequPackagePrepare: public RequPackage
     std::string const& statement;
     public:
         RequPackagePrepare(std::string const& statement)
-            : RequPackage("RequPackagePrepare")
+            : RequPackage("RequPackagePrepare", "Prepare")
             , statement(statement)
         {}
         virtual  std::ostream& print(std::ostream& s)   const override
@@ -47,7 +47,7 @@ class RequPackagePrepareClose: public RequPackage
     int statementID;
     public:
         RequPackagePrepareClose(int statementID)
-            : RequPackage("RequPackagePrepareClose")
+            : RequPackage("RequPackagePrepareClose", "Prepare-Close")
             , statementID(statementID)
         {}
         virtual  std::ostream& print(std::ostream& s)   const
@@ -70,7 +70,7 @@ class RequPackagePrepareExecute: public RequPackage
     BindBuffer const&   bindBuffer;
     public:
         RequPackagePrepareExecute(int statementID, BindBuffer const& bindBuffer)
-            : RequPackage("RequPackagePrepareExecute")
+            : RequPackage("RequPackagePrepareExecute", "Prepare-Execute")
             , statementID(statementID)
             , bindBuffer(bindBuffer)
         {}
@@ -104,7 +104,7 @@ class RequPackagePrepareReset: public RequPackage
     int statementID;
     public:
         RequPackagePrepareReset(int statementID)
-            : RequPackage("RequPackagePrepareReset")
+            : RequPackage("RequPackagePrepareReset", "Prepare-Reset")
             , statementID(statementID)
         {}
         virtual  std::ostream& print(std::ostream& s)   const
@@ -131,7 +131,7 @@ class RespPackagePrepare: public RespPackage
     std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
         RespPackagePrepare(int firstByte, ConectReader& reader)
-            : RespPackage(reader)
+            : RespPackage(reader, "Prepare")
         {
             assert(firstByte == 0x00);
 
@@ -197,7 +197,7 @@ class RespPackagePrepareExecute: public RespPackage
     std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
         RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
-            : RespPackage(reader)
+            : RespPackage(reader, "Prepare-Execute")
         {
             columnCount = firstByte;
             reader.reset();

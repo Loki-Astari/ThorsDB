@@ -5,7 +5,7 @@
 using namespace ThorsAnvil::MySQL::Detail;
 
 RespPackageResultSet::RespPackageResultSet(int firstByte, ConectReader& reader, std::vector<RespPackageColumnDefinition> const& columns)
-    : RespPackage(reader)
+    : RespPackage(reader, "Result-Set")
     , reader(reader)
     , columns(columns)
     , nextColumn(0)

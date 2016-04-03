@@ -2,6 +2,7 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
 #include <ostream>
+#include <iostream>
 
 namespace ThorsAnvil
 {
@@ -18,12 +19,14 @@ class RespPackage
         bool                eof;
         std::string         humanMessage;
     public:
-        RespPackage(ConectReader& reader)
+        RespPackage(ConectReader& reader, std::string const& respName)
             : reader(reader)
             , ok(false)
             , error(false)
             , eof(false)
-        {}
+        {
+            std::cerr << "\n<----- Resp: " << respName << "\n\n";
+        }
         virtual ~RespPackage() {}
         virtual  std::ostream& print(std::ostream& s) const = 0;
 

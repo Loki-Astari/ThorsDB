@@ -11,7 +11,7 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
                                                            Options const&     options,
                                                            std::string const& database,
                                                            RespPackageHandShake const& handshake)
-    : RequPackage("RequPackageHandShakeResponse")
+    : RequPackage("RequPackageHandShakeResponse", "HandShake-Response")
     , username(username)
     , options(options)
     , database(database)

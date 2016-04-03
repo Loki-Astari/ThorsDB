@@ -6,7 +6,7 @@
 using namespace ThorsAnvil::MySQL::Detail;
 
 RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
-    : RespPackage(reader)
+    : RespPackage(reader, "HandShake")
     , serverVersion(reader.nulTerminatedString())
     , connectionID(reader.fixedLengthInteger<4>())
     , authPluginData(reader.fixedLengthString(8))

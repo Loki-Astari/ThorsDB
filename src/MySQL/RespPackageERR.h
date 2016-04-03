@@ -20,7 +20,7 @@ class RespPackageERR: public RespPackage
     std::string SQLState;
     public:
         RespPackageERR(int firstByte, ConectReader& reader)
-            : RespPackage(reader)
+            : RespPackage(reader, "ERR")
             , errorCode(reader.fixedLengthInteger<2>())
             , hash(reader.fixedLengthString(1, CLIENT_PROTOCOL_41))
             , SQLState(reader.fixedLengthString(5, CLIENT_PROTOCOL_41))
