@@ -18,7 +18,10 @@ INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (38, "Mary Twit", 29, 'F
 
 CREATE TABLE IntTypes(
      ID  INTEGER
-    ,B0  BIT(4)                 # 4 bit (default)
+    ,B0  BIT(4)                 # 4  bit
+    ,B1  Bit(12)                # 12 bit
+    ,B2  Bit(24)                # 24 bit
+    ,B3  Bit(48)                # 48 bit
 
     ,U2  TINYINT     UNSIGNED   # 1 byte    0 -> 255
     ,U3  SMALLINT    UNSIGNED   # 2 byte    0 -> 65536
@@ -35,27 +38,27 @@ CREATE TABLE IntTypes(
     ,I7  BIGINT);               # 8 byte    -9223372036854775808 -> 9223372036854775807
 
 INSERT INTO IntTypes(ID,
-                     B0,
+                     B0, B1, B2, B3,
                      U2,U3,U4,U5,U6,U7,
                      I2,I3,I4,I5,I6,I7)
      VALUES(1,
-            0xA,
+            0xA, 0xB3D, 0x123456, 0xFEDCBA987654,
             0x12, 0x34, 0x56, 0x78, 0x9A, 0xCD,
             0x12, 0x34, 0x56, 0x78, 0x9A, 0xCD);
 INSERT INTO IntTypes(ID,
-                     B0,
+                     B0,B1,B2,B3,
                      U2,U3,U4,U5,U6,U7,
                      I2,I3,I4,I5,I6,I7)
      VALUES(2,
-            0,
+            0, 0, 0, 0,
             0, 0, 0, 0, 0, 0,
             -128, -32768, -8388608, -2147483648, -2147483648, -9223372036854775808);
 INSERT INTO IntTypes(ID,
-                     B0,
+                     B0,B1,B2,B3,
                      U2,U3,U4,U5,U6,U7,
                      I2,I3,I4,I5,I6,I7)
      VALUES(3,
-            0xF,
+            0xF, 0xFFF, 0xFFFFFF, 0xFFFFFFFFFFFF,
             255, 65535, 16777215, 4294967295, 4294967295, 18446744073709551615,
             127, 32767, 8388607, 2147483647, 2147483647, 9223372036854775807);
 
@@ -102,18 +105,4 @@ CREATE TABLE StringTypes(
     ,S4  TEXT
     ,S5  MEDIUMTEXT
     ,S6  LONGTEXT);
-
-CREATE TABLE ExtendedTypes(
-     ID  INTEGER
-    ,E1  ENUM('value1','value2','value3')
-    ,E2  SET('value1','value2','value3'));
-
-                     R1,R2,R3,R4,R5,R5,
-                     D1,D2,D3,D4,
-                     T1,T2,T3,T4,T5,
-                     B1,B2,B3,B4,B5,B6,
-                     S1,S2,S3,S4,S5,S6,
-                     E1,E2)
-        VALUES(1,
-                
 
