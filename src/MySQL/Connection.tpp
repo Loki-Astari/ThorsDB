@@ -9,7 +9,8 @@ namespace ThorsAnvil
 template<typename Resp>
 std::unique_ptr<Resp> Connection::recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction)
 {
-    return packageReader.recvMessage<Resp>(expectedResult, expectedResultAction);
+    std::unique_ptr<Resp>   result(packageReader.recvMessage<Resp>(expectedResult, expectedResultAction));
+    return result;
 }
 
 template<typename Requ>
@@ -25,7 +26,8 @@ template<typename Resp, typename Requ>
 std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction)
 {
     sendMessage(request, cont);
-    return recvMessage<Resp>(expectedResult, expectedResultAction);
+    std::unique_ptr<Resp> result(recvMessage<Resp>(expectedResult, expectedResultAction));
+    return result;
 }
 
     }
