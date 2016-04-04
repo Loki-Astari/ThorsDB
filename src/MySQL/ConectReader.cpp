@@ -9,8 +9,8 @@ using namespace ThorsAnvil::MySQL;
 
 void ConectReader::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
-    capabilities    = newCapabilities;
-    charset         = newCharset;
+    capbil      = newCapabilities;
+    charset     = newCharset;
 }
 
 void ConectReader::read(char* data, std::size_t len)
@@ -185,7 +185,11 @@ std::time_t ConectReader::readRel()
 unsigned long long ConectReader::readRelMicro()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return timeBag.day * (1000LL*60*60*24) + timeBag.hour * (1000LL*60*60) + timeBag.minute * (1000LL*60) + timeBag.second * (1000LL) + timeBag.uSecond;
+    return    timeBag.day * (1000LL*60*60*24)
+            + timeBag.hour * (1000LL*60*60)
+            + timeBag.minute * (1000LL*60)
+            + timeBag.second * (1000LL)
+            + timeBag.uSecond;
 }
 MySQLTimeBag ConectReader::readTimeIntoTimeBag()
 {

@@ -171,7 +171,10 @@ class RespPackagePrepare: public RespPackage
 
         virtual std::ostream& print(std::ostream& s)    const override
         {
-            s << "RespPackagePrepare: statementID" << statementID << " numColumns: " << numColumns << " numParams: " << numParams << " warningCount: " << warningCount << "\n";
+            s << "RespPackagePrepare: statementID" << statementID
+              << " numColumns: " << numColumns
+              << " numParams: " << numParams
+              << " warningCount: " << warningCount << "\n";
             s << "\tparamInfo:\n";
             for(auto const& loop: paramInfo) {
                 s << "\t\t" << loop;
@@ -380,7 +383,11 @@ void PrepareStatement::doExecute()
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     {{-1, // Does not matter what the first byte is
                                     [this](int firstByte, ConectReader& reader){
-                                        return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));
+                                        return new Detail::RespPackagePrepareExecute(
+                                                                firstByte,
+                                                                reader,
+                                                                *(this->prepareResp)
+                                                            );
                                     }}}
                               );
 }
@@ -394,7 +401,11 @@ bool PrepareStatement::more()
     nextLine = connection.recvMessage<Detail::RespPackageResultSet>(
                                     {{0x00,
                                     [this](int firstByte, ConectReader& reader){
-                                        return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());
+                                        return new Detail::RespPackageResultSet(
+                                                                firstByte,
+                                                                reader,
+                                                                this->prepareExec->getColumns()
+                                                            );
                                     }}});
     bool moreResult = nextLine.get() != nullptr;
     if (!moreResult) {
@@ -421,9 +432,20 @@ void PrepareStatement::abort()
 #include "Connection.tpp"
 #include "ConectReader.tpp"
 
-template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, ConectReader::OKMap const&);
-template std::unique_ptr<Detail::RespPackagePrepare> ConectReader::recvMessage<Detail::RespPackagePrepare>(ConectReader::OKMap const&, bool);
-template std::unique_ptr<Detail::RespPackagePrepareExecute> ConectReader::recvMessage<Detail::RespPackagePrepareExecute>(ConectReader::OKMap const&, bool);
+template
+std::unique_ptr<Detail::RespPackagePrepare>
+Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>
+(Detail::RequPackagePrepare const&, ConectReader::OKMap const&);
+
+template
+std::unique_ptr<Detail::RespPackagePrepare>
+ConectReader::recvMessage<Detail::RespPackagePrepare>
+(ConectReader::OKMap const&, bool);
+
+template
+std::unique_ptr<Detail::RespPackagePrepareExecute>
+ConectReader::recvMessage<Detail::RespPackagePrepareExecute>
+(ConectReader::OKMap const&, bool);
 
 
 #endif

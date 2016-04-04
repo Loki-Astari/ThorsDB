@@ -124,7 +124,10 @@ class RespPackageResultSet: public RespPackage
         void   retrieve(std::string& value)                 {value = getValue<std::string>("");}
 
         void   retrieve(std::vector<char>& value)           {value = getValue<std::vector<char>>(std::vector<char>());};
-        void   retrieve(SQL::UnixTimeStamp& value)          {value = getValue<SQL::UnixTimeStamp>(SQL::UnixTimeStamp(static_cast<std::time_t>(0)));}
+        void   retrieve(SQL::UnixTimeStamp& value)          {value = getValue<SQL::UnixTimeStamp>(
+                                                                        SQL::UnixTimeStamp(static_cast<std::time_t>(0))
+                                                                     );
+                                                            }
 };
         }
     }

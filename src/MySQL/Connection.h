@@ -61,7 +61,10 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
                                std::string const& password,
                                std::string const& database,
                                ThorsAnvil::SQL::Options const& options);
-        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/) override;
+        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(
+                                                                        std::string const& statement,
+                                                                        ThorsAnvil::SQL::StatementType /*type*/
+                                                                    ) override;
 };
 
     }

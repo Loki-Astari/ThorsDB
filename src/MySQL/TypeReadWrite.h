@@ -38,9 +38,10 @@ template<> inline long      standardConverter<long>(std::string const& t, std::s
 template<> inline long long standardConverter<long long>(std::string const& t, std::size_t* p)  {return stoll(t, p);}
 
 template<typename T>
-inline T stringtointeger(std::string const& t)
+inline T stringtointeger(ConectReader& p)
 {
     std::size_t  pos;
+    std::string const& t = p.lengthEncodedString();
     T            result = standardConverter<T>(t, &pos);
     if (pos != t.size()) {
         throw std::runtime_error(
@@ -165,131 +166,160 @@ T getBitField(ConectReader& p)
 /*
  * STRINGS
  */
-template<> inline std::string       readParameterValue<MYSQL_TYPE_VAR_STRING,   std::string>(ConectReader& p)        {return p.lengthEncodedString();}
-template<> inline std::string       readParameterValue<MYSQL_TYPE_STRING,       std::string>(ConectReader& p)        {return p.lengthEncodedString();}
-template<> inline std::string       readParameterValue<MYSQL_TYPE_VARCHAR,      std::string>(ConectReader& p)        {return p.lengthEncodedString();}
+using Intsll = signed long long;
+using Intsl  = signed long;
+using Intsi  = signed int;
+using Intss  = signed short;
+using Intsc  = signed char;
+using Intull = unsigned long long;
+using Intul  = unsigned long;
+using Intui  = unsigned int;
+using Intus  = unsigned short;
+using Intuc  = unsigned char;
+using String = std::string;
+using Vector = std::vector<char>;
+
+
+template<> inline String  readParameterValue<MYSQL_TYPE_VAR_STRING,   String>(ConectReader& p) {return p.lengthEncodedString();}
+template<> inline String  readParameterValue<MYSQL_TYPE_STRING,       String>(ConectReader& p) {return p.lengthEncodedString();}
+template<> inline String  readParameterValue<MYSQL_TYPE_VARCHAR,      String>(ConectReader& p) {return p.lengthEncodedString();}
 
 /*
  * BLOBS
  */
-template<> inline Buffer            readParameterValue<MYSQL_TYPE_TINY_BLOB,    std::vector<char>>(ConectReader& p)  {return p.lengthEncodedBlob();}
-template<> inline Buffer            readParameterValue<MYSQL_TYPE_MEDIUM_BLOB,  std::vector<char>>(ConectReader& p)  {return p.lengthEncodedBlob();}
-template<> inline Buffer            readParameterValue<MYSQL_TYPE_BLOB,         std::vector<char>>(ConectReader& p)  {return p.lengthEncodedBlob();}
-template<> inline Buffer            readParameterValue<MYSQL_TYPE_LONG_BLOB,    std::vector<char>>(ConectReader& p)  {return p.lengthEncodedBlob();}
+template<> inline Buffer  readParameterValue<MYSQL_TYPE_TINY_BLOB,    Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Buffer  readParameterValue<MYSQL_TYPE_MEDIUM_BLOB,  Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Buffer  readParameterValue<MYSQL_TYPE_BLOB,         Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Buffer  readParameterValue<MYSQL_TYPE_LONG_BLOB,    Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 
 /*
  * Integers
  */
  // signed long long
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_DECIMAL,      signed long long>(ConectReader& p)   {return Detail::stringtointeger<signed long long >(p.lengthEncodedString());}
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed long long>(ConectReader& p)   {return Detail::stringtointeger<signed long long>(p.lengthEncodedString());}
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_LONGLONG,     signed long long>(ConectReader& p)   {return p.fixedLengthInteger<8>();}
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_LONG,         signed long long>(ConectReader& p)   {return p.fixedLengthInteger<4>();}
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_INT24,        signed long long>(ConectReader& p)   {return p.fixedLengthInteger<4>();}
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_SHORT,        signed long long>(ConectReader& p)   {return p.fixedLengthInteger<2>();}
-template<> inline signed long long  readParameterValue<MYSQL_TYPE_TINY,         signed long long>(ConectReader& p)   {return p.fixedLengthInteger<1>();}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_DECIMAL,      Intsll>(ConectReader& p) {return Detail::stringtointeger<Intsll>(p);}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_NEWDECIMAL,   Intsll>(ConectReader& p) {return Detail::stringtointeger<Intsll>(p);}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_LONGLONG,     Intsll>(ConectReader& p) {return p.fixedLengthInteger<8>();}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_LONG,         Intsll>(ConectReader& p) {return p.fixedLengthInteger<4>();}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_INT24,        Intsll>(ConectReader& p) {return p.fixedLengthInteger<4>();}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_SHORT,        Intsll>(ConectReader& p) {return p.fixedLengthInteger<2>();}
+template<> inline Intsll  readParameterValue<MYSQL_TYPE_TINY,         Intsll>(ConectReader& p) {return p.fixedLengthInteger<1>();}
 // No MYSQL_TYPE_BIT => Signed integer (only unsigned is supported on purpose)
 
  // unsigned long long
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_DECIMAL,     unsigned long long>(ConectReader& p) {return Detail::stringtointeger<unsigned long long>(p.lengthEncodedString());}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_NEWDECIMAL,  unsigned long long>(ConectReader& p) {return Detail::stringtointeger<unsigned long long>(p.lengthEncodedString());}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_LONGLONG,    unsigned long long>(ConectReader& p) {return p.fixedLengthInteger<8>();}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_LONG,        unsigned long long>(ConectReader& p) {return p.fixedLengthInteger<4>();}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_INT24,       unsigned long long>(ConectReader& p) {return p.fixedLengthInteger<4>();}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_SHORT,       unsigned long long>(ConectReader& p) {return p.fixedLengthInteger<2>();}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_TINY,        unsigned long long>(ConectReader& p) {return p.fixedLengthInteger<1>();}
-template<> inline unsigned long long readParameterValue<MYSQL_TYPE_BIT,         unsigned long long>(ConectReader& p) {return getBitField<unsigned long long>(p);}
+template<> inline Intull readParameterValue<MYSQL_TYPE_DECIMAL,       Intull>(ConectReader& p) {return Detail::stringtointeger<Intull>(p);}
+template<> inline Intull readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intull>(ConectReader& p) {return Detail::stringtointeger<Intull>(p);}
+template<> inline Intull readParameterValue<MYSQL_TYPE_LONGLONG,      Intull>(ConectReader& p) {return p.fixedLengthInteger<8>();}
+template<> inline Intull readParameterValue<MYSQL_TYPE_LONG,          Intull>(ConectReader& p) {return p.fixedLengthInteger<4>();}
+template<> inline Intull readParameterValue<MYSQL_TYPE_INT24,         Intull>(ConectReader& p) {return p.fixedLengthInteger<4>();}
+template<> inline Intull readParameterValue<MYSQL_TYPE_SHORT,         Intull>(ConectReader& p) {return p.fixedLengthInteger<2>();}
+template<> inline Intull readParameterValue<MYSQL_TYPE_TINY,          Intull>(ConectReader& p) {return p.fixedLengthInteger<1>();}
+template<> inline Intull readParameterValue<MYSQL_TYPE_BIT,           Intull>(ConectReader& p) {return getBitField<Intull>(p);}
 
 /*
  * Integers
  */
  // signed long
-template<> inline signed long       readParameterValue<MYSQL_TYPE_DECIMAL,      signed long>(ConectReader& p)        {return Detail::stringtointeger<signed long>(p.lengthEncodedString());}
-template<> inline signed long       readParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed long>(ConectReader& p)        {return Detail::stringtointeger<signed long>(p.lengthEncodedString());}
-template<> inline signed long       readParameterValue<MYSQL_TYPE_LONGLONG,     signed long>(ConectReader& p)        {return p.fixedLengthInteger<8>();}
-template<> inline signed long       readParameterValue<MYSQL_TYPE_LONG,         signed long>(ConectReader& p)        {return p.fixedLengthInteger<4>();}
-template<> inline signed long       readParameterValue<MYSQL_TYPE_INT24,        signed long>(ConectReader& p)        {return p.fixedLengthInteger<4>();}
-template<> inline signed long       readParameterValue<MYSQL_TYPE_SHORT,        signed long>(ConectReader& p)        {return p.fixedLengthInteger<2>();}
-template<> inline signed long       readParameterValue<MYSQL_TYPE_TINY,         signed long>(ConectReader& p)        {return p.fixedLengthInteger<1>();}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_DECIMAL,       Intsl>(ConectReader& p)  {return Detail::stringtointeger<Intsl>(p);}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intsl>(ConectReader& p)  {return Detail::stringtointeger<Intsl>(p);}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_LONGLONG,      Intsl>(ConectReader& p)  {return p.fixedLengthInteger<8>();}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_LONG,          Intsl>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_INT24,         Intsl>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_SHORT,         Intsl>(ConectReader& p)  {return p.fixedLengthInteger<2>();}
+template<> inline Intsl  readParameterValue<MYSQL_TYPE_TINY,          Intsl>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
 // No MYSQL_TYPE_BIT => Signed integer (only unsigned is supported on purpose)
 
  // unsigned long
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_DECIMAL,      unsigned long>(ConectReader& p)      {return Detail::stringtointeger<unsigned long>(p.lengthEncodedString());}
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned long>(ConectReader& p)      {return Detail::stringtointeger<unsigned long>(p.lengthEncodedString());}
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_LONGLONG,     unsigned long>(ConectReader& p)      {return p.fixedLengthInteger<8>();}
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_LONG,         unsigned long>(ConectReader& p)      {return p.fixedLengthInteger<4>();}
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_INT24,        unsigned long>(ConectReader& p)      {return p.fixedLengthInteger<4>();}
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_SHORT,        unsigned long>(ConectReader& p)      {return p.fixedLengthInteger<2>();}
-template<> inline unsigned long     readParameterValue<MYSQL_TYPE_TINY,         unsigned long>(ConectReader& p)      {return p.fixedLengthInteger<1>();}
-template<> inline unsigned long       readParameterValue<MYSQL_TYPE_BIT,        unsigned long>(ConectReader& p)      {return getBitField<unsigned long>(p);}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_DECIMAL,       Intul>(ConectReader& p)  {return Detail::stringtointeger<Intul>(p);}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intul>(ConectReader& p)  {return Detail::stringtointeger<Intul>(p);}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_LONGLONG,      Intul>(ConectReader& p)  {return p.fixedLengthInteger<8>();}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_LONG,          Intul>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_INT24,         Intul>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_SHORT,         Intul>(ConectReader& p)  {return p.fixedLengthInteger<2>();}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_TINY,          Intul>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
+template<> inline Intul  readParameterValue<MYSQL_TYPE_BIT,           Intul>(ConectReader& p)  {return getBitField<Intul>(p);}
 
  // signed int
-template<> inline signed int        readParameterValue<MYSQL_TYPE_DECIMAL,      signed int>(ConectReader& p)         {return Detail::stringtointeger<signed int>(p.lengthEncodedString());}
-template<> inline signed int        readParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed int>(ConectReader& p)         {return Detail::stringtointeger<signed int>(p.lengthEncodedString());}
-template<> inline signed int        readParameterValue<MYSQL_TYPE_LONG,         signed int>(ConectReader& p)         {return p.fixedLengthInteger<4>();}
-template<> inline signed int        readParameterValue<MYSQL_TYPE_INT24,        signed int>(ConectReader& p)         {return p.fixedLengthInteger<4>();}
-template<> inline signed int        readParameterValue<MYSQL_TYPE_SHORT,        signed int>(ConectReader& p)         {return p.fixedLengthInteger<2>();}
-template<> inline signed int        readParameterValue<MYSQL_TYPE_TINY,         signed int>(ConectReader& p)         {return p.fixedLengthInteger<1>();}
+template<> inline Intsi  readParameterValue<MYSQL_TYPE_DECIMAL,       Intsi>(ConectReader& p)  {return Detail::stringtointeger<Intsi>(p);}
+template<> inline Intsi  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intsi>(ConectReader& p)  {return Detail::stringtointeger<Intsi>(p);}
+template<> inline Intsi  readParameterValue<MYSQL_TYPE_LONG,          Intsi>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intsi  readParameterValue<MYSQL_TYPE_INT24,         Intsi>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intsi  readParameterValue<MYSQL_TYPE_SHORT,         Intsi>(ConectReader& p)  {return p.fixedLengthInteger<2>();}
+template<> inline Intsi  readParameterValue<MYSQL_TYPE_TINY,          Intsi>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
 // No MYSQL_TYPE_BIT => Signed integer (only unsigned is supported on purpose)
 
  // unsigned int
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_DECIMAL,      unsigned int>(ConectReader& p)       {return Detail::stringtointeger<unsigned int>(p.lengthEncodedString());}
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned int>(ConectReader& p)       {return Detail::stringtointeger<unsigned int>(p.lengthEncodedString());}
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_LONG,         unsigned int>(ConectReader& p)       {return p.fixedLengthInteger<4>();}
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_INT24,        unsigned int>(ConectReader& p)       {return p.fixedLengthInteger<4>();}
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_SHORT,        unsigned int>(ConectReader& p)       {return p.fixedLengthInteger<2>();}
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_TINY,         unsigned int>(ConectReader& p)       {return p.fixedLengthInteger<1>();}
-template<> inline unsigned int      readParameterValue<MYSQL_TYPE_BIT,          unsigned int>(ConectReader& p)       {return getBitField<unsigned int>(p);}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_DECIMAL,       Intui>(ConectReader& p)  {return Detail::stringtointeger<Intui>(p);}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intui>(ConectReader& p)  {return Detail::stringtointeger<Intui>(p);}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_LONG,          Intui>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_INT24,         Intui>(ConectReader& p)  {return p.fixedLengthInteger<4>();}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_SHORT,         Intui>(ConectReader& p)  {return p.fixedLengthInteger<2>();}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_TINY,          Intui>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
+template<> inline Intui  readParameterValue<MYSQL_TYPE_BIT,           Intui>(ConectReader& p)  {return getBitField<Intui>(p);}
 
  // signed short
-template<> inline signed short      readParameterValue<MYSQL_TYPE_DECIMAL,      signed short>(ConectReader& p)       {return Detail::stringtointeger<signed short>(p.lengthEncodedString());}
-template<> inline signed short      readParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed short>(ConectReader& p)       {return Detail::stringtointeger<signed short>(p.lengthEncodedString());}
-template<> inline signed short      readParameterValue<MYSQL_TYPE_SHORT,        signed short>(ConectReader& p)       {return p.fixedLengthInteger<2>();}
-template<> inline signed short      readParameterValue<MYSQL_TYPE_TINY,         signed short>(ConectReader& p)       {return p.fixedLengthInteger<1>();}
+template<> inline Intss  readParameterValue<MYSQL_TYPE_DECIMAL,       Intss>(ConectReader& p)  {return Detail::stringtointeger<Intss>(p);}
+template<> inline Intss  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intss>(ConectReader& p)  {return Detail::stringtointeger<Intss>(p);}
+template<> inline Intss  readParameterValue<MYSQL_TYPE_SHORT,         Intss>(ConectReader& p)  {return p.fixedLengthInteger<2>();}
+template<> inline Intss  readParameterValue<MYSQL_TYPE_TINY,          Intss>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
 // No MYSQL_TYPE_BIT => Signed integer (only unsigned is supported on purpose)
 
  // unsigned short
-template<> inline unsigned short    readParameterValue<MYSQL_TYPE_DECIMAL,      unsigned short>(ConectReader& p)     {return Detail::stringtointeger<unsigned short>(p.lengthEncodedString());}
-template<> inline unsigned short    readParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned short>(ConectReader& p)     {return Detail::stringtointeger<unsigned short>(p.lengthEncodedString());}
-template<> inline unsigned short    readParameterValue<MYSQL_TYPE_SHORT,        unsigned short>(ConectReader& p)     {return p.fixedLengthInteger<2>();}
-template<> inline unsigned short    readParameterValue<MYSQL_TYPE_TINY,         unsigned short>(ConectReader& p)     {return p.fixedLengthInteger<1>();}
-template<> inline unsigned short    readParameterValue<MYSQL_TYPE_BIT,          unsigned short>(ConectReader& p)      {return getBitField<unsigned short>(p);}
+template<> inline Intus  readParameterValue<MYSQL_TYPE_DECIMAL,       Intus>(ConectReader& p)  {return Detail::stringtointeger<Intus>(p);}
+template<> inline Intus  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intus>(ConectReader& p)  {return Detail::stringtointeger<Intus>(p);}
+template<> inline Intus  readParameterValue<MYSQL_TYPE_SHORT,         Intus>(ConectReader& p)  {return p.fixedLengthInteger<2>();}
+template<> inline Intus  readParameterValue<MYSQL_TYPE_TINY,          Intus>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
+template<> inline Intus  readParameterValue<MYSQL_TYPE_BIT,           Intus>(ConectReader& p)  {return getBitField<Intus>(p);}
 
  // char
-template<> inline char              readParameterValue<MYSQL_TYPE_DECIMAL,      char>(ConectReader& p)               {return Detail::stringtointeger<char>(p.lengthEncodedString());}
-template<> inline char              readParameterValue<MYSQL_TYPE_NEWDECIMAL,   char>(ConectReader& p)               {return Detail::stringtointeger<char>(p.lengthEncodedString());}
-template<> inline char              readParameterValue<MYSQL_TYPE_TINY,         char>(ConectReader& p)               {return p.fixedLengthInteger<1>();}
+template<> inline char   readParameterValue<MYSQL_TYPE_DECIMAL,       char>(ConectReader& p)   {return Detail::stringtointeger<char>(p);}
+template<> inline char   readParameterValue<MYSQL_TYPE_NEWDECIMAL,    char>(ConectReader& p)   {return Detail::stringtointeger<char>(p);}
+template<> inline char   readParameterValue<MYSQL_TYPE_TINY,          char>(ConectReader& p)   {return p.fixedLengthInteger<1>();}
 // No MYSQL_TYPE_BIT => Signed integer (only unsigned is supported on purpose)
 
 
  // signed char
-template<> inline signed char       readParameterValue<MYSQL_TYPE_DECIMAL,      signed char>(ConectReader& p)        {return Detail::stringtointeger<signed char>(p.lengthEncodedString());}
-template<> inline signed char       readParameterValue<MYSQL_TYPE_NEWDECIMAL,   signed char>(ConectReader& p)        {return Detail::stringtointeger<signed char>(p.lengthEncodedString());}
-template<> inline signed char       readParameterValue<MYSQL_TYPE_TINY,         signed char>(ConectReader& p)        {return p.fixedLengthInteger<1>();}
+template<> inline Intsc  readParameterValue<MYSQL_TYPE_DECIMAL,       Intsc>(ConectReader& p)  {return Detail::stringtointeger<Intsc>(p);}
+template<> inline Intsc  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intsc>(ConectReader& p)  {return Detail::stringtointeger<Intsc>(p);}
+template<> inline Intsc  readParameterValue<MYSQL_TYPE_TINY,          Intsc>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
 // No MYSQL_TYPE_BIT => Signed integer (only unsigned is supported on purpose)
 
  // unsigned char
-template<> inline unsigned char     readParameterValue<MYSQL_TYPE_DECIMAL,      unsigned char>(ConectReader& p)      {return Detail::stringtointeger<unsigned char>(p.lengthEncodedString());}
-template<> inline unsigned char     readParameterValue<MYSQL_TYPE_NEWDECIMAL,   unsigned char>(ConectReader& p)      {return Detail::stringtointeger<unsigned char>(p.lengthEncodedString());}
-template<> inline unsigned char     readParameterValue<MYSQL_TYPE_TINY,         unsigned char>(ConectReader& p)      {return p.fixedLengthInteger<1>();}
-template<> inline unsigned char     readParameterValue<MYSQL_TYPE_BIT,          unsigned char>(ConectReader& p)      {return getBitField<unsigned char>(p);}
+template<> inline Intuc  readParameterValue<MYSQL_TYPE_DECIMAL,       Intuc>(ConectReader& p)  {return Detail::stringtointeger<Intuc>(p);}
+template<> inline Intuc  readParameterValue<MYSQL_TYPE_NEWDECIMAL,    Intuc>(ConectReader& p)  {return Detail::stringtointeger<Intuc>(p);}
+template<> inline Intuc  readParameterValue<MYSQL_TYPE_TINY,          Intuc>(ConectReader& p)  {return p.fixedLengthInteger<1>();}
+template<> inline Intuc  readParameterValue<MYSQL_TYPE_BIT,           Intuc>(ConectReader& p)  {return getBitField<Intuc>(p);}
 
 /*
  * Floating point
  */
 // TODO FIX
-template<> inline double            readParameterValue<MYSQL_TYPE_DOUBLE,       double>(ConectReader& p)             {double result;p.read(reinterpret_cast<char*>(&result), 8);return result;}
-template<> inline float             readParameterValue<MYSQL_TYPE_DOUBLE,       float>(ConectReader& p)              {double result;p.read(reinterpret_cast<char*>(&result), 8);return result;}
-template<> inline float             readParameterValue<MYSQL_TYPE_FLOAT,        float>(ConectReader& p)              {float  result;p.read(reinterpret_cast<char*>(&result), 4);return result;}
+template<> inline double readParameterValue<MYSQL_TYPE_DOUBLE,        double>(ConectReader& p)
+{
+    double result;
+    p.read(reinterpret_cast<char*>(&result), 8);
+    return result;
+}
+template<> inline float  readParameterValue<MYSQL_TYPE_DOUBLE,        float>(ConectReader& p)
+{
+    double result;
+    p.read(reinterpret_cast<char*>(&result), 8);
+    return result;
+}
+template<> inline float  readParameterValue<MYSQL_TYPE_FLOAT,         float>(ConectReader& p)
+{
+    float  result;
+    p.read(reinterpret_cast<char*>(&result), 4);
+    return result;
+}
 
 /*
  * Time/Date
  */
 // TODO FIX
-template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_DATE,         UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readDate());}
-template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_DATETIME,     UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readDate());}
-template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_TIMESTAMP,    UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readDate());}
-template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_TIME,         UnixTimeStamp>(ConectReader& p)      {return UnixTimeStamp(p.readRel());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATETIME, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP,UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
 
 template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
