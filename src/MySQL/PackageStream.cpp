@@ -21,10 +21,10 @@ MySQLStream::MySQLStream(std::string const& host, int port)
 {
     port    = port ? port : 3306;
 
-    sockaddr_in serv_addr; 
-    memset(&serv_addr, '0', sizeof(serv_addr)); 
+    sockaddr_in serv_addr;
+    memset(&serv_addr, '0', sizeof(serv_addr));
     serv_addr.sin_family    = AF_INET;
-    serv_addr.sin_port      = htons(port); 
+    serv_addr.sin_port      = htons(port);
 
     hostent*    serv  = ::gethostbyname(host.c_str());
     if (serv == NULL) {
@@ -40,7 +40,7 @@ MySQLStream::MySQLStream(std::string const& host, int port)
                 errorMsg("ThrosAnvil::MySQL::MySQLStream::MySQLStream: ",
                          "::socket() Failed: ", strerror(errno)
               ));
-    } 
+    }
 
     if (::connect(socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         ::close(socket);
@@ -48,7 +48,7 @@ MySQLStream::MySQLStream(std::string const& host, int port)
                 errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
                          "::connect() Failed: ", strerror(errno)
               ));
-    } 
+    }
 }
 MySQLStream::~MySQLStream()
 {

@@ -378,7 +378,7 @@ void PrepareStatement::doExecute()
 
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
-                                    {{-1, // Does not matter what the first byte is 
+                                    {{-1, // Does not matter what the first byte is
                                     [this](int firstByte, ConectReader& reader){
                                         return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));
                                     }}}

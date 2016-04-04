@@ -293,7 +293,7 @@ template<> inline UnixTimeStamp     readParameterValue<MYSQL_TYPE_TIME,         
 
 template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
-{   
+{
     p.writeLengthEncodedString(v);
     return MYSQL_TYPE_STRING;
 }
@@ -413,7 +413,7 @@ inline Enum readParameterValue<MYSQL_TYPE_ENUM, Enum>(ConectReader& p)
 
 /*
 Don't know what C++ type is appropriate
-#define MYSQL_TYPE_GEOMETRY                     0xff    lengthEncodedString() 
+#define MYSQL_TYPE_GEOMETRY                     0xff    lengthEncodedString()
 #define MYSQL_TYPE_SET                          0xf8    lengthEncodedString()
 #define MYSQL_TYPE_BIT                          0x10    lengthEncodedString()
 #define MYSQL_TYPE_YEAR                         0x0d    fixedLengthInteger<2>()

@@ -13,6 +13,8 @@ AC_PROG_CXX
 AX_THOR_PROG_COV
 AC_C_BIGENDIAN([AC_DEFINE([THOR_ENDIAN_BIG], [1], [Set for Big Endian Systems])],
                [AC_DEFINE([THOR_ENDIAN_SML], [1], [Set for small Endian Systems])])
+
+
 AC_CHECK_LIB(
             [crypto],
             [SHA1_Init],

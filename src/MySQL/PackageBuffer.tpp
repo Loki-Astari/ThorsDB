@@ -38,7 +38,7 @@ inline void PackageBufferMySQLDebugBuffer<T>::read(char* buffer, std::size_t len
     }
     while(len != retrieved);
 }
- 
+
 template<typename T>
 bool PackageBufferMySQLDebugBuffer<T>::isEmpty()
 {
@@ -223,4 +223,4 @@ void PackageBufferMySQLDebugBuffer<T>::writeStream(char const* buffer, std::size
 
     }
 }
- 
+
