@@ -16,8 +16,6 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-
-
 using Buffer = std::vector<char>;
 using SQL::UnixTimeStamp;
 
@@ -438,7 +436,6 @@ inline Enum readParameterValue<MYSQL_TYPE_ENUM, Enum>(ConectReader& p)
     valueStream >> enumFromString(result);
     return result;
 }*/
-
 
 
 /*

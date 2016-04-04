@@ -15,8 +15,6 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-
-
 template<typename T> inline T readNullParameter()
 {
     throw std::runtime_error(

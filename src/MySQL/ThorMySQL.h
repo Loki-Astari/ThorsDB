@@ -50,12 +50,10 @@
 #define SERVER_SESSION_STATE_CHANGED            0x4000
 
 
-
 #define CURSOR_TYPE_NO_CURSOR                   0x00
 #define CURSOR_TYPE_READ_ONLY                   0x01
 #define CURSOR_TYPE_FOR_UPDATE                  0x02
 #define CURSOR_TYPE_SCROLLABLE                  0x04
-
 
 #define COM_STMT_PREPARE                        0x16
 #define COM_STMT_EXECUTE                        0x17

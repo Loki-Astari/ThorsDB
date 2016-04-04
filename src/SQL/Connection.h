@@ -44,8 +44,6 @@ class Connection
                       std::string const& database,
                       Options const& options = Options{});
 
-
-
         static void registerConnectionType(std::string const& schema, ConnectionCreator creator);
 };
 
