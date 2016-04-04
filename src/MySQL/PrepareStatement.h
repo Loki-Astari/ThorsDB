@@ -119,7 +119,7 @@ class PrepareStatement: public Statement
             virtual void read(char* buffer, std::size_t len) override;
             bool  tooMany() const;
             bool  tooFew() const;
-            void  reset();
+            void  reset() override;
     };
 
     Connection&                                         connection;
