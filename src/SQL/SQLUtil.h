@@ -12,7 +12,7 @@ namespace ThorsAnvil
     {
 
 using Options=std::map<std::string, std::string>;
-enum  StatementType {Prepare, OneTime};
+enum StatementType {Prepare, OneTime};
 
     }
 
