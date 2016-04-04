@@ -185,7 +185,7 @@ std::time_t ConectReader::readRel()
 unsigned long long ConectReader::readRelMicro()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return    timeBag.day * (1000LL*60*60*24)
+    return timeBag.day * (1000LL*60*60*24)
             + timeBag.hour * (1000LL*60*60)
             + timeBag.minute * (1000LL*60)
             + timeBag.second * (1000LL)
