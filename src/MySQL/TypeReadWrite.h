@@ -53,7 +53,7 @@ inline T stringtointeger(ConectReader& p)
 
 inline std::string mapMySQLTypeToString(int mySQLType)
 {
-    static std::map<int,std::string> names {
+    static std::map<int, std::string> names {
         {0x00,  "MYSQL_TYPE_DECIMAL"},
         {0x01,  "MYSQL_TYPE_TINY"},
         {0x02,  "MYSQL_TYPE_SHORT"},
@@ -124,7 +124,7 @@ inline T readParameterValue(ConectReader&)
                      "Unknown conversion\n",
                      "\n",
                      "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n",
-                     getErrorMessage<Tv,T>()
+                     getErrorMessage<Tv, T>()
           ));
 }
 
@@ -316,7 +316,7 @@ template<> inline float  readParameterValue<MYSQL_TYPE_FLOAT,         float>(Con
 // TODO FIX
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATETIME, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
-template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP,UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTimeStamp>(ConectReader&p){return UnixTimeStamp(p.readDate());}
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
 
 template<>
