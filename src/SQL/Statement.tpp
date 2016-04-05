@@ -39,12 +39,14 @@ inline void Cursor::activate_(std::function<R(Args...)> cb)
 template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
 inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids...> const& id)
 {
-    try {
+    try
+    {
         auto list = {retrieve(std::get<ids>(arguments))...};
         thorUnused(list);
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
-    catch(ValidationTmpError const&) {
+    catch(ValidationTmpError const&)
+    {
         // Drop a temporary error.
         // These are only thrown by subsystems if they know they can recover and do
         // better error messaging as a result.
