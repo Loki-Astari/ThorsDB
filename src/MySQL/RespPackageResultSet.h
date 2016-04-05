@@ -36,7 +36,8 @@ class RespPackageResultSet: public RespPackage
     template<typename T>
     T readNextValue()
     {
-        if (nextColumn >= columns.size()) {
+        if (nextColumn >= columns.size())
+        {
             /* Note: This should never happen as we already validate that
                      a user callback function has the exact parameters required
                      for the data provided by the server.
@@ -94,7 +95,8 @@ class RespPackageResultSet: public RespPackage
     {
         int     index   = nextColumn / 8;
         int     bit     = nextColumn % 8;
-        if (nullMap[index] & (1 << bit)) {
+        if (nullMap[index] & (1 << bit))
+        {
             return defaultValue;
         }
         return readNextValue<T>();

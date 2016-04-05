@@ -61,7 +61,8 @@ std::string PackageBufferMySQLDebugBuffer<T>::readRemainingData()
         long remaining  = readCurrentPacketSize - readCurrentPacketPosition;
         dst.resize(retrieved + remaining);
         read(&dst[retrieved], remaining);
-        if (hasMore) {
+        if (hasMore)
+        {
             nextPacket();
             continue;
         }
@@ -75,7 +76,8 @@ std::string PackageBufferMySQLDebugBuffer<T>::readRemainingData()
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::nextPacket()
 {
-    if (!hasMore) {
+    if (!hasMore)
+    {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: ",
                          "No more data expected from server"
@@ -94,7 +96,8 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
     char actualSequenceID;
     stream.read(&actualSequenceID, 1);
 
-    if (currentPacketSequenceID != actualSequenceID) {
+    if (currentPacketSequenceID != actualSequenceID)
+    {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: ",
                          "currentPacketSequenceID(", currentPacketSequenceID, ")",
@@ -114,7 +117,8 @@ void PackageBufferMySQLDebugBuffer<T>::startNewConversation()
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len)
 {
-    if (flushed) {
+    if (flushed)
+    {
         throw std::domain_error(
                 bugReport("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::write: ",
                          "Writting to a flushed buffer"
@@ -147,7 +151,8 @@ void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len
 template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::flush()
 {
-    if (flushed) {
+    if (flushed)
+    {
         throw std::domain_error(
                 bugReport("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush: ",
                           "Already flushed"
@@ -173,7 +178,8 @@ void PackageBufferMySQLDebugBuffer<T>::drop()
         read(&drop[0], readDataAvailable);
 
         dataLeft    = 0;
-        if (hasMore) {
+        if (hasMore)
+        {
             nextPacket();
             dataLeft = readCurrentPacketSize - readCurrentPacketPosition;
         }
@@ -185,13 +191,16 @@ template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::reset()
 {
     std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
-    if (readDataAvailable == 0 && hasMore) {
+    if (readDataAvailable == 0 && hasMore)
+    {
         nextPacket();
         readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
     }
-    if (readDataAvailable != 0) {
+    if (readDataAvailable != 0)
+    {
         std::stringstream  extraData;
-        for(std::size_t loop=0; loop < readDataAvailable; ++loop) {
+        for(std::size_t loop=0; loop < readDataAvailable; ++loop)
+        {
             char x;
             read(&x, 1);
             extraData << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(x) << "(" << x << ") ";

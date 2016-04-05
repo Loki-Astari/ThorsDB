@@ -38,7 +38,8 @@ class RequPackagePrepare: public RequPackage
             writer.writeVariableLengthString(statement);
         }
 };
-void testPrintRequPackagePrepare(std::ostream& str) {
+void testPrintRequPackagePrepare(std::ostream& str)
+{
     str << RequPackagePrepare("Test");
 }
 
@@ -60,7 +61,8 @@ class RequPackagePrepareClose: public RequPackage
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
-void testPrintRequPackagePrepareClose(std::ostream& str) {
+void testPrintRequPackagePrepareClose(std::ostream& str)
+{
     str << RequPackagePrepareClose(1);
 }
 
@@ -93,7 +95,8 @@ class RequPackagePrepareExecute: public RequPackage
             bindBuffer.bindToMySQL(writer);
         }
 };
-void testPrintRequPackagePrepareExecute(std::ostream& str) {
+void testPrintRequPackagePrepareExecute(std::ostream& str)
+{
     std::vector<Detail::RespPackageColumnDefinition>    cols;
     BindBuffer  bindBuffer(cols);
     str << RequPackagePrepareExecute(1, bindBuffer);
@@ -117,7 +120,8 @@ class RequPackagePrepareReset: public RequPackage
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
-void testPrintRequPackagePrepareReset(std::ostream& str) {
+void testPrintRequPackagePrepareReset(std::ostream& str)
+{
     str << RequPackagePrepareReset(1);
 }
 
@@ -142,18 +146,22 @@ class RespPackagePrepare: public RespPackage
                               reader.fixedLengthInteger<1>(); // reserved
             warningCount    = reader.fixedLengthInteger<2>();
 
-            if (numParams > 0) {
+            if (numParams > 0)
+            {
                 reader.reset();
-                for(int loop = 0;loop < numParams; ++loop) {
+                for(int loop = 0;loop < numParams; ++loop)
+                {
                     paramInfo.emplace_back(reader);
                     reader.reset();
                 }
 
                 reader.recvMessageEOF();
             }
-            if (numColumns > 0) {
+            if (numColumns > 0)
+            {
                 reader.reset();
-                for(int loop = 0;loop < numColumns; ++loop) {
+                for(int loop = 0;loop < numColumns; ++loop)
+                {
                     columnInfo.emplace_back(reader);
                     reader.reset();
                 }
@@ -176,11 +184,13 @@ class RespPackagePrepare: public RespPackage
               << " numParams: " << numParams
               << " warningCount: " << warningCount << "\n";
             s << "\tparamInfo:\n";
-            for(auto const& loop: paramInfo) {
+            for(auto const& loop: paramInfo)
+            {
                 s << "\t\t" << loop;
             }
             s << "\tcolumnInfo:\n";
-            for(auto const& loop: columnInfo) {
+            for(auto const& loop: columnInfo)
+            {
                 s << "\t\t" << loop;
             }
             return s;
@@ -189,7 +199,8 @@ class RespPackagePrepare: public RespPackage
         std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
         std::vector<RespPackageColumnDefinition> const&  getParams()  const {return paramInfo;}
 };
-void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader) {
+void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader)
+{
     str << RespPackagePrepare(firstByte, reader);
 }
 
@@ -204,7 +215,8 @@ class RespPackagePrepareExecute: public RespPackage
         {
             columnCount = firstByte;
             reader.reset();
-            for(int loop = 0;loop < columnCount; ++loop) {
+            for(int loop = 0;loop < columnCount; ++loop)
+            {
                 columnInfo.push_back(RespPackageColumnDefinition(reader));
                 reader.reset();
             }
@@ -222,7 +234,8 @@ class RespPackagePrepareExecute: public RespPackage
         bool hasDataRows()    const {return hasRows;}
         std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
 };
-void testPrintRespPackagePrepareExecute(std::ostream& str, int firstBytePrep, int firstByteExec, ConectReader& reader) {
+void testPrintRespPackagePrepareExecute(std::ostream& str, int firstBytePrep, int firstByteExec, ConectReader& reader)
+{
     RespPackagePrepare  prep(firstBytePrep, reader);
     str << RespPackagePrepareExecute(firstByteExec, reader, prep);
 }
@@ -238,7 +251,8 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
 {
     int nullmaplength   = (columns.size() + 7 + 2) / 8;
     validateInfo.append(nullmaplength, '\0');
-    for(auto const& col: columns) {
+    for(auto const& col: columns)
+    {
         switch(col.type)
         {
             case MYSQL_TYPE_VAR_STRING:
@@ -305,7 +319,8 @@ void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
     // Because we have a fake column on the end.
     // Any attempt to read it should result in an error.
     // See: RespPackagePrepare::RespPackagePrepare
-    if (position + len >= validateInfo.size()) {
+    if (position + len >= validateInfo.size())
+    {
         errorReading    = true;
         // This causes this to unwind back to the SQL where it is caught.
         // The doExecute() will then be called where all the errors generated
@@ -345,8 +360,8 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
                                     Detail::RequPackagePrepare(statement),
                                     {{0x00, [](int firstByte, ConectReader& reader)
                                             {return new Detail::RespPackagePrepare(firstByte, reader);}
-                                    }}
-                              ))
+                                     }
+                                    }))
     , statementID(prepareResp->getStatementID())
     , validatorStream(prepareResp->getColumns())
     , validatorReader(validatorStream)
@@ -362,19 +377,24 @@ PrepareStatement::~PrepareStatement()
 void PrepareStatement::doExecute()
 {
     std::string errorMessage;
-    if (validatorStream.tooFew()) {
+    if (validatorStream.tooFew())
+    {
         errorMessage    += "Not all returned values are being used by the callback function.";
     }
-    if (validatorStream.tooMany()) {
+    if (validatorStream.tooMany())
+    {
         errorMessage    += "You have more parameters in your callback than are specified in the select.";
     }
-    if (bindBuffer.countBoundParameters() < prepareResp->getParams().size()) {
+    if (bindBuffer.countBoundParameters() < prepareResp->getParams().size())
+    {
         errorMessage    += "Not all bind points have parameters bound.";
     }
-    if (bindBuffer.countBoundParameters() > prepareResp->getParams().size()) {
+    if (bindBuffer.countBoundParameters() > prepareResp->getParams().size())
+    {
         errorMessage    += "Too many bound values. You have more values than '?'.";
     }
-    if (!errorMessage.empty()) {
+    if (!errorMessage.empty())
+    {
         throw std::logic_error(
                 errorMsg("ThrosAnvil::MySQL::PrepareStatement::doExecute: ", errorMessage));
     }
@@ -382,33 +402,41 @@ void PrepareStatement::doExecute()
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     {{-1, // Does not matter what the first byte is
-                                    [this](int firstByte, ConectReader& reader){
-                                        return new Detail::RespPackagePrepareExecute(
-                                                                firstByte,
-                                                                reader,
-                                                                *(this->prepareResp)
-                                                            );
-                                    }}}
+                                        [this](int firstByte, ConectReader& reader)
+                                        {
+                                            return new Detail::RespPackagePrepareExecute(
+                                                                    firstByte,
+                                                                    reader,
+                                                                    *(this->prepareResp)
+                                                                );
+                                        }
+                                     }
+                                    }
                               );
 }
 
 bool PrepareStatement::more()
 {
     connection.packageReader.reset();
-    if (!prepareExec->hasDataRows()) {
+    if (!prepareExec->hasDataRows())
+    {
         return false;
     }
     nextLine = connection.recvMessage<Detail::RespPackageResultSet>(
                                     {{0x00,
-                                    [this](int firstByte, ConectReader& reader){
-                                        return new Detail::RespPackageResultSet(
-                                                                firstByte,
-                                                                reader,
-                                                                this->prepareExec->getColumns()
-                                                            );
-                                    }}});
+                                        [this](int firstByte, ConectReader& reader)
+                                        {
+                                            return new Detail::RespPackageResultSet(
+                                                                    firstByte,
+                                                                    reader,
+                                                                    this->prepareExec->getColumns()
+                                                                );
+                                        }
+                                     }
+                                    });
     bool moreResult = nextLine.get() != nullptr;
-    if (!moreResult) {
+    if (!moreResult)
+    {
         connection.sendMessage<Detail::RespPackageOK>(Detail::RequPackagePrepareReset(statementID));
         validatorStream.reset();
         nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
@@ -419,7 +447,8 @@ bool PrepareStatement::more()
 void PrepareStatement::abort()
 {
     connection.removeCurrentPackage();
-    while(more()) {
+    while(more())
+    {
         connection.removeCurrentPackage();
     }
 }

@@ -54,7 +54,8 @@ namespace ThorsAnvil
             {}
             void bindToMySQL(ConectWriter& writer) const
             {
-                if (columns.size() == 0) {
+                if (columns.size() == 0)
+                {
                     return;
                 }
                 std::vector<char>  null((columns.size() + 7) / 8);

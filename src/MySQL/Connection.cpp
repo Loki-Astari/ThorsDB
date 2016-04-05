@@ -26,13 +26,16 @@ DefaultMySQLConnection::createStatementProxy(std::string const& statement, Thors
     std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
     result.reset(new PrepareStatement(connection, statement));
 #if 0
-    if (type == ThorsAnvil::SQL::OneTime) {
+    if (type == ThorsAnvil::SQL::OneTime)
+    {
         result.reset(new Statement(statement));
     }
-    else if (type == Prepare) {
+    else if (type == Prepare)
+    {
         result.reset(new PrepareStatement(statement));
     }
-    else {
+    else
+    {
         throw std::runtime_error("Unknown Type for MySQL");
     }
 #endif
@@ -65,7 +68,8 @@ Connection::Connection(
     std::unique_ptr<RespPackage>            ok = sendHandshakeMessage<RespPackage>(handshakeresp,
         {{0xFE, [](int firstByte, ConectReader& reader)
                 {return new Detail::RespPackageAuthSwitchRequest(firstByte, reader);}
-        }});
+         }
+        });
 
     if (!ok)
     {

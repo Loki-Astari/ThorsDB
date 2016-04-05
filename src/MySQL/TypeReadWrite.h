@@ -25,7 +25,8 @@ inline T standardConverter(std::string const& t, std::size_t* p)
     // used for char short
     T   result  = stoi(t, p);
     // Then conversion failed.
-    if (result < std::numeric_limits<T>::min() || result > std::numeric_limits<T>::max()) {
+    if (result < std::numeric_limits<T>::min() || result > std::numeric_limits<T>::max())
+    {
         (*p) = 0;
     }
     return result;
@@ -41,7 +42,8 @@ inline T stringtointeger(ConectReader& p)
     std::size_t  pos;
     std::string const& t = p.lengthEncodedString();
     T            result = standardConverter<T>(t, &pos);
-    if (pos != t.size()) {
+    if (pos != t.size())
+    {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::stringtointeger: ",
                          "Failed to convert whole integer: ", t,
@@ -53,7 +55,8 @@ inline T stringtointeger(ConectReader& p)
 
 inline std::string mapMySQLTypeToString(int mySQLType)
 {
-    static std::map<int, std::string> names {
+    static std::map<int, std::string> names
+    {
         {0x00,  "MYSQL_TYPE_DECIMAL"},
         {0x01,  "MYSQL_TYPE_TINY"},
         {0x02,  "MYSQL_TYPE_SHORT"},
@@ -83,10 +86,12 @@ inline std::string mapMySQLTypeToString(int mySQLType)
         {0xfc,  "MYSQL_TYPE_BLOB"},
         {0xfd,  "MYSQL_TYPE_VAR_STRING"},
         {0xfe,  "MYSQL_TYPE_STRING"},
-        {0xff, "MYSQL_TYPE_GEOMETRY"}};
+        {0xff, "MYSQL_TYPE_GEOMETRY"}
+    };
 
     auto find = names.find(mySQLType);
-    if (find == names.end()) {
+    if (find == names.end())
+    {
         return "Unknown???";
     }
     return find->second;
@@ -143,7 +148,8 @@ template<typename T>
 T getBitField(ConectReader& p)
 {
     std::string bitField    = p.lengthEncodedString();
-    if (bitField.size() > sizeof(T)) {
+    if (bitField.size() > sizeof(T))
+    {
         std::stringstream msg;
         msg << "ThorsAnvil::MySQL::getBitField: Bitfield to large for destination\n"
             << "   From DB:     " << bitField.size() << " bytes\n"
@@ -154,7 +160,8 @@ T getBitField(ConectReader& p)
     char const* valuePtr    = bitField.data();
     T           result      = 0;
     char*       resultPtr   = reinterpret_cast<char*>(&result);
-    for(std::size_t loop=0;loop < sizeof(signed long) && loop < bitField.size(); ++loop) {
+    for(std::size_t loop=0;loop < sizeof(signed long) && loop < bitField.size(); ++loop)
+    {
         resultPtr[loop] = valuePtr[loop];
     }
     // TODO take into account endianess

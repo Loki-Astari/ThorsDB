@@ -19,14 +19,16 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
 {
     assert(firstbyte = 0x0A);
 
-    if (reader.isEmpty()) {
+    if (reader.isEmpty())
+    {
         isV9    = true;
         return;
     }
     check           = reader.fixedLengthInteger<1>();
     capabilities    = reader.fixedLengthInteger<2>();
 
-    if (reader.isEmpty()) {
+    if (reader.isEmpty())
+    {
         return;
     }
 
