@@ -132,7 +132,7 @@ void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len
         buffer  += available;
         len     -= available;
 
-        while (len > 0xFFFFFF)
+        while(len > 0xFFFFFF)
         {
             writePackageHeader(0xFFFFFF);
             writeStream(buffer, 0xFFFFFF);
