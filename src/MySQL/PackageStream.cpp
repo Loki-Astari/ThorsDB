@@ -44,7 +44,8 @@ MySQLStream::MySQLStream(std::string const& host, int port)
               ));
     }
 
-    if (::connect(socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    using SockAddr = struct sockaddr;
+    if (::connect(socket, reinterpret_cast<SockAddr*>(&serv_addr), sizeof(serv_addr)) < 0)
     {
         ::close(socket);
         throw std::runtime_error(
