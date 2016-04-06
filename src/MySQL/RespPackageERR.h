@@ -17,13 +17,13 @@ class RespPackageERR: public RespPackage
 {
     long        errorCode;
     std::string hash;
-    std::string SQLState;
+    std::string stateSQL;
     public:
         RespPackageERR(int firstByte, ConectReader& reader)
             : RespPackage(reader, "ERR")
             , errorCode(reader.fixedLengthInteger<2>())
             , hash(reader.fixedLengthString(1, CLIENT_PROTOCOL_41))
-            , SQLState(reader.fixedLengthString(5, CLIENT_PROTOCOL_41))
+            , stateSQL(reader.fixedLengthString(5, CLIENT_PROTOCOL_41))
         {
             assert(firstByte == 0xFF);
 
@@ -35,7 +35,7 @@ class RespPackageERR: public RespPackage
             return s << "ERRPackage: "
                      << "errorCode(" << errorCode << ") "
                      << "hash(" << hash << ") Should be '#' "
-                     << "SQLState(" << SQLState << ") ";
+                     << "stateSQL(" << stateSQL << ") ";
         }
 };
 
