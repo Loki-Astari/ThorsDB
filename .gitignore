@@ -6,6 +6,7 @@ coverage/
 debug/
 release/
 profile/
+vera/
 makefile_tmp
 Makefile.extra
 Makefile.config
