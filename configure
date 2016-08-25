@@ -774,7 +774,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-enable_yaml
+enable_vera
 enable_shared
 enable_static
 with_pic
@@ -2919,9 +2919,9 @@ git submodule update
 fi
 
 
-    # Check whether --enable-yaml was given.
-if test "${enable_yaml+set}" = set; then :
-  enableval=$enable_yaml;
+    # Check whether --enable-vera was given.
+if test "${enable_vera+set}" = set; then :
+  enableval=$enable_vera;
 fi
 
     if test "x$enable_vera" == "xno"; then :
@@ -2976,9 +2976,6 @@ fi
 done
 test -n "$TestVera" || TestVera=":"
 
-            echo
-            echo $TestVera
-            echo
             if test "$TestVera" == ":"; then :
 
                     as_fn_error $? "
@@ -2990,7 +2987,7 @@ detected that \"vera++\" (the static analysis tool) is not currently installed.
 
 If you don't care about static analysis the feel free to disable this feature using the flag
 
-    --disable-yaml
+    --disable-vera
 
 Alternatively you can install vera++
 
