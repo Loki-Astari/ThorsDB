@@ -40,12 +40,12 @@ class RespPackageHandShake: public RespPackage
 inline std::ostream& RespPackageHandShake::print(std::ostream& s) const
 {
     std::stringstream reservedDecoded;
-    for(char x: reserved)
+    for (char x: reserved)
     {
         reservedDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
     }
     std::stringstream authPluginDataDecoded;
-    for(char x: authPluginData)
+    for (char x: authPluginData)
     {
         authPluginDataDecoded << "0x" << std::hex << static_cast<int>(x) << " ";
     }

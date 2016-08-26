@@ -1,4 +1,3 @@
-
 namespace ThorsAnvil
 {
     namespace SQL
@@ -45,7 +44,7 @@ inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids
         thorUnused(list);
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
-    catch(ValidationTmpError const&)
+    catch (ValidationTmpError const&)
     {
         // Drop a temporary error.
         // These are only thrown by subsystems if they know they can recover and do
@@ -84,4 +83,3 @@ inline int BindArgs<R...>::bindTheArgument(StatementProxy& statementProxy) const
 
     }
 }
-

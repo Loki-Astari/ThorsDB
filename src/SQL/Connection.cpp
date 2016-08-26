@@ -1,4 +1,3 @@
-
 #include "Connection.h"
 #include "Statement.h"
 #include <cerrno>
@@ -77,4 +76,3 @@ std::unique_ptr<StatementProxy> Connection::createStatementProxy(std::string con
 {
     return proxy->createStatementProxy(statement, type);
 }
-

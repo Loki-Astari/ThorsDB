@@ -1,4 +1,3 @@
-
 #include "ThorSQL/SQLUtil.h"
 #include <stdexcept>
 #include <sstream>
@@ -36,7 +35,7 @@ inline void PackageBufferMySQLDebugBuffer<T>::read(char* buffer, std::size_t len
         {   nextPacket();
         }
     }
-    while(len != retrieved);
+    while (len != retrieved);
 }
 
 template<typename T>
@@ -68,7 +67,7 @@ std::string PackageBufferMySQLDebugBuffer<T>::readRemainingData()
         }
         break;
     }
-    while(true);
+    while (true);
 
     return dst;
 }
@@ -136,7 +135,7 @@ void PackageBufferMySQLDebugBuffer<T>::write(char const* buffer, std::size_t len
         buffer  += available;
         len     -= available;
 
-        while(len > 0xFFFFFF)
+        while (len > 0xFFFFFF)
         {
             writePackageHeader(0xFFFFFF);
             writeStream(buffer, 0xFFFFFF);
@@ -184,7 +183,7 @@ void PackageBufferMySQLDebugBuffer<T>::drop()
             dataLeft = readCurrentPacketSize - readCurrentPacketPosition;
         }
     }
-    while(dataLeft != 0);
+    while (dataLeft != 0);
 }
 
 template<typename T>
@@ -199,7 +198,7 @@ void PackageBufferMySQLDebugBuffer<T>::reset()
     if (readDataAvailable != 0)
     {
         std::stringstream  extraData;
-        for(std::size_t loop=0; loop < readDataAvailable; ++loop)
+        for (std::size_t loop=0; loop < readDataAvailable; ++loop)
         {
             char x;
             read(&x, 1);
@@ -232,4 +231,3 @@ void PackageBufferMySQLDebugBuffer<T>::writeStream(char const* buffer, std::size
 
     }
 }
-

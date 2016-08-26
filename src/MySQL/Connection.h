@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_MYSQL_CONNECTION_H
 #define THORS_ANVIL_MYSQL_CONNECTION_H
 
@@ -75,4 +74,3 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
 #endif
 
 #endif
-

@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_SQL_PREPARE_STATEMENT_H
 #define THORS_ANVIL_SQL_PREPARE_STATEMENT_H
 
@@ -189,4 +188,3 @@ class PrepareStatement: public Statement
 }
 
 #endif
-

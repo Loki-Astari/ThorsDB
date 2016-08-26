@@ -1,4 +1,3 @@
-
 #include "PrepareStatement.h"
 #include "TypeReadWrite.h"
 #include "Connection.h"
@@ -149,7 +148,7 @@ class RespPackagePrepare: public RespPackage
             if (numParams > 0)
             {
                 reader.reset();
-                for(int loop = 0;loop < numParams; ++loop)
+                for (int loop = 0;loop < numParams; ++loop)
                 {
                     paramInfo.emplace_back(reader);
                     reader.reset();
@@ -160,7 +159,7 @@ class RespPackagePrepare: public RespPackage
             if (numColumns > 0)
             {
                 reader.reset();
-                for(int loop = 0;loop < numColumns; ++loop)
+                for (int loop = 0;loop < numColumns; ++loop)
                 {
                     columnInfo.emplace_back(reader);
                     reader.reset();
@@ -184,12 +183,12 @@ class RespPackagePrepare: public RespPackage
               << " numParams: " << numParams
               << " warningCount: " << warningCount << "\n";
             s << "\tparamInfo:\n";
-            for(auto const& loop: paramInfo)
+            for (auto const& loop: paramInfo)
             {
                 s << "\t\t" << loop;
             }
             s << "\tcolumnInfo:\n";
-            for(auto const& loop: columnInfo)
+            for (auto const& loop: columnInfo)
             {
                 s << "\t\t" << loop;
             }
@@ -215,7 +214,7 @@ class RespPackagePrepareExecute: public RespPackage
         {
             columnCount = firstByte;
             reader.reset();
-            for(int loop = 0;loop < columnCount; ++loop)
+            for (int loop = 0;loop < columnCount; ++loop)
             {
                 columnInfo.push_back(RespPackageColumnDefinition(reader));
                 reader.reset();
@@ -251,9 +250,9 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
 {
     int nullmaplength   = (columns.size() + 7 + 2) / 8;
     validateInfo.append(nullmaplength, '\0');
-    for(auto const& col: columns)
+    for (auto const& col: columns)
     {
-        switch(col.type)
+        switch (col.type)
         {
             case MYSQL_TYPE_VAR_STRING:
             case MYSQL_TYPE_STRING:
@@ -447,7 +446,7 @@ bool PrepareStatement::more()
 void PrepareStatement::abort()
 {
     connection.removeCurrentPackage();
-    while(more())
+    while (more())
     {
         connection.removeCurrentPackage();
     }
@@ -478,4 +477,3 @@ ConectReader::recvMessage<Detail::RespPackagePrepareExecute>
 
 
 #endif
-

@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_STREAM_H
 #define THORS_ANVIL_MYSQL_PACKAGE_STREAM_H
 
@@ -47,4 +46,3 @@ class MySQLStream: public PackageStream
 }
 
 #endif
-

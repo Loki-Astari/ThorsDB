@@ -29,4 +29,3 @@ inline void thorSHA1(ThorSHADigestStore& dest, std::string const& src)
 }
 
 #endif
-

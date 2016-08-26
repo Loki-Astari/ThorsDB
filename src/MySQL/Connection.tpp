@@ -1,4 +1,3 @@
-
 #include "ConectWriter.h"
 
 namespace ThorsAnvil
@@ -45,4 +44,3 @@ std::unique_ptr<Resp> Connection::sendHandshakeMessage(Requ const& request, Cone
 
     }
 }
-

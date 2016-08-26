@@ -1,4 +1,3 @@
-
 #include "RespPackageHandShake.h"
 #include "ConectReader.h"
 #include "ThorMySQL.h"
@@ -68,4 +67,3 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     // the 13th byte is "\0 byte, terminating the second part of a scramble"
     authPluginData  = (authPluginData + authPluginData2).substr(0, authPluginLength-1);
 }
-

@@ -1,4 +1,3 @@
-
 #include "ThorMySQL.h"
 #include "PackageStream.h"
 #include <stdexcept>
@@ -63,4 +62,3 @@ inline bool writeParameterType<int>(ConectWriter& p, int const&)
 
     }
 }
-

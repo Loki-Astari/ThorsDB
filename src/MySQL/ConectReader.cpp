@@ -1,4 +1,3 @@
-
 #include "ConectReader.h"
 #include "PackageStream.h"
 #include "RespPackageOK.h"
@@ -75,7 +74,7 @@ unsigned long ConectReader::lengthEncodedInteger()
 unsigned long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
 {
     unsigned long result;
-    switch(type)
+    switch (type)
     {
         case 0xFA:
         case 0xFB:
@@ -103,7 +102,7 @@ std::string ConectReader::nulTerminatedString()
     std::string result;
     char x;
 
-    for(read(&x, 1); x != '\0'; read(&x, 1))
+    for (read(&x, 1); x != '\0'; read(&x, 1))
     {
         result.append(1, x);
     }
@@ -263,4 +262,3 @@ template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
 template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(OKMap const& actions, bool expectedEOF);
 
 #endif
-

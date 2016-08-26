@@ -1,4 +1,3 @@
-
 #include "ConectWriter.h"
 #include "PackageStream.h"
 #include <stdexcept>
@@ -100,4 +99,3 @@ template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsign
 template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long long);
 
 #endif
-

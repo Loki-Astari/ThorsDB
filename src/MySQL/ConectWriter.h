@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 
@@ -69,4 +68,3 @@ class ConectWriter
 #endif
 
 #endif
-

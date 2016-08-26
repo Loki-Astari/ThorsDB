@@ -92,5 +92,3 @@
 #define MYSQL_TYPE_GEOMETRY                     0xff
 
 #endif
-
-
