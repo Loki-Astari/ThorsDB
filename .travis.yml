@@ -3,6 +3,7 @@ git:
 language: cpp
 os:
     - linux
+futureos:
     - osx
 compiler:
     - gcc
@@ -34,7 +35,7 @@ before_install:
 install:
     - ./configure --with-thor-build-on-travis
 script:
-    - make 
+    - export PATH=${PATH}:$(pwd)/build/bin;make 
 after_success:
     - ./uploadcodecovrage
 branches:
