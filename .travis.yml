@@ -31,7 +31,7 @@ before_install:
     - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
     - cat src/MySQL/test/data/init.sql | mysql --force --user=root --password=testPassword
 install:
-    - ./configure
+    - ./configure --with-thor-build-on-travis
 script:
     - make 
 after_success:
