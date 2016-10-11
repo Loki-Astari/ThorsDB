@@ -76,12 +76,7 @@ Connection::Connection(
     }
     if (!(ok->isOK()))
     {
-        std::cerr << "Runtime Error about to go\n";
-        // Not currently we only support "mysql_native_password" authentication.
-        // I welcome a pull request to support other authentication protocols.
-        std::stringstream message;
-        message << "Connection::Connection: Handshake failed: Got: " << (*ok);
-        throw std::runtime_error(message.str());
+        throw std::runtime_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*ok)));
     }
 }
 

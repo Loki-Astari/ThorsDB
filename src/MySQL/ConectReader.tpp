@@ -14,8 +14,7 @@ std::unique_ptr<Resp> ConectReader::recvMessage(OKMap const& actions /*= {}*/, b
     if (resp->isError())
     {
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ",
-                         "Error Message from Server: ", resp->message()
+                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", resp->message()
               ));
     }
 

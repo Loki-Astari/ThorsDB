@@ -149,11 +149,10 @@ T getBitField(ConectReader& p)
     std::string bitField    = p.lengthEncodedString();
     if (bitField.size() > sizeof(T))
     {
-        std::stringstream msg;
-        msg << "ThorsAnvil::MySQL::getBitField: Bitfield to large for destination\n"
-            << "   From DB:     " << bitField.size() << " bytes\n"
-            << "   Output Type: " << typeid(T).name() << "\n";
-        throw std::runtime_error(msg.str());
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::getBitField: Bitfield to large for destination\n",
+                         "   From DB:     ", bitField.size(), " bytes\n",
+                         "   Output Type: ", typeid(T).name(), "\n"));
     }
 
     char const* valuePtr    = bitField.data();
