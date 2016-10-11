@@ -67,22 +67,36 @@ AC_ARG_WITH([TestMySQLUser], AS_HELP_STRING([--with-TestMySQLUser=<User>], [Use 
 AC_ARG_WITH([TestMySQLPass], AS_HELP_STRING([--with-TestMySQLPass=<Pass>], [Use an alternative mysql password for testing with (testPassword)]))
 AC_ARG_WITH([TestMySQLDatabase], AS_HELP_STRING([--with-TestMySQLDatabase=<DB>], [Use an alternative mysql database for testing with (test)]))
 
-AS_IF([test "x$have_TestMySQLHost" = "xyes"],
-            [AC_DEFINE([THOR_TESTING_MYSQL_HOST], [$with_TestMySQLHost],   [mysql DB host for testing])],
-            [AC_DEFINE([THOR_TESTING_MYSQL_HOST], ["127.0.0.1"],           [mysql DB host for testing])]
-)
-AS_IF([test "x$have_TestMySQLUser" = "xyes"],
-            [AC_DEFINE([THOR_TESTING_MYSQL_USER], [$with_TestMySQLUser],   [mysql DB user for testing])],
-            [AC_DEFINE([THOR_TESTING_MYSQL_USER], ["test"],                [mysql DB user for testing])]
-)
-AS_IF([test "x$have_TestMySQLPass" = "xyes"],
-            [AC_DEFINE([THOR_TESTING_MYSQL_PASS], [$with_TestMySQLPass],   [mysql DB password for testing])],
-            [AC_DEFINE([THOR_TESTING_MYSQL_PASS], ["testPassword"],        [mysql DB password for testing])]
-)
-AS_IF([test "x$have_TestMySQLDatabase" = "xyes"],
-            [AC_DEFINE([THOR_TESTING_MYSQL_DB], [$with_TestMySQLDatabase], [mysql DB password for testing])],
-            [AC_DEFINE([THOR_TESTING_MYSQL_DB], ["test"],                  [mysql DB password for testing])]
-)
+mysql_test_host="127.0.0.1"
+mysql_test_user="test"
+mysql_test_pw="testPassword"
+mysql_test_db="test"
+
+AS_IF([test "x$have_TestMySQLHost" = "xyes"], [mysql_test_host=$with_TestMySQLHost])
+AS_IF([test "x$have_TestMySQLUser" = "xyes"], [mysql_test_user=$with_TestMySQLUser])
+AS_IF([test "x$have_TestMySQLPass" = "xyes"], [mysql_test_pw=$with_TestMySQLPass])
+AS_IF([test "x$have_TestMySQLDatabase" = "xyes"], [mysql_test_db=$with_TestMySQLDatabase])
+
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_HOST], ["$mysql_test_host"], [mysql DB host for testing])
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_USER], ["$mysql_test_user"], [mysql DB user for testing])
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_PASS], ["$mysql_test_pw"],   [mysql DB password for testing])
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_DB],   ["$mysql_test_db"],   [mysql DB for testing])
+
+mysq_test_connect=`echo "select 3+4 from dual" |  mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1`
+AS_IF([test "x$mysq_test_connect" != "x7"],
+     [AC_MSG_ERROR([
+
+Error: Can not connect to mysql server for testing.
+
+        This may be because the mysql server is not running or the test data has not been created.
+
+        1) Install MySQL server
+        2) Make sure MySQL is running
+        3) Install the test data and users.
+                cat ./src/MySQL/test/data/init.sql | mysql -u root -p
+
+                  ])
+     ])
 
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AC_CONFIG_HEADERS([src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h])

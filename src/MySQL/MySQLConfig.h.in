@@ -66,7 +66,7 @@
 /* Set for small Endian Systems */
 #undef THOR_ENDIAN_SML
 
-/* mysql DB password for testing */
+/* mysql DB for testing */
 #undef THOR_TESTING_MYSQL_DB
 
 /* mysql DB host for testing */
