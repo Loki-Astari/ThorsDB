@@ -35,7 +35,7 @@ before_install:
 install:
     - ./configure --with-thor-build-on-travis
 script:
-    - export PATH=${PATH}:$(pwd)/build/bin;make 
+    - make 
 after_success:
     - ./uploadcodecovrage
 branches:
