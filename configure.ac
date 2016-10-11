@@ -15,21 +15,46 @@ AC_C_BIGENDIAN([AC_DEFINE([THOR_ENDIAN_BIG], [1], [Set for Big Endian Systems])]
                [AC_DEFINE([THOR_ENDIAN_SML], [1], [Set for small Endian Systems])])
 
 
-AC_CHECK_LIB(
-            [crypto],
-            [SHA1_Init],
-            [],
-            [AC_MSG_ERROR([
+AC_DEFUN([AX_THOR_FUNC_USE_CRYPTO],
+[
+    AC_ARG_WITH(
+        [cryptoroot],
+        AS_HELP_STRING([--with-cryptoroot=<location>], [Directory of CRYPTO_ROOT])
+    )
+    ORIG_LDFLAGS="${LDFLAGS}"
+    LDFLAGS="$LDFLAGS -L$with_cryptoroot/lib"
 
-The MySQL library requires SSH1 crypto to generate the password hash used in authentication.
-Please install libcrypto on your machine.
-
-            ])])
+    AC_CHECK_LIB(
+        [crypto],
+        [SHA1_Init],
+        [
+            AS_IF([test "$with_cryptoroot" != ""],
+                  [
+                    AC_SUBST([crypto_ROOT_LIBDIR], ["-L $with_cryptoroot/lib"])
+                    AC_SUBST([crypto_ROOT_INCDIR], ["-I $with_cryptoroot/include"])
+                  ])
+        ],
+        [AC_MSG_ERROR([
  
-Error: Could not find libyaml
+Error: Could not find libcrypto
 
-You can solve this by installing libyaml
-    see http://pyyaml.org/wiki/LibYAML
+        On a mac you will need to install openssl
+        and define the crypto root directory to configuration.
+
+            brew install openssl
+            ./confgure --with-cryptoroot=/usr/local/Cellar/openssl/1.0.2j/
+
+        On Linux you will need to install openssl
+
+            sudo apt-get install openssl
+
+                ], [1])]
+    )
+
+    LDFLAGS="${ORIG_LDFLAGS}"
+])
+
+AX_THOR_FUNC_USE_CRYPTO
 
 LT_INIT
 

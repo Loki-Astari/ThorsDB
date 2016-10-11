@@ -6,6 +6,9 @@ VIRA=@VERA@
 CXXSTDVER=@CXXSTDVER@
 CXX_STD_FLAG=@CXX_STD_FLAG@
 
+crypto_ROOT_LIBDIR=@crypto_ROOT_LIBDIR@
+crypto_ROOT_INCDIR=@crypto_ROOT_INCDIR@
+
 prefix?=@prefix@
 exec_prefix?=@exec_prefix@
 bindir?=@bindir@
