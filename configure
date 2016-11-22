@@ -4722,7 +4722,7 @@ Error: Could not find libcrypto
         and define the crypto root directory to configuration.
 
             brew install openssl
-            ./confgure --with-cryptoroot=/usr/local/Cellar/openssl/1.0.2j/
+            ./configure --with-cryptoroot=/usr/local/Cellar/openssl/1.0.2j/
 
         On Linux you will need to install openssl
 
