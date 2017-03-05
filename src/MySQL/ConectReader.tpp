@@ -42,9 +42,9 @@ std::unique_ptr<Resp> ConectReader::recvMessage(OKMap const& actions /*= {}*/, b
 }
 
 template<int len>
-inline unsigned long ConectReader::fixedLengthInteger()
+inline unsigned long long ConectReader::fixedLengthInteger()
 {
-    unsigned long result = 0;
+    unsigned long long result = 0;
     THOR_MYSQL_READ_INT(result, len);
 
     return result;

@@ -62,14 +62,14 @@ RespPackage* ConectReader::getNextPackageWrap(OKMap const& actions)
     }
 }
 
-unsigned long ConectReader::lengthEncodedInteger()
+unsigned long long ConectReader::lengthEncodedInteger()
 {
     unsigned char    type;
     read(reinterpret_cast<char*>(&type), 1);
     return lengthEncodedIntegerUsingSize(type);
 }
 
-unsigned long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
+unsigned long long ConectReader::lengthEncodedIntegerUsingSize(unsigned char type)
 {
     unsigned long result;
     switch (type)
@@ -241,10 +241,10 @@ void ConectReader::reset()
  */
 #include "ConectReader.tpp"
 
-template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
-template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
-template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
-template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
+template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
+template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
+template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
+template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
 
 
 template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(OKMap const& actions, bool expectedEOF);
