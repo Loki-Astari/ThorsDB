@@ -56,6 +56,7 @@ inline std::string mapMySQLTypeToString(int mySQLType)
 {
     static std::map<int, std::string> names
     {
+        {-1,    "===="},
         {0x00,  "MYSQL_TYPE_DECIMAL"},
         {0x01,  "MYSQL_TYPE_TINY"},
         {0x02,  "MYSQL_TYPE_SHORT"},
@@ -145,7 +146,8 @@ unsigned int writeParameterValue(ConectWriter&, Src const&)
     // The translations we know about are defined below.
     throw std::runtime_error(
             errorMsg("ThorsAnvil::MySQL::writeParameterValue: ",
-                     "Unknown conversion"
+                     "Unknown conversion",
+                     getErrorMessage<-1, Src>()
           ));
 }
 
