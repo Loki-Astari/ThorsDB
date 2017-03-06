@@ -95,10 +95,13 @@ CREATE TABLE BinaryTypes(
 CREATE TABLE StringTypes(
      ID  INTEGER
 
-    ,S1  CHAR
+    ,S1  CHAR(1)
     ,S2  VARCHAR(32)
     ,S3  TINYTEXT
     ,S4  TEXT
     ,S5  MEDIUMTEXT
     ,S6  LONGTEXT);
+
+INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
+ VALUES(1, 'x', "A normal Var char", "Tiny Text", "This is normal text", "This is some medium length test", "This is some long text");
 
