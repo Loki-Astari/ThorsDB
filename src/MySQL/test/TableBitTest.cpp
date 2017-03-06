@@ -5,6 +5,9 @@
 #include <cstdint>
 
 /*
+ * see test/data/init.sql
+ * Add test data to this file in table IntTypes
+ *
  * Bit Filed can go into:
  *
  * unsigned char

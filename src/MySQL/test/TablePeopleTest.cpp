@@ -5,9 +5,9 @@
 #include <cstdint>
 
 /*
-
-INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (14, "Tom Smith", 32, 'M', 56.34);
-INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (38, "Mary Twit", 29, 'F', 34.45678);
+ * see test/data/init.sql
+ * Add test data to this file in table People
+ *
  */
 
 

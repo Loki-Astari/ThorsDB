@@ -5,22 +5,25 @@
 #include <cstdint>
 
 /*
-unsigned long long
-unsigned long
-unsigned int
-unsigned short
-unsigned char
-
-signed long long
-signed long
-signed int
-signed short
-signed char
-
-Special case char is both signed and unsigned.
-char
-
-*/
+ * see test/data/init.sql
+ * Add test data to this file in table IntTypes
+ *
+ * unsigned long long
+ * unsigned long
+ * unsigned int
+ * unsigned short
+ * unsigned char
+ * 
+ * signed long long
+ * signed long
+ * signed int
+ * signed short
+ * signed char
+ * 
+ * Special case char is both signed and unsigned.
+ * char
+ * 
+ */
 
 /*
 htonll seems to be define on my machine.

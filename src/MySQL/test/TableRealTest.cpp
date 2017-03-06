@@ -5,6 +5,9 @@
 #include <cstdint>
 
 /*
+ * see test/data/init.sql
+ * Add test data to this file in table RealTypes
+ *
  * FLOAT, DOUBLE
  *
  * FLOAT => float or double or long double

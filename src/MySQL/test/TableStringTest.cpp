@@ -5,11 +5,21 @@
 #include <cstdint>
 
 /*
- * MYSQL_TYPE_VARCHAR
- * MYSQL_TYPE_VAR_STRING
- * MYSQL_TYPE_STRING
+ * see test/data/init.sql
+ * Add test data to this file in table StringTypes
  *
  * These types should read into a std::string
+ * MYSQL_TYPE_VAR_STRING
+ * MYSQL_TYPE_STRING
+ * MYSQL_TYPE_BLOB
+ *
+ *
+ * Question:
+ *   Still need to have SQL table with the following field:
+ *      MYSQL_TYPE_VARCHAR
+ *      MYSQL_TYPE_TINY_BLOB      
+ *      MYSQL_TYPE_MEDIUM_BLOB
+ *      MYSQL_TYPE_LONG_BLOB
  */
 
 
