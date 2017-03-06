@@ -204,9 +204,14 @@ inline unsigned long signExtend(unsigned long value, int length)
         ? maskBuild(length) | value     // negative value
         : value;                        // positive value
 }
+// VARCHAR(32)
 template<> inline String readParameterValue<MYSQL_TYPE_VAR_STRING,    String>(ConectReader& p) {return p.lengthEncodedString();}
+// VARCHAR(64)
 template<> inline String readParameterValue<MYSQL_TYPE_STRING,        String>(ConectReader& p) {return p.lengthEncodedString();}
-template<> inline String readParameterValue<MYSQL_TYPE_VARCHAR,       String>(ConectReader& p) {return p.lengthEncodedString();}
+//TINYTEXT TEXT MEDIUMTEXT LONGTEXT
+template<> inline String readParameterValue<MYSQL_TYPE_BLOB,          String>(ConectReader& p) {return p.lengthEncodedString();}
+
+//template<> inline String readParameterValue<MYSQL_TYPE_VARCHAR,       String>(ConectReader& p) {return p.lengthEncodedString();}
 
 /*
  * BLOBS
