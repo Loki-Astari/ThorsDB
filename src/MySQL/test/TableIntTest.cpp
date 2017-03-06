@@ -25,21 +25,6 @@
  * 
  */
 
-/*
-htonll seems to be define on my machine.
-Leaving this here for future reference.
-inline std::uint64_t htonll(std::uint64_t value)
-{
-    uint64_t  result;
-    uint32_t* inputValue    = reinterpret_cast<uint32_t*>(&value);
-    uint32_t* outputValue   = reinterpret_cast<uint32_t*>(&result);
-
-    outputValue[0] = htonl(inputValue[1]);
-    outputValue[1] = htonl(inputValue[0]);
-    return(result);
-}
-*/
-
 // Unsigned Tiny (0->255) Values can only be read into "unsigned integer types"
 TEST(TableIntTest, ReadUTinyIntoUChar)     { typeGoodTest<unsigned char> (0x12, "SELECT U2 FROM IntTypes where Id=1"); }
 TEST(TableIntTest, ReadUTinyIntoUShort)    { typeGoodTest<unsigned short>(0x12, "SELECT U2 FROM IntTypes where Id=1"); }
