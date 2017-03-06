@@ -65,17 +65,13 @@ INSERT INTO IntTypes(ID,
 CREATE TABLE RealTypes(
      ID  INTEGER
 
-    ,R1  REAL        UNSIGNED
-    ,R2  DOUBLE      UNSIGNED
-    ,R3  FLOAT       UNSIGNED
-    ,R4  REAL
-    ,R5  DOUBLE
-    ,R6  FLOAT
+    ,R1  DOUBLE
+    ,R2  FLOAT
 
-    ,D1  DECIMAL     UNSIGNED
-    ,D2  NUMERIC     UNSIGNED
-    ,D3  DECIMAL
-    ,D4  NUMERIC);
+    ,D1  DECIMAL
+    ,D2  NUMERIC);
+
+INSERT INTO RealTypes(ID, R1, R2, D1, D2) VALUES(1, 10, 11, 12, 13);
 
 CREATE TABLE TimeStampTypes(
      ID  INTEGER

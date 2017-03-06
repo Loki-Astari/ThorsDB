@@ -195,7 +195,7 @@ inline unsigned long long maskBuild(int length)
 
     return mask ^ shield;
 }
-    
+
 inline unsigned long signExtend(unsigned long value, int length)
 {
     return ((length != sizeof(unsigned long long)) && ((value >> (length * 8 - 1)) & 0x1))
@@ -316,16 +316,28 @@ template<> inline Intuc  readParameterValue<MYSQL_TYPE_BIT,           Intuc>(Con
  * Floating point
  */
 // TODO FIX
+template<> inline long double readParameterValue<MYSQL_TYPE_DOUBLE,   long double>(ConectReader& p)
+{
+    double result;
+    p.read(reinterpret_cast<char*>(&result), 8);
+    return result;
+}
 template<> inline double readParameterValue<MYSQL_TYPE_DOUBLE,        double>(ConectReader& p)
 {
     double result;
     p.read(reinterpret_cast<char*>(&result), 8);
     return result;
 }
-template<> inline float  readParameterValue<MYSQL_TYPE_DOUBLE,        float>(ConectReader& p)
+template<> inline long double readParameterValue<MYSQL_TYPE_FLOAT,    long double>(ConectReader& p)
 {
-    double result;
-    p.read(reinterpret_cast<char*>(&result), 8);
+    float result;
+    p.read(reinterpret_cast<char*>(&result), 4);
+    return result;
+}
+template<> inline double  readParameterValue<MYSQL_TYPE_FLOAT,         double>(ConectReader& p)
+{
+    float result;
+    p.read(reinterpret_cast<char*>(&result), 4);
     return result;
 }
 template<> inline float  readParameterValue<MYSQL_TYPE_FLOAT,         float>(ConectReader& p)
