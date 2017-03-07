@@ -216,9 +216,11 @@ template<> inline String readParameterValue<MYSQL_TYPE_BLOB,          String>(Co
 /*
  * BLOBS
  */
+template<> inline Vector readParameterValue<MYSQL_TYPE_VAR_STRING,      Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Vector readParameterValue<MYSQL_TYPE_STRING,          Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Vector readParameterValue<MYSQL_TYPE_BLOB,            Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 //template<> inline Buffer readParameterValue<MYSQL_TYPE_TINY_BLOB,     Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 //template<> inline Buffer readParameterValue<MYSQL_TYPE_MEDIUM_BLOB,   Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
-//template<> inline Buffer readParameterValue<MYSQL_TYPE_BLOB,          Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 //template<> inline Buffer readParameterValue<MYSQL_TYPE_LONG_BLOB,     Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 
 /*
