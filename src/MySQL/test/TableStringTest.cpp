@@ -24,7 +24,7 @@
 
 
 // Bit Values can only be read into "unsigned integer types"a
-TEST(TableStringTest, ReadCHAR2String)      {typeGoodTest<std::string>("x",                               "SELECT S1 from StringTypes WHERE Id=1");}// CHAR
+TEST(TableStringTest, ReadCHAR2String)      {typeGoodTest<std::string>("x",                               "SELECT S1 from StringTypes WHERE Id=1");}// CHAR       => MYSQL_TYPE_STRING
 TEST(TableStringTest, ReadVARCHAR2String)   {typeGoodTest<std::string>("A normal Var char",               "SELECT S2 from StringTypes WHERE Id=1");}// VARCHAR    => MYSQL_TYPE_VAR_STRING
 TEST(TableStringTest, ReadTINYTEXT2String)  {typeGoodTest<std::string>("Tiny Text",                       "SELECT S3 from StringTypes WHERE Id=1");}// TINYTEXT   => MYSQL_TYPE_BLOB
 TEST(TableStringTest, ReadTEXT2String)      {typeGoodTest<std::string>("This is normal text",             "SELECT S4 from StringTypes WHERE Id=1");}// TEXT       => MYSQL_TYPE_BLOB
