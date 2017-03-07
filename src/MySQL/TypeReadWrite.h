@@ -358,10 +358,10 @@ template<> inline float  readParameterValue<MYSQL_TYPE_FLOAT,         float>(Con
  * Time/Date
  */
 // TODO FIX
-template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
-template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,      UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,      UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
 //template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATETIME, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
-//template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTimeStamp>(ConectReader&p){return UnixTimeStamp(p.readDate());}
 
 template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
