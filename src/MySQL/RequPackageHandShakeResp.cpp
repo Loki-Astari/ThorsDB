@@ -87,6 +87,7 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
                  | CLIENT_LOCAL_FILES
                  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD;
 
+    // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeResponse41
     // Turn off flags not supported by the server
     unsigned long localCap = capabilities & cap;
     writer.writeFixedLengthInteger<4>(localCap);

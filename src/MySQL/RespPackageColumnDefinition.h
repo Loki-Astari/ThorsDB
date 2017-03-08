@@ -74,6 +74,7 @@ struct RespPackageColumnDefinition
     }
     RespPackageColumnDefinition(ConectReader& reader, bool getDefaultValues = false)
     {
+        // https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnDefinition
         unsigned long capabilities  = reader.getCapabilities();
         if (capabilities & CLIENT_PROTOCOL_41)
         {

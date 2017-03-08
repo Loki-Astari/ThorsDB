@@ -338,6 +338,7 @@ template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTim
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATETIME,  UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
 template<> inline int           readParameterValue<MYSQL_TYPE_YEAR,      int>          (ConectReader& p){return p.fixedLengthInteger<2>();}
 
+// https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnType
 template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
 {

@@ -23,6 +23,7 @@ class RespPackageEOF: public RespPackage
             , warningCount(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
             , statusFlag(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
         {
+            // https://dev.mysql.com/doc/internals/en/packet-EOF_Packet.html
             assert(firstByte == 0xFE);
             eof = true;
         }

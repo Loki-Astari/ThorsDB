@@ -30,6 +30,7 @@ template<typename T> inline bool writeParameterType(ConectWriter&, T const&)
 }
 
 // Specializations
+// https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnType
 template<>
 inline bool writeParameterValue<std::string>(ConectWriter& p, std::string const& val)
 {

@@ -25,6 +25,7 @@ class RespPackageAuthSwitchRequest: public RespPackage
             , pluginName(reader.nulTerminatedString())
             , pluginData(reader.restOfPacketString())
         {
+            // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchRequest
             assert(firstByte == 0xFE);
             std::cerr << "RespPackageAuthSwitchRequest: " << (*this) << "\n\n";
         }

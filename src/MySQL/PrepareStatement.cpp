@@ -33,6 +33,7 @@ class RequPackagePrepare: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const override
         {
+            // https://dev.mysql.com/doc/internals/en/com-stmt-prepare.html#com-stmt-prepare
             writer.writeFixedLengthInteger<1>(COM_STMT_PREPARE);
             writer.writeVariableLengthString(statement);
         }
@@ -56,6 +57,7 @@ class RequPackagePrepareClose: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const
         {
+            // https://dev.mysql.com/doc/internals/en/com-stmt-close.html#com-stmt-close
             writer.writeFixedLengthInteger<1>(COM_STMT_CLOSE);
             writer.writeFixedLengthInteger<4>(statementID);
         }
@@ -81,6 +83,7 @@ class RequPackagePrepareExecute: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const override
         {
+            // https://dev.mysql.com/doc/internals/en/com-stmt-execute.html#com-stmt-execute
             writer.writeFixedLengthInteger<1>(COM_STMT_EXECUTE);
             writer.writeFixedLengthInteger<4>(statementID);
             /*
@@ -115,6 +118,7 @@ class RequPackagePrepareReset: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const
         {
+            // https://dev.mysql.com/doc/internals/en/com-stmt-reset.html#com-stmt-reset
             writer.writeFixedLengthInteger<1>(COM_STMT_RESET);
             writer.writeFixedLengthInteger<4>(statementID);
         }
@@ -136,6 +140,7 @@ class RespPackagePrepare: public RespPackage
         RespPackagePrepare(int firstByte, ConectReader& reader)
             : RespPackage(reader, "Prepare")
         {
+            // https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html#com-stmt-prepare-response
             assert(firstByte == 0x00);
 
             // Not We have already read 1 byte (status OK)
@@ -212,6 +217,7 @@ class RespPackagePrepareExecute: public RespPackage
         RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
             : RespPackage(reader, "Prepare-Execute")
         {
+            // https://dev.mysql.com/doc/internals/en/binary-protocol-resultset.html#binary-protocol-resultset
             columnCount = firstByte;
             reader.reset();
             for (int loop = 0;loop < columnCount; ++loop)

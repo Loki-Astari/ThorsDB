@@ -27,6 +27,7 @@ class RespPackageOK: public RespPackage
             , statusFlags(reader.fixedLengthInteger<2>())
             , warningFlags(reader.fixedLengthInteger<2>())
         {
+            // https://dev.mysql.com/doc/internals/en/packet-OK_Packet.html#packet-OK_Packet
             assert(firstByte == 0x00);
 
             ok              = true;
