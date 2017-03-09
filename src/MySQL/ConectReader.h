@@ -51,11 +51,8 @@ class ConectReader
         {}
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
-        std::unique_ptr<RespPackage>    getNextPackage(OKMap const& actions);
         std::unique_ptr<Detail::RespPackageEOF> recvMessageEOF();
         std::unique_ptr<RespPackage>            recvMessage(OKMap const& actions = {});
-    private:
-        RespPackage*    getNextPackageWrap(OKMap const& actions);
     public:
 
 
