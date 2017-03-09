@@ -25,13 +25,13 @@ std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(Requ const& requ
 {
     sendMessageInternal(request, true);
     // FIXNOW (not need to use ResPackage below)
-    return recvMessage(actions, false);
+    return recvMessage(actions);
 }
 template<typename Resp, typename Requ>
 std::unique_ptr<Resp> Connection::sendHandshakeMessage(Requ const& request, ConectReader::OKMap const& actions)
 {
     sendMessageInternal(request, false);
-    std::unique_ptr<RespPackage> result(recvMessage(actions, false));
+    std::unique_ptr<RespPackage> result(recvMessage(actions));
     return downcastUniquePtr<Resp>(std::move(result));
 }
 

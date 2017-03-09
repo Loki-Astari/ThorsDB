@@ -90,9 +90,9 @@ void Connection::removeCurrentPackage()
     packageReader.drop();
 }
 
-std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& actions, bool expectedEOF)
+std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& actions)
 {
-    std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions, expectedEOF));
+    std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions));
     return result;
 }
 

@@ -24,7 +24,7 @@ bool ConectReader::isEmpty() const
 
 std::unique_ptr<Detail::RespPackageEOF> ConectReader::recvMessageEOF()
 {
-    std::unique_ptr<RespPackage> result = recvMessage({}, true);
+    std::unique_ptr<RespPackage> result = recvMessage({{0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);}}});
     return downcastUniquePtr<Detail::RespPackageEOF>(std::move(result));
 }
 std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKMap const& actions)
@@ -32,24 +32,14 @@ std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKMap const& actions)
     return std::unique_ptr<RespPackage>(getNextPackageWrap(actions));
 }
 
-std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= {}*/, bool expectingEOF /*= false*/)
+std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= {}*/)
 {
     std::unique_ptr<RespPackage>    resp = getNextPackage(actions);
-    if (resp->isError())
+    if (resp && resp->isError())
     {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", resp->message()
               ));
-    }
-
-    if (!expectingEOF && resp->isEOF())
-    {
-        // EOF is special case.
-        // If we are getting a set of results then the end of the set is marked
-        // by an EOF package. This is not an error. We release it here and
-        // make the resp empty. Anybody that is looking for an end of sequence
-        // will need to validate that the pointer returned is not nullptr
-        resp    = nullptr;
     }
 
     // Now we know the dynamic_cast will work and not return a nullptr.
@@ -72,7 +62,8 @@ RespPackage* ConectReader::getNextPackageWrap(OKMap const& actions)
     }
     else if (packageType == 0xFE)
     {
-        return new Detail::RespPackageEOF(packageType, *this);
+        Detail::RespPackageEOF  ignore(packageType, *this);
+        return nullptr;
     }
     else if (packageType == 0xFF)
     {

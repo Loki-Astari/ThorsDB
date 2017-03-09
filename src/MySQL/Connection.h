@@ -32,7 +32,7 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
-        std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions, bool expectedEOF = false);
+        std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions);
         template<typename Resp, typename Requ>
         std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
         template<typename Requ>
