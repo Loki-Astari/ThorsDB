@@ -27,12 +27,12 @@ void Connection::sendMessage(Requ const& request)
 {
     sendMessageInternal(request, true);
 }
-template<typename Resp, typename Requ>
-std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, ConectReader::OKMap const& actions)
+template<typename Requ>
+std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(Requ const& request, ConectReader::OKMap const& actions)
 {
     sendMessageInternal(request, true);
-    std::unique_ptr<Resp> result(recvMessage<Resp>(actions, false));
-    return result;
+    // FIXNOW (not need to use ResPackage below)
+    return recvMessage<RespPackage>(actions, false);
 }
 template<typename Resp, typename Requ>
 std::unique_ptr<Resp> Connection::sendHandshakeMessage(Requ const& request, ConectReader::OKMap const& actions)

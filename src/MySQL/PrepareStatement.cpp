@@ -361,12 +361,15 @@ using namespace ThorsAnvil::MySQL;
 PrepareStatement::PrepareStatement(Connection& connectn, std::string const& statement)
     : Statement(statement)
     , connection(connectn)
-    , prepareResp(connection.sendMessage<Detail::RespPackagePrepare>(
+    , prepareResp(downcastUniquePtr<Detail::RespPackagePrepare>(
+                                connection.sendMessageGetResponse(
                                     Detail::RequPackagePrepare(statement),
                                     {{0x00, [](int firstByte, ConectReader& reader)
                                             {return new Detail::RespPackagePrepare(firstByte, reader);}
                                      }
-                                    }))
+                                    }
+                                )
+                 ))
     , statementID(prepareResp->getStatementID())
     , validatorStream(prepareResp->getColumns())
     , validatorReader(validatorStream)
@@ -404,7 +407,7 @@ void PrepareStatement::doExecute()
                 errorMsg("ThrosAnvil::MySQL::PrepareStatement::doExecute: ", errorMessage));
     }
 
-    prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
+    std::unique_ptr<RespPackage> tmp = connection.sendMessageGetResponse(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     {{-1, // Does not matter what the first byte is
                                         [this](int firstByte, ConectReader& reader)
@@ -418,6 +421,7 @@ void PrepareStatement::doExecute()
                                      }
                                     }
                               );
+    prepareExec = downcastUniquePtr<Detail::RespPackagePrepareExecute>(std::move(tmp));
 }
 
 bool PrepareStatement::more()
@@ -442,7 +446,12 @@ bool PrepareStatement::more()
     bool moreResult = nextLine.get() != nullptr;
     if (!moreResult)
     {
-        connection.sendMessage<Detail::RespPackageOK>(Detail::RequPackagePrepareReset(statementID));
+        std::unique_ptr<RespPackage> resp = connection.sendMessageGetResponse(Detail::RequPackagePrepareReset(statementID));
+
+        // Need to make sure we got an RespPackageOK
+        // Otherwise there is a real problem.
+        downcastUniquePtr<Detail::RespPackageOK>(std::move(resp));
+
         validatorStream.reset();
         nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
     }
@@ -467,9 +476,8 @@ void PrepareStatement::abort()
 #include "ConectReader.tpp"
 
 template
-std::unique_ptr<Detail::RespPackagePrepare>
-Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>
-(Detail::RequPackagePrepare const&, ConectReader::OKMap const&);
+std::unique_ptr<Detail::RespPackageOK> ConectReader::recvMessage<Detail::RespPackageOK>
+(std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&, bool);
 
 template
 std::unique_ptr<Detail::RespPackagePrepare>

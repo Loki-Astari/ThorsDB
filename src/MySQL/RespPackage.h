@@ -44,6 +44,24 @@ class RespPackage
         }
 };
 
+template<typename To>
+std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item)
+{
+    if (item.get() == nullptr)
+    {
+        return nullptr;
+    }
+
+    // Note the dynamic_cast may fail and throw.
+    // If this happens item retains ownership.
+    std::unique_ptr<To> result(&dynamic_cast<To&>(*item));
+    // Now that ownership has been transferred.
+    // Release the original pointer.
+    item.release();
+
+    return result;
+}
+
     }
 }
 
