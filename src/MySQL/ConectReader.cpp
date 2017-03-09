@@ -24,7 +24,8 @@ bool ConectReader::isEmpty() const
 
 std::unique_ptr<Detail::RespPackageEOF> ConectReader::recvMessageEOF()
 {
-    return recvMessage<Detail::RespPackageEOF>({}, true);
+    std::unique_ptr<RespPackage> result = recvMessage({}, true);
+    return downcastUniquePtr<Detail::RespPackageEOF>(std::move(result));
 }
 std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKMap const& actions)
 {
@@ -245,8 +246,5 @@ template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
-
-
-template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(OKMap const& actions, bool expectedEOF);
 
 #endif

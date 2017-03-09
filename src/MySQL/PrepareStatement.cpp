@@ -431,7 +431,8 @@ bool PrepareStatement::more()
     {
         return false;
     }
-    nextLine = connection.recvMessage<Detail::RespPackageResultSet>(
+    std::unique_ptr<RespPackage> message
+                        = connection.recvMessage(
                                     {{0x00,
                                         [this](int firstByte, ConectReader& reader)
                                         {
@@ -443,6 +444,7 @@ bool PrepareStatement::more()
                                         }
                                      }
                                     });
+    nextLine = downcastUniquePtr<Detail::RespPackageResultSet>(std::move(message));
     bool moreResult = nextLine.get() != nullptr;
     if (!moreResult)
     {
@@ -474,20 +476,5 @@ void PrepareStatement::abort()
  */
 #include "Connection.tpp"
 #include "ConectReader.tpp"
-
-template
-std::unique_ptr<Detail::RespPackageOK> ConectReader::recvMessage<Detail::RespPackageOK>
-(std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&, bool);
-
-template
-std::unique_ptr<Detail::RespPackagePrepare>
-ConectReader::recvMessage<Detail::RespPackagePrepare>
-(ConectReader::OKMap const&, bool);
-
-template
-std::unique_ptr<Detail::RespPackagePrepareExecute>
-ConectReader::recvMessage<Detail::RespPackagePrepareExecute>
-(ConectReader::OKMap const&, bool);
-
 
 #endif

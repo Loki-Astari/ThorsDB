@@ -7,8 +7,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-template<typename Resp>
-std::unique_ptr<Resp> ConectReader::recvMessage(OKMap const& actions /*= {}*/, bool expectingEOF /*= false*/)
+inline std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= {}*/, bool expectingEOF /*= false*/)
 {
     std::unique_ptr<RespPackage>    resp = getNextPackage(actions);
     if (resp->isError())
@@ -27,18 +26,11 @@ std::unique_ptr<Resp> ConectReader::recvMessage(OKMap const& actions /*= {}*/, b
         // will need to validate that the pointer returned is not nullptr
         resp    = nullptr;
     }
-    else
-    {
-        // Throws exception if cast fails.
-        Resp&                   resultRef = dynamic_cast<Resp&>(*resp);
-        thorUnused(resultRef);
-    }
 
     // Now we know the dynamic_cast will work and not return a nullptr.
     // release it do the dynamic cast and store it in a new unique_ptr
     // for return.
-    std::unique_ptr<Resp>   result(dynamic_cast<Resp*>(resp.release()));
-    return result;
+    return resp;
 }
 
 template<int len>

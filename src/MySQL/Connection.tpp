@@ -5,10 +5,9 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-template<typename Resp>
-std::unique_ptr<Resp> Connection::recvMessage(ConectReader::OKMap const& actions, bool expectedEOF)
+inline std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& actions, bool expectedEOF)
 {
-    std::unique_ptr<Resp>   result(packageReader.recvMessage<Resp>(actions, expectedEOF));
+    std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions, expectedEOF));
     return result;
 }
 
@@ -32,14 +31,16 @@ std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(Requ const& requ
 {
     sendMessageInternal(request, true);
     // FIXNOW (not need to use ResPackage below)
-    return recvMessage<RespPackage>(actions, false);
+    return recvMessage(actions, false);
 }
+
+// FIXNOW does this need to have Resp
 template<typename Resp, typename Requ>
 std::unique_ptr<Resp> Connection::sendHandshakeMessage(Requ const& request, ConectReader::OKMap const& actions)
 {
     sendMessageInternal(request, false);
-    std::unique_ptr<Resp> result(recvMessage<Resp>(actions, false));
-    return result;
+    std::unique_ptr<RespPackage> result(recvMessage(actions, false));
+    return downcastUniquePtr<Resp>(std::move(result));
 }
 
     }
