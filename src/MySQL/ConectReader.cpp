@@ -31,6 +31,33 @@ std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKMap const& actions)
 {
     return std::unique_ptr<RespPackage>(getNextPackageWrap(actions));
 }
+
+std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= {}*/, bool expectingEOF /*= false*/)
+{
+    std::unique_ptr<RespPackage>    resp = getNextPackage(actions);
+    if (resp->isError())
+    {
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", resp->message()
+              ));
+    }
+
+    if (!expectingEOF && resp->isEOF())
+    {
+        // EOF is special case.
+        // If we are getting a set of results then the end of the set is marked
+        // by an EOF package. This is not an error. We release it here and
+        // make the resp empty. Anybody that is looking for an end of sequence
+        // will need to validate that the pointer returned is not nullptr
+        resp    = nullptr;
+    }
+
+    // Now we know the dynamic_cast will work and not return a nullptr.
+    // release it do the dynamic cast and store it in a new unique_ptr
+    // for return.
+    return resp;
+}
+
 RespPackage* ConectReader::getNextPackageWrap(OKMap const& actions)
 {
     int    packageType  = fixedLengthInteger<1>();;

@@ -90,6 +90,12 @@ void Connection::removeCurrentPackage()
     packageReader.drop();
 }
 
+std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& actions, bool expectedEOF)
+{
+    std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions, expectedEOF));
+    return result;
+}
+
 #ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes
