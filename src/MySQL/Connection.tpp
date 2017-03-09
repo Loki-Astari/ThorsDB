@@ -24,7 +24,6 @@ template<typename Requ>
 std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(Requ const& request, ConectReader::OKMap const& actions)
 {
     sendMessageInternal(request, true);
-    // FIXNOW (not need to use ResPackage below)
     return recvMessage(actions);
 }
 template<typename Resp, typename Requ>
