@@ -33,7 +33,8 @@
 
 #define CLIENT_DEPRECATE_EOF                    0x01000000
 
-
+// https://dev.mysql.com/doc/internals/en/status-flags.html
+// This is the status returned in the RespPackageOK message
 #define SERVER_STATUS_IN_TRANS                  0x0001
 #define SERVER_STATUS_AUTOCOMMIT                0x0002
 #define SERVER_MORE_RESULTS_EXISTS              0x0008

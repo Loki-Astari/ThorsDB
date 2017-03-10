@@ -2,6 +2,7 @@
 #define THORS_ANVIL_SQL_PREPARE_STATEMENT_H
 
 #include "Statement.h"
+#include "RespPackageOK.h"
 #include "RespPackageResultSet.h"
 #include "TypeReadWrite.h"
 #include "PackageStream.h"
@@ -133,6 +134,7 @@ class PrepareStatement: public Statement
     ConectReader                                        validatorReader;
     std::unique_ptr<Detail::RespPackagePrepareExecute>  prepareExec;
     std::unique_ptr<Detail::RespPackageResultSet>       nextLine;
+    std::unique_ptr<Detail::RespPackageOK>              modificationOK;
     BindBuffer                                          bindBuffer;
 
     public:
@@ -144,6 +146,10 @@ class PrepareStatement: public Statement
 
         virtual void doExecute()                            override;
         virtual bool more()                                 override;
+
+        virtual bool isSelect() const                       override;
+        virtual long rowsAffected() const                   override;
+        virtual long lastInsertID() const                   override;
 
         virtual void   bind(char value)                     override    {bindBuffer.bindValue(value);}
         virtual void   bind(signed char value)              override    {bindBuffer.bindValue(value);}

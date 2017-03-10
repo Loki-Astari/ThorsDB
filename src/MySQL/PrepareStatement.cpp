@@ -181,6 +181,11 @@ class RespPackagePrepare: public RespPackage
              columnInfo.push_back(RespPackageColumnDefinition::getFakeColumn(MYSQL_TYPE_TINY));
         }
 
+        bool isSelect() const
+        {
+            return numColumns != 0;
+        }
+
         virtual std::ostream& print(std::ostream& s)    const override
         {
             s << "RespPackagePrepare: statementID" << statementID
@@ -384,6 +389,9 @@ PrepareStatement::~PrepareStatement()
 
 void PrepareStatement::doExecute()
 {
+    modificationOK.reset();
+    prepareExec.reset();
+
     std::string errorMessage;
     if (validatorStream.tooFew())
     {
@@ -421,7 +429,14 @@ void PrepareStatement::doExecute()
                                      }
                                     }
                               );
-    prepareExec = downcastUniquePtr<Detail::RespPackagePrepareExecute>(std::move(tmp));
+    if (tmp->isOK())
+    {
+        modificationOK = downcastUniquePtr<Detail::RespPackageOK>(std::move(tmp));
+    }
+    else
+    {
+        prepareExec = downcastUniquePtr<Detail::RespPackagePrepareExecute>(std::move(tmp));
+    }
 }
 
 bool PrepareStatement::more()
@@ -458,6 +473,21 @@ bool PrepareStatement::more()
         nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
     }
     return moreResult;
+}
+
+bool PrepareStatement::isSelect() const
+{
+    return prepareResp->isSelect();
+}
+
+long PrepareStatement::rowsAffected() const
+{
+    return modificationOK->getAffectedRows();
+}
+
+long PrepareStatement::lastInsertID() const
+{
+    return modificationOK->getLastInsertID();
 }
 
 void PrepareStatement::abort()
