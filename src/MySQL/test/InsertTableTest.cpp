@@ -10,9 +10,37 @@
  *
  */
 
+class InsertPeopleTest: public ::testing::Test
+{
+	protected:
+		// Per-test-case set-up.
+		// Called before the first test in this test case.
+		// Can be omitted if not needed.
+		static void SetUpTestCase()
+		{
+		}
 
-// Bit Values can only be read into "unsigned integer types"a
-TEST(InsertPeopleTest, InsertTomHanks)
+		// Per-test-case tear-down.
+		// Called after the last test in this test case.
+		// Can be omitted if not needed.
+		static void TearDownTestCase()
+		{
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 0);
+		}
+
+		// You can define per-test set-up and tear-down logic as usual.
+		virtual void SetUp()
+		{
+		}
+		virtual void TearDown()
+		{
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 1);
+            executeModification("DELETE FROM PeopleExtra WHERE ID=15");
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 0);
+		}
+};
+
+TEST_F(InsertPeopleTest, InsertTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -23,12 +51,11 @@ TEST(InsertPeopleTest, InsertTomHanks)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    // CREATE TABLE PeopleExtra ( ID  INTEGER, Name VARCHAR(64), Age  SMALLINT, Sex  CHAR(1), Height DOUBLE);
-    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (Name, Age, Sex, Height) VALUES ('Tom Hanks', 67, 'M', 5.67)");
+    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (15, 'Tom Hanks', 67, 'M', 5.67)");
     statement.execute();
 }
 
-TEST(InsertPeopleTest, UpdateTomHanks)
+TEST_F(InsertPeopleTest, InsertTomHanks2)
 {
     using namespace ThorsAnvil;
 
@@ -39,23 +66,7 @@ TEST(InsertPeopleTest, UpdateTomHanks)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID=3");
-    statement.execute();
+    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (?, 'Tom Hanks', 67, 'M', 5.67)");
+    statement.execute(SQL::Bind(15));
 }
-
-TEST(InsertPeopleTest, DeleteTomHanks)
-{
-    using namespace ThorsAnvil;
-
-    std::map<std::string, std::string>      options;
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
-                                    THOR_TESTING_MYSQL_USER,
-                                    THOR_TESTING_MYSQL_PASS,
-                                    THOR_TESTING_MYSQL_DB,
-                                    options);
-
-    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE isNull(ID)");
-    statement.execute();
-}
-
 

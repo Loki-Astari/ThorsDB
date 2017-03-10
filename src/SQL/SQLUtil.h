@@ -29,8 +29,9 @@ int printItem(std::ostream& str, T const& msg)
     str << msg;
     return 1;
 }
+
 template<typename... Args>
-std::string errorMsg(Args const& ...a)
+std::string stringBuild(Args const& ...a)
 {
     std::stringstream msg;
     auto list = {printItem(msg, a)...};
@@ -38,10 +39,17 @@ std::string errorMsg(Args const& ...a)
 
     return msg.str();
 }
+
+template<typename... Args>
+std::string errorMsg(Args const& ...a)
+{
+    return stringBuild(a...);
+}
+
 template<typename... Args>
 std::string bugReport(Args const& ...a)
 {
-    return errorMsg(a..., "\nPlease File a Bug Report: ");
+    return stringBuild(a..., "\nPlease File a Bug Report: ");
 }
 
 }
