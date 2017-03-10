@@ -44,6 +44,10 @@ class Statement: public SQL::StatementProxy
         virtual void doExecute()                            override    {}
         virtual bool more()                                 override    {return false;}
 
+        virtual bool isSelect() const                       override    {return true;}
+        virtual long rowsAffected() const                   override    {return 0;}
+        virtual long lastInsertID() const                   override    {return 0;}
+
         virtual void   retrieve(char& value)                override    {value=0;}
         virtual void   retrieve(signed char& value)         override    {value=0;}
         virtual void   retrieve(signed short& value)        override    {value=0;}

@@ -51,11 +51,13 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
             // 15         John Smith          32           M           34.9
             int     nextRow;
             int     nextField;
+            bool    isSelectStatement;
 
             public:
-            MockMySQLStatement()
+            MockMySQLStatement(bool isSelectStatement)
                 : nextRow(0)
                 , nextField(0)
+                , isSelectStatement(isSelectStatement)
             {}
             virtual void   abort()                              {}
 
@@ -84,6 +86,9 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
 
             virtual void doExecute()                            {}
             virtual bool more()                                 {return nextRow < 2;}
+            virtual bool isSelect() const                       {return isSelectStatement;}
+            virtual long rowsAffected() const                   {return 0;}
+            virtual long lastInsertID() const                   {return 0;}
 
             virtual void   retrieve(char& value)                {getField(nextRow, nextField, value);}
             virtual void   retrieve(signed char& value)         {getField(nextRow, nextField, value);}
@@ -112,7 +117,8 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
         }
         virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type) override
         {
-            return std::unique_ptr<StatementProxy>(new MockMySQLStatement);
+            bool isSelect = statement.find("SELECT") != std::string::npos;
+            return std::unique_ptr<StatementProxy>(new MockMySQLStatement(isSelect));
         }
 };
 
