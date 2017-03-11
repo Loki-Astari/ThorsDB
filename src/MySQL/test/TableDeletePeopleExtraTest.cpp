@@ -11,7 +11,7 @@
  */
 
 
-TEST(DeletePeopleTest, DeleteTomHanks)
+TEST(TableDeletePeopleExtraTest, DeleteTomHanks)
 {
     using namespace ThorsAnvil;
 

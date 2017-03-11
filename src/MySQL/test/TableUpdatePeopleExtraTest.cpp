@@ -12,7 +12,7 @@
  */
 
 
-TEST(UpdatePeopleTest, UpdateTomHanks)
+TEST(TableUpdatePeopleExtraTest, UpdateTomHanks)
 {
     using namespace ThorsAnvil;
 

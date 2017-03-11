@@ -10,7 +10,7 @@
  *
  */
 
-class InsertPeopleTest: public ::testing::Test
+class TableInsertPeopleExtraTest: public ::testing::Test
 {
 	protected:
 		// Per-test-case set-up.
@@ -40,7 +40,7 @@ class InsertPeopleTest: public ::testing::Test
 		}
 };
 
-TEST_F(InsertPeopleTest, InsertTomHanks)
+TEST_F(TableInsertPeopleExtraTest, InsertTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -55,7 +55,7 @@ TEST_F(InsertPeopleTest, InsertTomHanks)
     statement.execute();
 }
 
-TEST_F(InsertPeopleTest, InsertTomHanks2)
+TEST_F(TableInsertPeopleExtraTest, InsertTomHanks2)
 {
     using namespace ThorsAnvil;
 
