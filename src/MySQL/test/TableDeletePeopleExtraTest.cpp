@@ -31,9 +31,14 @@ class TableDeletePeopleExtraTest: public ::testing::Test
 		// You can define per-test set-up and tear-down logic as usual.
 		virtual void SetUp()
 		{
+            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (18, \"Tom Hanks\", 35, \"M\", 56.89)");
+            // The insert should insert the only value
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 1);
 		}
 		virtual void TearDown()
 		{
+            // The test should delete it. Therefore the count will be 0.
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 0);
 		}
 };
 
