@@ -31,9 +31,16 @@ class TableUpdatePeopleExtraTest: public ::testing::Test
 		// You can define per-test set-up and tear-down logic as usual.
 		virtual void SetUp()
 		{
+            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES(21, \"Tom Hanks\", 91, \"F\", 332.56)");
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
 		}
 		virtual void TearDown()
 		{
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=91", 0);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=92", 1);
+            executeModification("DELETE FROM PeopleExtra WHERE ID=21");
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 0);
 		}
 };
 
