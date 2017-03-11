@@ -19,6 +19,7 @@ class TablePeopleExtraUpdateTest: public ::testing::Test
 		// Can be omitted if not needed.
 		static void SetUpTestCase()
 		{
+            executeModification("DELETE FROM PeopleExtra");
 		}
 
 		// Per-test-case tear-down.
@@ -26,6 +27,7 @@ class TablePeopleExtraUpdateTest: public ::testing::Test
 		// Can be omitted if not needed.
 		static void TearDownTestCase()
 		{
+            executeModification("DELETE FROM PeopleExtra");
 		}
 
 		// You can define per-test set-up and tear-down logic as usual.
@@ -39,8 +41,7 @@ class TablePeopleExtraUpdateTest: public ::testing::Test
             checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
             checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=91", 0);
             checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=92", 1);
-            executeModification("DELETE FROM PeopleExtra WHERE ID=21");
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 0);
+            executeModification("DELETE FROM PeopleExtra");
 		}
 };
 
