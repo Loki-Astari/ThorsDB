@@ -78,7 +78,10 @@ inline void checkSelectCount(std::string const& select, int row)
 static void executeModification(std::string const& mod)
 {
     std::string modString = ThorsAnvil::stringBuild("echo '", mod , "' | ", getMySQL());
-    system(modString.c_str());
+    ASSERT_EQ(
+        0,
+        system(modString.c_str())
+    );
 }
 
 
