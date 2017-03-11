@@ -1,7 +1,6 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
-#include "ThorSQL/SQLUtil.h"
 #include <arpa/inet.h>
 #include <cstdint>
 
@@ -11,7 +10,8 @@
  *
  */
 
-class TableUpdatePeopleExtraTest: public ::testing::Test
+
+class TablePeopleExtraDeleteTest: public ::testing::Test
 {
 	protected:
 		// Per-test-case set-up.
@@ -31,20 +31,18 @@ class TableUpdatePeopleExtraTest: public ::testing::Test
 		// You can define per-test set-up and tear-down logic as usual.
 		virtual void SetUp()
 		{
-            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES(21, \"Tom Hanks\", 91, \"F\", 332.56)");
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
+            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (18, \"Tom Hanks\", 35, \"M\", 56.89)");
+            // The insert should insert the only value
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 1);
 		}
 		virtual void TearDown()
 		{
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=91", 0);
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=92", 1);
-            executeModification("DELETE FROM PeopleExtra WHERE ID=21");
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 0);
+            // The test should delete it. Therefore the count will be 0.
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 0);
 		}
 };
 
-TEST_F(TableUpdatePeopleExtraTest, UpdateTomHanks)
+TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -55,11 +53,11 @@ TEST_F(TableUpdatePeopleExtraTest, UpdateTomHanks)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = 21");
+    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = 18");
     statement.execute();
 }
 
-TEST_F(TableUpdatePeopleExtraTest, UpdateTomHanksWithBind)
+TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
@@ -70,7 +68,8 @@ TEST_F(TableUpdatePeopleExtraTest, UpdateTomHanksWithBind)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
-    statement.execute(SQL::Bind(21));
+    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = ?");
+    statement.execute(SQL::Bind(18));
 }
+
 

@@ -1,6 +1,7 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
+#include "ThorSQL/SQLUtil.h"
 #include <arpa/inet.h>
 #include <cstdint>
 
@@ -10,7 +11,7 @@
  *
  */
 
-class TableInsertPeopleExtraTest: public ::testing::Test
+class TablePeopleExtraUpdateTest: public ::testing::Test
 {
 	protected:
 		// Per-test-case set-up.
@@ -25,22 +26,25 @@ class TableInsertPeopleExtraTest: public ::testing::Test
 		// Can be omitted if not needed.
 		static void TearDownTestCase()
 		{
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 0);
 		}
 
 		// You can define per-test set-up and tear-down logic as usual.
 		virtual void SetUp()
 		{
+            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES(21, \"Tom Hanks\", 91, \"F\", 332.56)");
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
 		}
 		virtual void TearDown()
 		{
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 1);
-            executeModification("DELETE FROM PeopleExtra WHERE ID=15");
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 0);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 1);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=91", 0);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21 && Age=92", 1);
+            executeModification("DELETE FROM PeopleExtra WHERE ID=21");
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=21", 0);
 		}
 };
 
-TEST_F(TableInsertPeopleExtraTest, InsertTomHanks)
+TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -51,11 +55,11 @@ TEST_F(TableInsertPeopleExtraTest, InsertTomHanks)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (15, 'Tom Hanks', 67, 'M', 5.67)");
+    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = 21");
     statement.execute();
 }
 
-TEST_F(TableInsertPeopleExtraTest, InsertTomHanksWithBind)
+TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
@@ -66,7 +70,7 @@ TEST_F(TableInsertPeopleExtraTest, InsertTomHanksWithBind)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (?, 'Tom Hanks', 67, 'M', 5.67)");
-    statement.execute(SQL::Bind(15));
+    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
+    statement.execute(SQL::Bind(21));
 }
 

@@ -11,7 +11,7 @@
  *
  */
 
-class TableRowsAffectedPeopleExtraTest: public ::testing::Test
+class TablePeopleExtraRowsAffectedTest: public ::testing::Test
 {
 	protected:
 		// Per-test-case set-up.
@@ -38,7 +38,7 @@ class TableRowsAffectedPeopleExtraTest: public ::testing::Test
 		}
 };
 
-TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanks)
+TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -61,7 +61,7 @@ TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanks)
     );
 }
 
-TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanksWithBind)
+TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
@@ -84,7 +84,7 @@ TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanksWithBind)
     );
 }
 
-TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanksNoHits)
+TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksNoHits)
 {
     using namespace ThorsAnvil;
 
@@ -107,7 +107,7 @@ TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanksNoHits)
     );
 }
 
-TEST_F(TableRowsAffectedPeopleExtraTest, ModTomHanksWithBindNoHits)
+TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksWithBindNoHits)
 {
     using namespace ThorsAnvil;
 

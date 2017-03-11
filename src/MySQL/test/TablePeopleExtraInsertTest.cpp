@@ -10,8 +10,7 @@
  *
  */
 
-
-class TableDeletePeopleExtraTest: public ::testing::Test
+class TablePeopleExtraInsertTest: public ::testing::Test
 {
 	protected:
 		// Per-test-case set-up.
@@ -26,23 +25,22 @@ class TableDeletePeopleExtraTest: public ::testing::Test
 		// Can be omitted if not needed.
 		static void TearDownTestCase()
 		{
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 0);
 		}
 
 		// You can define per-test set-up and tear-down logic as usual.
 		virtual void SetUp()
 		{
-            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (18, \"Tom Hanks\", 35, \"M\", 56.89)");
-            // The insert should insert the only value
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 1);
 		}
 		virtual void TearDown()
 		{
-            // The test should delete it. Therefore the count will be 0.
-            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 0);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 1);
+            executeModification("DELETE FROM PeopleExtra WHERE ID=15");
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID=15", 0);
 		}
 };
 
-TEST_F(TableDeletePeopleExtraTest, DeleteTomHanks)
+TEST_F(TablePeopleExtraInsertTest, InsertTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -53,11 +51,11 @@ TEST_F(TableDeletePeopleExtraTest, DeleteTomHanks)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = 18");
+    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (15, 'Tom Hanks', 67, 'M', 5.67)");
     statement.execute();
 }
 
-TEST_F(TableDeletePeopleExtraTest, DeleteTomHanksWithBind)
+TEST_F(TablePeopleExtraInsertTest, InsertTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
@@ -68,8 +66,7 @@ TEST_F(TableDeletePeopleExtraTest, DeleteTomHanksWithBind)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = ?");
-    statement.execute(SQL::Bind(18));
+    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (?, 'Tom Hanks', 67, 'M', 5.67)");
+    statement.execute(SQL::Bind(15));
 }
-
 
