@@ -55,7 +55,7 @@ TEST_F(TableInsertPeopleExtraTest, InsertTomHanks)
     statement.execute();
 }
 
-TEST_F(TableInsertPeopleExtraTest, InsertTomHanks2)
+TEST_F(TableInsertPeopleExtraTest, InsertTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
