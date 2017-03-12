@@ -344,6 +344,7 @@ inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::strin
     p.writeLengthEncodedString(v);
     return MYSQL_TYPE_STRING;
 }
+
 template<>
 inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
 {
