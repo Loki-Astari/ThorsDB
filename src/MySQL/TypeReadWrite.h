@@ -419,6 +419,20 @@ inline unsigned int writeParameterValue<unsigned long>(ConectWriter& p, unsigned
     p.writeFixedLengthInteger<4>(v);
     return MYSQL_TYPE_LONG;
 }
+
+template<>
+inline unsigned int writeParameterValue<signed long long>(ConectWriter& p, signed long long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned long long>(ConectWriter& p, unsigned long long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
         }
     }
 }
