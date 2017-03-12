@@ -353,13 +353,6 @@ inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::strin
 }
 
 template<>
-inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
-{
-    p.writeRawData(reinterpret_cast<char const*>(&v), 8);
-    return MYSQL_TYPE_DOUBLE;
-}
-
-template<>
 inline unsigned int writeParameterValue<char>(ConectWriter& p, char const& v)
 {
     // If you bind as a string it matches both number and string.
@@ -441,6 +434,23 @@ inline unsigned int writeParameterValue<unsigned long long>(ConectWriter& p, uns
     p.writeFixedLengthInteger<8>(v);
     return MYSQL_TYPE_LONGLONG;
 }
+
+template<>
+inline unsigned int writeParameterValue<float>(ConectWriter& p, float const& v)
+{
+    std::cout << "Bind FLOAT " << v << "\n";
+    p.writeRawData(reinterpret_cast<char const*>(&v), 4);
+    return MYSQL_TYPE_FLOAT;
+}
+
+template<>
+inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
+{
+    std::cout << "Bind DOUBLE " << v << "\n";
+    p.writeRawData(reinterpret_cast<char const*>(&v), 8);
+    return MYSQL_TYPE_DOUBLE;
+}
+
         }
     }
 }
