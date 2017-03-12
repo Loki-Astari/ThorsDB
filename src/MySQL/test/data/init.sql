@@ -65,6 +65,14 @@ INSERT INTO IntTypes(ID,
             0xF, 0xFFF, 0xFFFFFF, 0xFFFFFFFFFFFF,
             255, 65535, 16777215, 4294967295, 4294967295, 18446744073709551615,
             127, 32767, 8388607, 2147483647, 2147483647, 9223372036854775807);
+INSERT INTO IntTypes(ID,
+                     B0,B1,B2,B3,
+                     U2,U3,U4,U5,U6,U7,
+                     I2,I3,I4,I5,I6,I7)
+     VALUES(4,
+            8, 8, 8, 8,
+            8, 8, 8, 8, 8, 8,
+            8, 8, 8, 8, 8, 8);
 
 -- See test/TableRealTest.cpp
 --      Add tests to this file for integers.
@@ -126,4 +134,6 @@ CREATE TABLE StringTypes(
 
 INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
  VALUES(1, 'x', "A normal Var char", "Tiny Text", "This is normal text", "This is some medium length test", "This is some long text");
+INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
+ VALUES(2, 'F', "F", "F", "F", "F", "F");
 

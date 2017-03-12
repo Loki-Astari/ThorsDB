@@ -357,6 +357,20 @@ inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v
     return MYSQL_TYPE_DOUBLE;
 }
 
+template<>
+inline unsigned int writeParameterValue<char>(ConectWriter& p, char const& v)
+{
+    // If you bind as a string it matches both number and string.
+    // Note the char '8' will match the number 8 (a bit wierd) but this is the
+    // same behavior as you get from mysql console.
+    std::string value(1, v);
+    p.writeLengthEncodedString(value);
+    return MYSQL_TYPE_STRING;
+
+    // If you bind as a number it does not match text.
+    //p.writeFixedLengthInteger<1>(v);
+    //return MYSQL_TYPE_TINY;
+}
         }
     }
 }
