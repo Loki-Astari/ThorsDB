@@ -339,6 +339,13 @@ template<> inline int           readParameterValue<MYSQL_TYPE_YEAR,      int>   
 
 // https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnType
 template<>
+inline unsigned int writeParameterValue<std::vector<char>>(ConectWriter& p, std::vector<char> const& v)
+{
+    p.writeLengthEncodedBlob(v);
+    return MYSQL_TYPE_BLOB;
+}
+
+template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
 {
     p.writeLengthEncodedString(v);

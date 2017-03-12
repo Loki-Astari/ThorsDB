@@ -126,6 +126,8 @@ CREATE TABLE BinaryTypes(
 
 INSERT INTO BinaryTypes(ID, B1, B2, B3, B4, B5, B6)
  VALUES(1, 'B', 'A variable binary string', 'A Tiny Blob', 'A Normal Blob', 'A Medium Sized Blob', 'This is the best I can do for long Blob');
+INSERT INTO BinaryTypes(ID, B1, B2, B3, B4, B5, B6)
+ VALUES(2, 'K', 'K', 'K', 'K', 'K', 'K');
 
 -- See test/TableStringTest.cpp
 --      Add tests to this file for integers.
