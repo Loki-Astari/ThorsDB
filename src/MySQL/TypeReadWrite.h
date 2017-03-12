@@ -345,12 +345,6 @@ inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::strin
     return MYSQL_TYPE_STRING;
 }
 template<>
-inline unsigned int writeParameterValue<signed int>(ConectWriter& p, signed int const& v)
-{
-    p.writeFixedLengthInteger<4>(v);
-    return MYSQL_TYPE_LONG;
-}
-template<>
 inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
 {
     p.writeRawData(reinterpret_cast<char const*>(&v), 8);
@@ -398,6 +392,19 @@ inline unsigned int writeParameterValue<unsigned short>(ConectWriter& p, unsigne
     return MYSQL_TYPE_SHORT;
 }
 
+template<>
+inline unsigned int writeParameterValue<signed int>(ConectWriter& p, signed int const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned int>(ConectWriter& p, unsigned int const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
         }
     }
 }
