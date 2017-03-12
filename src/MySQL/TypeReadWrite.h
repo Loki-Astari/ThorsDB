@@ -371,6 +371,33 @@ inline unsigned int writeParameterValue<char>(ConectWriter& p, char const& v)
     //p.writeFixedLengthInteger<1>(v);
     //return MYSQL_TYPE_TINY;
 }
+
+template<>
+inline unsigned int writeParameterValue<signed char>(ConectWriter& p, signed char const& v)
+{
+    return writeParameterValue<char>(p, static_cast<char>(v));
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned char>(ConectWriter& p, unsigned char const& v)
+{
+    return writeParameterValue<char>(p, static_cast<char>(v));
+}
+
+template<>
+inline unsigned int writeParameterValue<signed short>(ConectWriter& p, signed short const& v)
+{
+    p.writeFixedLengthInteger<2>(v);
+    return MYSQL_TYPE_SHORT;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned short>(ConectWriter& p, unsigned short const& v)
+{
+    p.writeFixedLengthInteger<2>(v);
+    return MYSQL_TYPE_SHORT;
+}
+
         }
     }
 }

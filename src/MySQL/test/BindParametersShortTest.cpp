@@ -16,8 +16,11 @@ TEST(BindParametersShortTest, BindShortTestAgainstBit4)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B0=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    ASSERT_EQ(1, count);
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
+    ASSERT_EQ(2, count);
 }
 
 TEST(BindParametersShortTest, BindShortTestAgainstBit12)
@@ -33,8 +36,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstBit12)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B1=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -51,8 +56,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstBit24)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B2=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -69,8 +76,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstBit48)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B3=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -87,8 +96,11 @@ TEST(BindParametersShortTest, BindShortTestAgainstUTinyInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U2=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    ASSERT_EQ(1, count);
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
+    ASSERT_EQ(2, count);
 }
 
 TEST(BindParametersShortTest, BindShortTestAgainstTinyInt)
@@ -104,8 +116,11 @@ TEST(BindParametersShortTest, BindShortTestAgainstTinyInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I2=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    ASSERT_EQ(1, count);
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
+    ASSERT_EQ(2, count);
 }
 
 TEST(BindParametersShortTest, BindShortTestAgainstUSmallInt)
@@ -121,8 +136,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstUSmallInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U3=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -139,8 +156,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstSmallInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I3=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -157,8 +176,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstUMedInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U4=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -175,8 +196,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstMedInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I4=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -193,8 +216,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstUInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U5=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -211,8 +236,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I5=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -229,8 +256,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstULongInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U6=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -247,8 +276,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstLongInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I6=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -265,8 +296,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstULongLongInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U7=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 
@@ -283,8 +316,10 @@ TEST(BindParametersShortTest, BindShortTestAgainstLongLongInt)
 
     SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I7=?");
     long count = 0;
-    statement.execute(SQL::Bind(8),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
-    statement.execute(SQL::Bind(264),[&count](long id, unsigned long, unsigned long){if (id==5){++count;}});
+    signed   short sbind = 8;
+    unsigned short ubind = 14;
+    statement.execute(SQL::Bind(sbind),[&count](long id, unsigned long, unsigned long){++count;});
+    statement.execute(SQL::Bind(ubind),[&count](long id, unsigned long, unsigned long){++count;});
     ASSERT_EQ(2, count);
 }
 

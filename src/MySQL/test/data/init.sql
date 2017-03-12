@@ -65,6 +65,7 @@ INSERT INTO IntTypes(ID,
             0xF, 0xFFF, 0xFFFFFF, 0xFFFFFFFFFFFF,
             255, 65535, 16777215, 4294967295, 4294967295, 18446744073709551615,
             127, 32767, 8388607, 2147483647, 2147483647, 9223372036854775807);
+
 INSERT INTO IntTypes(ID,
                      B0,B1,B2,B3,
                      U2,U3,U4,U5,U6,U7,
@@ -73,15 +74,14 @@ INSERT INTO IntTypes(ID,
             8, 8, 8, 8,
             8, 8, 8, 8, 8, 8,
             8, 8, 8, 8, 8, 8);
-
 INSERT INTO IntTypes(ID,
                      B0,B1,B2,B3,
                      U2,U3,U4,U5,U6,U7,
                      I2,I3,I4,I5,I6,I7)
      VALUES(5,
-            0, 264, 264, 264,
-            0, 264, 264, 264, 264, 264,
-            0, 264, 264, 264, 264, 264);
+            14, 14, 14, 14,
+            14, 14, 14, 14, 14, 14,
+            14, 14, 14, 14, 14, 14);
 
 -- See test/TableRealTest.cpp
 --      Add tests to this file for integers.
