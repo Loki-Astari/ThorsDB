@@ -65,12 +65,22 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_BIT:            return readParameterValue<MYSQL_TYPE_BIT, T>(reader);
             case MYSQL_TYPE_DECIMAL:        return readParameterValue<MYSQL_TYPE_DECIMAL, T>(reader);
             case MYSQL_TYPE_NEWDECIMAL:     return readParameterValue<MYSQL_TYPE_NEWDECIMAL, T>(reader);
-            case MYSQL_TYPE_LONGLONG:       return readParameterValue<MYSQL_TYPE_LONGLONG, T>(reader);
-            case MYSQL_TYPE_LONG:           return readParameterValue<MYSQL_TYPE_LONG, T>(reader);
-            case MYSQL_TYPE_INT24:          return readParameterValue<MYSQL_TYPE_INT24, T>(reader);
-            case MYSQL_TYPE_SHORT:          return readParameterValue<MYSQL_TYPE_SHORT, T>(reader);
+            case MYSQL_TYPE_LONGLONG:       return columns[currentColumn].flags & 0x20
+                                                    ? readParameterValue<MYSQL_TYPE_LONGLONG_UNSIGNED, T>(reader)
+                                                    : readParameterValue<MYSQL_TYPE_LONGLONG, T>(reader);
+            case MYSQL_TYPE_LONG:           return columns[currentColumn].flags & 0x20
+                                                    ? readParameterValue<MYSQL_TYPE_LONG_UNSIGNED, T>(reader)
+                                                    : readParameterValue<MYSQL_TYPE_LONG, T>(reader);
+            case MYSQL_TYPE_INT24:          return columns[currentColumn].flags & 0x20
+                                                    ? readParameterValue<MYSQL_TYPE_INT24_UNSIGNED, T>(reader)
+                                                    : readParameterValue<MYSQL_TYPE_INT24, T>(reader);
+            case MYSQL_TYPE_SHORT:          return columns[currentColumn].flags & 0x20
+                                                    ? readParameterValue<MYSQL_TYPE_SHORT_UNSIGNED, T>(reader)
+                                                    : readParameterValue<MYSQL_TYPE_SHORT, T>(reader);
             case MYSQL_TYPE_YEAR:           return readParameterValue<MYSQL_TYPE_YEAR, T>(reader);
-            case MYSQL_TYPE_TINY:           return readParameterValue<MYSQL_TYPE_TINY, T>(reader);
+            case MYSQL_TYPE_TINY:           return columns[currentColumn].flags & 0x20
+                                                    ? readParameterValue<MYSQL_TYPE_TINY_UNSIGNED, T>(reader)
+                                                    : readParameterValue<MYSQL_TYPE_TINY, T>(reader);
             case MYSQL_TYPE_DOUBLE:         return readParameterValue<MYSQL_TYPE_DOUBLE, T>(reader);
             case MYSQL_TYPE_FLOAT:          return readParameterValue<MYSQL_TYPE_FLOAT, T>(reader);
             case MYSQL_TYPE_DATE:           return readParameterValue<MYSQL_TYPE_DATE, T>(reader);

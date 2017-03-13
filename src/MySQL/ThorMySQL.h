@@ -91,4 +91,9 @@
 #define MYSQL_TYPE_STRING                       0xfe
 #define MYSQL_TYPE_GEOMETRY                     0xff
 
+#define MYSQL_TYPE_TINY_UNSIGNED                  0x101
+#define MYSQL_TYPE_SHORT_UNSIGNED                 0x102
+#define MYSQL_TYPE_LONG_UNSIGNED                  0x103
+#define MYSQL_TYPE_LONGLONG_UNSIGNED              0x108
+#define MYSQL_TYPE_INT24_UNSIGNED                 0x109
 #endif

@@ -1,6 +1,9 @@
 #ifndef THORSANVIL_MYSQL_DETAIL_RESP_PACKAGE_COLUMN_DEFINITION_H
 #define THORSANVIL_MYSQL_DETAIL_RESP_PACKAGE_COLUMN_DEFINITION_H
 
+// MySQL documentation
+// https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnDefinition
+
 #include "ConectReader.h"
 #include "ThorMySQL.h"
 #include "TypeReadWrite.h"

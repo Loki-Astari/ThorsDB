@@ -40,7 +40,7 @@ class ConectReader
     unsigned long    capbil;
     unsigned long    charset;
 
-    unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
+    unsigned long long lengthEncodedIntegerUsingSize(unsigned char size);
     public:
         using OKAction = std::function<RespPackage*(int byte, ConectReader&)>;
         using OKMap    = std::map<int, OKAction>;
@@ -65,8 +65,8 @@ class ConectReader
 
         unsigned long   getCapabilities()                                       {return capbil;}
         template<int len>
-        unsigned long   fixedLengthInteger(unsigned long rCap)                  {return (rCap & capbil) ? fixedLengthInteger<len>() : 0;}
-        unsigned long   lengthEncodedInteger(unsigned long rCap)                {return (rCap & capbil) ? lengthEncodedInteger()    : 0;}
+        unsigned long long fixedLengthInteger(unsigned long rCap)               {return (rCap & capbil) ? fixedLengthInteger<len>() : 0;}
+        unsigned long long lengthEncodedInteger(unsigned long rCap)             {return (rCap & capbil) ? lengthEncodedInteger()    : 0;}
         std::string     fixedLengthString(std::size_t s, unsigned long rCap)    {return (rCap & capbil) ? fixedLengthString(s)      : "";}
         std::string     nulTerminatedString(unsigned long rCap)                 {return (rCap & capbil) ? nulTerminatedString()     : "";}
         std::string     variableLengthString(std::size_t s, unsigned long rCap) {return (rCap & capbil) ? variableLengthString(s)   : "";}
@@ -74,8 +74,8 @@ class ConectReader
         std::string     restOfPacketString(unsigned long rCap)                  {return (rCap & capbil) ? restOfPacketString()      : "";}
 
         template<int len>
-        unsigned long   fixedLengthInteger();
-        unsigned long   lengthEncodedInteger();
+        unsigned long long fixedLengthInteger();
+        unsigned long long lengthEncodedInteger();
         std::string     fixedLengthString(std::size_t size);
         std::string     nulTerminatedString();
         std::string     variableLengthString(std::size_t size);
