@@ -51,6 +51,12 @@
 #define CURSOR_TYPE_FOR_UPDATE                  0x02
 #define CURSOR_TYPE_SCROLLABLE                  0x04
 
+
+#define COM_STMT_PREPARE                        0x16
+#define COM_STMT_EXECUTE                        0x17
+#define COM_STMT_CLOSE                          0x19
+#define COM_STMT_RESET                          0x1A
+
 #define MYSQL_TYPE_DECIMAL                      0x00
 #define MYSQL_TYPE_TINY                         0x01
 #define MYSQL_TYPE_SHORT                        0x02

@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <ctime>
+#include <tuple>
 
 namespace ThorsAnvil
 {
@@ -37,6 +38,14 @@ struct UnixTimeStamp
 
         explicit UnixTimeStamp(std::time_t time):
             time(time)
+        {}
+};
+
+class ValidationTmpError: public std::runtime_error
+{
+    public:
+        ValidationTmpError(std::string const& msg)
+            : std::runtime_error(msg)
         {}
 };
 
@@ -119,9 +128,11 @@ class Cursor
 template<typename... Args>
 class BindArgs
 {
-    std::tuple<std::reference_wrapper<Args>...>     arguments;
+    using DataTuple = std::tuple<std::reference_wrapper<typename std::add_const<Args>::type>...>;
+
+    DataTuple  arguments;
     public:
-        BindArgs(Args... args)
+        explicit BindArgs(Args const&... args)
             : arguments(args...)
         {}
 
@@ -135,7 +146,7 @@ class BindArgs
 
 // -- Bindings
 template<typename... Args>
-BindArgs<Args...> Bind(Args... args)
+BindArgs<Args...> Bind(Args const&... args)
 {
     return BindArgs<Args...>(args...);
 }

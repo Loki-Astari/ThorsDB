@@ -4,7 +4,9 @@
 
 #include "Statement.h"
 #include "RespPackageResultSet.h"
+#include "TypeReadWrite.h"
 #include "PackageStream.h"
+#include "ConectWriter.h"
 #include <string>
 #include <vector>
 
@@ -20,6 +22,67 @@ namespace ThorsAnvil
             struct RespPackageColumnDefinition;
         }
 
+    class BindBuffer
+    {
+        class BindStream: public MySQLStream
+        {
+            std::vector<char>& dst;
+            public:
+                BindStream(std::vector<char>& dst)
+                    : MySQLStream(-1)
+                    , dst(dst)
+                {}
+                virtual void read(char*, std::size_t) override {}
+                virtual void write(char const* buffer, std::size_t len)  override
+                {
+                    dst.insert(dst.end(), buffer, buffer + len);
+                }
+        };
+        std::vector<Detail::RespPackageColumnDefinition> const& columns;
+        std::vector<char>                                       typeBuffer;
+        std::vector<char>                                       valueBuffer;
+        std::size_t                                             currentCol;
+        BindStream                                              bindStream;
+        ConectWriter                                            bindWriter;
+
+        public:
+            BindBuffer(std::vector<Detail::RespPackageColumnDefinition> const& col)
+                : columns(col)
+                , currentCol(0)
+                , bindStream(valueBuffer)
+                , bindWriter(bindStream)
+            {}
+            void bindToMySQL(ConectWriter& writer) const
+            {
+                if (columns.size() == 0) {
+                    return;
+                }
+                std::vector<char>  null((columns.size() + 7) / 8);
+                writer.writeRawData(&null[0], null.size());
+
+                writer.writeFixedLengthInteger<1>(1);
+                writer.writeRawData(&typeBuffer[0], typeBuffer.size());
+                writer.writeRawData(&valueBuffer[0], valueBuffer.size());
+            }
+            void reset()
+            {
+                currentCol  = 0;
+                typeBuffer.clear();
+                valueBuffer.clear();
+            }
+            std::size_t countBoundParameters() const
+            {
+                return currentCol;
+            }
+            template<typename Src>
+            void bindValue(Src const& value)
+            {
+                unsigned int type = Detail::writeParameterValue(bindWriter, value);
+                typeBuffer.push_back(type);
+                typeBuffer.push_back(std::is_unsigned<Src>::value ? '\x80' : '\x00');
+                ++currentCol;
+            }
+    };
 class Connection;
 class PrepareStatement: public Statement
 {
@@ -50,10 +113,12 @@ class PrepareStatement: public Statement
         std::vector<Detail::RespPackageColumnDefinition> const& columns;
         std::string                                     validateInfo;
         std::size_t                                     position;
+        bool                                            errorReading;
         public:
             ValidatorStream(std::vector<Detail::RespPackageColumnDefinition> const& colu);
             virtual void read(char* buffer, std::size_t len) override;
-            bool  empty() const;
+            bool  tooMany() const;
+            bool  tooFew() const;
             void  reset();
     };
 
@@ -64,6 +129,7 @@ class PrepareStatement: public Statement
     ConectReader                                        validatorReader;
     std::unique_ptr<Detail::RespPackagePrepareExecute>  prepareExec;
     std::unique_ptr<Detail::RespPackageResultSet>       nextLine;
+    BindBuffer                                          bindBuffer;
 
     public:
         PrepareStatement(Connection& connection, std::string const& statement);
@@ -73,6 +139,27 @@ class PrepareStatement: public Statement
 
         virtual void doExecute()                            override;
         virtual bool more()                                 override;
+
+        virtual void   bind(char value)                     override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed char value)              override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed short value)             override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed int value)               override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed long value)              override    {bindBuffer.bindValue(value);}
+        virtual void   bind(signed long long value)         override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned char value)            override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned short value)           override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned int value)             override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned long value)            override    {bindBuffer.bindValue(value);}
+        virtual void   bind(unsigned long long value)       override    {bindBuffer.bindValue(value);}
+
+        virtual void   bind(float value)                    override    {bindBuffer.bindValue(value);}
+        virtual void   bind(double value)                   override    {bindBuffer.bindValue(value);}
+        virtual void   bind(long double value)              override    {bindBuffer.bindValue(value);}
+
+        virtual void   bind(std::string const& value)       override    {bindBuffer.bindValue(value);}
+        virtual void   bind(std::vector<char> const& value) override    {bindBuffer.bindValue(value);}
+
+        virtual void   bind(SQL::UnixTimeStamp const& value)override    {bindBuffer.bindValue(value);}
 
         virtual void   retrieve(char& value)                override    {nextLine->retrieve(value);}
         virtual void   retrieve(signed char& value)         override    {nextLine->retrieve(value);}

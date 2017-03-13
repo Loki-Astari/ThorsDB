@@ -1,5 +1,6 @@
 
 #include "PrepareStatement.h"
+#include "TypeReadWrite.h"
 #include "Connection.h"
 #include "ConectReader.h"
 #include "RequPackage.h"
@@ -9,6 +10,7 @@
 #include "RespPackageColumnDefinition.h"
 #include "ThorMySQL.h"
 #include <cassert>
+#include <sstream>
 
 
 namespace ThorsAnvil
@@ -32,7 +34,7 @@ class RequPackagePrepare: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const override
         {
-            writer.writeFixedLengthInteger<1>(0x16);
+            writer.writeFixedLengthInteger<1>(COM_STMT_PREPARE);
             writer.writeVariableLengthString(statement);
         }
 };
@@ -54,7 +56,7 @@ class RequPackagePrepareClose: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const
         {
-            writer.writeFixedLengthInteger<1>(0x19);
+            writer.writeFixedLengthInteger<1>(COM_STMT_CLOSE);
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
@@ -64,11 +66,13 @@ void testPrintRequPackagePrepareClose(std::ostream& str) {
 
 class RequPackagePrepareExecute: public RequPackage
 {
-    int statementID;
+    int                 statementID;
+    BindBuffer const&   bindBuffer;
     public:
-        RequPackagePrepareExecute(int statementID)
+        RequPackagePrepareExecute(int statementID, BindBuffer const& bindBuffer)
             : RequPackage("RequPackagePrepareExecute")
             , statementID(statementID)
+            , bindBuffer(bindBuffer)
         {}
         virtual  std::ostream& print(std::ostream& s)   const override
         {
@@ -76,7 +80,7 @@ class RequPackagePrepareExecute: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const override
         {
-            writer.writeFixedLengthInteger<1>(0x17);
+            writer.writeFixedLengthInteger<1>(COM_STMT_EXECUTE);
             writer.writeFixedLengthInteger<4>(statementID);
             /*
              *  0x00    CURSOR_TYPE_NO_CURSOR
@@ -86,10 +90,13 @@ class RequPackagePrepareExecute: public RequPackage
              */
             writer.writeFixedLengthInteger<1>(0x00);
             writer.writeFixedLengthInteger<4>(1);
+            bindBuffer.bindToMySQL(writer);
         }
 };
 void testPrintRequPackagePrepareExecute(std::ostream& str) {
-    str << RequPackagePrepareExecute(1);
+    std::vector<Detail::RespPackageColumnDefinition>    cols;
+    BindBuffer  bindBuffer(cols);
+    str << RequPackagePrepareExecute(1, bindBuffer);
 }
 
 class RequPackagePrepareReset: public RequPackage
@@ -106,7 +113,7 @@ class RequPackagePrepareReset: public RequPackage
         }
         virtual  void build(ConectWriter& writer)       const
         {
-            writer.writeFixedLengthInteger<1>(0x1A);
+            writer.writeFixedLengthInteger<1>(COM_STMT_RESET);
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
@@ -152,6 +159,14 @@ class RespPackagePrepare: public RespPackage
                 }
                 reader.recvMessage<RespPackageEOF>();
             }
+            /* To prevent exceptions in RespPackageResultSet when two many arguments are provided
+             * We are going to push an extra fake column into the columns here.
+             *
+             * This is compensated for in Validation Stream which will detect the error
+             * and generate a more appropriate exception that will happen during validation
+             * rather than at runtime.
+             */
+             columnInfo.push_back(RespPackageColumnDefinition::getFakeColumn(MYSQL_TYPE_TINY));
         }
 
         virtual std::ostream& print(std::ostream& s)    const override
@@ -169,6 +184,7 @@ class RespPackagePrepare: public RespPackage
         }
         int     getStatementID()                        const               {return statementID;}
         std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
+        std::vector<RespPackageColumnDefinition> const&  getParams()  const {return paramInfo;}
 };
 void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader) {
     str << RespPackagePrepare(firstByte, reader);
@@ -215,6 +231,7 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
     : MySQLStream(0)
     , columns(colu)
     , position(0)
+    , errorReading(false)
 {
     int nullmaplength   = (columns.size() + 7 + 2) / 8;
     validateInfo.append(nullmaplength, '\0');
@@ -258,7 +275,11 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
                 validateInfo.append(8, '\x0');
                 break;
             default:
-                throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: Unknown Type");
+                std::stringstream msg;
+                msg << "ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream:"
+                    << "Unknown Type returned by server. Please file a bug report.\n"
+                    << "   Type: " << std::hex << col.type;
+                throw std::runtime_error(msg.str());
         }
     }
     // Buffer
@@ -266,16 +287,30 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPacka
 
 void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
 {
-    if (position + len > validateInfo.size()) {
-        throw std::runtime_error("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::read: No more data");
+    // Because we have a fake column on the end.
+    // Any attempt to read it should result in an error.
+    // See: RespPackagePrepare::RespPackagePrepare
+    if (position + len >= validateInfo.size()) {
+        errorReading    = true;
+        // This causes this to unwind back to the SQL where it is caught.
+        // The doExecute() will then be called where all the errors generated
+        // during validation are checked and handeled in a single place.
+        throw SQL::ValidationTmpError("Too many parameters in callback function.");
     }
     std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
     position += len;
 }
 
-bool PrepareStatement::ValidatorStream::empty() const
+bool PrepareStatement::ValidatorStream::tooMany() const
 {
-    return position == validateInfo.size();
+    return errorReading;
+}
+
+bool PrepareStatement::ValidatorStream::tooFew() const
+{
+    // Compensate for fake column by adding +1 (MYSQL_TYPE_TINY)
+    // See: RespPackagePrepare::RespPackagePrepare
+    return (position + 1) != validateInfo.size();
 }
 
 void PrepareStatement::ValidatorStream::reset()
@@ -303,6 +338,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     , validatorStream(prepareResp->getColumns())
     , validatorReader(validatorStream)
     , nextLine(new Detail::RespPackageResultSet(0x00, validatorReader, prepareResp->getColumns()))
+    , bindBuffer(prepareResp->getParams())
 {}
 
 PrepareStatement::~PrepareStatement()
@@ -312,11 +348,25 @@ PrepareStatement::~PrepareStatement()
 
 void PrepareStatement::doExecute()
 {
-    if (!validatorStream.empty()) {
-        throw std::runtime_error("ThorsAnvil::MySQL::PrepareStatement::doExecute: Not all returned values are being used by the callback function");
+    std::string errorMessage;
+    if (validatorStream.tooFew()) {
+        errorMessage    += "Not all returned values are being used by the callback function.";
     }
+    if (validatorStream.tooMany()) {
+        errorMessage    += "You have more parameters in your callback than are specified in the select.";
+    }
+    if (bindBuffer.countBoundParameters() < prepareResp->getParams().size()) {
+        errorMessage    += "Not all bind points have parameters bound.";
+    }
+    if (bindBuffer.countBoundParameters() > prepareResp->getParams().size()) {
+        errorMessage    += "Too many bound values. You have more values than '?'.";
+    }
+    if (!errorMessage.empty()) {
+        throw std::logic_error(std::string("ThrosAnvil::MySQL::PrepareStatement::doExecute: ") + errorMessage);
+    }
+
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
-                                    Detail::RequPackagePrepareExecute(statementID),
+                                    Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     Connection::Reset,
                                     -1, // Does not matter what the first byte is 
                                     [this](int firstByte, ConectReader& reader){

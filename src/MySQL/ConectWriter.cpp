@@ -54,6 +54,29 @@ void ConectWriter::writeLengthEncodedString(std::string const& value)
     writeVariableLengthString(value);
 }
 
+void ConectWriter::writeRawData(char const* buffer, std::size_t size)
+{
+    stream.write(buffer, size);
+}
+
+void ConectWriter::writeLengthEncodedBlob(std::vector<char> const& value)
+{
+    writeLengthEncodedInteger(value.size());
+    stream.write(&value[0], value.size());
+}
+
+void ConectWriter::writeDate(std::time_t const& )
+{
+}
+
+void ConectWriter::writeRel(std::time_t const& )
+{
+}
+
+void ConectWriter::writeRel(unsigned long long )
+{
+}
+
 void ConectWriter::flush()
 {
     stream.flush();

@@ -3,9 +3,11 @@
 #define THORSANVIL_MYSQL_DETAIL_RESP_PACKAGE_COLUMN_DEFINITION_H
 
 #include "ConectReader.h"
+#include "ThorMySQL.h"
+#include "TypeReadWrite.h"
 #include <string>
 #include <vector>
-#include "ThorMySQL.h"
+#include <iomanip>
 
 namespace ThorsAnvil
 {
@@ -32,20 +34,20 @@ struct RespPackageColumnDefinition
     std::vector<std::string>    defaultValues;
 
     friend std::ostream& operator<<(std::ostream& s, RespPackageColumnDefinition const& data) {
-        s << "RespPackageColumnDefinition:"
-          << " catalog: " << data.catalog
-          << " schema: " << data.schema
-          << " table: " << data.table
-          << " orgTable: " << data.orgTable
-          << " name: " << data.name
-          << " orgName: " << data.orgName
-          << " lengthOfFixedField: " << data.lengthOfFixedField
-          << " charSet: " << data.charSet
-          << " columnLength: " << data.columnLength
-          << " type: " << data.type
-          << " flags: " << data.flags
-          << " decimal: " << data.decimal
-          << " filler: (";
+        s << "RespPackageColumnDefinition:\n"
+          << "\t" << std::setw(20) << std::left << "catalog: " << data.catalog << "\n"
+          << "\t" << std::setw(20) << std::left << "schema: " << data.schema << "\n"
+          << "\t" << std::setw(20) << std::left << "table: " << data.table << "\n"
+          << "\t" << std::setw(20) << std::left << "orgTable: " << data.orgTable << "\n"
+          << "\t" << std::setw(20) << std::left << "name: " << data.name << "\n"
+          << "\t" << std::setw(20) << std::left << "orgName: " << data.orgName << "\n"
+          << "\t" << std::setw(20) << std::left << "lengthOfFixedField: " << data.lengthOfFixedField << "\n"
+          << "\t" << std::setw(20) << std::left << "charSet: " << data.charSet << "\n"
+          << "\t" << std::setw(20) << std::left << "columnLength: " << data.columnLength << "\n"
+          << "\t" << std::setw(20) << std::left << "type: " << data.type << "(" << mapMySQLTypeToString(data.type) << ")" << "\n"
+          << "\t" << std::setw(20) << std::left << "flags: " << data.flags << "\n"
+          << "\t" << std::setw(20) << std::left << "decimal: " << data.decimal << "\n"
+          << "\t" << std::setw(20) << std::left << "filler: " << "(";
         for(auto const& dv: data.defaultValues) {
             s << dv << ", ";
         }
@@ -53,6 +55,18 @@ struct RespPackageColumnDefinition
         return s;
     }
 
+    private:
+    /* Allow the creation of fake columns.
+     * But we don't want it to happen accidentally so you have to
+     * explicitly ask for one via getFakeColumn().
+     */
+    RespPackageColumnDefinition(int type)
+        : type(type)
+    {}
+    public:
+    static RespPackageColumnDefinition getFakeColumn(int type) {
+        return RespPackageColumnDefinition(type);
+    }
     RespPackageColumnDefinition(ConectReader& reader, bool getDefaultValues = false)
     {
         unsigned long capabilities  = reader.getCapabilities();
@@ -65,8 +79,8 @@ struct RespPackageColumnDefinition
             name            = reader.lengthEncodedString();
             orgName         = reader.lengthEncodedString();
 
-            std::size_t len = reader.lengthEncodedInteger();
-            if (len != 0x0c) {
+            lengthOfFixedField = reader.lengthEncodedInteger();
+            if (lengthOfFixedField != 0x0c) {
                 throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
                                          "Expected 0x0c: length of fixed-length fields [0c]");
             }
@@ -86,7 +100,7 @@ struct RespPackageColumnDefinition
         {
             table           = reader.lengthEncodedString();
             name            = reader.lengthEncodedString();
-            std::size_t len = reader.lengthEncodedInteger();
+            size_t len = reader.lengthEncodedInteger();
             if (len != 0x03) {
                 throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
                                          "Expected 0x03: length of the column_length field [03]");
