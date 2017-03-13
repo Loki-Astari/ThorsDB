@@ -29,7 +29,8 @@ Cursor::operator bool()
 
 #ifdef COVERAGE_SQL
 #include "Statement.tpp"
-template void ThorsAnvil::SQL::Cursor::activate<std::function<void (int, std::string const&, short, char, double)> >(std::function<void (int, std::string const&, short, char, double)>);
+template void ThorsAnvil::SQL::Cursor::activate<false, std::function<void (int, std::string const&, short, char, double)> >(std::function<void (int, std::string const&, short, char, double)>);
+template void ThorsAnvil::SQL::Cursor::activate<true,  std::function<void (int, std::string const&, short, char, double)> >(std::function<void (int, std::string const&, short, char, double)>);
 template void ThorsAnvil::SQL::BindArgs<int>::bindTo(ThorsAnvil::SQL::StatementProxy&) const;
 #endif
 

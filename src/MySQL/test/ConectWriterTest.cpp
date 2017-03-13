@@ -140,8 +140,8 @@ TEST(ConectWriter, writeLengthEncodedString)
 TEST(ConectWriter, writeHugeStringOneUnder)
 {
     char const      data[] = "";
-    unsigned char   result[0xFFFFFF + 20];
-    MockStream      buffer(data, sizeof(data), result);
+    std::vector<unsigned char> result(0xFFFFFF + 20, '\0');
+    MockStream      buffer(data, sizeof(data), &result[0]);
     ConectWriter    writer(buffer);
     std::string     str(0xFFFFFE,'X');
 

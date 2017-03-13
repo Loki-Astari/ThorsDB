@@ -1,9 +1,11 @@
 
 #include "ConectReader.h"
 #include "PackageStream.h"
+#include "RespPackageOK.h"
 #include "test/MockStream.h"
 
 #include "gtest/gtest.h"
+#include "ThorMySQL.h"
 
 
 using ThorsAnvil::MySQL::ConectReader;
@@ -381,5 +383,43 @@ TEST(ConectReaderTest, readTimeIntoTimeBagNegativeFail)
     ConectReader        reader(buffer);
 
     ASSERT_THROW(reader.readRelMicro(), std::runtime_error);
+}
+
+TEST(ConectReaderTest, ThrowOnErrorMessage)
+{
+    char const          data[] = "\xFF"
+                                 "\x01\x00"
+                                 "A"
+                                 "MNOPQ"
+                                 "Error: Better Be This";
+    MockStream          buffer(data, sizeof(data) - 1);
+    ConectReader        reader(buffer);
+    reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
+
+    try
+    {
+        reader.recvMessage<ThorsAnvil::MySQL::Detail::RespPackageOK>(0);
+        FAIL();
+    }
+    catch(std::runtime_error const& e) {
+        ASSERT_NE(std::string::npos, std::string(e.what()).find("Better Be This"));
+    }
+}
+
+TEST(ConectReaderTest, dropData)
+{
+    char const      data[] = "\x01" "A"     // String
+                             "1234567890"   // Remaining String
+                             ;
+    MockStream      buffer(data, sizeof(data) - 1);
+    ConectReader    reader(buffer);
+
+    reader.lengthEncodedString();
+    ASSERT_EQ(2, buffer.readLen());
+
+    reader.drop();
+    // Just make sure the underlying stream gets moved to the end
+    // by calling drop in it.
+    ASSERT_EQ(sizeof(data) - 1, buffer.readLen());
 }
 

@@ -135,7 +135,7 @@ template<typename T>
 void PackageBufferMySQLDebugBuffer<T>::flush()
 {
     if (flushed) {
-        throw std::runtime_error("horsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush: Already flushed\n");
+        throw std::runtime_error("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::flush: Already flushed\n");
     }
     flushed = true;
     std::size_t   currentSize = sendBuffer.size();
@@ -143,6 +143,26 @@ void PackageBufferMySQLDebugBuffer<T>::flush()
     writePackageHeader(currentSize);
     writeStream(&sendBuffer[0], currentSize);
     sendBuffer.clear();
+}
+
+template<typename T>
+void PackageBufferMySQLDebugBuffer<T>::drop()
+{
+    std::size_t dataLeft;
+    std::vector<char>   drop;
+    do
+    {
+        std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
+        drop.resize(readDataAvailable);
+        read(&drop[0], readDataAvailable);
+
+        dataLeft    = 0;
+        if (hasMore) {
+            nextPacket();
+            dataLeft = readCurrentPacketSize - readCurrentPacketPosition;
+        }
+    }
+    while(dataLeft != 0);
 }
 
 template<typename T>

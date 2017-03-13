@@ -67,7 +67,8 @@ struct RespPackageColumnDefinition
 
             std::size_t len = reader.lengthEncodedInteger();
             if (len != 0x0c) {
-                throw std::runtime_error("Expected 0x0c: length of fixed-length fields [0c]");
+                throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
+                                         "Expected 0x0c: length of fixed-length fields [0c]");
             }
 
             charSet         = reader.fixedLengthInteger<2>();
@@ -77,7 +78,8 @@ struct RespPackageColumnDefinition
             decimal         = reader.fixedLengthInteger<1>();
             filler          = reader.fixedLengthInteger<2>();
             if (filler != 0) {
-                throw std::runtime_error("Expected 0x00 for filler");
+                throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
+                                         "Expected 0x00 for filler");
             }
         }
         else
@@ -86,12 +88,14 @@ struct RespPackageColumnDefinition
             name            = reader.lengthEncodedString();
             std::size_t len = reader.lengthEncodedInteger();
             if (len != 0x03) {
-                throw std::runtime_error("Expected 0x03: length of the column_length field [03]");
+                throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
+                                         "Expected 0x03: length of the column_length field [03]");
             }
             columnLength    = reader.fixedLengthInteger<3>();
             len             = reader.lengthEncodedInteger();
             if (len != 0x01) {
-                throw std::runtime_error("Expected 0x01: length of type field [01]");
+                throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
+                                         "Expected 0x01: length of type field [01]");
             }
             type            = reader.fixedLengthInteger<1>();
 
@@ -99,7 +103,8 @@ struct RespPackageColumnDefinition
             {
                 len         = reader.lengthEncodedInteger();
                 if (len != 0x03) {
-                    throw std::runtime_error("Expected 0x03: length of flags+decimals fields [03]");
+                    throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
+                                             "Expected 0x03: length of flags+decimals fields [03]");
                 }
                 flags           = reader.fixedLengthInteger<2>();
                 decimal         = reader.fixedLengthInteger<1>();
@@ -108,7 +113,8 @@ struct RespPackageColumnDefinition
             {
                 len         = reader.lengthEncodedInteger();
                 if (len != 0x02) {
-                    throw std::runtime_error("Expected 0x02: length of flags+decimals fields [02]");
+                    throw std::runtime_error("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: "
+                                             "Expected 0x02: length of flags+decimals fields [02]");
                 }
                 flags           = reader.fixedLengthInteger<1>();
                 decimal         = reader.fixedLengthInteger<1>();

@@ -27,17 +27,17 @@ MySQLStream::MySQLStream(std::string const& host, int port)
 
     hostent*    serv  = gethostbyname(host.c_str());
     if (serv == NULL) {
-        throw std::runtime_error(std::string("MySQL::connect: ::gethostbyname() Failed: ") + strerror(errno));
+        throw std::runtime_error(std::string("ThorsAnvil::MySQL::connect: ::gethostbyname() Failed: ") + strerror(errno));
     }
     bcopy((char *)serv->h_addr, (char *)&serv_addr.sin_addr.s_addr, serv->h_length);
 
     if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        throw std::runtime_error(std::string("MySQL::Connection::connect: ::socket() Failed: ") + strerror(errno));
+        throw std::runtime_error(std::string("ThrosAnvil::MySQL::Connection::connect: ::socket() Failed: ") + strerror(errno));
     } 
 
     if (::connect(socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         ::close(socket);
-        throw std::runtime_error(std::string("MySQL::Connection::connect: ::connect() Failed: ") + strerror(errno));
+        throw std::runtime_error(std::string("ThorsAnvil::MySQL::Connection::connect: ::connect() Failed: ") + strerror(errno));
     } 
 }
 MySQLStream::~MySQLStream()
@@ -58,13 +58,13 @@ void MySQLStream::read(char* buffer, std::size_t len)
         }
         else if (read == 0) {
             std::stringstream msg;
-            msg << "ThorsAnvil::MySQLStream::read: Read fail. Tried to read " << len << "bytes but only found " << readSoFar << " before EOF";
+            msg << "ThorsAnvil::MySQL::MySQLStream::read: Read fail. Tried to read " << len << "bytes but only found " << readSoFar << " before EOF";
             throw std::runtime_error(msg.str());
         }
         else if (read == ErrorResult)
         {
             std::stringstream msg;
-            msg << "ThorsAnvil::MySQLStream::read: Read fail. errno=" << errno << " Message=" << strerror(errno);
+            msg << "ThorsAnvil::MySQL::MySQLStream::read: Read fail. errno=" << errno << " Message=" << strerror(errno);
             throw std::runtime_error(msg.str());
         }
 
@@ -83,13 +83,13 @@ void MySQLStream::write(char const* buffer, std::size_t len)
         }
         else if (writen == 0) {
             std::stringstream msg;
-            msg << "ThorsAnvil::MySQLStream::write: Write fail. Tried to write " << len << "bytes but only found " << writenSoFar << " before EOF";
+            msg << "ThorsAnvil::MySQL::MySQLStream::write: Write fail. Tried to write " << len << "bytes but only found " << writenSoFar << " before EOF";
             throw std::runtime_error(msg.str());
         }
         else if (writen == ErrorResult)
         {
             std::stringstream msg;
-            msg << "ThorsAnvil::MySQLStream::write: Write fail. errno=" << errno << " Message=" << strerror(errno);
+            msg << "ThorsAnvil::MySQL::MySQLStream::write: Write fail. errno=" << errno << " Message=" << strerror(errno);
             throw std::runtime_error(msg.str());
         }
 

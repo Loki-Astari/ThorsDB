@@ -28,6 +28,7 @@ class MockStream: public ThorsAnvil::MySQL::PackageStream
         virtual void        write(char const* buffer, std::size_t len)  override {std::copy(buffer, buffer + len, output + writSoFar); writSoFar += len;}
         virtual void        startNewConversation()                      override {}
         virtual void        flush()                                     override {}
+        virtual void        drop()                                      override {readSoFar = len;}
         virtual void        reset()                                     override {}
         virtual bool        isEmpty()                                   override {return len == readSoFar;}
         virtual std::string readRemainingData()                         override {return std::string(input + readSoFar, input + readSoFar + len);}
