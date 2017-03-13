@@ -11,7 +11,7 @@
  */
 
 
-class TableDeletePeopleExtraTest: public ::testing::Test
+class TablePeopleExtraDeleteTest: public ::testing::Test
 {
 	protected:
 		// Per-test-case set-up.
@@ -19,6 +19,7 @@ class TableDeletePeopleExtraTest: public ::testing::Test
 		// Can be omitted if not needed.
 		static void SetUpTestCase()
 		{
+            executeModification("DELETE FROM PeopleExtra");
 		}
 
 		// Per-test-case tear-down.
@@ -26,18 +27,27 @@ class TableDeletePeopleExtraTest: public ::testing::Test
 		// Can be omitted if not needed.
 		static void TearDownTestCase()
 		{
+            executeModification("DELETE FROM PeopleExtra");
 		}
 
 		// You can define per-test set-up and tear-down logic as usual.
 		virtual void SetUp()
 		{
+            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (18, \"Tom Hanks\", 35, \"M\", 56.89)");
+            executeModification("INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (19, \"Tom Hanks\", 35, \"M\", 56.89)");
+            checkSelectCount("SELECT * FROM PeopleExtra", 2);
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 1);
 		}
 		virtual void TearDown()
 		{
+            // The test should delete it. Therefore the count will be 0.
+            checkSelectCount("SELECT * FROM PeopleExtra WHERE ID = 18", 0);
+            checkSelectCount("SELECT * FROM PeopleExtra", 1);
+            executeModification("DELETE FROM PeopleExtra");
 		}
 };
 
-TEST_F(TableDeletePeopleExtraTest, DeleteTomHanks)
+TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanks)
 {
     using namespace ThorsAnvil;
 
@@ -52,7 +62,7 @@ TEST_F(TableDeletePeopleExtraTest, DeleteTomHanks)
     statement.execute();
 }
 
-TEST_F(TableDeletePeopleExtraTest, DeleteTomHanksWithBind)
+TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
