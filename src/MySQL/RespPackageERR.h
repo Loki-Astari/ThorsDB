@@ -25,6 +25,7 @@ class RespPackageERR: public RespPackage
             , hash(reader.fixedLengthString(1, CLIENT_PROTOCOL_41))
             , stateSQL(reader.fixedLengthString(5, CLIENT_PROTOCOL_41))
         {
+            // https://dev.mysql.com/doc/internals/en/packet-ERR_Packet.html#packet-ERR_Packet
             assert(firstByte == 0xFF);
 
             error           = true;

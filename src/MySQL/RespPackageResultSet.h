@@ -55,13 +55,10 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_STRING:         return readParameterValue<MYSQL_TYPE_STRING, T>(reader);
             case MYSQL_TYPE_VARCHAR:        return readParameterValue<MYSQL_TYPE_VARCHAR, T>(reader);
             case MYSQL_TYPE_VAR_STRING:     return readParameterValue<MYSQL_TYPE_VAR_STRING, T>(reader);
-            case MYSQL_TYPE_ENUM:           return readParameterValue<MYSQL_TYPE_ENUM, T>(reader);
-            case MYSQL_TYPE_SET:            return readParameterValue<MYSQL_TYPE_SET, T>(reader);
             case MYSQL_TYPE_LONG_BLOB:      return readParameterValue<MYSQL_TYPE_LONG_BLOB, T>(reader);
             case MYSQL_TYPE_MEDIUM_BLOB:    return readParameterValue<MYSQL_TYPE_MEDIUM_BLOB, T>(reader);
             case MYSQL_TYPE_BLOB:           return readParameterValue<MYSQL_TYPE_BLOB, T>(reader);
             case MYSQL_TYPE_TINY_BLOB:      return readParameterValue<MYSQL_TYPE_TINY_BLOB, T>(reader);
-            case MYSQL_TYPE_GEOMETRY:       return readParameterValue<MYSQL_TYPE_GEOMETRY, T>(reader);
             case MYSQL_TYPE_BIT:            return readParameterValue<MYSQL_TYPE_BIT, T>(reader);
             case MYSQL_TYPE_DECIMAL:        return readParameterValue<MYSQL_TYPE_DECIMAL, T>(reader);
             case MYSQL_TYPE_NEWDECIMAL:     return readParameterValue<MYSQL_TYPE_NEWDECIMAL, T>(reader);
@@ -87,10 +84,23 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_DATETIME:       return readParameterValue<MYSQL_TYPE_DATETIME, T>(reader);
             case MYSQL_TYPE_TIMESTAMP:      return readParameterValue<MYSQL_TYPE_TIMESTAMP, T>(reader);
             case MYSQL_TYPE_TIME:           return readParameterValue<MYSQL_TYPE_TIME, T>(reader);
-            case MYSQL_TYPE_NEWDATE:        return readParameterValue<MYSQL_TYPE_NEWDATE, T>(reader);
-            case MYSQL_TYPE_TIMESTAMP2:     return readParameterValue<MYSQL_TYPE_TIMESTAMP2, T>(reader);
-            case MYSQL_TYPE_DATETIME2:      return readParameterValue<MYSQL_TYPE_DATETIME2, T>(reader);
-            case MYSQL_TYPE_TIME2:          return readParameterValue<MYSQL_TYPE_TIME2, T>(reader);
+
+            case MYSQL_TYPE_NULL:
+            case MYSQL_TYPE_NEWDATE:
+            case MYSQL_TYPE_TIMESTAMP2:
+            case MYSQL_TYPE_DATETIME2:
+            case MYSQL_TYPE_TIME2:
+            case MYSQL_TYPE_ENUM:
+            case MYSQL_TYPE_SET:
+            case MYSQL_TYPE_GEOMETRY:
+                throw std::logic_error(
+                         errorMsg(  "ThorsAnvil::MySQL::RespPackageResultSet::readNextValue:\n",
+                                    "This type is currently NOT unsupported.\n",
+                                    "\n",
+                                    "\tMySQL Type: ",  mapMySQLTypeToString(columns[currentColumn].type), "\n",
+                                    "\n",
+                                    "Send my some SQL and unit tests :-)"
+                                ));
             default:
                 throw std::domain_error(
                         bugReport("ThorsAnvil::MySQL::RespPackageResultSet::readNextValue: ",

@@ -123,7 +123,7 @@ class Cursor
         void activateWithArgs(F func, A& arguments, std::index_sequence<ids...> const&);
 
         template<typename V>
-        int retrieve(V& value);
+        void retrieve(V& value);
 };
 
 template<typename... Args>
@@ -142,7 +142,7 @@ class BindArgs
         template<std::size_t... ids>
         void bindArgsTo(StatementProxy& statementProxy, std::index_sequence<ids...>const&) const;
         template<std::size_t id>
-        int bindTheArgument(StatementProxy& statementProxy) const;
+        void bindTheArgument(StatementProxy& statementProxy) const;
 };
 
 // -- Bindings

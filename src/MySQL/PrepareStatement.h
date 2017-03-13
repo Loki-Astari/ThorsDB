@@ -53,6 +53,8 @@ namespace ThorsAnvil
             {}
             void bindToMySQL(ConectWriter& writer) const
             {
+                // https://dev.mysql.com/doc/internals/en/com-stmt-execute.html#com-stmt-execute
+                //  Called once to write information about all the bound parameters.
                 if (columns.size() == 0)
                 {
                     return;
@@ -77,6 +79,8 @@ namespace ThorsAnvil
             template<typename Src>
             void bindValue(Src const& value)
             {
+                //  This is called once for each bound parameter.
+                //  It build's up two chunks of data that are passed to the server.
                 unsigned int type = Detail::writeParameterValue(bindWriter, value);
                 typeBuffer.push_back(type);
                 typeBuffer.push_back(std::is_unsigned<Src>::value ? '\x80' : '\x00');

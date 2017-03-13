@@ -40,7 +40,7 @@ inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids
 {
     try
     {
-        auto list = {retrieve(std::get<ids>(arguments))...};
+        auto list = {0, (retrieve(std::get<ids>(arguments)), 0)...};
         thorUnused(list);
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
@@ -53,10 +53,9 @@ inline void Cursor::activateWithArgs(F cb, A& arguments, std::index_sequence<ids
 }
 
 template<typename V>
-inline int Cursor::retrieve(V& value)
+inline void Cursor::retrieve(V& value)
 {
     statementProxy.retrieve(value);
-    return 1;
 }
 
 template<typename... R>
@@ -69,16 +68,15 @@ template<typename... R>
 template<std::size_t... ids>
 inline void BindArgs<R...>::bindArgsTo(StatementProxy& statementProxy, std::index_sequence<ids...>const&) const
 {
-    auto list = {bindTheArgument<ids>(statementProxy)...};
+    auto list = {0, (bindTheArgument<ids>(statementProxy), 0)...};
     thorUnused(list);
 }
 
 template<typename... R>
 template<std::size_t id>
-inline int BindArgs<R...>::bindTheArgument(StatementProxy& statementProxy) const
+inline void BindArgs<R...>::bindTheArgument(StatementProxy& statementProxy) const
 {
     statementProxy.bind(std::get<id>(arguments).get());
-    return id;
 }
 
     }
