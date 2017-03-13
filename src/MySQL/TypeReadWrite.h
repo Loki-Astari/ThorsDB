@@ -339,16 +339,17 @@ template<> inline int           readParameterValue<MYSQL_TYPE_YEAR,      int>   
 
 // https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnType
 template<>
+inline unsigned int writeParameterValue<std::vector<char>>(ConectWriter& p, std::vector<char> const& v)
+{
+    p.writeLengthEncodedBlob(v);
+    return MYSQL_TYPE_BLOB;
+}
+
+template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
 {
     p.writeLengthEncodedString(v);
     return MYSQL_TYPE_STRING;
-}
-template<>
-inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
-{
-    p.writeRawData(reinterpret_cast<char const*>(&v), 8);
-    return MYSQL_TYPE_DOUBLE;
 }
 
 template<>
@@ -433,6 +434,23 @@ inline unsigned int writeParameterValue<unsigned long long>(ConectWriter& p, uns
     p.writeFixedLengthInteger<8>(v);
     return MYSQL_TYPE_LONGLONG;
 }
+
+template<>
+inline unsigned int writeParameterValue<float>(ConectWriter& p, float const& v)
+{
+    std::cout << "Bind FLOAT " << v << "\n";
+    p.writeRawData(reinterpret_cast<char const*>(&v), 4);
+    return MYSQL_TYPE_FLOAT;
+}
+
+template<>
+inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
+{
+    std::cout << "Bind DOUBLE " << v << "\n";
+    p.writeRawData(reinterpret_cast<char const*>(&v), 8);
+    return MYSQL_TYPE_DOUBLE;
+}
+
         }
     }
 }
