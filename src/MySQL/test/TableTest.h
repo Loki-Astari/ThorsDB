@@ -22,6 +22,7 @@ void typeGoodTest(T expected, std::string const& expr)
         ASSERT_EQ(expected, select);
     });
 }
+
 template<typename T, typename ExceptionType>
 void typeBadTest(std::string const& expr)
 {
@@ -42,5 +43,46 @@ void typeBadTest(std::string const& expr)
         ExceptionType
     );
 }
+
+inline std::string getMySQL()
+{
+    return ThorsAnvil::stringBuild("mysql --user=", THOR_TESTING_MYSQL_USER,
+                                        " --password=", THOR_TESTING_MYSQL_PASS,
+                                        " ", THOR_TESTING_MYSQL_DB,
+                                        " 2> /dev/null");
+}
+
+inline std::string getSelectCount(std::string const& select)
+{
+    return ThorsAnvil::stringBuild("echo '", select, "'",
+                                    " | ",
+                                    getMySQL(),
+                                    " | ",
+                                    " wc -l",
+                                    " | ",
+                                    // Remove the Header row
+                                    " awk '{if ($1 == 0){print 0;}else{print $1-1;}}'");
+}
+
+inline void checkSelectCount(std::string const& select, int row)
+{
+    std::string checkNoRowsLeft = ThorsAnvil::stringBuild(
+        "if [[ $(", getSelectCount(select), ") != \"", row, "\" ]]; then exit 1; fi"
+                                                         );
+    ASSERT_EQ(
+        0,
+        system(checkNoRowsLeft.c_str())
+    );
+}
+
+static void executeModification(std::string const& mod)
+{
+    std::string modString = ThorsAnvil::stringBuild("echo '", mod , "' | ", getMySQL());
+    ASSERT_EQ(
+        0,
+        system(modString.c_str())
+    );
+}
+
 
 #endif

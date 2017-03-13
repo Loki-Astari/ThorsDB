@@ -23,12 +23,19 @@ class Statement
 {
     private:
         std::unique_ptr<StatementProxy>    statementProxy;
+        bool                               modifyDone;
     public:
         Statement(Connection& connect, std::string const& selectStatement, StatementType = ThorsAnvil::SQL::Prepare);
         template<typename F, typename... R>
         void execute(BindArgs<R...> const& binds, F cb);
         template<typename F>
         void execute(F cb);
+        template<typename... R>
+        void execute(BindArgs<R...> const& binds);
+        void execute();
+
+        long rowsAffected() const;
+        long lastInsertID() const;
 };
 
 struct UnixTimeStamp
@@ -83,6 +90,11 @@ class StatementProxy
         Cursor execute();
         virtual void doExecute()                            = 0;
         virtual bool more()                                 = 0;
+
+        // Status Info
+        virtual bool isSelect() const                       = 0;
+        virtual long rowsAffected() const                   = 0;
+        virtual long lastInsertID() const                   = 0;
 
         virtual void   retrieve(char&)                      = 0;
         virtual void   retrieve(signed char&)               = 0;
@@ -171,12 +183,15 @@ namespace Detail
     };
 }
 
-// This version of execute takes bind parameters.
-// The next one is identical but takes no parameters.
 // Thus in the subsequent on there is no call to `binds.bindTo()`
 template<typename F, typename... R>
 inline void Statement::execute(BindArgs<R...> const& binds, F cb)
 {
+    if (!statementProxy->isSelect())
+    {
+        throw std::logic_error("ThrosAnvil::SQL::Statement::execute: Passing callback function to non select");
+    }
+
     typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
     // Call before calling execute.
     // This gets the proxy to validate the conversion of the values returned
@@ -200,30 +215,30 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
         throw;
     }
 }
+
 template<typename F>
 inline void Statement::execute(F cb)
 {
-    typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
-    // Call before calling execute.
-    // This gets the proxy to validate the conversion of the values returned
-    // by a select into the parameters used by the CB function. If it fails now
-    // we can do less tidy up work at the DB level.
-    Cursor validator(*statementProxy);
-    validator.activate<true, CBTraits>(cb);
+    execute(BindArgs<>(), cb);
+}
 
-    Cursor cursor = statementProxy->execute();
-    try
+template<typename... R>
+inline void Statement::execute(BindArgs<R...> const& binds)
+{
+    if (statementProxy->isSelect())
     {
-        while (cursor)
-        {
-            cursor.activate<false, CBTraits>(cb);
-        }
+        throw std::logic_error("ThrosAnvil::SQL::Statement::execute: Not passing callback to SELECT statement");
     }
-    catch (...)
-    {
-        statementProxy->abort();
-        throw;
-    }
+
+    modifyDone = true;
+    binds.bindTo(*statementProxy);
+    statementProxy->execute();
+    return;
+}
+
+inline void Statement::execute()
+{
+    execute(BindArgs<>());
 }
 
     }

@@ -24,6 +24,7 @@ class RespPackageOK: public RespPackage
             : RespPackage(reader, "OK")
             , affectedRows(reader.lengthEncodedInteger())
             , lastInsertID(reader.lengthEncodedInteger())
+            // https://dev.mysql.com/doc/internals/en/status-flags.html
             , statusFlags(reader.fixedLengthInteger<2>())
             , warningFlags(reader.fixedLengthInteger<2>())
         {
@@ -33,6 +34,10 @@ class RespPackageOK: public RespPackage
             ok              = true;
             humanMessage    = reader.restOfPacketString();
         }
+
+        long getAffectedRows() const {return affectedRows;}
+        long getLastInsertID() const {return lastInsertID;}
+
         virtual  std::ostream& print(std::ostream& s) const
         {
             return s << "OKPackage: "
