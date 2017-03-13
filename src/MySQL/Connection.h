@@ -32,12 +32,11 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
-        template<typename Resp>
-        std::unique_ptr<Resp> recvMessage(ConectReader::OKMap const& actions, bool expectedEOF = false);
+        std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions);
         template<typename Resp, typename Requ>
         std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
-        template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const& request, ConectReader::OKMap const&    actions     = {});
+        template<typename Requ>
+        std::unique_ptr<RespPackage> sendMessageGetResponse(Requ const& request, ConectReader::OKMap const&    actions     = {});
         template<typename Requ>
         void                  sendMessage(Requ const& request);
         void                  removeCurrentPackage();

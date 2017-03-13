@@ -53,13 +53,13 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    using RespPackageHandShakeUPtr = std::unique_ptr<Detail::RespPackageHandShake>;
-    RespPackageHandShakeUPtr    handshake = recvMessage<Detail::RespPackageHandShake>(
+    std::unique_ptr<RespPackage> initPack = recvMessage(
                                                 {{0x0A, [](int firstByte, ConectReader& reader
                                                           )
                                                         {return new Detail::RespPackageHandShake(firstByte, reader);}
                                                  }
                                                 });
+    std::unique_ptr<Detail::RespPackageHandShake> handshake = downcastUniquePtr<Detail::RespPackageHandShake>(std::move(initPack));
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
@@ -90,6 +90,12 @@ void Connection::removeCurrentPackage()
     packageReader.drop();
 }
 
+std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& actions)
+{
+    std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions));
+    return result;
+}
+
 #ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes
@@ -101,13 +107,5 @@ void Connection::removeCurrentPackage()
 template
 std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, Detail::RequPackageHandShakeResponse>
 (Detail::RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
-
-template
-std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>
-(ConectReader::OKMap const&, bool);
-
-template
-std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>
-(ConectReader::OKMap const&, bool);
 
 #endif

@@ -3,6 +3,7 @@
 #include "RespPackageOK.h"
 #include "RespPackageEOF.h"
 #include "RespPackageERR.h"
+#include <utility>
 
 using namespace ThorsAnvil::MySQL;
 
@@ -24,41 +25,45 @@ bool ConectReader::isEmpty() const
 
 std::unique_ptr<Detail::RespPackageEOF> ConectReader::recvMessageEOF()
 {
-    return recvMessage<Detail::RespPackageEOF>({}, true);
+    std::unique_ptr<RespPackage> result = recvMessage({{0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);}}});
+    return downcastUniquePtr<Detail::RespPackageEOF>(std::move(result));
 }
-std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKMap const& actions)
-{
-    return std::unique_ptr<RespPackage>(getNextPackageWrap(actions));
-}
-RespPackage* ConectReader::getNextPackageWrap(OKMap const& actions)
+
+std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= {}*/)
 {
     int    packageType  = fixedLengthInteger<1>();;
     auto find = actions.find(packageType);
     if (find != actions.end())
     {
-        return find->second(packageType, *this);
+        return std::unique_ptr<RespPackage>(find->second(packageType, *this));
     }
     else if (packageType == 0x00)
     {
-        return new Detail::RespPackageOK(packageType, *this);
+        return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(packageType, *this));
     }
     else if (packageType == 0xFE)
     {
-        return new Detail::RespPackageEOF(packageType, *this);
+        // EOF default action: => read and ignore.
+        Detail::RespPackageEOF  eofPackage(packageType, *this);
+        return nullptr;
     }
     else if (packageType == 0xFF)
     {
-        return new Detail::RespPackageERR(packageType, *this);
+        // Error default action: => read and throw
+        Detail::RespPackageERR  errorPackage(packageType, *this);
+        throw std::runtime_error(
+                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", errorPackage.message()
+              ));
     }
     else
     {
         find = actions.find(-1);
         if (find != actions.end())
         {
-            return find->second(packageType, *this);
+            return std::unique_ptr<RespPackage>(find->second(packageType, *this));
         }
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::getNextPackage: ", "Unknown Result Type: ", packageType));
+                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Unknown Result Type: ", packageType));
     }
 }
 
@@ -245,8 +250,5 @@ template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
-
-
-template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(OKMap const& actions, bool expectedEOF);
 
 #endif

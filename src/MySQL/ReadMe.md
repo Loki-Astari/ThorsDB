@@ -55,12 +55,12 @@ Messages from server to client:
 To send a message use:
 
         // If no response from the server is expected.
-        connection.sendMessage(<RequObject>);
+        connection.sendMessageGetResponse(<RequObject>);
 
         // If a response object from the server is required:
         // Then you need to provide a map of expected package ID to function that know how to build
         // RespPackages of that type (this is becuase package ID are Request specific and overlap.
-        std::uniqe_ptr<RespType>  connection.sendMessage(<RequObject>, {{ 0xA1, std::function<RespPackage*(int byte, ConectReader&)> },
+        std::uniqe_ptr<RespType>  connection.sendMessageGetResponse(<RequObject>, {{ 0xA1, std::function<RespPackage*(int byte, ConectReader&)> },
                                                                         { 0xA2, std::function<RespPackage*(int byte, ConectReader&)> }
                                                                        }
                                                                        // OK/EOF/Error are detected automatically.
