@@ -54,7 +54,8 @@ namespace ThorsAnvil
             {}
             void bindToMySQL(ConectWriter& writer) const
             {
-                if (columns.size() == 0) {
+                if (columns.size() == 0)
+                {
                     return;
                 }
                 std::vector<char>  null((columns.size() + 7) / 8);
@@ -119,7 +120,7 @@ class PrepareStatement: public Statement
             virtual void read(char* buffer, std::size_t len) override;
             bool  tooMany() const;
             bool  tooFew() const;
-            void  reset();
+            void  reset() override;
     };
 
     Connection&                                         connection;
@@ -135,6 +136,7 @@ class PrepareStatement: public Statement
         PrepareStatement(Connection& connection, std::string const& statement);
         ~PrepareStatement();
 
+    private:
         virtual void abort()                                override;
 
         virtual void doExecute()                            override;

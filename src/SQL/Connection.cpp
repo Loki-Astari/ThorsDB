@@ -13,7 +13,8 @@ Connection::Connection(std::string const& connection,
                        Options const& options)
 {
     std::size_t     schemaEnd   = connection.find(':');
-    if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/') {
+    if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/')
+    {
         throw std::logic_error(
                 errorMsg("ThorsAnvil::SQL::Connection::Connection: ",
                          "Failed to find schema: ",
@@ -25,7 +26,8 @@ Connection::Connection(std::string const& connection,
     bool        hasPort     = true;
     std::size_t hostEnd     = connection.find(':', schemaEnd + 3);
 
-    if (hostEnd == std::string::npos) {
+    if (hostEnd == std::string::npos)
+    {
         hasPort = false;
         hostEnd = connection.size();
     }
@@ -39,7 +41,8 @@ Connection::Connection(std::string const& connection,
     int         portNumber  = std::strtol(port.c_str(), &endPtr, 10);
     auto        creator     = getCreators().find(schema);
 
-    if (host == "" || errno != 0 || *endPtr != '\0') {
+    if (host == "" || errno != 0 || *endPtr != '\0')
+    {
         throw std::logic_error(
                 errorMsg("ThorsAnvil::SQL::Connection::Connection: ",
                          "Failed to parse connection: ",
@@ -48,7 +51,8 @@ Connection::Connection(std::string const& connection,
               ));
     }
 
-    if (creator == getCreators().end()) {
+    if (creator == getCreators().end())
+    {
         throw std::logic_error(
                 errorMsg("ThorsAnvil::SQL::Connection::Conection: ",
                          "Schema for unregister DB type: ",

@@ -25,10 +25,10 @@ void ConectWriter::writeLengthEncodedInteger(unsigned long long value)
     static char const Mark3Byte = '\xFD';
     static char const Mark8Byte = '\xFE';
 
-    if (value < 251)            {                                                               writeFixedLengthInteger<1>(value);}
-    else if (value <= 0xFFFF)   {   stream.write(reinterpret_cast<char const*>(&Mark2Byte), 1); writeFixedLengthInteger<2>(value);}
-    else if (value <= 0xFFFFFF) {   stream.write(reinterpret_cast<char const*>(&Mark3Byte), 1); writeFixedLengthInteger<3>(value);}
-    else                        {   stream.write(reinterpret_cast<char const*>(&Mark8Byte), 1); writeFixedLengthInteger<8>(value);}
+    if (value < 251)            {                                writeFixedLengthInteger<1>(value);}
+    else if (value <= 0xFFFF)   {   stream.write(&Mark2Byte, 1); writeFixedLengthInteger<2>(value);}
+    else if (value <= 0xFFFFFF) {   stream.write(&Mark3Byte, 1); writeFixedLengthInteger<3>(value);}
+    else                        {   stream.write(&Mark8Byte, 1); writeFixedLengthInteger<8>(value);}
 }
 
 void ConectWriter::writeFixedLengthString(std::string const& value, std::size_t size)

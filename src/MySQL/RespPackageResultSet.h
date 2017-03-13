@@ -15,8 +15,6 @@ namespace ThorsAnvil
         namespace Detail
         {
 
-
-
 template<typename T> inline T readNullParameter()
 {
     throw std::runtime_error(
@@ -38,7 +36,8 @@ class RespPackageResultSet: public RespPackage
     template<typename T>
     T readNextValue()
     {
-        if (nextColumn >= columns.size()) {
+        if (nextColumn >= columns.size())
+        {
             /* Note: This should never happen as we already validate that
                      a user callback function has the exact parameters required
                      for the data provided by the server.
@@ -96,7 +95,8 @@ class RespPackageResultSet: public RespPackage
     {
         int     index   = nextColumn / 8;
         int     bit     = nextColumn % 8;
-        if (nullMap[index] & (1 << bit)) {
+        if (nullMap[index] & (1 << bit))
+        {
             return defaultValue;
         }
         return readNextValue<T>();
@@ -124,7 +124,10 @@ class RespPackageResultSet: public RespPackage
         void   retrieve(std::string& value)                 {value = getValue<std::string>("");}
 
         void   retrieve(std::vector<char>& value)           {value = getValue<std::vector<char>>(std::vector<char>());};
-        void   retrieve(SQL::UnixTimeStamp& value)          {value = getValue<SQL::UnixTimeStamp>(SQL::UnixTimeStamp(static_cast<std::time_t>(0)));}
+        void   retrieve(SQL::UnixTimeStamp& value)          {value = getValue<SQL::UnixTimeStamp>(
+                                                                        SQL::UnixTimeStamp(static_cast<std::time_t>(0))
+                                                                     );
+                                                            }
 };
         }
     }

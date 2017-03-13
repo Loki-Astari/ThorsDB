@@ -13,6 +13,8 @@ AC_PROG_CXX
 AX_THOR_PROG_COV
 AC_C_BIGENDIAN([AC_DEFINE([THOR_ENDIAN_BIG], [1], [Set for Big Endian Systems])],
                [AC_DEFINE([THOR_ENDIAN_SML], [1], [Set for small Endian Systems])])
+
+
 AC_CHECK_LIB(
             [crypto],
             [SHA1_Init],
@@ -36,7 +38,7 @@ AX_CHECK_COMPILE_FLAG([-ansi], [AC_SUBST([CXXFLAGS], ["$CXXFLAGS -ansi"])])
 AX_THOR_FUNC_LANG_FLAG(14)
 
 AC_ARG_WITH([TestMySQLHost], AS_HELP_STRING([--with-TestMySQLHost=<Host>], [Use an alternative mysql host for testing with Default(127.0.0.1)]))
-AC_ARG_WITH([TestMySQLUser], AS_HELP_STRING([--with-TestMySQLUser=<User>], [Use an alternative mysql user for testing with (root)]))
+AC_ARG_WITH([TestMySQLUser], AS_HELP_STRING([--with-TestMySQLUser=<User>], [Use an alternative mysql user for testing with (test)]))
 AC_ARG_WITH([TestMySQLPass], AS_HELP_STRING([--with-TestMySQLPass=<Pass>], [Use an alternative mysql password for testing with (testPassword)]))
 AC_ARG_WITH([TestMySQLDatabase], AS_HELP_STRING([--with-TestMySQLDatabase=<DB>], [Use an alternative mysql database for testing with (test)]))
 
@@ -46,7 +48,7 @@ AS_IF([test "x$have_TestMySQLHost" = "xyes"],
 )
 AS_IF([test "x$have_TestMySQLUser" = "xyes"],
             [AC_DEFINE([THOR_TESTING_MYSQL_USER], [$with_TestMySQLUser],   [mysql DB user for testing])],
-            [AC_DEFINE([THOR_TESTING_MYSQL_USER], ["root"],                [mysql DB user for testing])]
+            [AC_DEFINE([THOR_TESTING_MYSQL_USER], ["test"],                [mysql DB user for testing])]
 )
 AS_IF([test "x$have_TestMySQLPass" = "xyes"],
             [AC_DEFINE([THOR_TESTING_MYSQL_PASS], [$with_TestMySQLPass],   [mysql DB password for testing])],
@@ -58,6 +60,6 @@ AS_IF([test "x$have_TestMySQLDatabase" = "xyes"],
 )
 
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
-AC_CONFIG_HEADERS([src/MySQL/MySQLConfig.h])
+AC_CONFIG_HEADERS([src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h])
 AC_CONFIG_FILES([Makefile.extra Makefile.config])
 AC_OUTPUT

@@ -20,18 +20,22 @@ DefaultMySQLConnection::DefaultMySQLConnection(
     , writer(buffer)
     , connection(username, password, database, options, reader, writer)
 {}
-std::unique_ptr<ThorsAnvil::SQL::StatementProxy> DefaultMySQLConnection::createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/)
+std::unique_ptr<ThorsAnvil::SQL::StatementProxy>
+DefaultMySQLConnection::createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/)
 {
     std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
     result.reset(new PrepareStatement(connection, statement));
 #if 0
-    if (type == ThorsAnvil::SQL::OneTime) {
+    if (type == ThorsAnvil::SQL::OneTime)
+    {
         result.reset(new Statement(statement));
     }
-    else if (type == Prepare) {
+    else if (type == Prepare)
+    {
         result.reset(new PrepareStatement(statement));
     }
-    else {
+    else
+    {
         throw std::runtime_error("Unknown Type for MySQL");
     }
 #endif
@@ -50,15 +54,22 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>({{0x0A, [](int firstByte, ConectReader& reader){return new Detail::RespPackageHandShake(firstByte, reader);}}});
+    using RespPackageHandShakeUPtr = std::unique_ptr<Detail::RespPackageHandShake>;
+    RespPackageHandShakeUPtr    handshake = recvMessage<Detail::RespPackageHandShake>(
+                                                {{0x0A, [](int firstByte, ConectReader& reader
+                                                          )
+                                                        {return new Detail::RespPackageHandShake(firstByte, reader);}
+                                                 }
+                                                });
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None,
+    std::unique_ptr<RespPackage>            ok = sendHandshakeMessage<RespPackage>(handshakeresp,
         {{0xFE, [](int firstByte, ConectReader& reader)
                 {return new Detail::RespPackageAuthSwitchRequest(firstByte, reader);}
-        }});
+         }
+        });
 
     if (!ok)
     {
@@ -93,9 +104,17 @@ void Connection::removeCurrentPackage()
 #include "Connection.tpp"
 #include "ConectReader.tpp"
 
-template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, ConectReader::OKMap const&, bool);
-template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(ConectReader::OKMap const&, bool);
-template std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>(ConectReader::OKMap const&, bool);
+template
+std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, Detail::RequPackageHandShakeResponse>
+(Detail::RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
+
+template
+std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>
+(ConectReader::OKMap const&, bool);
+
+template
+std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>
+(ConectReader::OKMap const&, bool);
 
 #endif
 

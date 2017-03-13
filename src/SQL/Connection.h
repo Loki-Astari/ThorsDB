@@ -44,8 +44,6 @@ class Connection
                       std::string const& database,
                       Options const& options = Options{});
 
-
-
         static void registerConnectionType(std::string const& schema, ConnectionCreator creator);
 };
 
@@ -62,7 +60,7 @@ class ConnectionCreatorRegister
                                                           std::string const& database,
                                                           Options const& options)
                     {
-                        return std::unique_ptr<ConnectionProxy>(new T(host, port , username, password, database, options));
+                        return std::unique_ptr<ConnectionProxy>(new T(host, port, username, password, database, options));
                     });
         }
 };

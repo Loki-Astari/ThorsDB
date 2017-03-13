@@ -10,7 +10,7 @@ namespace ThorsAnvil
 struct MySQLTimeBag
 {
     enum TimeType {Absolute, RelativeNegative, RelativePositive};
- 
+
     TimeType             type;
     unsigned long        year;
     unsigned long        month;

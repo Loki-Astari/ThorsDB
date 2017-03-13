@@ -105,7 +105,8 @@ DIST_COMMON = $(srcdir)/Makefile.extra.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/src/MySQL/MySQLConfig.h
+CONFIG_HEADER = $(top_builddir)/src/MySQL/MySQLConfig.h \
+	$(top_builddir)/src/SQL/SQLConfig.h
 CONFIG_CLEAN_FILES = Makefile.config
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -173,6 +174,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.config.in \
 	$(top_srcdir)/build/autotools/build/ltmain.sh \
 	$(top_srcdir)/build/autotools/build/missing \
 	$(top_srcdir)/src/MySQL/MySQLConfig.h.in \
+	$(top_srcdir)/src/SQL/SQLConfig.h.in \
 	build/autotools/build/ar-lib build/autotools/build/compile \
 	build/autotools/build/config.guess \
 	build/autotools/build/config.sub \
@@ -297,7 +299,9 @@ STRIP = @STRIP@
 StdFlag11 = @StdFlag11@
 StdFlag14 = @StdFlag14@
 StdFlag17 = @StdFlag17@
+TestVera = @TestVera@
 UNZIP = @UNZIP@
+VERA = @VERA@
 VERSION = @VERSION@
 WGET = @WGET@
 abs_builddir = @abs_builddir@
@@ -403,8 +407,16 @@ $(top_srcdir)/src/MySQL/MySQLConfig.h.in:  $(am__configure_deps)
 	rm -f src/MySQL/stamp-h1
 	touch $@
 
+src/SQL/SQLConfig.h: src/SQL/stamp-h2
+	@test -f $@ || rm -f src/SQL/stamp-h2
+	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) src/SQL/stamp-h2
+
+src/SQL/stamp-h2: $(top_srcdir)/src/SQL/SQLConfig.h.in $(top_builddir)/config.status
+	@rm -f src/SQL/stamp-h2
+	cd $(top_builddir) && $(SHELL) ./config.status src/SQL/SQLConfig.h
+
 distclean-hdr:
-	-rm -f src/MySQL/MySQLConfig.h src/MySQL/stamp-h1
+	-rm -f src/MySQL/MySQLConfig.h src/MySQL/stamp-h1 src/SQL/SQLConfig.h src/SQL/stamp-h2
 Makefile.config: $(top_builddir)/config.status $(srcdir)/Makefile.config.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 

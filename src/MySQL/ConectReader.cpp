@@ -9,8 +9,8 @@ using namespace ThorsAnvil::MySQL;
 
 void ConectReader::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
-    capabilities    = newCapabilities;
-    charset         = newCharset;
+    capbil      = newCapabilities;
+    charset     = newCharset;
 }
 
 void ConectReader::read(char* data, std::size_t len)
@@ -35,21 +35,27 @@ RespPackage* ConectReader::getNextPackageWrap(OKMap const& actions)
 {
     int    packageType  = fixedLengthInteger<1>();;
     auto find = actions.find(packageType);
-    if (find != actions.end()) {
+    if (find != actions.end())
+    {
         return find->second(packageType, *this);
     }
-    else if (packageType == 0x00) {
+    else if (packageType == 0x00)
+    {
         return new Detail::RespPackageOK(packageType, *this);
     }
-    else if (packageType == 0xFE) {
+    else if (packageType == 0xFE)
+    {
         return new Detail::RespPackageEOF(packageType, *this);
     }
-    else if (packageType == 0xFF) {
+    else if (packageType == 0xFF)
+    {
         return new Detail::RespPackageERR(packageType, *this);
     }
-    else {
+    else
+    {
         find = actions.find(-1);
-        if (find != actions.end()) {
+        if (find != actions.end())
+        {
             return find->second(packageType, *this);
         }
         throw std::runtime_error(
@@ -151,7 +157,8 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
 {
     MySQLTimeBag    timeBag;
     long    size    = fixedLengthInteger<1>();
-    if (size != 11 && size != 7 && size != 4 && size != 0) {
+    if (size != 11 && size != 7 && size != 4 && size != 0)
+    {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::readDate: ",
                          "Invalid Date Size", size,
@@ -185,13 +192,18 @@ std::time_t ConectReader::readRel()
 unsigned long long ConectReader::readRelMicro()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return timeBag.day * (1000LL*60*60*24) + timeBag.hour * (1000LL*60*60) + timeBag.minute * (1000LL*60) + timeBag.second * (1000LL) + timeBag.uSecond;
+    return timeBag.day * (1000LL*60*60*24)
+            + timeBag.hour * (1000LL*60*60)
+            + timeBag.minute * (1000LL*60)
+            + timeBag.second * (1000LL)
+            + timeBag.uSecond;
 }
 MySQLTimeBag ConectReader::readTimeIntoTimeBag()
 {
     MySQLTimeBag    timeBag;
     long    size    = fixedLengthInteger<1>();
-    if (size != 12 && size != 8 && size != 0) {
+    if (size != 12 && size != 8 && size != 0)
+    {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ",
                          "Invalid Time Size: ", size,
@@ -202,7 +214,8 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     if (size == 12 || size == 8)
     {
         long    negativeTest    = fixedLengthInteger<1>();
-        if (negativeTest < 0 || negativeTest > 1) {
+        if (negativeTest < 0 || negativeTest > 1)
+        {
             throw std::runtime_error(
                     errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ",
                              "Invalid Negative Test"

@@ -38,7 +38,7 @@ class RespPackage;
 class ConectReader
 {
     PackageStream&   stream;
-    unsigned long    capabilities;
+    unsigned long    capbil;
     unsigned long    charset;
 
     unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
@@ -47,7 +47,7 @@ class ConectReader
         using OKMap    = std::map<int, OKAction>;
         ConectReader(PackageStream& stream)
             : stream(stream)
-            , capabilities(0)
+            , capbil(0)
             , charset(0)
         {}
 
@@ -64,15 +64,15 @@ class ConectReader
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;
 
-        unsigned long   getCapabilities()                                                   {return capabilities;}
+        unsigned long   getCapabilities()                                       {return capbil;}
         template<int len>
-        unsigned long   fixedLengthInteger(unsigned long requiredCap)                       {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
-        unsigned long   lengthEncodedInteger(unsigned long requiredCap)                     {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
-        std::string     fixedLengthString(std::size_t size, unsigned long requiredCap)      {return (requiredCap & capabilities) ? fixedLengthString(size)      : "";}
-        std::string     nulTerminatedString(unsigned long requiredCap)                      {return (requiredCap & capabilities) ? nulTerminatedString()        : "";}
-        std::string     variableLengthString(std::size_t size, unsigned long requiredCap)   {return (requiredCap & capabilities) ? variableLengthString(size)   : "";}
-        std::string     lengthEncodedString(unsigned long requiredCap)                      {return (requiredCap & capabilities) ? lengthEncodedString()        : "";}
-        std::string     restOfPacketString(unsigned long requiredCap)                       {return (requiredCap & capabilities) ? restOfPacketString()         : "";}
+        unsigned long   fixedLengthInteger(unsigned long rCap)                  {return (rCap & capbil) ? fixedLengthInteger<len>() : 0;}
+        unsigned long   lengthEncodedInteger(unsigned long rCap)                {return (rCap & capbil) ? lengthEncodedInteger()    : 0;}
+        std::string     fixedLengthString(std::size_t s, unsigned long rCap)    {return (rCap & capbil) ? fixedLengthString(s)      : "";}
+        std::string     nulTerminatedString(unsigned long rCap)                 {return (rCap & capbil) ? nulTerminatedString()     : "";}
+        std::string     variableLengthString(std::size_t s, unsigned long rCap) {return (rCap & capbil) ? variableLengthString(s)   : "";}
+        std::string     lengthEncodedString(unsigned long rCap)                 {return (rCap & capbil) ? lengthEncodedString()     : "";}
+        std::string     restOfPacketString(unsigned long rCap)                  {return (rCap & capbil) ? restOfPacketString()      : "";}
 
         template<int len>
         unsigned long   fixedLengthInteger();

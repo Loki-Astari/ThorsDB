@@ -21,13 +21,14 @@ MySQLStream::MySQLStream(std::string const& host, int port)
 {
     port    = port ? port : 3306;
 
-    sockaddr_in serv_addr; 
-    memset(&serv_addr, '0', sizeof(serv_addr)); 
+    sockaddr_in serv_addr;
+    memset(&serv_addr, '0', sizeof(serv_addr));
     serv_addr.sin_family    = AF_INET;
-    serv_addr.sin_port      = htons(port); 
+    serv_addr.sin_port      = htons(port);
 
     hostent*    serv  = ::gethostbyname(host.c_str());
-    if (serv == NULL) {
+    if (serv == NULL)
+    {
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
                          "::gethostbyname() Failed: ", strerror(errno)
@@ -35,20 +36,23 @@ MySQLStream::MySQLStream(std::string const& host, int port)
     }
     bcopy((char *)serv->h_addr, (char *)&serv_addr.sin_addr.s_addr, serv->h_length);
 
-    if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    {
         throw std::runtime_error(
                 errorMsg("ThrosAnvil::MySQL::MySQLStream::MySQLStream: ",
                          "::socket() Failed: ", strerror(errno)
               ));
-    } 
+    }
 
-    if (::connect(socket, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    using SockAddr = struct sockaddr;
+    if (::connect(socket, reinterpret_cast<SockAddr*>(&serv_addr), sizeof(serv_addr)) < 0)
+    {
         ::close(socket);
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
                          "::connect() Failed: ", strerror(errno)
               ));
-    } 
+    }
 }
 MySQLStream::~MySQLStream()
 {
@@ -62,11 +66,13 @@ void MySQLStream::read(char* buffer, std::size_t len)
     while(readSoFar != len)
     {
         std::size_t read = ::read(socket, buffer + readSoFar, len - readSoFar);
-        if ((read == ErrorResult) && (errno == EAGAIN || errno == EINTR)) {
+        if ((read == ErrorResult) && (errno == EAGAIN || errno == EINTR))
+        {
             /* Recoverable error. Try again. */
             continue;
         }
-        else if (read == 0) {
+        else if (read == 0)
+        {
             throw std::runtime_error(
                     errorMsg("ThorsAnvil::MySQL::MySQLStream::read: "
                              "::read() Failed: ",
@@ -91,11 +97,13 @@ void MySQLStream::write(char const* buffer, std::size_t len)
     while(writenSoFar != len)
     {
         std::size_t writen = ::write(socket, buffer + writenSoFar, len - writenSoFar);
-        if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR)) {
+        if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR))
+        {
             /* Recoverable error. Try again. */
             continue;
         }
-        else if (writen == 0) {
+        else if (writen == 0)
+        {
             throw std::runtime_error(
                     errorMsg("ThorsAnvil::MySQL::MySQLStream::write: ",
                              "::write() Failed: ",

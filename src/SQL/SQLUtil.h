@@ -12,7 +12,7 @@ namespace ThorsAnvil
     {
 
 using Options=std::map<std::string, std::string>;
-enum  StatementType {Prepare, OneTime};
+enum StatementType {Prepare, OneTime};
 
     }
 
@@ -25,7 +25,8 @@ inline void thorUnused(T const&)
 
 /* Build error message or bug report for exceptions */
 template<typename T>
-int printItem(std::ostream& str, T const& msg) {
+int printItem(std::ostream& str, T const& msg)
+{
     str << msg;
     return 1;
 }
