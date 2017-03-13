@@ -90,7 +90,9 @@ CREATE TABLE TimeStampTypes(
     ,ST4  DATETIME
     ,ST5  YEAR);
 
--- See test/TableBlobTest.cpp
+INSERT INTO TimeStampTypes(ID, ST1, ST2, ST3, ST4, ST5) VALUES (1, '1969-04-25', '06:15:43', '1973-04-25 06:15:43', '1969-04-25 06:15:43', '2016');
+
+-- See test/TableBinaryTest.cpp
 --      Add tests to this file for integers.
 --      Add immutable test data below
 CREATE TABLE BinaryTypes(
@@ -103,6 +105,9 @@ CREATE TABLE BinaryTypes(
     ,B5  MEDIUMBLOB
     ,B6  LONGBLOB);
 
+INSERT INTO BinaryTypes(ID, B1, B2, B3, B4, B5, B6)
+ VALUES(1, 'B', 'A variable binary string', 'A Tiny Blob', 'A Normal Blob', 'A Medium Sized Blob', 'This is the best I can do for long Blob');
+
 -- See test/TableStringTest.cpp
 --      Add tests to this file for integers.
 --      Add immutable test data below
@@ -111,10 +116,11 @@ CREATE TABLE StringTypes(
 
     ,S1  CHAR(1)
     ,S2  VARCHAR(32)
-    ,S3  TINYTEXT
-    ,S4  TEXT
-    ,S5  MEDIUMTEXT
-    ,S6  LONGTEXT);
+    ,S3  TINYTEXT       -- BLOB
+    ,S4  TEXT           -- BLOB
+    ,S5  MEDIUMTEXT     -- BLOB
+    ,S6  LONGTEXT       -- BLOB
+);
 
 INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
  VALUES(1, 'x', "A normal Var char", "Tiny Text", "This is normal text", "This is some medium length test", "This is some long text");

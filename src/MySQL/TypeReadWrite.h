@@ -216,9 +216,11 @@ template<> inline String readParameterValue<MYSQL_TYPE_BLOB,          String>(Co
 /*
  * BLOBS
  */
+template<> inline Vector readParameterValue<MYSQL_TYPE_VAR_STRING,      Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Vector readParameterValue<MYSQL_TYPE_STRING,          Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
+template<> inline Vector readParameterValue<MYSQL_TYPE_BLOB,            Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 //template<> inline Buffer readParameterValue<MYSQL_TYPE_TINY_BLOB,     Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 //template<> inline Buffer readParameterValue<MYSQL_TYPE_MEDIUM_BLOB,   Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
-//template<> inline Buffer readParameterValue<MYSQL_TYPE_BLOB,          Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 //template<> inline Buffer readParameterValue<MYSQL_TYPE_LONG_BLOB,     Vector>(ConectReader& p) {return p.lengthEncodedBlob();}
 
 /*
@@ -358,10 +360,11 @@ template<> inline float  readParameterValue<MYSQL_TYPE_FLOAT,         float>(Con
  * Time/Date
  */
 // TODO FIX
-//template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
-//template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATETIME, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
-//template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTimeStamp>(ConectReader&p){return UnixTimeStamp(p.readDate());}
-//template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,     UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,      UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,      UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATETIME,  UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
+template<> inline int           readParameterValue<MYSQL_TYPE_YEAR,      int>          (ConectReader& p){return p.fixedLengthInteger<2>();}
 
 template<>
 inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::string const& v)
@@ -497,7 +500,6 @@ Don't know what C++ type is appropriate
 #define MYSQL_TYPE_GEOMETRY                     0xff    lengthEncodedString()
 #define MYSQL_TYPE_SET                          0xf8    lengthEncodedString()
 #define MYSQL_TYPE_BIT                          0x10    lengthEncodedString()
-#define MYSQL_TYPE_YEAR                         0x0d    fixedLengthInteger<2>()
 */
 
 

@@ -35,9 +35,11 @@ struct UnixTimeStamp
 {
     std::time_t     time;
 
-        explicit UnixTimeStamp(std::time_t time):
+        UnixTimeStamp(std::time_t time = 0):
             time(time)
         {}
+    bool operator==(UnixTimeStamp const& rhs) const {return time == rhs.time;}
+    bool operator!=(UnixTimeStamp const& rhs) const {return ! (this->operator==(rhs));}
 };
 
 class ValidationTmpError: public std::runtime_error
