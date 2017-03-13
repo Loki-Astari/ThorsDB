@@ -3,14 +3,12 @@
 #include "Connection.h"
 #include "ConectReader.h"
 #include "RequPackage.h"
-#include "RespPackage.h"
 #include "RespPackageEOF.h"
 #include "RespPackageOK.h"
 #include "RespPackageResultSet.h"
 #include "RespPackageColumnDefinition.h"
 #include "ThorMySQL.h"
-#include <stdexcept>
-#include <assert.h>
+#include <cassert>
 
 
 namespace ThorsAnvil
@@ -38,6 +36,9 @@ class RequPackagePrepare: public RequPackage
             writer.writeVariableLengthString(statement);
         }
 };
+void testPrintRequPackagePrepare(std::ostream& str) {
+    str << RequPackagePrepare("Test");
+}
 
 class RequPackagePrepareClose: public RequPackage
 {
@@ -57,6 +58,9 @@ class RequPackagePrepareClose: public RequPackage
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
+void testPrintRequPackagePrepareClose(std::ostream& str) {
+    str << RequPackagePrepareClose(1);
+}
 
 class RequPackagePrepareExecute: public RequPackage
 {
@@ -84,6 +88,9 @@ class RequPackagePrepareExecute: public RequPackage
             writer.writeFixedLengthInteger<4>(1);
         }
 };
+void testPrintRequPackagePrepareExecute(std::ostream& str) {
+    str << RequPackagePrepareExecute(1);
+}
 
 class RequPackagePrepareReset: public RequPackage
 {
@@ -103,6 +110,9 @@ class RequPackagePrepareReset: public RequPackage
             writer.writeFixedLengthInteger<4>(statementID);
         }
 };
+void testPrintRequPackagePrepareReset(std::ostream& str) {
+    str << RequPackagePrepareReset(1);
+}
 
 class RespPackagePrepare: public RespPackage
 {
@@ -159,6 +169,9 @@ class RespPackagePrepare: public RespPackage
         }
         int     getStatementID()                        const           {return statementID;}
 };
+void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader) {
+    str << RespPackagePrepare(firstByte, reader);
+}
 
 class RespPackagePrepareExecute: public RespPackage
 {
@@ -189,6 +202,10 @@ class RespPackagePrepareExecute: public RespPackage
         bool hasDataRows()    const {return hasRows;}
         std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
 };
+void testPrintRespPackagePrepareExecute(std::ostream& str, int firstBytePrep, int firstByteExec, ConectReader& reader) {
+    RespPackagePrepare  prep(firstBytePrep, reader);
+    str << RespPackagePrepareExecute(firstByteExec, reader, prep);
+}
 
         }
     }

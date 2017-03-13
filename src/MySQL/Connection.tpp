@@ -1,4 +1,5 @@
 
+#include "ConectWriter.h"
 
 namespace ThorsAnvil
 {

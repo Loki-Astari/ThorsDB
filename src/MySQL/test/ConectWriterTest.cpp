@@ -1,5 +1,6 @@
 
 #include "ConectWriter.h"
+#include "PackageStream.h"
 
 #include "gtest/gtest.h"
 #include "test/MockStream.h"
@@ -135,5 +136,39 @@ TEST(ConectWriter, writeLengthEncodedString)
     ASSERT_EQ(result[6], 't');
     ASSERT_EQ(result[7], 'U');
     ASSERT_EQ(result[8], 'p');
+}
+TEST(ConectWriter, writeHugeStringOneUnder)
+{
+    char const      data[] = "";
+    unsigned char   result[0xFFFFFF + 20];
+    MockStream      buffer(data, sizeof(data), result);
+    ConectWriter    writer(buffer);
+    std::string     str(0xFFFFFE,'X');
+
+    writer.writeLengthEncodedString(str);
+    // 2 bytes Package buffer
+    ASSERT_EQ(4 + 0XFFFFFE, buffer.writLen());
+}
+TEST(ConectWriter, writeHugeStringJustBig)
+{
+    char const          data[] = "";
+    std::vector<unsigned char>   result(0xFFFFFF + 20, '\0');
+    MockStream      buffer(data, sizeof(data), &result[0]);
+    ConectWriter    writer(buffer);
+    std::string     str(0xFFFFFF,'X');
+
+    writer.writeLengthEncodedString(str);
+    ASSERT_EQ(4 + 0XFFFFFF, buffer.writLen());
+}
+TEST(ConectWriter, writeHugeStringOneOver)
+{
+    char const          data[] = "";
+    std::vector<unsigned char>   result(0xFFFFFF + 20, '\0');
+    MockStream      buffer(data, sizeof(data), &result[0]);
+    ConectWriter    writer(buffer);
+    std::string     str(0x1000000,'X');
+
+    writer.writeLengthEncodedString(str);
+    ASSERT_EQ(9 + 0X1000000, buffer.writLen());
 }
 

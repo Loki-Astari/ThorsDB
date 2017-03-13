@@ -2,13 +2,14 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 
 #include "RespPackage.h"
-#include "ConectReader.h"
 #include <sstream>
+#include <iomanip>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
+class ConectReader;
         namespace Detail
         {
 

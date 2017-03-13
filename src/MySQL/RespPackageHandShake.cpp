@@ -1,6 +1,7 @@
 
 #include "RespPackageHandShake.h"
-#include <assert.h>
+#include "ConectReader.h"
+#include <cassert>
 
 using namespace ThorsAnvil::MySQL::Detail;
 

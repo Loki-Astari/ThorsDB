@@ -18,6 +18,13 @@ TEST(PackageStreamTest, ReadNormal)
 
     ASSERT_EQ(std::string(data, data + 16), std::string("1234567890ABCDEF"));
 }
+TEST(PackageStreamTest, ReadBadHost)
+{
+    ASSERT_THROW(
+        MySQLStream stream("BadHostNotGoingToWork.com", 99872),
+        std::runtime_error
+    );
+}
 TEST(PackageStreamTest, ReadPastEOF)
 {
     int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);

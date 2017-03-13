@@ -2,7 +2,7 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 
-#include "PackageStream.h"
+#include <string>
 
 #include "MySQLConfig.h"
 #if     defined(THOR_ENDIAN_SML)
@@ -18,6 +18,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
+class PackageStream;
 class ConectWriter
 {
     protected:

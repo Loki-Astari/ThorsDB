@@ -1,5 +1,8 @@
 
 #include "ConectWriter.h"
+#include "PackageStream.h"
+#include <stdexcept>
+#include <typeinfo>
 
 using namespace ThorsAnvil::MySQL;
 

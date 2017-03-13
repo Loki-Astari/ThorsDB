@@ -1,57 +1,41 @@
 
 #include "Connection.h"
-#include "Statement.h"
-#include "ThorSQL/Connection.h"
-#include "PackageStream.h"
-#include "PackageBuffer.h"
-#include "ConectReader.h"
 #include "RespPackageHandShake.h"
 #include "RequPackageHandShakeResp.h"
 #include "PrepareStatement.h"
-#include "RespPackage.h"
 #include "RespPackageOK.h"
-#include <sstream>
 
 using namespace ThorsAnvil::MySQL;
 
-class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
+DefaultMySQLConnection::DefaultMySQLConnection(
+                            std::string const& host, int port,
+                            std::string const& username,
+                            std::string const& password,
+                            std::string const& database,
+                            ThorsAnvil::SQL::Options const& options)
+    : stream(host, port)
+    , buffer(stream, true)
+    , reader(buffer)
+    , writer(buffer)
+    , connection(username, password, database, options, reader, writer)
+{}
+std::unique_ptr<ThorsAnvil::SQL::StatementProxy> DefaultMySQLConnection::createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/)
 {
-    private:
-        MySQLStream                                 stream;
-        PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
-        ConectReader                                reader;
-        ConectWriter                                writer;
-        Connection                                  connection;
-    public:
-        DefaultMySQLConnection(std::string const& host, int port,
-                               std::string const& username,
-                               std::string const& password,
-                               std::string const& database,
-                               ThorsAnvil::SQL::Options const& options)
-            : stream(host, port)
-            , buffer(stream, true)
-            , reader(buffer)
-            , writer(buffer)
-            , connection(username, password, database, options, reader, writer)
-        {}
-        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/) override
-        {
-            std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
-            result.reset(new PrepareStatement(connection, statement));
+    std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
+    result.reset(new PrepareStatement(connection, statement));
 #if 0
-            if (type == ThorsAnvil::SQL::OneTime) {
-                result.reset(new Statement(statement));
-            }
-            else if (type == Prepare) {
-                result.reset(new PrepareStatement(statement));
-            }
-            else {
-                throw std::runtime_error("Unknown Type for MySQL");
-            }
+    if (type == ThorsAnvil::SQL::OneTime) {
+        result.reset(new Statement(statement));
+    }
+    else if (type == Prepare) {
+        result.reset(new PrepareStatement(statement));
+    }
+    else {
+        throw std::runtime_error("Unknown Type for MySQL");
+    }
 #endif
-            return result;
-        }
-};
+    return result;
+}
 
 ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");
 

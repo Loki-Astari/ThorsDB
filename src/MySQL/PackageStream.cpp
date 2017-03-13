@@ -7,7 +7,7 @@
 #include <sys/uio.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdio>
 #include <cerrno>
 #include <cstring>
 

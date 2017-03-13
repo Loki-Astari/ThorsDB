@@ -4,7 +4,6 @@
 
 #include "PackageStream.h"
 #include <vector>
-//#include <cstddef>
 
 namespace ThorsAnvil
 {

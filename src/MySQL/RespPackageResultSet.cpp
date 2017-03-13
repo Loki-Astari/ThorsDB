@@ -1,6 +1,6 @@
 
 #include "RespPackageResultSet.h"
-#include <assert.h>
+#include <cassert>
 
 using namespace ThorsAnvil::MySQL::Detail;
 

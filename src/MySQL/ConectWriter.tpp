@@ -1,5 +1,6 @@
 
 #include "ThorMySQL.h"
+#include "PackageStream.h"
 #include <stdexcept>
 #include <typeinfo>
 

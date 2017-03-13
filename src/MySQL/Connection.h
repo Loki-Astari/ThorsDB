@@ -2,12 +2,13 @@
 #ifndef THORS_ANVIL_MYSQL_CONNECTION_H
 #define THORS_ANVIL_MYSQL_CONNECTION_H
 
+#include "ThorSQL/Connection.h"
 #include "ThorSQL/SQLUtil.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
-#include "RespPackage.h"
+#include "PackageBuffer.h"
+#include "PackageStream.h"
 #include <string>
-#include <map>
 
 namespace ThorsAnvil
 {
@@ -16,6 +17,8 @@ namespace ThorsAnvil
 
 using ThorsAnvil::SQL::Options;
 
+class ConectWriter;
+class RespPackage;
 class Connection
 {
     public:
@@ -38,6 +41,23 @@ class Connection
         std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*{throw std::runtime_error("Failed");});
         template<typename Requ>
         void                  sendMessage(Requ const& request, PacketContinuation cont);
+};
+
+class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
+{
+    private:
+        MySQLStream                                 stream;
+        PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
+        ConectReader                                reader;
+        ConectWriter                                writer;
+        Connection                                  connection;
+    public:
+        DefaultMySQLConnection(std::string const& host, int port,
+                               std::string const& username,
+                               std::string const& password,
+                               std::string const& database,
+                               ThorsAnvil::SQL::Options const& options);
+        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/) override;
 };
 
     }
