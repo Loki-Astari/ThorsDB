@@ -23,14 +23,22 @@ bool ConectReader::isEmpty() const
     return stream.isEmpty();
 }
 
-std::unique_ptr<RespPackage> ConectReader::getNextPackage(int expectedResult, OKAction expectedResultAction)
+std::unique_ptr<Detail::RespPackageEOF> ConectReader::recvMessageEOF()
 {
-    return std::unique_ptr<RespPackage>(getNextPackageWrap(expectedResult,expectedResultAction));
+    return recvMessage<Detail::RespPackageEOF>({}, true);
 }
-RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expectedResultAction)
+std::unique_ptr<RespPackage> ConectReader::getNextPackage(OKMap const& actions)
+{
+    return std::unique_ptr<RespPackage>(getNextPackageWrap(actions));
+}
+RespPackage* ConectReader::getNextPackageWrap(OKMap const& actions)
 {
     int    packageType  = fixedLengthInteger<1>();;
-    if (packageType == 0x00 && expectedResult != 0x00) {
+    auto find = actions.find(packageType);
+    if (find != actions.end()) {
+        return find->second(packageType, *this);
+    }
+    else if (packageType == 0x00) {
         return new Detail::RespPackageOK(packageType, *this);
     }
     else if (packageType == 0xFE) {
@@ -39,14 +47,14 @@ RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expec
     else if (packageType == 0xFF) {
         return new Detail::RespPackageERR(packageType, *this);
     }
-    else if (packageType == expectedResult || expectedResult == -1) {
-        return expectedResultAction(packageType, *this);
-    }
     else {
+        find = actions.find(-1);
+        if (find != actions.end()) {
+            return find->second(packageType, *this);
+        }
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::getNextPackage: ",
-                         "Unknown Result Type: ", packageType,
-                         "\nExpecting: ", expectedResult
+                         "Unknown Result Type: ", packageType
               ));
     }
 }
@@ -239,7 +247,7 @@ template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
 template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
 
 
-template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(OKMap const& actions, bool expectedEOF);
 
 #endif
 

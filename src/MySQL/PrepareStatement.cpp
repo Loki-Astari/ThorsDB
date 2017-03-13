@@ -25,7 +25,7 @@ class RequPackagePrepare: public RequPackage
     std::string const& statement;
     public:
         RequPackagePrepare(std::string const& statement)
-            : RequPackage("RequPackagePrepare")
+            : RequPackage("RequPackagePrepare", "Prepare")
             , statement(statement)
         {}
         virtual  std::ostream& print(std::ostream& s)   const override
@@ -47,7 +47,7 @@ class RequPackagePrepareClose: public RequPackage
     int statementID;
     public:
         RequPackagePrepareClose(int statementID)
-            : RequPackage("RequPackagePrepareClose")
+            : RequPackage("RequPackagePrepareClose", "Prepare-Close")
             , statementID(statementID)
         {}
         virtual  std::ostream& print(std::ostream& s)   const
@@ -70,7 +70,7 @@ class RequPackagePrepareExecute: public RequPackage
     BindBuffer const&   bindBuffer;
     public:
         RequPackagePrepareExecute(int statementID, BindBuffer const& bindBuffer)
-            : RequPackage("RequPackagePrepareExecute")
+            : RequPackage("RequPackagePrepareExecute", "Prepare-Execute")
             , statementID(statementID)
             , bindBuffer(bindBuffer)
         {}
@@ -104,7 +104,7 @@ class RequPackagePrepareReset: public RequPackage
     int statementID;
     public:
         RequPackagePrepareReset(int statementID)
-            : RequPackage("RequPackagePrepareReset")
+            : RequPackage("RequPackagePrepareReset", "Prepare-Reset")
             , statementID(statementID)
         {}
         virtual  std::ostream& print(std::ostream& s)   const
@@ -131,7 +131,7 @@ class RespPackagePrepare: public RespPackage
     std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
         RespPackagePrepare(int firstByte, ConectReader& reader)
-            : RespPackage(reader)
+            : RespPackage(reader, "Prepare")
         {
             assert(firstByte == 0x00);
 
@@ -149,7 +149,7 @@ class RespPackagePrepare: public RespPackage
                     reader.reset();
                 }
 
-                reader.recvMessage<RespPackageEOF>();
+                reader.recvMessageEOF();
             }
             if (numColumns > 0) {
                 reader.reset();
@@ -157,7 +157,7 @@ class RespPackagePrepare: public RespPackage
                     columnInfo.emplace_back(reader);
                     reader.reset();
                 }
-                reader.recvMessage<RespPackageEOF>();
+                reader.recvMessageEOF();
             }
             /* To prevent exceptions in RespPackageResultSet when two many arguments are provided
              * We are going to push an extra fake column into the columns here.
@@ -197,7 +197,7 @@ class RespPackagePrepareExecute: public RespPackage
     std::vector<RespPackageColumnDefinition>   columnInfo;
     public:
         RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
-            : RespPackage(reader)
+            : RespPackage(reader, "Prepare-Execute")
         {
             columnCount = firstByte;
             reader.reset();
@@ -205,7 +205,7 @@ class RespPackagePrepareExecute: public RespPackage
                 columnInfo.push_back(RespPackageColumnDefinition(reader));
                 reader.reset();
             }
-            auto mark = reader.recvMessage<RespPackageEOF>(0xFE);
+            auto mark = reader.recvMessageEOF();
             hasRows = !(mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS);
 
             // Stream now contains the data followed by an EOF token
@@ -328,10 +328,9 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     , prepareResp(connection.sendMessage<Detail::RespPackagePrepare>(
                                     Detail::RequPackagePrepare(statement),
                                     Connection::Reset,
-                                    0x00,
-                                    [](int firstByte, ConectReader& reader){
-                                        return new Detail::RespPackagePrepare(firstByte, reader);
-                                    }
+                                    {{0x00, [](int firstByte, ConectReader& reader)
+                                            {return new Detail::RespPackagePrepare(firstByte, reader);}
+                                    }}
                               ))
     , statementID(prepareResp->getStatementID())
     , validatorStream(prepareResp->getColumns())
@@ -368,10 +367,10 @@ void PrepareStatement::doExecute()
     prepareExec = connection.sendMessage<Detail::RespPackagePrepareExecute>(
                                     Detail::RequPackagePrepareExecute(statementID, bindBuffer),
                                     Connection::Reset,
-                                    -1, // Does not matter what the first byte is 
+                                    {{-1, // Does not matter what the first byte is 
                                     [this](int firstByte, ConectReader& reader){
                                         return new Detail::RespPackagePrepareExecute(firstByte, reader, *(this->prepareResp));
-                                    }
+                                    }}}
                               );
 }
 
@@ -382,16 +381,15 @@ bool PrepareStatement::more()
         return false;
     }
     nextLine = connection.recvMessage<Detail::RespPackageResultSet>(
-                                    0x00,
+                                    {{0x00,
                                     [this](int firstByte, ConectReader& reader){
                                         return new Detail::RespPackageResultSet(firstByte, reader, this->prepareExec->getColumns());
-                                    });
+                                    }}});
     bool moreResult = nextLine.get() != nullptr;
     if (!moreResult) {
         connection.sendMessage<Detail::RespPackageOK>(
                                     Detail::RequPackagePrepareReset(statementID),
-                                    Connection::Reset,
-                                    -1 // Only looking for the OK message. Anything else will throw an exception.
+                                    Connection::Reset
                                 );
         validatorStream.reset();
         nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
@@ -415,9 +413,9 @@ void PrepareStatement::abort()
 #include "Connection.tpp"
 #include "ConectReader.tpp"
 
-template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
-template std::unique_ptr<Detail::RespPackagePrepare> ConectReader::recvMessage<Detail::RespPackagePrepare>(int, std::function<RespPackage*(int, ConectReader&)>);
-template std::unique_ptr<Detail::RespPackagePrepareExecute> ConectReader::recvMessage<Detail::RespPackagePrepareExecute>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackagePrepare> Connection::sendMessage<Detail::RespPackagePrepare, Detail::RequPackagePrepare>(Detail::RequPackagePrepare const&, Connection::PacketContinuation, ConectReader::OKMap const&, bool);
+template std::unique_ptr<Detail::RespPackagePrepare> ConectReader::recvMessage<Detail::RespPackagePrepare>(ConectReader::OKMap const&, bool);
+template std::unique_ptr<Detail::RespPackagePrepareExecute> ConectReader::recvMessage<Detail::RespPackagePrepareExecute>(ConectReader::OKMap const&, bool);
 
 
 #endif

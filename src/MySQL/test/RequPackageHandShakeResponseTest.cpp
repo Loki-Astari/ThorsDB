@@ -168,7 +168,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_native_password)
                         "\x01\x02\x03\x04"      // Connection ID
                         "12345678"              // authPluginData       initial 8 characters.
                         "\x05"                  // check
-                        "\x06\x07"              // capabilities
+                        "\x06\x87"              // capabilities
                         "\x08"                  // charset
                         "\x09\x0A"              // statusFlag
                         "\x0B\x0C"              // cap2

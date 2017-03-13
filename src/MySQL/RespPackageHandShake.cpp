@@ -1,12 +1,13 @@
 
 #include "RespPackageHandShake.h"
 #include "ConectReader.h"
+#include "ThorMySQL.h"
 #include <cassert>
 
 using namespace ThorsAnvil::MySQL::Detail;
 
 RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
-    : RespPackage(reader)
+    : RespPackage(reader, "HandShake")
     , serverVersion(reader.nulTerminatedString())
     , connectionID(reader.fixedLengthInteger<4>())
     , authPluginData(reader.fixedLengthString(8))
@@ -32,12 +33,31 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     charset         = reader.fixedLengthInteger<1>();
     statusFlag      = reader.fixedLengthInteger<2>();
     long cap2       = reader.fixedLengthInteger<2>();
-    authPluginLength= reader.fixedLengthInteger<1>();
-    reserved        = reader.fixedLengthString(10);
-    std::string authPluginData2 = reader.variableLengthString(std::max(13L, authPluginLength - 8L));
-    authPluginName  = reader.nulTerminatedString();
+    authPluginLength= 0;
 
     capabilities    = capabilities | (cap2 << 16);
+
+    if (capabilities & CLIENT_PLUGIN_AUTH)
+    {
+        authPluginLength= reader.fixedLengthInteger<1>();
+    }
+    else
+    {
+        int fill = reader.fixedLengthInteger<1>();
+        assert(fill == 0);
+    }
+
+    reserved        = reader.fixedLengthString(10);
+    std::string authPluginData2;
+    if (capabilities & CLIENT_SECURE_CONNECTION)
+    {
+        authPluginData2 = reader.variableLengthString(std::max(13L, authPluginLength - 8L));
+    }
+    if (capabilities & CLIENT_PLUGIN_AUTH)
+    {
+        authPluginName  = reader.nulTerminatedString();
+    }
+
     // Because of the way 13L is the min size for authPluginData2 data
     // This may exceed the actual size of the auth data. So after concatenating the
     // data make sure we only use the required length `authPluginLength`. This means

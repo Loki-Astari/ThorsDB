@@ -23,6 +23,10 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
+        namespace Detail
+        {
+            class RespPackageEOF;
+        }
 
 class Package
 {
@@ -40,6 +44,7 @@ class ConectReader
     unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
     public:
         using OKAction = std::function<RespPackage*(int byte, ConectReader&)>;
+        using OKMap    = std::map<int, OKAction>;
         ConectReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
@@ -47,20 +52,12 @@ class ConectReader
         {}
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
-        std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
+        std::unique_ptr<RespPackage>    getNextPackage(OKMap const& actions);
+        std::unique_ptr<Detail::RespPackageEOF> recvMessageEOF();
         template<typename Resp>
-        std::unique_ptr<Resp>           recvMessage(int expectedResult = -1,
-                                                    OKAction expectedResultAction =
-                                                                [](int, ConectReader&)->RespPackage*
-                                                                {
-                                                                    throw std::runtime_error(
-                                                                            errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ",
-                                                                                     "No result expected"
-                                                                          ));
-                                                                }
-                                                   );
+        std::unique_ptr<Resp>           recvMessage(OKMap const& actions = {}, bool expectedEOF = false);
     private:
-        RespPackage*    getNextPackageWrap(int expectedResult, OKAction expectedResultAction);
+        RespPackage*    getNextPackageWrap(OKMap const& actions);
     public:
 
 

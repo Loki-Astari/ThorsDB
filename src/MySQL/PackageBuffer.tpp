@@ -1,6 +1,8 @@
 
 #include "ThorSQL/SQLUtil.h"
 #include <stdexcept>
+#include <sstream>
+#include <iomanip>
 
 namespace ThorsAnvil
 {
@@ -188,9 +190,16 @@ void PackageBufferMySQLDebugBuffer<T>::reset()
         readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
     }
     if (readDataAvailable != 0) {
+        std::stringstream  extraData;
+        for(std::size_t loop=0; loop < readDataAvailable; ++loop) {
+            char x;
+            read(&x, 1);
+            extraData << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(x) << "(" << x << ") ";
+        }
         throw std::domain_error(
                 bugReport("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<T>::reset: ",
-                          "reset() before message was read"
+                          "reset() before message was read:",
+                          extraData.str()
               ));
     }
 
