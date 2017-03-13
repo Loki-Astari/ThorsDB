@@ -345,18 +345,94 @@ inline unsigned int writeParameterValue<std::string>(ConectWriter& p, std::strin
     return MYSQL_TYPE_STRING;
 }
 template<>
-inline unsigned int writeParameterValue<signed int>(ConectWriter& p, signed int const& v)
-{
-    p.writeFixedLengthInteger<4>(v);
-    return MYSQL_TYPE_LONG;
-}
-template<>
 inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
 {
     p.writeRawData(reinterpret_cast<char const*>(&v), 8);
     return MYSQL_TYPE_DOUBLE;
 }
 
+template<>
+inline unsigned int writeParameterValue<char>(ConectWriter& p, char const& v)
+{
+    // If you bind as a string it matches both number and string.
+    // Note the char '8' will match the number 8 (a bit wierd) but this is the
+    // same behavior as you get from mysql console.
+    std::string value(1, v);
+    p.writeLengthEncodedString(value);
+    return MYSQL_TYPE_STRING;
+
+    // If you bind as a number it does not match text.
+    //p.writeFixedLengthInteger<1>(v);
+    //return MYSQL_TYPE_TINY;
+}
+
+template<>
+inline unsigned int writeParameterValue<signed char>(ConectWriter& p, signed char const& v)
+{
+    return writeParameterValue<char>(p, static_cast<char>(v));
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned char>(ConectWriter& p, unsigned char const& v)
+{
+    return writeParameterValue<char>(p, static_cast<char>(v));
+}
+
+template<>
+inline unsigned int writeParameterValue<signed short>(ConectWriter& p, signed short const& v)
+{
+    p.writeFixedLengthInteger<2>(v);
+    return MYSQL_TYPE_SHORT;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned short>(ConectWriter& p, unsigned short const& v)
+{
+    p.writeFixedLengthInteger<2>(v);
+    return MYSQL_TYPE_SHORT;
+}
+
+template<>
+inline unsigned int writeParameterValue<signed int>(ConectWriter& p, signed int const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned int>(ConectWriter& p, unsigned int const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<signed long>(ConectWriter& p, signed long const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned long>(ConectWriter& p, unsigned long const& v)
+{
+    p.writeFixedLengthInteger<4>(v);
+    return MYSQL_TYPE_LONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<signed long long>(ConectWriter& p, signed long long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
+
+template<>
+inline unsigned int writeParameterValue<unsigned long long>(ConectWriter& p, unsigned long long const& v)
+{
+    p.writeFixedLengthInteger<8>(v);
+    return MYSQL_TYPE_LONGLONG;
+}
         }
     }
 }

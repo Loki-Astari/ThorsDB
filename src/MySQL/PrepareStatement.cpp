@@ -470,6 +470,7 @@ bool PrepareStatement::more()
         downcastUniquePtr<Detail::RespPackageOK>(std::move(resp));
 
         validatorStream.reset();
+        bindBuffer.reset();
         nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
     }
     return moreResult;
