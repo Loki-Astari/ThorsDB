@@ -1,5 +1,7 @@
 
 #include "ThorMySQL.h"
+#include <stdexcept>
+#include <typeinfo>
 
 namespace ThorsAnvil
 {
@@ -7,7 +9,7 @@ namespace ThorsAnvil
     {
 
 template<int len>
-void ConectWriter::writeFixedLengthInteger(unsigned long value)
+void ConectWriter::writeFixedLengthInteger(unsigned long long value)
 {
     THOR_MYSQL_WRITE_INT(value, len);
 }

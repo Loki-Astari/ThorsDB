@@ -1,6 +1,7 @@
 
 #include "PackageStream.h"
 #include <sstream>
+#include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/uio.h>
@@ -8,6 +9,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <cerrno>
+#include <cstring>
 
 using namespace ThorsAnvil::MySQL;
 

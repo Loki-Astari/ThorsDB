@@ -18,9 +18,10 @@ using ThorsAnvil::SQL::Options;
 
 class Connection
 {
-    ConectReader&   packageReader;
-    ConectWriter&   packageWriter;
     public:
+        ConectReader&   packageReader;
+        ConectWriter&   packageWriter;
+
         Connection(std::string const& username,
                    std::string const& password,
                    std::string const& database,
@@ -29,22 +30,20 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
-    private:
         enum PacketContinuation { None, Reset};
-        enum PacketCompletion   { OK,   EOF_OK };
-
-        template<typename V>    void unusedVariable(V const&){}
 
         template<typename Resp>
-        std::unique_ptr<Resp> recvMessage(PacketCompletion comp, ConectReader::ResponceType type);
+        std::unique_ptr<Resp> recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction);
         template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type);
+        std::unique_ptr<Resp> sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*{throw std::runtime_error("Failed");});
+        template<typename Requ>
+        void                  sendMessage(Requ const& request, PacketContinuation cont);
 };
 
     }
 }
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_MySQL
 #include "Connection.tpp"
 #endif
 

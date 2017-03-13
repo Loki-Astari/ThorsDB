@@ -6,36 +6,25 @@ namespace ThorsAnvil
     {
 
 template<typename Resp>
-std::unique_ptr<Resp> Connection::recvMessage(PacketCompletion comp, ConectReader::ResponceType type)
+std::unique_ptr<Resp> Connection::recvMessage(int expectedResult, ConectReader::OKAction expectedResultAction)
 {
-    std::unique_ptr<RespPackage>    resp = packageReader.getNextPackage(type);
-    if (resp->isError()) {
-        throw std::runtime_error(resp->message());;
-    }
-
-    if ((comp == OK && resp->isOK()) || (comp == EOF_OK && resp->isEOF())) {
-        return nullptr;
-    }
-
-    // Throws exception if cast fails.
-    Resp&                   resultRef = dynamic_cast<Resp&>(*resp);
-    unusedVariable(resultRef);
-
-    // Now we know the dynamic_cast will work and not return a nullptr.
-    // release it do the dynamic cast and store it in a new unique_ptr
-    // for return.
-    std::unique_ptr<Resp>   result(dynamic_cast<Resp*>(resp.release()));
-    return result;
+    return packageReader.recvMessage<Resp>(expectedResult, expectedResultAction);
 }
 
-template<typename Resp, typename Requ>
-std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, PacketCompletion comp, ConectReader::ResponceType type)
+template<typename Requ>
+void Connection::sendMessage(Requ const& request, PacketContinuation cont)
 {
+    packageReader.reset();
     if (cont == Reset) {
         packageWriter.reset();
     }
     request.send(packageWriter);
-    return recvMessage<Resp>(comp, type);
+}
+template<typename Resp, typename Requ>
+std::unique_ptr<Resp> Connection::sendMessage(Requ const& request, PacketContinuation cont, int expectedResult, ConectReader::OKAction expectedResultAction)
+{
+    sendMessage(request, cont);
+    return recvMessage<Resp>(expectedResult, expectedResultAction);
 }
 
     }

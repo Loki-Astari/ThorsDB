@@ -4,8 +4,10 @@
 
 
 #include <memory>
+#include <functional>
 #include <vector>
 #include <string>
+#include <ctime>
 
 #include "MySQLConfig.h"
 #if     defined(THOR_ENDIAN_SML)
@@ -53,19 +55,26 @@ class ConectReader
 
     unsigned long   lengthEncodedIntegerUsingSize(unsigned char size);
     public:
+        using OKAction = std::function<RespPackage*(int byte, ConectReader&)>;
         ConectReader(PackageStream& stream)
             : stream(stream)
             , capabilities(0)
             , charset(0)
         {}
-        enum ResponceType       { HandshakeOK };
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
-        std::unique_ptr<RespPackage>    getNextPackage(ResponceType type);
+        std::unique_ptr<RespPackage>    getNextPackage(int expectedResult, OKAction expectedResultAction);
+        template<typename Resp>
+        std::unique_ptr<Resp>           recvMessage(int expectedResult = -1, OKAction expectedResultAction = [](int, ConectReader&)->RespPackage*{throw std::runtime_error("Failed");});
+    private:
+        RespPackage*    getNextPackageWrap(int expectedResult, OKAction expectedResultAction);
+    public:
+
 
         void        read(char* data, std::size_t len);
         bool        isEmpty() const;
 
+        unsigned long   getCapabilities()                                                   {return capabilities;}
         template<int len>
         unsigned long   fixedLengthInteger(unsigned long requiredCap)                       {return (requiredCap & capabilities) ? fixedLengthInteger<len>()    : 0;}
         unsigned long   lengthEncodedInteger(unsigned long requiredCap)                     {return (requiredCap & capabilities) ? lengthEncodedInteger()       : 0;}
@@ -85,18 +94,20 @@ class ConectReader
         std::string     restOfPacketString();
 
         std::vector<char> lengthEncodedBlob();
-        time_t            readDate();
-        unsigned long     readRel();
-        unsigned long     readRelMicro();
+        std::time_t       readDate();
+        std::time_t       readRel();
+        unsigned long long readRelMicro();
         MySQLTimeBag      readDateIntoTimeBag();
         MySQLTimeBag      readTimeIntoTimeBag();
+
+        void            reset();
 };
 
 
     }
 }
 
-#ifndef COVERAGE_TEST
+#ifndef COVERAGE_MySQL
 #include "ConectReader.tpp"
 #endif
 

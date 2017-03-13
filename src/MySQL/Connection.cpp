@@ -1,12 +1,15 @@
 
 #include "Connection.h"
+#include "Statement.h"
 #include "ThorSQL/Connection.h"
 #include "PackageStream.h"
 #include "PackageBuffer.h"
 #include "ConectReader.h"
 #include "RespPackageHandShake.h"
 #include "RequPackageHandShakeResp.h"
+#include "PrepareStatement.h"
 #include "RespPackage.h"
+#include "RespPackageOK.h"
 #include <sstream>
 
 using namespace ThorsAnvil::MySQL;
@@ -31,6 +34,23 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
             , writer(buffer)
             , connection(username, password, database, options, reader, writer)
         {}
+        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/) override
+        {
+            std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
+            result.reset(new PrepareStatement(connection, statement));
+#if 0
+            if (type == ThorsAnvil::SQL::OneTime) {
+                result.reset(new Statement(statement));
+            }
+            else if (type == Prepare) {
+                result.reset(new PrepareStatement(statement));
+            }
+            else {
+                throw std::runtime_error("Unknown Type for MySQL");
+            }
+#endif
+            return result;
+        }
 };
 
 ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");
@@ -45,12 +65,12 @@ Connection::Connection(
     : packageReader(pr)
     , packageWriter(pw)
 {
-    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(OK, ConectReader::HandshakeOK);
+    std::unique_ptr<Detail::RespPackageHandShake>    handshake = recvMessage<Detail::RespPackageHandShake>(0x0A, [](int firstByte, ConectReader& reader){return new Detail::RespPackageHandShake(firstByte, reader);});
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, Reset, OK, ConectReader::HandshakeOK);
+    std::unique_ptr<RespPackage>            ok = sendMessage<RespPackage>(handshakeresp, None, 0x00, [](int firstByte, ConectReader& reader){return new Detail::RespPackageOK(firstByte, reader);});
 }
 
 Connection::~Connection()
@@ -58,12 +78,17 @@ Connection::~Connection()
     // Shut Down
 }
 
-#ifdef COVERAGE_TEST
+#ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
  */
 #include "Connection.tpp"
+#include "ConectReader.tpp"
+
+template std::unique_ptr<RespPackage> Connection::sendMessage<RespPackage, Detail::RequPackageHandShakeResponse>(Detail::RequPackageHandShakeResponse const&, Connection::PacketContinuation, int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackageHandShake> Connection::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
+template std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::RespPackageHandShake>(int, std::function<RespPackage*(int, ConectReader&)>);
 
 #endif
 

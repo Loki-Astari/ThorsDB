@@ -4,6 +4,7 @@
 #include "RespPackage.h"
 #include "ConectReader.h"
 #include "ThorMySQL.h"
+#include <assert.h>
 
 namespace ThorsAnvil
 {
@@ -18,12 +19,14 @@ class RespPackageERR: public RespPackage
     std::string hash;
     std::string SQLState;
     public:
-        RespPackageERR(ConectReader& reader)
+        RespPackageERR(int firstByte, ConectReader& reader)
             : RespPackage(reader)
             , errorCode(reader.fixedLengthInteger<2>())
             , hash(reader.fixedLengthString(1, CLIENT_PROTOCOL_41))
             , SQLState(reader.fixedLengthString(5, CLIENT_PROTOCOL_41))
         {
+            assert(firstByte == 0xFF);
+
             error           = true;
             humanMessage    = reader.restOfPacketString();
         }

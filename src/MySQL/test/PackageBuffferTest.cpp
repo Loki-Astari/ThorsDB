@@ -11,7 +11,7 @@ TEST(PackageBufferMySQLDebugBufferTest, isEmpty)
     char const      data[] = "\x00\x00\x00" // size
                              "\x00"         // id
                              ;
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(data, sizeof(data), result);
     MySqlBuf        mysqlBuffer(buffer);
 
@@ -23,7 +23,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read1Block)
                              "\x00"         // id
                              "1234567890ABCDEF" // Note: '\0' is part of data
                              ;
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(data, sizeof(data) - 1, result); // The '\0' is not part of the data
     MySqlBuf        mysqlBuffer(buffer);
 
@@ -44,7 +44,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithZero)
     }
     data.insert(data.end(), std::begin(block2Header), std::end(block2Header));
 
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(&data[0], data.size(), result);
     MySqlBuf        mysqlBuffer(buffer);
 
@@ -71,7 +71,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithTen)
         data.insert(data.end(),'Y');
     }
 
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(&data[0], data.size(), result);
     MySqlBuf        mysqlBuffer(buffer);
 
@@ -220,13 +220,15 @@ TEST(PackageBufferMySQLDebugBufferTest, flush)
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
                              ;
-    unsigned char   result[1];
+    unsigned char   result[8];
     MockStream      buffer(data, sizeof(data) - 1, result);
     MySqlBuf        mysqlBuffer(buffer);
 
     mysqlBuffer.flush();
+    ASSERT_EQ(4, buffer.writLen());
     mysqlBuffer.reset();
     mysqlBuffer.flush();    // Flush OK after a reset
+    ASSERT_EQ(8, buffer.writLen());
     // But should fail if done twice without a reset
     ASSERT_THROW(mysqlBuffer.flush(), std::runtime_error);
 }
@@ -235,34 +237,25 @@ TEST(PackageBufferMySQLDebugBufferTest, flushAndWrite)
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
                              ;
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(data, sizeof(data) - 1, result);
     MySqlBuf        mysqlBuffer(buffer);
 
     mysqlBuffer.flush();
+    ASSERT_EQ(4, buffer.writLen());
     ASSERT_THROW(mysqlBuffer.write("10", 2), std::runtime_error);
-}
-TEST(PackageBufferMySQLDebugBufferTest, resetWithoutFlush)
-{
-    char const      data[] = "\x00\x00\x00" // size
-                             "\x01"         // id
-                             ;
-    unsigned char   result[1];
-    MockStream      buffer(data, sizeof(data) - 1, result);
-    MySqlBuf        mysqlBuffer(buffer);
-
-    ASSERT_THROW(mysqlBuffer.reset(), std::runtime_error);
 }
 TEST(PackageBufferMySQLDebugBufferTest, resetWithFlush)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
                              ;
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(data, sizeof(data) - 1, result);
     MySqlBuf        mysqlBuffer(buffer);
 
     mysqlBuffer.flush();
+    ASSERT_EQ(4, buffer.writLen());
     mysqlBuffer.reset();
 }
 TEST(PackageBufferMySQLDebugBufferTest, readRemainingData)
@@ -271,7 +264,7 @@ TEST(PackageBufferMySQLDebugBufferTest, readRemainingData)
                              "\x00"         // id
                              "1234567890"
                              ;
-    unsigned char   result[1];
+    unsigned char   result[4];
     MockStream      buffer(data, sizeof(data) - 1, result);
     MySqlBuf        mysqlBuffer(buffer);
 

@@ -1,7 +1,6 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
-#include "ConectReader.h"
 #include <ostream>
 #include <iomanip>
 
@@ -10,6 +9,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
+class ConectReader;
 class RespPackage
 {
     protected:

@@ -1,17 +1,12 @@
 
 #include "Connection.h"
+#include "Statement.h"
 
 #include "gtest/gtest.h"
+#include "test/MockMysql.h"
 
-class MockConectionProxyRegister: public ThorsAnvil::SQL::ConnectionProxy
-{
-    public:
-        MockConectionProxyRegister(std::string const&, int, std::string const&, std::string const&, std::string const&, ThorsAnvil::SQL::Options const&)
-        {
-        }
-};
 
-ThorsAnvil::SQL::ConnectionCreatorRegister<MockConectionProxyRegister>   registerFakeMysql("mysql");
+ThorsAnvil::SQL::ConnectionCreatorRegister<MockMySQLConnection>   registerFakeMysql("mysql");
 
 TEST(ConnectionTest, Create)
 {

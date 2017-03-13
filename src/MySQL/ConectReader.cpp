@@ -1,10 +1,9 @@
 
-#include "PackageStream.h"
 #include "ConectReader.h"
+#include "PackageStream.h"
 #include "RespPackageOK.h"
-#include "RespPackageERR.h"
 #include "RespPackageEOF.h"
-#include "RespPackageHandShake.h"
+#include "RespPackageERR.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -24,28 +23,27 @@ bool ConectReader::isEmpty() const
     return stream.isEmpty();
 }
 
-std::unique_ptr<RespPackage> ConectReader::getNextPackage(ResponceType type)
+std::unique_ptr<RespPackage> ConectReader::getNextPackage(int expectedResult, OKAction expectedResultAction)
 {
-    unsigned char    packageType;
-    read(reinterpret_cast<char*>(&packageType), 1);
-    switch(packageType)
-    {
-        case 0x00:
-        {
-            switch(type)
-            {
-                case HandshakeOK:   return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(*this));
-                default:
-                    throw std::runtime_error("ConectReader::getNextPackage: Unknown OK Package");
-            }
-        }
-        case 0x0A:  return std::unique_ptr<RespPackage>(new Detail::RespPackageHandShake(*this));
-        case 0xFF:  return std::unique_ptr<RespPackage>(new Detail::RespPackageERR(*this));
-        case 0xFE:  return std::unique_ptr<RespPackage>(new Detail::RespPackageEOF(*this));
-        default:
-        {
-            throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
-        }
+    return std::unique_ptr<RespPackage>(getNextPackageWrap(expectedResult,expectedResultAction));
+}
+RespPackage* ConectReader::getNextPackageWrap(int expectedResult, OKAction expectedResultAction)
+{
+    int    packageType  = fixedLengthInteger<1>();;
+    if (packageType == 0x00 && expectedResult != 0x00) {
+        return new Detail::RespPackageOK(packageType, *this);
+    }
+    else if (packageType == 0xFE) {
+        return new Detail::RespPackageEOF(packageType, *this);
+    }
+    else if (packageType == 0xFF) {
+        return new Detail::RespPackageERR(packageType, *this);
+    }
+    else if (packageType == expectedResult || expectedResult == -1) {
+        return expectedResultAction(packageType, *this);
+    }
+    else {
+        throw std::runtime_error(std::string("ConectReader::getNextPackage: Unknown Result Type: ") + std::to_string(packageType));
     }
 }
 
@@ -116,7 +114,7 @@ std::vector<char> ConectReader::lengthEncodedBlob()
     read(&result[0], size);
     return result;
 }
-time_t ConectReader::readDate()
+std::time_t ConectReader::readDate()
 {
     MySQLTimeBag    timeBag = readDateIntoTimeBag();
     tm              time;
@@ -160,15 +158,15 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
     return timeBag;
 }
 
-unsigned long ConectReader::readRel()
+std::time_t ConectReader::readRel()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return timeBag.day * (60*60*24) + timeBag.hour * (60*60) + timeBag.minute * (60) + timeBag.second;
+    return timeBag.day * (60LL*60*24) + timeBag.hour * (60LL*60) + timeBag.minute * (60LL) + timeBag.second;
 }
-unsigned long ConectReader::readRelMicro()
+unsigned long long ConectReader::readRelMicro()
 {
     MySQLTimeBag    timeBag = readTimeIntoTimeBag();
-    return timeBag.day * (1000*60*60*24) + timeBag.hour * (1000*60*60) + timeBag.minute * (1000*60) + timeBag.second * (1000) + timeBag.uSecond;
+    return timeBag.day * (1000LL*60*60*24) + timeBag.hour * (1000LL*60*60) + timeBag.minute * (1000LL*60) + timeBag.second * (1000LL) + timeBag.uSecond;
 }
 MySQLTimeBag ConectReader::readTimeIntoTimeBag()
 {
@@ -199,7 +197,13 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     }
     return timeBag;
 }
-#ifdef COVERAGE_TEST
+
+void ConectReader::reset()
+{
+    stream.reset();
+}
+
+#ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
@@ -210,6 +214,9 @@ template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
 template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
 template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
 template unsigned long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
+
+
+template std::unique_ptr<RespPackage> ConectReader::recvMessage<RespPackage>(int, std::function<RespPackage*(int, ConectReader&)>);
 
 #endif
 

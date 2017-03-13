@@ -1,5 +1,6 @@
 
 #include "Connection.h"
+#include "Statement.h"
 #include <cerrno>
 #include <cstdlib>
 
@@ -51,5 +52,11 @@ std::map<std::string, ConnectionCreator>& Connection::getCreators()
 void Connection::registerConnectionType(std::string const& schema, ConnectionCreator creator)
 {
     getCreators().emplace(schema, creator);
+}
+
+
+std::unique_ptr<StatementProxy> Connection::createStatementProxy(std::string const& statement, StatementType type)
+{
+    return proxy->createStatementProxy(statement, type);
 }
 

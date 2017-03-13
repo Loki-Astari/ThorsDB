@@ -9,7 +9,7 @@ void ConectWriter::initFromHandshake(unsigned long newCapabilities, unsigned lon
     charset         = newCharset;
 }
 
-void ConectWriter::writeLengthEncodedInteger(unsigned long value)
+void ConectWriter::writeLengthEncodedInteger(unsigned long long value)
 {
     /*
      * Length encoded integers.
@@ -18,9 +18,9 @@ void ConectWriter::writeLengthEncodedInteger(unsigned long value)
      *  Val >= 2^16 < 2^24      => 0Xfd + 3byte Value
      *  Val >= 2^24 < 2^64      => 0Xfe + 8byte Value
      */
-    static char const Mark2Byte = 0xFC;
-    static char const Mark3Byte = 0xFD;
-    static char const Mark8Byte = 0xFE;
+    static char const Mark2Byte = '\xFC';
+    static char const Mark3Byte = '\xFD';
+    static char const Mark8Byte = '\xFE';
 
     if (value < 251)            {                                                               writeFixedLengthInteger<1>(value);}
     else if (value <= 0xFFFF)   {   stream.write(reinterpret_cast<char const*>(&Mark2Byte), 1); writeFixedLengthInteger<2>(value);}
@@ -57,21 +57,21 @@ void ConectWriter::flush()
 }
 void ConectWriter::reset()
 {
-    stream.reset();
+    stream.startNewConversation();
 }
 
-#ifdef COVERAGE_TEST
+#ifdef COVERAGE_MySQL
 /*
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
  */
 #include "ConectWriter.tpp"
 
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<1>(unsigned long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<2>(unsigned long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<3>(unsigned long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsigned long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<1>(unsigned long long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<2>(unsigned long long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<3>(unsigned long long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsigned long long);
+template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long long);
 
 #endif
 
