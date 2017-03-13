@@ -1,4 +1,3 @@
-
 #ifndef THORSANVIL_MYSQL_DETAIL_RESP_PACKAGE_COLUMN_DEFINITION_H
 #define THORSANVIL_MYSQL_DETAIL_RESP_PACKAGE_COLUMN_DEFINITION_H
 
@@ -49,7 +48,7 @@ struct RespPackageColumnDefinition
           << "\t" << std::setw(20) << std::left << "flags: " << data.flags << "\n"
           << "\t" << std::setw(20) << std::left << "decimal: " << data.decimal << "\n"
           << "\t" << std::setw(20) << std::left << "filler: " << "(";
-        for(auto const& dv: data.defaultValues)
+        for (auto const& dv: data.defaultValues)
         {
             s << dv << ", ";
         }
@@ -158,7 +157,7 @@ struct RespPackageColumnDefinition
         if (getDefaultValues)
         {
             std::size_t len = reader.lengthEncodedInteger();
-            for(std::size_t loop=0;loop < len; ++loop)
+            for (std::size_t loop=0;loop < len; ++loop)
             {
                 defaultValues.push_back(reader.lengthEncodedString());
             }
@@ -171,4 +170,3 @@ struct RespPackageColumnDefinition
 }
 
 #endif
-

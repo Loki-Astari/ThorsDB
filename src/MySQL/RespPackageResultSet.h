@@ -1,4 +1,3 @@
-
 #ifndef THORSANIVL_MYSQL_DETAIL_RESP_PACKAGE_RESULT_SET_H
 #define THORSANIVL_MYSQL_DETAIL_RESP_PACKAGE_RESULT_SET_H
 
@@ -51,7 +50,7 @@ class RespPackageResultSet: public RespPackage
         }
         int currentColumn   = nextColumn;
         ++nextColumn;
-        switch(columns[currentColumn].type)
+        switch (columns[currentColumn].type)
         {
             case MYSQL_TYPE_STRING:         return readParameterValue<MYSQL_TYPE_STRING, T>(reader);
             case MYSQL_TYPE_VARCHAR:        return readParameterValue<MYSQL_TYPE_VARCHAR, T>(reader);
@@ -134,4 +133,3 @@ class RespPackageResultSet: public RespPackage
 }
 
 #endif
-

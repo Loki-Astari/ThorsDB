@@ -1,4 +1,3 @@
-
 #include "PackageStream.h"
 #include "RespPackage.h"
 #include "ThorSQL/SQLUtil.h"
@@ -55,4 +54,3 @@ inline unsigned long ConectReader::fixedLengthInteger()
 
     }
 }
-

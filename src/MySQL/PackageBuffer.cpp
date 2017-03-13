@@ -1,4 +1,3 @@
-
 #include "PackageBuffer.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -28,4 +27,3 @@ template bool ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::isEm
 template ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer<MockStream>::PackageBufferMySQLDebugBuffer(MockStream&, bool);
 
 #endif
-

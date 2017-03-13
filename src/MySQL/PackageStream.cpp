@@ -1,4 +1,3 @@
-
 #include "PackageStream.h"
 #include "ThorSQL/SQLUtil.h"
 #include <sstream>
@@ -63,7 +62,7 @@ MySQLStream::~MySQLStream()
 void MySQLStream::read(char* buffer, std::size_t len)
 {
     std::size_t     readSoFar    = 0;
-    while(readSoFar != len)
+    while (readSoFar != len)
     {
         std::size_t read = ::read(socket, buffer + readSoFar, len - readSoFar);
         if ((read == ErrorResult) && (errno == EAGAIN || errno == EINTR))
@@ -94,7 +93,7 @@ void MySQLStream::read(char* buffer, std::size_t len)
 void MySQLStream::write(char const* buffer, std::size_t len)
 {
     std::size_t     writenSoFar    = 0;
-    while(writenSoFar != len)
+    while (writenSoFar != len)
     {
         std::size_t writen = ::write(socket, buffer + writenSoFar, len - writenSoFar);
         if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR))
@@ -122,4 +121,3 @@ void MySQLStream::write(char const* buffer, std::size_t len)
         writenSoFar += writen;
     }
 }
-

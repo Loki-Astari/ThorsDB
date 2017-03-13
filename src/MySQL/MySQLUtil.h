@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_MYSQL_MYSQL_UTIL_H
 #define THORS_ANVIL_MYSQL_MYSQL_UTIL_H
 
@@ -28,5 +27,3 @@ struct MySQLTimeBag
 }
 
 #endif
-
-

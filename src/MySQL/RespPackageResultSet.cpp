@@ -1,4 +1,3 @@
-
 #include "RespPackageResultSet.h"
 #include <cassert>
 
@@ -19,5 +18,3 @@ RespPackageResultSet::RespPackageResultSet(
     int nullmaplength   = (columns.size() + 7 + 2) / 8;
     nullMap = reader.fixedLengthString(nullmaplength);
 }
-
-

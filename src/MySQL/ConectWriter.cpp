@@ -1,4 +1,3 @@
-
 #include "ConectWriter.h"
 #include "PackageStream.h"
 #include <stdexcept>
@@ -21,14 +20,14 @@ void ConectWriter::writeLengthEncodedInteger(unsigned long long value)
      *  Val >= 2^16 < 2^24      => 0Xfd + 3byte Value
      *  Val >= 2^24 < 2^64      => 0Xfe + 8byte Value
      */
-    static char const Mark2Byte = '\xFC';
-    static char const Mark3Byte = '\xFD';
-    static char const Mark8Byte = '\xFE';
+    static char const mark2Byte = '\xFC';
+    static char const mark3Byte = '\xFD';
+    static char const mark8Byte = '\xFE';
 
     if (value < 251)            {                                writeFixedLengthInteger<1>(value);}
-    else if (value <= 0xFFFF)   {   stream.write(&Mark2Byte, 1); writeFixedLengthInteger<2>(value);}
-    else if (value <= 0xFFFFFF) {   stream.write(&Mark3Byte, 1); writeFixedLengthInteger<3>(value);}
-    else                        {   stream.write(&Mark8Byte, 1); writeFixedLengthInteger<8>(value);}
+    else if (value <= 0xFFFF)   {   stream.write(&mark2Byte, 1); writeFixedLengthInteger<2>(value);}
+    else if (value <= 0xFFFFFF) {   stream.write(&mark3Byte, 1); writeFixedLengthInteger<3>(value);}
+    else                        {   stream.write(&mark8Byte, 1); writeFixedLengthInteger<8>(value);}
 }
 
 void ConectWriter::writeFixedLengthString(std::string const& value, std::size_t size)
@@ -100,4 +99,3 @@ template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsign
 template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long long);
 
 #endif
-

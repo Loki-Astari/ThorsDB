@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
 
@@ -46,4 +45,3 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
 #endif
 
 #endif
-

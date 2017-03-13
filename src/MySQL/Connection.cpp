@@ -1,4 +1,3 @@
-
 #include "Connection.h"
 #include "RespPackageHandShake.h"
 #include "RespPackageAuthSwitchRequest.h"
@@ -117,4 +116,3 @@ std::unique_ptr<Detail::RespPackageHandShake> ConectReader::recvMessage<Detail::
 (ConectReader::OKMap const&, bool);
 
 #endif
-

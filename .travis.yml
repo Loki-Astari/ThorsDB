@@ -3,6 +3,7 @@ git:
 language: cpp
 os:
     - linux
+futureos:
     - osx
 compiler:
     - gcc
@@ -28,12 +29,13 @@ before_install:
 # - if [ "$TRAVIS_OS_NAME" == "linux" ];  then sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password password testPassword';sudo debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password testPassword';sudo apt-get install -qq mysql-server;fi
 # - if [ "$TRAVIS_OS_NAME" == "osx" ];    then brew install mysql;fi
 # - if [ "$TRAVIS_OS_NAME" == "osx" ];    then mysql.server start;fi
+    - sudo apt-get install libboost-all-dev
     - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
-    - cat src/MySQL/test/data/init.sql | mysql --user=root --password=testPassword
+    - cat src/MySQL/test/data/init.sql | mysql --force --user=root --password=testPassword
 install:
-    - ./configure
+    - ./configure --with-thor-build-on-travis
 script:
-    - make 
+    - export PATH=${PATH}:$(pwd)/build/bin;make 
 after_success:
     - ./uploadcodecovrage
 branches:

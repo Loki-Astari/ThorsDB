@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_SQL_STATEMENT_H
 #define THORS_ANVIL_SQL_STATEMENT_H
 
@@ -188,12 +187,12 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
     Cursor cursor = statementProxy->execute();
     try
     {
-        while(cursor)
+        while (cursor)
         {
             cursor.activate<false, CBTraits>(cb);
         }
     }
-    catch(...)
+    catch (...)
     {
         statementProxy->abort();
         throw;
@@ -213,12 +212,12 @@ inline void Statement::execute(F cb)
     Cursor cursor = statementProxy->execute();
     try
     {
-        while(cursor)
+        while (cursor)
         {
             cursor.activate<false, CBTraits>(cb);
         }
     }
-    catch(...)
+    catch (...)
     {
         statementProxy->abort();
         throw;
@@ -233,5 +232,3 @@ inline void Statement::execute(F cb)
 #endif
 
 #endif
-
-

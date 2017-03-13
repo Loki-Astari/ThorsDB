@@ -1,4 +1,3 @@
-
 #ifndef THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 #define THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 
@@ -160,7 +159,7 @@ T getBitField(ConectReader& p)
     char const* valuePtr    = bitField.data();
     T           result      = 0;
     char*       resultPtr   = reinterpret_cast<char*>(&result);
-    for(std::size_t loop=0;loop < sizeof(signed long) && loop < bitField.size(); ++loop)
+    for (std::size_t loop=0;loop < sizeof(signed long) && loop < bitField.size(); ++loop)
     {
         resultPtr[loop] = valuePtr[loop];
     }
@@ -468,4 +467,3 @@ Unknown format on stream
 }
 
 #endif
-

@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_READER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_READER_H
 
@@ -103,4 +102,3 @@ class ConectReader
 #endif
 
 #endif
-

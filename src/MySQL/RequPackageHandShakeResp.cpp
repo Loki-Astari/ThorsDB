@@ -1,4 +1,3 @@
-
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageHandShake.h"
 #include "ThorMySQL.h"
@@ -61,7 +60,7 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
         ThorSHADigestStore  extendedHash;
         thorSHA1(extendedHash, extendedAuth);
 
-        for(int loop=0;loop < SHA_DIGEST_LENGTH;++loop)
+        for (int loop=0;loop < SHA_DIGEST_LENGTH;++loop)
         {
             extendedHash[loop] = extendedHash[loop] ^ stage1[loop];
         }
@@ -134,16 +133,15 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
     if (localCap & CLIENT_CONNECT_ATTRS)
     {
         std::size_t size = 0;
-        for(auto const& loop: options)
+        for (auto const& loop: options)
         {
             size    += loop.first.size() + loop.second.size();
         }
         writer.writeLengthEncodedInteger(size);
-        for(auto const& loop: options)
+        for (auto const& loop: options)
         {
             writer.writeLengthEncodedString(loop.first);
             writer.writeLengthEncodedString(loop.second);
         }
     }
 }
-

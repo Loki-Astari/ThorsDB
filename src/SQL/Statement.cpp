@@ -1,4 +1,3 @@
-
 #include "Statement.h"
 #include "Connection.h"
 
@@ -38,4 +37,3 @@ template void ThorsAnvil::SQL::Cursor::activate<true,  std::function<void (int, 
 
 template void ThorsAnvil::SQL::BindArgs<int>::bindTo(ThorsAnvil::SQL::StatementProxy&) const;
 #endif
-

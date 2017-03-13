@@ -1,4 +1,3 @@
-
 #ifndef THORS_ANVIL_SQL_CONNECTION_H
 #define THORS_ANVIL_SQL_CONNECTION_H
 
@@ -69,5 +68,3 @@ class ConnectionCreatorRegister
 }
 
 #endif
-
-
