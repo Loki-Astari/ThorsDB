@@ -15,7 +15,9 @@ CREATE TABLE People ( ID  INTEGER, Name VARCHAR(64), Age  SMALLINT, Sex  CHAR(1)
 INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (14, "Tom Smith", 32, 'M', 56.34);
 INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (38, "Mary Twit", 29, 'F', 34.45678);
 
-
+-- See test/TableIntTest.cpp
+--      Add tests to this file for integers.
+--      Add immutable test data below
 CREATE TABLE IntTypes(
      ID  INTEGER
     ,B0  BIT(4)                 # 4  bit
@@ -62,21 +64,23 @@ INSERT INTO IntTypes(ID,
             255, 65535, 16777215, 4294967295, 4294967295, 18446744073709551615,
             127, 32767, 8388607, 2147483647, 2147483647, 9223372036854775807);
 
+-- See test/TableRealTest.cpp
+--      Add tests to this file for integers.
+--      Add immutable test data below
 CREATE TABLE RealTypes(
      ID  INTEGER
 
-    ,R1  REAL        UNSIGNED
-    ,R2  DOUBLE      UNSIGNED
-    ,R3  FLOAT       UNSIGNED
-    ,R4  REAL
-    ,R5  DOUBLE
-    ,R6  FLOAT
+    ,R1  DOUBLE
+    ,R2  FLOAT
 
-    ,D1  DECIMAL     UNSIGNED
-    ,D2  NUMERIC     UNSIGNED
-    ,D3  DECIMAL
-    ,D4  NUMERIC);
+    ,D1  DECIMAL
+    ,D2  NUMERIC);
 
+INSERT INTO RealTypes(ID, R1, R2, D1, D2) VALUES(1, 10, 11, 12, 13);
+
+-- See test/TableTimeTest.cpp
+--      Add tests to this file for integers.
+--      Add immutable test data below
 CREATE TABLE TimeStampTypes(
      ID  INTEGER
 
@@ -86,6 +90,9 @@ CREATE TABLE TimeStampTypes(
     ,ST4  DATETIME
     ,ST5  YEAR);
 
+-- See test/TableBlobTest.cpp
+--      Add tests to this file for integers.
+--      Add immutable test data below
 CREATE TABLE BinaryTypes(
      ID  INTEGER
 
@@ -96,13 +103,19 @@ CREATE TABLE BinaryTypes(
     ,B5  MEDIUMBLOB
     ,B6  LONGBLOB);
 
+-- See test/TableStringTest.cpp
+--      Add tests to this file for integers.
+--      Add immutable test data below
 CREATE TABLE StringTypes(
      ID  INTEGER
 
-    ,S1  CHAR
+    ,S1  CHAR(1)
     ,S2  VARCHAR(32)
     ,S3  TINYTEXT
     ,S4  TEXT
     ,S5  MEDIUMTEXT
     ,S6  LONGTEXT);
+
+INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
+ VALUES(1, 'x', "A normal Var char", "Tiny Text", "This is normal text", "This is some medium length test", "This is some long text");
 
