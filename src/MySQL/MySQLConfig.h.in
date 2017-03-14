@@ -82,6 +82,9 @@
 #undef THOR_TESTING_MYSQL_USER
 
 /* Disable tests that use timegm() */
+#undef THOR_USE_MOD_TESTS_FLASE
+
+/* Disable tests that use timegm() */
 #undef THOR_USE_TIMEGM_FLASE
 
 /* Version number of package */

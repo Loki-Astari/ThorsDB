@@ -715,6 +715,9 @@ build_vendor
 build_cpu
 build
 LIBTOOL
+awk
+wc
+echo
 crypto_ROOT_INCDIR
 crypto_ROOT_LIBDIR
 EGREP
@@ -780,6 +783,7 @@ with_thor_build_on_travis
 enable_vera
 with_cryptoroot
 with_timegm
+with_modtests
 enable_shared
 enable_static
 with_pic
@@ -1451,6 +1455,8 @@ Optional Packages:
                           Directory of CRYPTO_ROOT
 
   --without-timegm        Disables tests that use the timegm functions
+
+  --without-modtests      Disables tests that check that modifying the DB work
 
   --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
                           both]
@@ -4652,6 +4658,9 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
+
+
+
 # Check whether --with-cryptoroot was given.
 if test "${with_cryptoroot+set}" = set; then :
   withval=$with_cryptoroot;
@@ -4753,8 +4762,9 @@ else
 
 Error: Could not find \`timegm()\` function on your system.
 
-    timegm() is only used for testing. If you are just building this package
-    for usage and not development then you can safely disable this test.
+    timegm() is only used for testing.
+    If you are just building this package for usage (and trust that test will work) then you can safely disable this test.
+    If you are using modifying this package you will need to fix this because you need to run all the tests before submitting a pull request.
 
     To disable these test by specifying --without-timegm
 
@@ -4770,6 +4780,317 @@ else
 
 
 $as_echo "#define THOR_USE_TIMEGM_FLASE 1" >>confdefs.h
+
+
+fi
+
+
+
+# Check whether --with-modtests was given.
+if test "${with_modtests+set}" = set; then :
+  withval=$with_modtests;
+fi
+
+
+    if test "x$with_modtests" != xno; then :
+
+        thor_clt=good
+        if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}", so it can be a program name with args.
+set dummy ${ac_tool_prefix}; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_echo+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$echo"; then
+  ac_cv_prog_echo="$echo" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_echo="${ac_tool_prefix}"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+echo=$ac_cv_prog_echo
+if test -n "$echo"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $echo" >&5
+$as_echo "$echo" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_echo"; then
+  ac_ct_echo=$echo
+  # Extract the first word of "", so it can be a program name with args.
+set dummy ; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_echo+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_echo"; then
+  ac_cv_prog_ac_ct_echo="$ac_ct_echo" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_echo=""
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_echo=$ac_cv_prog_ac_ct_echo
+if test -n "$ac_ct_echo"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_echo" >&5
+$as_echo "$ac_ct_echo" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_echo" = x; then
+    echo="thor_clt=bad"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    echo=$ac_ct_echo
+  fi
+else
+  echo="$ac_cv_prog_echo"
+fi
+
+        if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}", so it can be a program name with args.
+set dummy ${ac_tool_prefix}; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_wc+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$wc"; then
+  ac_cv_prog_wc="$wc" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_wc="${ac_tool_prefix}"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+wc=$ac_cv_prog_wc
+if test -n "$wc"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $wc" >&5
+$as_echo "$wc" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_wc"; then
+  ac_ct_wc=$wc
+  # Extract the first word of "", so it can be a program name with args.
+set dummy ; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_wc+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_wc"; then
+  ac_cv_prog_ac_ct_wc="$ac_ct_wc" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_wc=""
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_wc=$ac_cv_prog_ac_ct_wc
+if test -n "$ac_ct_wc"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_wc" >&5
+$as_echo "$ac_ct_wc" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_wc" = x; then
+    wc="thor_clt=bad"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    wc=$ac_ct_wc
+  fi
+else
+  wc="$ac_cv_prog_wc"
+fi
+
+        if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}", so it can be a program name with args.
+set dummy ${ac_tool_prefix}; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_awk+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$awk"; then
+  ac_cv_prog_awk="$awk" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_awk="${ac_tool_prefix}"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+awk=$ac_cv_prog_awk
+if test -n "$awk"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $awk" >&5
+$as_echo "$awk" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_awk"; then
+  ac_ct_awk=$awk
+  # Extract the first word of "", so it can be a program name with args.
+set dummy ; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_ac_ct_awk+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$ac_ct_awk"; then
+  ac_cv_prog_ac_ct_awk="$ac_ct_awk" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_awk=""
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+ac_ct_awk=$ac_cv_prog_ac_ct_awk
+if test -n "$ac_ct_awk"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_ct_awk" >&5
+$as_echo "$ac_ct_awk" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_ct_awk" = x; then
+    awk="thor_clt=bad"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    awk=$ac_ct_awk
+  fi
+else
+  awk="$ac_cv_prog_awk"
+fi
+
+        if test "x$thor_clt" == xbad; then :
+
+            as_fn_error $? "
+
+Error: Could not find one or more of: echo wc awk
+
+    echo/awk/ws are only used for testing.
+    If you are just building this package for usage (and trust that test will work) then you can safely disable this test.
+    If you are using modifying this package you will need to fix this because you need to run all the tests before submitting a pull request.
+
+    To disable these test by specifying --without-modtests
+
+            " "$LINENO" 5
+
+fi
+
+else
+
+
+$as_echo "#define THOR_USE_MOD_TESTS_FLASE 1" >>confdefs.h
 
 
 fi
