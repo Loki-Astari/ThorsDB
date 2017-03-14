@@ -1,6 +1,78 @@
 #ifndef THORS_ANVIL_SQL_STATEMENT_H
 #define THORS_ANVIL_SQL_STATEMENT_H
 
+/*
+ *      ThorsAnvil::SQL::Statement  Represent an SQL statement.
+ *                                  It is a simple PIMPLE class that uses a StatementProxy as the implementation.
+ *
+ *                                  It has one function execute() (in two veriations) which executes the SQL statement.
+ *
+ *                                  Modification Statements:
+ *                                  ========================
+ *                                  If your SQL statement is INSERT/UPDATE or DELETE.
+ *                                  Then you should use `execute()` or `execute(<BindArguments>)`. Using a version where
+ *                                  a lambda is passed as an argument will generate a std::runtime_error exception.
+ *
+ *                                  After a statement has been executes you can use `rowsAffected()` and `lastInsertID()
+ *                                  to get basic information about the query.
+ *
+ *
+ *                                  Query Statements:
+ *                                  =================
+ *                                  If your statement is SELECT.
+ *                                  Then you should use `execute(<lambda>)` or `execute(<BindArguments>, <lambda>)`. Using
+ *                                  a version where a lambda is NOT passed will generate a std::runtime_error exception.
+ *
+ *                                  When the select is execute the lambda function will be executed for each row retrieved
+ *                                  from the DB.
+ *
+ *                                  Argument Binding:
+ *                                  =================
+ *                                  Each '?' in the SQL statement is a bind point. You MUST provide an argument for each
+ *                                  bind point in the statement. Failure to do so will generate a std::logic_error exception.
+ *
+ *                                  Lambda Arguments:
+ *                                  =================
+ *                                  For each selected parameter the lambda must have a parameter of the correct type. The
+ *                                  order of the lambda parameters is the same as the order of the select parameter.
+ *                                  If the number of select parameters does not match the number of parameters in the
+ *                                  lambda an exception or the type of the values returned does not match the types of
+ *                                  parameters then std::logic_error will be generated.
+ *
+ *                                  Note: A '*' in the select parameter maps to one parameter for each column.
+ *
+ *      BindArgs:                   Used as an argument to execute to bind parameters to bind points.
+ *                                  See examples
+ *
+ *      UnixTimeStamp:              Used as a Bind type for Date/Time/DateTime/TimeStamp fields in a DB.
+ *                                  Basically to distinguish time objects from integer objects.
+ *
+ * Example:
+ *      Statement       select("SELECT * from People where Age>=?");
+ *      select.execute(Bind(25), [](std::string name, int age, char sex, float height) {
+ *          std::cout << "Found: " << name << " Details: " << age << " years old << " S:" << sex << " Height: " << height << "\n";
+ *      });
+ *
+ *      Statement       addPeople("INSERT INTO People(NAme, age, sex, height) VALUES(?, ?, ?, ?)");
+ *      addPeople.execute(Bind("Loki",  987, 'M', 2.34));
+ *      std::cout << "ID: " << addPeople.lastInsertID() << "\n";
+ *
+ *      addPeople.execute(Bind("Thor", 1003, 'M', 2.43));
+ *      std::cout << "ID: " << addPeople.lastInsertID() << "\n";
+ *
+ *
+ * Other Classes:
+ * ==============
+ *      Detail::ValidationTmpError:     Exception type that may be thrown.
+ *
+ *      Detail::Cursor:                 Used internally by statement to loop over all the rows retrieved by a select.
+ *
+ *      Detail::FunctionTraits:         Used to get lambda parameter types.
+ *
+ *      Lib::StatementProxy:            Used by libraries that implement statement objects.
+ *
+ */
+
 #include "SQLUtil.h"
 #include <memory>
 #include <vector>

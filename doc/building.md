@@ -7,7 +7,7 @@
 ````bash
     > git clone git@github.com:Loki-Astari/ThorsSQL.git
     > cd ThorsSQL
-    > ./configure --disable-binary
+    > ./configure
     > make
     > sudo make install
 ````
@@ -53,5 +53,4 @@ This library uses features from C++14 so you will need a compiler that supports 
 
 It has been tested on [travis-ci.org](https://travis-ci.org/Loki-Astari/ThorsSQL) using clang 3.5 and g++ 4.9 (on mac and ubuntu). Though clang 3.4 also supports C++14 its code coverage tool is very basic and the generic makefiles will fail when attempting to perform code coverage tests.
 
-The yaml serialization uses libyaml so you will need that installed locally. The configuration files attempt to detect in the default location. If it is not there detailed instructions of your options are provided.
 

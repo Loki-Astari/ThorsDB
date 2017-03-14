@@ -11,6 +11,7 @@ Connection::Connection(std::string const& connection,
                        std::string const& database,
                        Options const& options)
 {
+    // Parse a connection URI.
     std::size_t     schemaEnd   = connection.find(':');
     if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/')
     {
@@ -50,6 +51,7 @@ Connection::Connection(std::string const& connection,
               ));
     }
 
+    // Use the schema is used to pull a registered creator object.
     if (creator == getCreators().end())
     {
         throw std::logic_error(
@@ -58,6 +60,7 @@ Connection::Connection(std::string const& connection,
                          schema, " From: ", connection
               ));
     }
+    // Finally use the creator object to construct a ConnectionProxy.
     proxy   = creator->second(host, portNumber, username, password, database, options);
 }
 
