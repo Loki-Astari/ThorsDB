@@ -54,7 +54,40 @@ Error: Could not find libcrypto
     LDFLAGS="${ORIG_LDFLAGS}"
 ])
 
+AC_DEFUN([AX_THOR_USE_TIMEGM],
+[
+    AC_ARG_WITH(
+        [timegm],
+        [AS_HELP_STRING([--without-timegm], [Disables tests that use the timegm functions])]
+    )
+
+    AS_IF([test "x$with_timegm" != xno],
+    [
+        AC_CHECK_FUNCS(
+            [timegm],
+            [],
+            [
+                AC_MSG_ERROR([
+
+Error: Could not find `timegm()` function on your system.
+
+    timegm() is only used for testing. If you are just building this package
+    for usage and not development then you can safely disable this test.
+
+    To disable these test by specifying --without-timegm
+
+    PS: If you happen to know a valid alternative to timegm() that is POSIX standard I would be greatful for input.
+                ])
+            ]
+        )
+    ],
+    [
+        AC_DEFINE([THOR_USE_TIMEGM_FLASE], [1], [Disable tests that use timegm()])
+    ])
+])
+
 AX_THOR_FUNC_USE_CRYPTO
+AX_THOR_USE_TIMEGM
 
 LT_INIT
 
