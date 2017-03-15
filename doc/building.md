@@ -3,7 +3,7 @@
 ![ThorStream](../img/stream.jpg)
 
 
-#Building Instructions:
+# Building Instructions:
 ````bash
     > git clone git@github.com:Loki-Astari/ThorsSQL.git
     > cd ThorsSQL
@@ -15,11 +15,14 @@
 
 By default installation will be in `/usr/local/[include/lib]`. You can override this with the normal auto-tools defaults. Use `./configure --help` to get details.
 
-###What is installed:
+### What is installed:
 
 * /usr/local/include/ThorSQL/*
 * /usr/local/include/ThorMySQL/*
-* /use/local/lib/libThorMySQL14.so
+* /usr/local/lib/libThorSQL14.so
+* /usr/local/lib/libThorMySQL14.so
+* /usr/local/lib/libThorSQL14D.so
+* /usr/local/lib/libThorMySQL14D.so
 
 
 Note:
@@ -27,11 +30,11 @@ libThorMySQL14.so is build using -O3 and thus is fully optimized and debug symbo
 libThorMySQL14D.so is build using -g and is useful for debugging purposes.
 
 
-###What is Downloaded
+### What is Downloaded
 
-The configuration processes will download the generic makefiles (using git) from [ThorMaker](https://github.com/Loki-Astari/ThorMaker) which in turn will download and build google's gtest library that is used in running the unit tests.
+The configuration processes will download the generic makefiles (using git) from [ThorMaker](https://github.com/Loki-Astari/ThorMaker) which in turn will download and build google's gtest and vera++ library that is used in running the unit tests.
 
-##Configure options
+## Configure options
 
 The test require a DB connection. By default the following are used:
 
@@ -47,7 +50,7 @@ All these options can be modified using config arguments.
     --with-TestMySQLPass=<Password>
     --with-TestMySQLDatabase=<DB>
 
-##Requirements
+## Requirements
 
 This library uses features from C++14 so you will need a compiler that supports this. The generic makefile also does code coverage tests so your compiler will also need to support a code coverage tool that has an interface similar to gcov.
 

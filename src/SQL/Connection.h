@@ -5,25 +5,8 @@
  * ThorsAnvil::SQL::Connection      Represents a connection to a DB.
  *                                  It is used to initialize `Statement Objects`.
  *
- *                                  It is a simple PIMPLE object were the actual
- *                                  functionality is provided by a ConnectionProxy object.
- *
- *                                  The Connection class also acts as a factory class for
- *                                  creating ConnectionProxy objects. Each library that
- *                                  defines an implementation should also register a
- *                                  ConnectionCreator object with the Connector so that it
- *                                  can automatically create the ConnectionProxy from the URI.
- *
- *                                  The class ConnectionCreatorRegister is useful as a simple
- *                                  way to register ConnectionCreator objects. Each library
- *                                  should declare a single object of this type in the global
- *                                  scope. Its instantiation will automatically register the
- *                                  creator when the shared library is loaded.
- *
- * Example:
- *      Options    conectOptions;
- *      Connextion conect("mysql://<host>[:<port]", "<username>", "<password>", "<DB Name>", conectOptions);
- *
+ *                                  See: doc/usage.md for usage details
+ *                                  See: doc/internal.md for implementation details
  *
  * Other Classes:
  * ==============
@@ -49,7 +32,10 @@ namespace ThorsAnvil
             class ConnectionProxy
             {
                 public:
+                    // constructor is called with host/port/username/password/database/options
+                    // See ConnectionCreator below.
                     virtual ~ConnectionProxy()  = 0;
+                    // A function for creating DB specific instances of the StatementProxy objects.
                     virtual std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement) = 0;
             };
             template<typename T>
@@ -59,11 +45,11 @@ namespace ThorsAnvil
                     ConnectionCreatorRegister(std::string const& schema);
             };
 
-                using ConnectionCreator= std::function<std::unique_ptr<Lib::ConnectionProxy>(std::string const& host, int port,
-                                                                                             std::string const& username,
-                                                                                             std::string const& password,
-                                                                                             std::string const& database,
-                                                                                             Options const& options)>;
+            using ConnectionCreator= std::function<std::unique_ptr<Lib::ConnectionProxy>(std::string const& host, int port,
+                                                                                         std::string const& username,
+                                                                                         std::string const& password,
+                                                                                         std::string const& database,
+                                                                                         Options const& options)>;
         }
 
 class Statement;

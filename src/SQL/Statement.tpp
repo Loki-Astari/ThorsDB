@@ -61,7 +61,7 @@ inline void Detail::Cursor::activateWithArgs(F cb, A& arguments, std::index_sequ
         thorUnused(list);
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
-    catch (Detail::ValidationTmpError const&)
+    catch (Lib::ValidationTmpError const&)
     {
         // Drop a temporary error.
         // These are only thrown by subsystems if they know they can recover and do

@@ -2,72 +2,20 @@
 #define THORS_ANVIL_SQL_STATEMENT_H
 
 /*
- *      ThorsAnvil::SQL::Statement  Represent an SQL statement.
- *                                  It is a simple PIMPLE class that uses a StatementProxy as the implementation.
+ *      ThorsAnvil::SQL::Statement      Represent an SQL statement.
+ *      ThorsAnvil::SQL::BindArgs:      Used to bind arguments to a statement.
+ *      ThorsAnvil::SQL::UnixTimeStamp: Used as a Bind type for Date/Time/DateTime/TimeStamp fields in a DB.
  *
- *                                  It has one function execute() (in two veriations) which executes the SQL statement.
- *
- *                                  Modification Statements:
- *                                  ========================
- *                                  If your SQL statement is INSERT/UPDATE or DELETE.
- *                                  Then you should use `execute()` or `execute(<BindArguments>)`. Using a version where
- *                                  a lambda is passed as an argument will generate a std::runtime_error exception.
- *
- *                                  After a statement has been executes you can use `rowsAffected()` and `lastInsertID()
- *                                  to get basic information about the query.
- *
- *
- *                                  Query Statements:
- *                                  =================
- *                                  If your statement is SELECT.
- *                                  Then you should use `execute(<lambda>)` or `execute(<BindArguments>, <lambda>)`. Using
- *                                  a version where a lambda is NOT passed will generate a std::runtime_error exception.
- *
- *                                  When the select is execute the lambda function will be executed for each row retrieved
- *                                  from the DB.
- *
- *                                  Argument Binding:
- *                                  =================
- *                                  Each '?' in the SQL statement is a bind point. You MUST provide an argument for each
- *                                  bind point in the statement. Failure to do so will generate a std::logic_error exception.
- *
- *                                  Lambda Arguments:
- *                                  =================
- *                                  For each selected parameter the lambda must have a parameter of the correct type. The
- *                                  order of the lambda parameters is the same as the order of the select parameter.
- *                                  If the number of select parameters does not match the number of parameters in the
- *                                  lambda an exception or the type of the values returned does not match the types of
- *                                  parameters then std::logic_error will be generated.
- *
- *                                  Note: A '*' in the select parameter maps to one parameter for each column.
- *
- *      BindArgs:                   Used as an argument to execute to bind parameters to bind points.
- *                                  See examples
- *
- *      UnixTimeStamp:              Used as a Bind type for Date/Time/DateTime/TimeStamp fields in a DB.
- *                                  Basically to distinguish time objects from integer objects.
- *
- * Example:
- *      Statement       select("SELECT * from People where Age>=?");
- *      select.execute(Bind(25), [](std::string name, int age, char sex, float height) {
- *          std::cout << "Found: " << name << " Details: " << age << " years old << " S:" << sex << " Height: " << height << "\n";
- *      });
- *
- *      Statement       addPeople("INSERT INTO People(NAme, age, sex, height) VALUES(?, ?, ?, ?)");
- *      addPeople.execute(Bind("Loki",  987, 'M', 2.34));
- *      std::cout << "ID: " << addPeople.lastInsertID() << "\n";
- *
- *      addPeople.execute(Bind("Thor", 1003, 'M', 2.43));
- *      std::cout << "ID: " << addPeople.lastInsertID() << "\n";
- *
+ *                See: doc/usage.md for usage details
+ *                See: doc/internal.md for implementation details
  *
  * Other Classes:
  * ==============
- *      Detail::ValidationTmpError:     Exception type that may be thrown.
- *
  *      Detail::Cursor:                 Used internally by statement to loop over all the rows retrieved by a select.
  *
  *      Detail::FunctionTraits:         Used to get lambda parameter types.
+ *
+ *      Lib::ValidationTmpError:        Exception type that may be thrown.
  *
  *      Lib::StatementProxy:            Used by libraries that implement statement objects.
  *
@@ -156,14 +104,6 @@ BindArgs<Args...> Bind(Args const&... args)
 namespace Detail
 {
 
-    class ValidationTmpError: public std::runtime_error
-    {
-        public:
-            ValidationTmpError(std::string const& msg)
-                : std::runtime_error(msg)
-            {}
-    };
-
     class Cursor
     {
         Lib::StatementProxy&     statementProxy;
@@ -189,13 +129,25 @@ namespace Detail
 namespace Lib
 {
 
+    class ValidationTmpError: public std::runtime_error
+    {
+        public:
+            ValidationTmpError(std::string const& msg)
+                : std::runtime_error(msg)
+            {}
+    };
+
     class StatementProxy
     {
         public:
             virtual ~StatementProxy()
             {}
+            // abort called if an exception is thrown by the lambda provided to SELECT
+            // After abort returns the exception is re-thrown. So if an exception is
+            // generated during abort() the application will terminate.
             virtual void   abort()                              = 0;
 
+            // bind() is called for each parameter provided by ThorsAnvil::SQL::Bind()
             virtual void   bind(char)                           = 0;
             virtual void   bind(signed char)                    = 0;
             virtual void   bind(signed short)                   = 0;
@@ -220,14 +172,17 @@ namespace Lib
             // -----
 
             Detail::Cursor execute();
+            // After all the bind parameters have been bound with the above calls.
+            // This method is called to initiate the communication with the DB
             virtual void doExecute()                            = 0;
+
+            // Called from the Detail::Cursor object to see if there are more rows
+            // to be retrieved from the DB
             virtual bool more()                                 = 0;
 
-            // Status Info
-            virtual bool isSelect() const                       = 0;
-            virtual long rowsAffected() const                   = 0;
-            virtual long lastInsertID() const                   = 0;
-
+            // For each parameter in the lambda one of these functions is called
+            // to retrieve a value returned by the DB. They are called in the order
+            // of the parameters in the lambda
             virtual void   retrieve(char&)                      = 0;
             virtual void   retrieve(signed char&)               = 0;
             virtual void   retrieve(signed short&)              = 0;
@@ -248,6 +203,15 @@ namespace Lib
             virtual void   retrieve(std::vector<char>&)         = 0;
 
             virtual void   retrieve(UnixTimeStamp&)             = 0;
+
+
+            // Status Info
+            // These functions can be called to get information about
+            // the last call to execute() if this was a modification
+            // statement.
+            virtual bool isSelect() const                       = 0;
+            virtual long rowsAffected() const                   = 0;
+            virtual long lastInsertID() const                   = 0;
     };
 
 }

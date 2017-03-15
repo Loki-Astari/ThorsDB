@@ -9,8 +9,6 @@
 A C++ SQL library (not a wrapper for C)
 
 * [Objective](doc/objective.md)
-* [Simple Example](doc/example1.md)
-* [Bigger Example](doc/example2.md)
 * [Building](doc/building.md)
 * [Documentation Usage](doc/usage.md)
 * [Documentation Internal](doc/internal.md)
