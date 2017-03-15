@@ -77,7 +77,7 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
 {
     if (!hasMore)
     {
-        throw std::runtime_error(
+        throw std::domain_error(
                 errorMsg("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: ",
                          "No more data expected from server"
               ));
@@ -97,7 +97,7 @@ void PackageBufferMySQLDebugBuffer<T>::nextPacket()
 
     if (currentPacketSequenceID != actualSequenceID)
     {
-        throw std::runtime_error(
+        throw std::domain_error(
                 errorMsg("ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer::nextPacket: ",
                          "currentPacketSequenceID(", currentPacketSequenceID, ")",
                          " != actual sequence on input stream(",  actualSequenceID, ")"

@@ -45,7 +45,7 @@ class Connection
         void sendMessageInternal(Requ const& request, bool resetWriter);
 };
 
-class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
+class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
 {
     private:
         MySQLStream                                 stream;
@@ -59,10 +59,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
                                std::string const& password,
                                std::string const& database,
                                ThorsAnvil::SQL::Options const& options);
-        virtual std::unique_ptr<ThorsAnvil::SQL::StatementProxy> createStatementProxy(
-                                                                        std::string const& statement,
-                                                                        ThorsAnvil::SQL::StatementType /*type*/
-                                                                    ) override;
+        virtual std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
 };
 
     }

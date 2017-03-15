@@ -84,7 +84,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithTen)
     ASSERT_FALSE(mysqlBuffer.isEmpty());
     mysqlBuffer.read(dst, 0x0A);
     ASSERT_TRUE(mysqlBuffer.isEmpty());
-    ASSERT_THROW(mysqlBuffer.read(dst, 1), std::runtime_error);
+    ASSERT_THROW(mysqlBuffer.read(dst, 1), std::domain_error);
 }
 
 TEST(PackageBufferMySQLDebugBufferTest, writeZero)

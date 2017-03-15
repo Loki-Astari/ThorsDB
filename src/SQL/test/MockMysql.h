@@ -6,8 +6,7 @@
 #include "Statement.h"
 
 
-using ThorsAnvil::SQL::StatementProxy;
-using ThorsAnvil::SQL::StatementType;
+using ThorsAnvil::SQL::Lib::StatementProxy;
 using ThorsAnvil::SQL::UnixTimeStamp;
 
 template<typename T>
@@ -16,7 +15,7 @@ void getField(int& nextRow, int& nextField, T& value)
     switch(nextField)
     {
         case 0: value =     static_cast<T>(nextRow ? 15:32);        break;
-        case 1: throw std::runtime_error("Invalid Conversion");
+        case 1: throw std::domain_error("Invalid Conversion");
         case 2: value =     static_cast<T>(nextRow ? 32:29);        break;
         case 3: value =     static_cast<T>(nextRow ? 'M':'F');      break;
         case 4: value =     static_cast<T>(nextRow ? 34.9:33.543);  break;
@@ -30,7 +29,7 @@ void getField(int& nextRow, int& nextField, T& value)
 void getFieldString(int& nextRow, int& nextField, std::string& value)
 {
     if (nextField != 1) {
-        throw std::runtime_error("Invalid Conversion");
+        throw std::domain_error("Invalid Conversion");
     }
     value = nextRow ? "John Smith" : "Mandy Twit";
     ++nextField;
@@ -40,7 +39,7 @@ void getFieldString(int& nextRow, int& nextField, std::string& value)
     }
 }
 
-class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
+class MockMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
 {
     public:
         class MockMySQLStatement: public StatementProxy
@@ -115,7 +114,7 @@ class MockMySQLConnection: public ThorsAnvil::SQL::ConnectionProxy
         MockMySQLConnection(std::string const&, int, std::string const&, std::string const&, std::string const&, ThorsAnvil::SQL::Options const&)
         {
         }
-        virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type) override
+        virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement) override
         {
             bool isSelect = statement.find("SELECT") != std::string::npos;
             return std::unique_ptr<StatementProxy>(new MockMySQLStatement(isSelect));

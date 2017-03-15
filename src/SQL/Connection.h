@@ -28,7 +28,7 @@
  * Other Classes:
  * ==============
  *      Lib::ConnectionProxy:                 Used by libraries that implement connection class.
- *      ConnectionCreator:               Used by libraries that implement connection class.
+ *      Lib::ConnectionCreator:               Used by libraries that implement connection class.
  *      Lib::ConnectionCreatorRegister:       Used by libraries that implement connection class.
  */
 
@@ -42,31 +42,40 @@ namespace ThorsAnvil
 {
     namespace SQL
     {
+        namespace Lib
+        {
+            class StatementProxy;
+
+            class ConnectionProxy
+            {
+                public:
+                    virtual ~ConnectionProxy()  = 0;
+                    virtual std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement) = 0;
+            };
+            template<typename T>
+            class ConnectionCreatorRegister
+            {
+                public:
+                    ConnectionCreatorRegister(std::string const& schema);
+            };
+
+                using ConnectionCreator= std::function<std::unique_ptr<Lib::ConnectionProxy>(std::string const& host, int port,
+                                                                                             std::string const& username,
+                                                                                             std::string const& password,
+                                                                                             std::string const& database,
+                                                                                             Options const& options)>;
+        }
 
 class Statement;
-class StatementProxy;
-class ConnectionProxy
-{
-    public:
-        virtual ~ConnectionProxy()  = 0;
-        virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type) = 0;
-};
-
-inline ConnectionProxy::~ConnectionProxy() {}
-using ConnectionCreator= std::function<std::unique_ptr<ConnectionProxy>(std::string const& host, int port,
-                                                                        std::string const& username,
-                                                                        std::string const& password,
-                                                                        std::string const& database,
-                                                                        Options const& options)>;
 class Connection
 {
     private:
-        static std::map<std::string, ConnectionCreator>&    getCreators();
+        static std::map<std::string, Lib::ConnectionCreator>&    getCreators();
 
         friend class Statement;
-        std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement, StatementType type);
+        std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement);
 
-        std::unique_ptr<ConnectionProxy>  proxy;
+        std::unique_ptr<Lib::ConnectionProxy>  proxy;
     public:
         Connection(std::string const& connection,
                       std::string const& username,
@@ -74,26 +83,22 @@ class Connection
                       std::string const& database,
                       Options const& options = Options{});
 
-        static void registerConnectionType(std::string const& schema, ConnectionCreator creator);
+        static void registerConnectionType(std::string const& schema, Lib::ConnectionCreator creator);
 };
 
 template<typename T>
-class ConnectionCreatorRegister
+Lib::ConnectionCreatorRegister<T>::ConnectionCreatorRegister(std::string const& schema)
 {
-    public:
-        ConnectionCreatorRegister(std::string const& schema)
-        {
-            std::cerr << "Register: " << schema << "\n";
-            Connection::registerConnectionType(schema, [](std::string const& host, int port,
-                                                          std::string const& username,
-                                                          std::string const& password,
-                                                          std::string const& database,
-                                                          Options const& options)
-                    {
-                        return std::unique_ptr<ConnectionProxy>(new T(host, port, username, password, database, options));
-                    });
-        }
-};
+    std::cerr << "Register: " << schema << "\n";
+    Connection::registerConnectionType(schema, [](std::string const& host, int port,
+                                                  std::string const& username,
+                                                  std::string const& password,
+                                                  std::string const& database,
+                                                  Options const& options)
+            {
+                return std::unique_ptr<Lib::ConnectionProxy>(new T(host, port, username, password, database, options));
+            });
+}
 
     }
 }

@@ -3,7 +3,7 @@
 
 To add MySQL functionality you need this object:
 
-    ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
+    ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
 
 This is normally automatically added when you link with -lThorMySQL
 

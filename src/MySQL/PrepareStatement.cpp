@@ -335,7 +335,7 @@ void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
         // This causes this to unwind back to the SQL where it is caught.
         // The doExecute() will then be called where all the errors generated
         // during validation are checked and handeled in a single place.
-        throw SQL::ValidationTmpError("Too many parameters in callback function.");
+        throw SQL::Detail::ValidationTmpError("Too many parameters in callback function.");
     }
     std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
     position += len;
