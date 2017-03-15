@@ -10,6 +10,8 @@
  *
  */
 
+#ifndef THOR_USE_MOD_TESTS_FLASE
+
 class TablePeopleExtraInsertTest: public ::testing::Test
 {
 	protected:
@@ -70,4 +72,6 @@ TEST_F(TablePeopleExtraInsertTest, InsertTomHanksWithBind)
     SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (?, 'Tom Hanks', 67, 'M', 5.67)");
     statement.execute(SQL::Bind(15));
 }
+
+#endif
 

@@ -10,6 +10,7 @@
  *
  */
 
+#ifndef THOR_USE_MOD_TESTS_FLASE
 
 class TablePeopleExtraDeleteTest: public ::testing::Test
 {
@@ -77,4 +78,5 @@ TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanksWithBind)
     statement.execute(SQL::Bind(18));
 }
 
+#endif
 

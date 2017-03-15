@@ -54,7 +54,76 @@ Error: Could not find libcrypto
     LDFLAGS="${ORIG_LDFLAGS}"
 ])
 
+AC_DEFUN([AX_THOR_USE_TIMEGM],
+[
+    AC_ARG_WITH(
+        [timegm],
+        [AS_HELP_STRING([--without-timegm], [Disables tests that use the timegm functions])]
+    )
+
+    AS_IF([test "x$with_timegm" != xno],
+    [
+        AC_CHECK_FUNCS(
+            [timegm],
+            [],
+            [
+                AC_MSG_ERROR([
+
+Error: Could not find `timegm()` function on your system.
+
+    timegm() is only used for testing.
+    If you are just building this package for usage (and trust that test will work) then you can safely disable this test.
+    If you are using modifying this package you will need to fix this because you need to run all the tests before submitting a pull request.
+
+    To disable these test by specifying --without-timegm
+
+    PS: If you happen to know a valid alternative to timegm() that is POSIX standard I would be greatful for input.
+                ])
+            ]
+        )
+    ],
+    [
+        AC_DEFINE([THOR_USE_TIMEGM_FLASE], [1], [Disable tests that use timegm()])
+    ])
+])
+
+AC_DEFUN([AX_THOR_USE_MODTEST],
+[
+    AC_ARG_WITH(
+        [modtests],
+        [AS_HELP_STRING([--without-modtests], [Disables tests that check that modifying the DB work])]
+    )
+
+    AS_IF([test "x$with_modtests" != xno],
+    [
+        thor_clt=good
+        AC_CHECK_TOOL([echo], [], [thor_clt=bad])
+        AC_CHECK_TOOL([wc],   [], [thor_clt=bad])
+        AC_CHECK_TOOL([awk],  [], [thor_clt=bad])
+        AS_IF([test "x$thor_clt" == xbad],
+        [
+            AC_MSG_ERROR([
+
+Error: Could not find one or more of: echo wc awk
+
+    echo/awk/ws are only used for testing.
+    If you are just building this package for usage (and trust that test will work) then you can safely disable this test.
+    If you are using modifying this package you will need to fix this because you need to run all the tests before submitting a pull request.
+
+    To disable these test by specifying --without-modtests
+
+            ])
+        ])
+    ],
+    [
+        AC_DEFINE([THOR_USE_MOD_TESTS_FLASE], [1], [Disable tests that use timegm()])
+    ])
+])
+
+
 AX_THOR_FUNC_USE_CRYPTO
+AX_THOR_USE_TIMEGM
+AX_THOR_USE_MODTEST
 
 LT_INIT
 
