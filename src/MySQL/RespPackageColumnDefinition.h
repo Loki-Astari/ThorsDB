@@ -4,17 +4,21 @@
 // MySQL documentation
 // https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-Protocol::ColumnDefinition
 
-#include "ConectReader.h"
 #include "ThorMySQL.h"
 #include "TypeReadWrite.h"
 #include <string>
 #include <vector>
+#include <ostream>
 #include <iomanip>
+#include <stdexcept>
+#include <cstddef>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
+
+class ConectReader;
 
 struct RespPackageColumnDefinition
 {

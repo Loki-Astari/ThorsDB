@@ -2,14 +2,15 @@
 #define THORS_ANVIL_MYSQL_STATEMENT_H
 
 #include "ThorSQL/Statement.h"
+#include <string>
 #include <vector>
+#include <cstddef>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
 
-class Connection;
 class Statement: public SQL::Lib::StatementProxy
 {
     public:

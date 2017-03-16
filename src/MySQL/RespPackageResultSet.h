@@ -4,8 +4,11 @@
 #include "RespPackage.h"
 #include "RespPackageColumnDefinition.h"
 #include "TypeReadWrite.h"
-#include "ThorSQL/Statement.h"
+#include <ostream>
 #include <vector>
+#include <string>
+#include <cstddef>
+#include <stdexcept>
 
 namespace ThorsAnvil
 {
@@ -22,6 +25,8 @@ template<typename T> inline T readNullParameter()
 
 template<> inline std::string readNullParameter<std::string>()                                 {return "";}
 template<> inline int         readNullParameter<int>()                                         {return 0;}
+
+class ConectReader;
 
 class RespPackageResultSet: public RespPackage
 {

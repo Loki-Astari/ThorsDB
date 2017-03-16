@@ -1,6 +1,6 @@
+#include "ThorMySQL.h"
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageHandShake.h"
-#include "ThorMySQL.h"
 #include "ThorCryptWrapper.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -145,4 +145,24 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
             writer.writeLengthEncodedString(loop.second);
         }
     }
+}
+
+std::ostream& RequPackageHandShakeResponse::print(std::ostream& s) const
+{
+    std::stringstream authRespDecoded;
+    for (char x: authResponse)
+    {   authRespDecoded << "0x" << std::hex << static_cast<unsigned int>(static_cast<unsigned char>(x)) << " ";
+    }
+    std::stringstream keyValDecoded;
+    for (auto const& val: options)
+    {   keyValDecoded << "KV(" << val.first << " => " << val.second << ") ";
+    }
+
+    return s << "HandshakeResponsePackage: "
+             << "username(" << username << ") "
+             << "authResponse(" << authRespDecoded.str() << ") "
+             << "options(" << keyValDecoded.str() << ") "
+             << "database(" << database << ") "
+             << "authPluginName(" << authPluginName << ") "
+             << "capabilities(" << capabilities << ") ";
 }

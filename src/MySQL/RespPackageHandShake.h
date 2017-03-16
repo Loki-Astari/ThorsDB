@@ -2,7 +2,9 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 
 #include "RespPackage.h"
+#include <string>
 #include <sstream>
+#include <ostream>
 #include <iomanip>
 
 namespace ThorsAnvil

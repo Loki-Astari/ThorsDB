@@ -1,10 +1,11 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
 
-#include "RespPackage.h"
 #include "ConectReader.h"
-#include <cassert>
+#include "RespPackage.h"
+#include <ostream>
 #include <iomanip>
+#include <cassert>
 
 namespace ThorsAnvil
 {

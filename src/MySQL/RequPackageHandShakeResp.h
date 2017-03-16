@@ -3,7 +3,8 @@
 
 #include "RequPackage.h"
 #include "ThorSQL/SQLUtil.h"
-#include <sstream>
+#include <string>
+#include <ostream>
 
 namespace ThorsAnvil
 {
@@ -12,6 +13,8 @@ namespace ThorsAnvil
 
 using Options=SQL::Options;
 class RespPackageHandShake;
+class ConectWriter;
+
 class RequPackageHandShakeResponse: public RequPackage
 {
     std::string const& username;
@@ -31,26 +34,6 @@ class RequPackageHandShakeResponse: public RequPackage
         virtual  std::ostream& print(std::ostream& s)   const override;
         virtual  void build(ConectWriter& writer)       const override;
 };
-
-inline std::ostream& RequPackageHandShakeResponse::print(std::ostream& s) const
-{
-    std::stringstream authRespDecoded;
-    for (char x: authResponse)
-    {   authRespDecoded << "0x" << std::hex << static_cast<unsigned int>(static_cast<unsigned char>(x)) << " ";
-    }
-    std::stringstream keyValDecoded;
-    for (auto const& val: options)
-    {   keyValDecoded << "KV(" << val.first << " => " << val.second << ") ";
-    }
-
-    return s << "HandshakeResponsePackage: "
-             << "username(" << username << ") "
-             << "authResponse(" << authRespDecoded.str() << ") "
-             << "options(" << keyValDecoded.str() << ") "
-             << "database(" << database << ") "
-             << "authPluginName(" << authPluginName << ") "
-             << "capabilities(" << capabilities << ") ";
-}
 
     }
 }

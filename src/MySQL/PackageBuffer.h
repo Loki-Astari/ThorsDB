@@ -3,6 +3,8 @@
 
 #include "PackageStream.h"
 #include <vector>
+#include <string>
+#include <cstddef>
 
 namespace ThorsAnvil
 {
@@ -10,7 +12,7 @@ namespace ThorsAnvil
     {
 
 template<typename T>
-class PackageBufferMySQLDebugBuffer: public PackageStream
+class PackageBuffer: public PackageStream
 {
     T&                  stream;
     std::size_t         readCurrentPacketSize;
@@ -26,7 +28,7 @@ class PackageBufferMySQLDebugBuffer: public PackageStream
         void writeStream(char const* buffer, std::size_t len);
 
     public:
-        PackageBufferMySQLDebugBuffer(T& stream, bool flushed = false);
+        PackageBuffer(T& stream, bool flushed = false);
         virtual void        read(char* buffer, std::size_t len)         override;
         virtual void        write(char const* buffer, std::size_t len)  override;
         virtual bool        isEmpty()                                   override;

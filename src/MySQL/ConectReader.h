@@ -1,11 +1,12 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_READER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_READER_H
 
-#include "MySQLUtil.h"
+#include "MySQLTimeBag.h"
 #include "ThorSQL/SQLUtil.h"
 #include <memory>
 #include <functional>
 #include <vector>
+#include <map>
 #include <string>
 #include <ctime>
 
@@ -23,15 +24,10 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class RespPackageEOF;
-
-class Package
-{
-    public:
-        virtual ~Package()  = 0;
-};
 class PackageStream;
 class RespPackage;
+class RespPackageEOF;
+
 class ConectReader
 {
     PackageStream&   stream;

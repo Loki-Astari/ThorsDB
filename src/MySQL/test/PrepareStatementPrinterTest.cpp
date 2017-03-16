@@ -9,6 +9,13 @@
 #include <gtest/gtest.h>
 #include "MySQLConfig.h"
 
+#include "RequPackagePrepare.h"
+#include "RequPackagePrepareClose.h"
+#include "RequPackagePrepareExecute.h"
+#include "RequPackagePrepareReset.h"
+#include "RespPackagePrepare.h"
+#include "RespPackagePrepareExecute.h"
+
 namespace ThorsAnvil
 {
     namespace MySQL
