@@ -10,8 +10,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 class RespPackageEOF: public RespPackage
 {
@@ -38,7 +36,6 @@ class RespPackageEOF: public RespPackage
         long    getStatusFlag() const {return statusFlag;}
 };
 
-        }
     }
 }
 

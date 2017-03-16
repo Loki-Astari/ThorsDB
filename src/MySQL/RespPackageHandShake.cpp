@@ -3,7 +3,7 @@
 #include "ThorMySQL.h"
 #include <cassert>
 
-using namespace ThorsAnvil::MySQL::Detail;
+using namespace ThorsAnvil::MySQL;
 
 RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     : RespPackage(reader, "HandShake")

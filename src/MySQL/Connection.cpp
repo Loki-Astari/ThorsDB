@@ -42,17 +42,17 @@ Connection::Connection(
     std::unique_ptr<RespPackage> initPack = recvMessage(
                                                 {{0x0A, [](int firstByte, ConectReader& reader
                                                           )
-                                                        {return new Detail::RespPackageHandShake(firstByte, reader);}
+                                                        {return new RespPackageHandShake(firstByte, reader);}
                                                  }
                                                 });
-    std::unique_ptr<Detail::RespPackageHandShake> handshake = downcastUniquePtr<Detail::RespPackageHandShake>(std::move(initPack));
+    std::unique_ptr<RespPackageHandShake> handshake = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
     packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
-    Detail::RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>            ok = sendHandshakeMessage<RespPackage>(handshakeresp,
+    RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
+    std::unique_ptr<RespPackage>    ok = sendHandshakeMessage<RespPackage>(handshakeresp,
         {{0xFE, [](int firstByte, ConectReader& reader)
-                {return new Detail::RespPackageAuthSwitchRequest(firstByte, reader);}
+                {return new RespPackageAuthSwitchRequest(firstByte, reader);}
          }
         });
 
@@ -91,7 +91,7 @@ std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& 
 #include "ConectReader.tpp"
 
 template
-std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, Detail::RequPackageHandShakeResponse>
-(Detail::RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
+std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageHandShakeResponse>
+(RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
 
 #endif

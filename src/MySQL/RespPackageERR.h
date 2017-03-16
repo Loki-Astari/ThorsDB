@@ -10,8 +10,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 class RespPackageERR: public RespPackage
 {
@@ -40,7 +38,6 @@ class RespPackageERR: public RespPackage
         }
 };
 
-        }
     }
 }
 

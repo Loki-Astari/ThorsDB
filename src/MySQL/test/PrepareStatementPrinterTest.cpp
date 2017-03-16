@@ -13,15 +13,12 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 extern void testPrintRequPackagePrepare(std::ostream& str);
 extern void testPrintRequPackagePrepareClose(std::ostream& str);
 extern void testPrintRequPackagePrepareExecute(std::ostream& str);
 extern void testPrintRequPackagePrepareReset(std::ostream& str);
 extern void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader);
 extern void testPrintRespPackagePrepareExecute(std::ostream& str, int firstBytePrep, int firstByteExec, ConectReader& reader);
-        }
     }
 }
 
@@ -30,26 +27,26 @@ extern void testPrintRespPackagePrepareExecute(std::ostream& str, int firstByteP
 TEST(PrepareStatementPrinterTest, RequPackagePreparePrint)
 {
     std::stringstream       output;
-    ThorsAnvil::MySQL::Detail::testPrintRequPackagePrepare(output);
+    ThorsAnvil::MySQL::testPrintRequPackagePrepare(output);
     ASSERT_NE(std::string::npos, output.str().find("RequPackagePrepare:"));
 
 }
 TEST(PrepareStatementPrinterTest, RequPackagePrepareClosePrint)
 {
     std::stringstream       output;
-    ThorsAnvil::MySQL::Detail::testPrintRequPackagePrepareClose(output);
+    ThorsAnvil::MySQL::testPrintRequPackagePrepareClose(output);
     ASSERT_NE(std::string::npos, output.str().find("RequPackagePrepareClose:"));
 }
 TEST(PrepareStatementPrinterTest, RequPackagePrepareExecutePrint)
 {
     std::stringstream       output;
-    ThorsAnvil::MySQL::Detail::testPrintRequPackagePrepareExecute(output);
+    ThorsAnvil::MySQL::testPrintRequPackagePrepareExecute(output);
     ASSERT_NE(std::string::npos, output.str().find("RequPackagePrepareExecute:"));
 }
 TEST(PrepareStatementPrinterTest, RequPackagePrepareResetPrint)
 {
     std::stringstream       output;
-    ThorsAnvil::MySQL::Detail::testPrintRequPackagePrepareReset(output);
+    ThorsAnvil::MySQL::testPrintRequPackagePrepareReset(output);
     ASSERT_NE(std::string::npos, output.str().find("RequPackagePrepareReset:"));
 }
 TEST(PrepareStatementPrinterTest, RespPackagePreparePrint)
@@ -132,7 +129,7 @@ TEST(PrepareStatementPrinterTest, RespPackagePreparePrint)
     ConectReader            reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
     std::stringstream       output;
-    ThorsAnvil::MySQL::Detail::testPrintRespPackagePrepare(output, 0x00, reader);
+    ThorsAnvil::MySQL::testPrintRespPackagePrepare(output, 0x00, reader);
     ASSERT_NE(std::string::npos, output.str().find("RespPackagePrepare:"));
     ASSERT_EQ(0xFF, reader.fixedLengthInteger<1>());
 }
@@ -248,7 +245,7 @@ TEST(PrepareStatementPrinterTest, RespPackagePrepareExecutePrint)
     ConectReader            reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
     std::stringstream       output;
-    ThorsAnvil::MySQL::Detail::testPrintRespPackagePrepareExecute(output, 0x00, 0x02, reader);
+    ThorsAnvil::MySQL::testPrintRespPackagePrepareExecute(output, 0x00, 0x02, reader);
     ASSERT_NE(std::string::npos, output.str().find("RespPackagePrepareExecute:"));
     ASSERT_EQ(0xFF, reader.fixedLengthInteger<1>());
 }

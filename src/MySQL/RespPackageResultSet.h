@@ -11,8 +11,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 template<typename T> inline T readNullParameter()
 {
@@ -148,7 +146,7 @@ class RespPackageResultSet: public RespPackage
                                                                      );
                                                             }
 };
-        }
+
     }
 }
 

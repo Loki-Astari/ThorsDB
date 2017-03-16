@@ -15,8 +15,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 struct RespPackageColumnDefinition
 {
@@ -169,7 +167,6 @@ struct RespPackageColumnDefinition
     }
 };
 
-        }
     }
 }
 

@@ -22,10 +22,8 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
-            class RespPackageEOF;
-        }
+
+class RespPackageEOF;
 
 class Package
 {
@@ -51,8 +49,8 @@ class ConectReader
         {}
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
-        std::unique_ptr<Detail::RespPackageEOF> recvMessageEOF();
-        std::unique_ptr<RespPackage>            recvMessage(OKMap const& actions = {});
+        std::unique_ptr<RespPackageEOF> recvMessageEOF();
+        std::unique_ptr<RespPackage>    recvMessage(OKMap const& actions = {});
     public:
 
 

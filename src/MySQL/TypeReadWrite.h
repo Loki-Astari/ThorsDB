@@ -12,8 +12,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 using Buffer = std::vector<char>;
 using SQL::UnixTimeStamp;
@@ -451,7 +449,6 @@ inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v
     return MYSQL_TYPE_DOUBLE;
 }
 
-        }
     }
 }
 

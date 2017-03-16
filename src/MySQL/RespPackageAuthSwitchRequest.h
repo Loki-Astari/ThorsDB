@@ -11,8 +11,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 class RespPackageAuthSwitchRequest: public RespPackage
 {
@@ -43,7 +41,6 @@ class RespPackageAuthSwitchRequest: public RespPackage
         }
 };
 
-        }
     }
 }
 

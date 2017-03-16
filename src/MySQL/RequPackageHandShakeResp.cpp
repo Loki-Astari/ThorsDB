@@ -3,7 +3,7 @@
 #include "ThorMySQL.h"
 #include "ThorCryptWrapper.h"
 
-using namespace ThorsAnvil::MySQL::Detail;
+using namespace ThorsAnvil::MySQL;
 
 RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& username,
                                                            std::string const& password,

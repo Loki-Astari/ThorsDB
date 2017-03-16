@@ -9,8 +9,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 using Options=SQL::Options;
 class RespPackageHandShake;
@@ -54,7 +52,6 @@ inline std::ostream& RequPackageHandShakeResponse::print(std::ostream& s) const
              << "capabilities(" << capabilities << ") ";
 }
 
-        }
     }
 }
 
