@@ -7,7 +7,7 @@
 #include "test/MockMysql.h"
 
 
-ThorsAnvil::SQL::ConnectionCreatorRegister<MockMySQLConnection>   registerFakeMysql("mysql");
+ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<MockMySQLConnection>   registerFakeMysql("mysql");
 
 TEST(ConnectionTest, Create)
 {
@@ -25,7 +25,7 @@ TEST(ConnectionTest, BadSchema)
     using ThorsAnvil::SQL::Connection;
     ASSERT_THROW(
     Connection     connection("badschema://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB),
-    std::logic_error
+    std::runtime_error
     );
 }
 

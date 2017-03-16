@@ -62,7 +62,7 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
         {
             return std::unique_ptr<RespPackage>(find->second(packageType, *this));
         }
-        throw std::runtime_error(
+        throw std::domain_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Unknown Result Type: ", packageType));
     }
 }
@@ -82,7 +82,7 @@ unsigned long long ConectReader::lengthEncodedIntegerUsingSize(unsigned char typ
         case 0xFA:
         case 0xFB:
         case 0xFF:
-            throw std::runtime_error(
+            throw std::domain_error(
                     errorMsg("ThorsAnvil::MySQL::ConectReader::lengthEncodedInteger: ", "Invalid length encoding: ", type));
         case 0xFC:  result  = fixedLengthInteger<2>(); break;
         case 0xFD:  result  = fixedLengthInteger<3>(); break;
@@ -160,7 +160,7 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
     long    size    = fixedLengthInteger<1>();
     if (size != 11 && size != 7 && size != 4 && size != 0)
     {
-        throw std::runtime_error(
+        throw std::domain_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::readDate: ", "Invalid Date Size", size, "\nExpecting: 11/7/4/0"));
     }
     if (size == 11 || size == 7 || size == 4)
@@ -202,7 +202,7 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     long    size    = fixedLengthInteger<1>();
     if (size != 12 && size != 8 && size != 0)
     {
-        throw std::runtime_error(
+        throw std::domain_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ", "Invalid Time Size: ", size, "\nExpecting 12/8/0"));
     }
     timeBag.type    = MySQLTimeBag::RelativePositive;
@@ -211,7 +211,7 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
         long    negativeTest    = fixedLengthInteger<1>();
         if (negativeTest < 0 || negativeTest > 1)
         {
-            throw std::runtime_error( errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ", "Invalid Negative Test"));
+            throw std::domain_error( errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ", "Invalid Negative Test"));
         }
         if (negativeTest == 1)
         {

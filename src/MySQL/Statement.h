@@ -10,7 +10,7 @@ namespace ThorsAnvil
     {
 
 class Connection;
-class Statement: public SQL::StatementProxy
+class Statement: public SQL::Lib::StatementProxy
 {
     public:
         Statement(std::string const& statement);

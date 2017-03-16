@@ -115,9 +115,9 @@ TEST(ConectReaderTest, lengthEncodedIntegerFail)
     MockStream          buffer(data, sizeof(data));
     ConectReader        reader(buffer);
 
-    ASSERT_THROW(reader.lengthEncodedInteger(), std::runtime_error);    // FA
-    ASSERT_THROW(reader.lengthEncodedInteger(), std::runtime_error);    // FB
-    ASSERT_THROW(reader.lengthEncodedInteger(), std::runtime_error);    // FC
+    ASSERT_THROW(reader.lengthEncodedInteger(), std::domain_error);    // FA
+    ASSERT_THROW(reader.lengthEncodedInteger(), std::domain_error);    // FB
+    ASSERT_THROW(reader.lengthEncodedInteger(), std::domain_error);    // FC
 }
 
 TEST(ConectReaderTest, fixedLengthString)
@@ -259,7 +259,7 @@ TEST(ConectReaderTest, readDateIntoTimeBagFail)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    ASSERT_THROW(reader.readDateIntoTimeBag(), std::runtime_error);
+    ASSERT_THROW(reader.readDateIntoTimeBag(), std::domain_error);
 }
 
 TEST(ConectReaderTest, readDate)
@@ -353,7 +353,7 @@ TEST(ConectReaderTest, readTimeIntoTimeBagFail)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    ASSERT_THROW(reader.readRelMicro(), std::runtime_error);
+    ASSERT_THROW(reader.readRelMicro(), std::domain_error);
 }
 TEST(ConectReaderTest, readTimeIntoTimeBagNegative)
 {
@@ -382,7 +382,7 @@ TEST(ConectReaderTest, readTimeIntoTimeBagNegativeFail)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    ASSERT_THROW(reader.readRelMicro(), std::runtime_error);
+    ASSERT_THROW(reader.readRelMicro(), std::domain_error);
 }
 
 TEST(ConectReaderTest, ThrowOnErrorMessage)

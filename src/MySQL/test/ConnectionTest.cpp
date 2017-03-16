@@ -10,7 +10,7 @@
 
 using namespace ThorsAnvil::MySQL;
 
-ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
+ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
 
 /*
  * Tests assume mysql is already up and running.

@@ -11,6 +11,7 @@ Connection::Connection(std::string const& connection,
                        std::string const& database,
                        Options const& options)
 {
+    // Parse a connection URI.
     std::size_t     schemaEnd   = connection.find(':');
     if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/')
     {
@@ -50,29 +51,34 @@ Connection::Connection(std::string const& connection,
               ));
     }
 
+    // Use the schema is used to pull a registered creator object.
     if (creator == getCreators().end())
     {
-        throw std::logic_error(
+        throw std::runtime_error(
                 errorMsg("ThorsAnvil::SQL::Connection::Conection: ",
                          "Schema for unregister DB type: ",
                          schema, " From: ", connection
               ));
     }
+    // Finally use the creator object to construct a ConnectionProxy.
     proxy   = creator->second(host, portNumber, username, password, database, options);
 }
 
-std::map<std::string, ConnectionCreator>& Connection::getCreators()
+std::map<std::string, Lib::ConnectionCreator>& Connection::getCreators()
 {
-    static std::map<std::string, ConnectionCreator> creators;
+    static std::map<std::string, Lib::ConnectionCreator> creators;
     return creators;
 }
-void Connection::registerConnectionType(std::string const& schema, ConnectionCreator creator)
+void Connection::registerConnectionType(std::string const& schema, Lib::ConnectionCreator creator)
 {
     getCreators().emplace(schema, creator);
 }
 
 
-std::unique_ptr<StatementProxy> Connection::createStatementProxy(std::string const& statement, StatementType type)
+std::unique_ptr<Lib::StatementProxy> Connection::createStatementProxy(std::string const& statement)
 {
-    return proxy->createStatementProxy(statement, type);
+    return proxy->createStatementProxy(statement);
 }
+
+Lib::ConnectionProxy::~ConnectionProxy()
+{}

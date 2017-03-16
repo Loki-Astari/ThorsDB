@@ -19,29 +19,15 @@ DefaultMySQLConnection::DefaultMySQLConnection(
     , writer(buffer)
     , connection(username, password, database, options, reader, writer)
 {}
-std::unique_ptr<ThorsAnvil::SQL::StatementProxy>
-DefaultMySQLConnection::createStatementProxy(std::string const& statement, ThorsAnvil::SQL::StatementType /*type*/)
+std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy>
+DefaultMySQLConnection::createStatementProxy(std::string const& statement)
 {
-    std::unique_ptr<ThorsAnvil::SQL::StatementProxy>  result;
+    std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy>  result;
     result.reset(new PrepareStatement(connection, statement));
-#if 0
-    if (type == ThorsAnvil::SQL::OneTime)
-    {
-        result.reset(new Statement(statement));
-    }
-    else if (type == Prepare)
-    {
-        result.reset(new PrepareStatement(statement));
-    }
-    else
-    {
-        throw std::runtime_error("Unknown Type for MySQL");
-    }
-#endif
     return result;
 }
 
-ThorsAnvil::SQL::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");
+ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");
 
 Connection::Connection(
                     std::string const& username,
@@ -72,11 +58,11 @@ Connection::Connection(
 
     if (!ok)
     {
-        throw std::runtime_error("Connection::Connection: Handshake failed: Unexpected Package");
+        throw std::domain_error("Connection::Connection: Handshake failed: Unexpected Package");
     }
     if (!(ok->isOK()))
     {
-        throw std::runtime_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*ok)));
+        throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*ok)));
     }
 }
 

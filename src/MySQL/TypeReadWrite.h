@@ -144,7 +144,7 @@ unsigned int writeParameterValue(ConectWriter&, Src const&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    throw std::runtime_error(
+    throw std::logic_error(
             errorMsg("ThorsAnvil::MySQL::writeParameterValue: ",
                      "Unknown conversion",
                      getErrorMessage<-1, Src>()
@@ -157,7 +157,7 @@ T getBitField(ConectReader& p)
     std::string bitField    = p.lengthEncodedString();
     if (bitField.size() > sizeof(T))
     {
-        throw std::runtime_error(
+        throw std::logic_error(
                 errorMsg("ThorsAnvil::MySQL::getBitField: Bitfield to large for destination\n",
                          "   From DB:     ", bitField.size(), " bytes\n",
                          "   Output Type: ", typeid(T).name(), "\n"));

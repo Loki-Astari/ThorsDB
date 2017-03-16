@@ -1,6 +1,26 @@
 #ifndef THORS_ANVIL_SQL_STATEMENT_H
 #define THORS_ANVIL_SQL_STATEMENT_H
 
+/*
+ *      ThorsAnvil::SQL::Statement      Represent an SQL statement.
+ *      ThorsAnvil::SQL::BindArgs:      Used to bind arguments to a statement.
+ *      ThorsAnvil::SQL::UnixTimeStamp: Used as a Bind type for Date/Time/DateTime/TimeStamp fields in a DB.
+ *
+ *                See: doc/usage.md for usage details
+ *                See: doc/internal.md for implementation details
+ *
+ * Other Classes:
+ * ==============
+ *      Detail::Cursor:                 Used internally by statement to loop over all the rows retrieved by a select.
+ *
+ *      Detail::FunctionTraits:         Used to get lambda parameter types.
+ *
+ *      Lib::ValidationTmpError:        Exception type that may be thrown.
+ *
+ *      Lib::StatementProxy:            Used by libraries that implement statement objects.
+ *
+ */
+
 #include "SQLUtil.h"
 #include <memory>
 #include <vector>
@@ -12,20 +32,26 @@ namespace ThorsAnvil
 {
     namespace SQL
     {
+        namespace Detail
+        {
+            class Cursor;
+        }
+        namespace Lib
+        {
+            class StatementProxy;
+        }
 
 class Connection;
-class StatementProxy;
-class Cursor;
 template<typename... Args>
 class BindArgs;
 
 class Statement
 {
     private:
-        std::unique_ptr<StatementProxy>    statementProxy;
-        bool                               modifyDone;
+        std::unique_ptr<Lib::StatementProxy>    statementProxy;
+        bool                                    modifyDone;
     public:
-        Statement(Connection& connect, std::string const& selectStatement, StatementType = ThorsAnvil::SQL::Prepare);
+        Statement(Connection& connect, std::string const& selectStatement);
         template<typename F, typename... R>
         void execute(BindArgs<R...> const& binds, F cb);
         template<typename F>
@@ -49,94 +75,6 @@ struct UnixTimeStamp
     bool operator!=(UnixTimeStamp const& rhs) const {return ! (this->operator==(rhs));}
 };
 
-class ValidationTmpError: public std::runtime_error
-{
-    public:
-        ValidationTmpError(std::string const& msg)
-            : std::runtime_error(msg)
-        {}
-};
-
-class StatementProxy
-{
-    public:
-        virtual ~StatementProxy()
-        {}
-        virtual void   abort()                              = 0;
-
-        virtual void   bind(char)                           = 0;
-        virtual void   bind(signed char)                    = 0;
-        virtual void   bind(signed short)                   = 0;
-        virtual void   bind(signed int)                     = 0;
-        virtual void   bind(signed long)                    = 0;
-        virtual void   bind(signed long long)               = 0;
-        virtual void   bind(unsigned char)                  = 0;
-        virtual void   bind(unsigned short)                 = 0;
-        virtual void   bind(unsigned int)                   = 0;
-        virtual void   bind(unsigned long)                  = 0;
-        virtual void   bind(unsigned long long)             = 0;
-
-        virtual void   bind(float)                          = 0;
-        virtual void   bind(double)                         = 0;
-        virtual void   bind(long double)                    = 0;
-
-        virtual void   bind(std::string const&)             = 0;
-        virtual void   bind(std::vector<char> const&)       = 0;
-
-        virtual void   bind(UnixTimeStamp const&)           = 0;
-
-        // -----
-
-        Cursor execute();
-        virtual void doExecute()                            = 0;
-        virtual bool more()                                 = 0;
-
-        // Status Info
-        virtual bool isSelect() const                       = 0;
-        virtual long rowsAffected() const                   = 0;
-        virtual long lastInsertID() const                   = 0;
-
-        virtual void   retrieve(char&)                      = 0;
-        virtual void   retrieve(signed char&)               = 0;
-        virtual void   retrieve(signed short&)              = 0;
-        virtual void   retrieve(signed int&)                = 0;
-        virtual void   retrieve(signed long&)               = 0;
-        virtual void   retrieve(signed long long&)          = 0;
-        virtual void   retrieve(unsigned char&)             = 0;
-        virtual void   retrieve(unsigned short&)            = 0;
-        virtual void   retrieve(unsigned int&)              = 0;
-        virtual void   retrieve(unsigned long&)             = 0;
-        virtual void   retrieve(unsigned long long&)        = 0;
-
-        virtual void   retrieve(float&)                     = 0;
-        virtual void   retrieve(double&)                    = 0;
-        virtual void   retrieve(long double&)               = 0;
-
-        virtual void   retrieve(std::string&)               = 0;
-        virtual void   retrieve(std::vector<char>&)         = 0;
-
-        virtual void   retrieve(UnixTimeStamp&)             = 0;
-};
-
-class Cursor
-{
-    StatementProxy&     statementProxy;
-    public:
-        explicit operator bool();
-        Cursor(StatementProxy& statementProxy);
-
-        template<bool ValidateOnly, typename F>
-        void activate(F cb);
-
-        template<bool ValidateOnly, typename R, typename... Args>
-        void activate_(std::function<R(Args...)> cb);
-
-        template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
-        void activateWithArgs(F func, A& arguments, std::index_sequence<ids...> const&);
-
-        template<typename V>
-        void retrieve(V& value);
-};
 
 template<typename... Args>
 class BindArgs
@@ -149,96 +87,133 @@ class BindArgs
             : arguments(args...)
         {}
 
-        void bindTo(StatementProxy& statementProxy) const;
+        void bindTo(Lib::StatementProxy& statementProxy) const;
     private:
         template<std::size_t... ids>
-        void bindArgsTo(StatementProxy& statementProxy, std::index_sequence<ids...>const&) const;
+        void bindArgsTo(Lib::StatementProxy& statementProxy, std::index_sequence<ids...>const&) const;
         template<std::size_t id>
-        void bindTheArgument(StatementProxy& statementProxy) const;
+        void bindTheArgument(Lib::StatementProxy& statementProxy) const;
 };
-
-// -- Bindings
 template<typename... Args>
 BindArgs<Args...> Bind(Args const&... args)
 {
     return BindArgs<Args...>(args...);
 }
 
-// -- Statement
 
-// Classes need to get the type of a lambda to
-// Coerce the correct function in Cursor to be
-// called.
 namespace Detail
 {
-    template<typename T>
-    struct FunctionTraits
-        : public FunctionTraits<decltype(&T::operator())>
-    {};
 
-    template <typename ClassType, typename ReturnType, typename... Args>
-    struct FunctionTraits<ReturnType(ClassType::*)(Args...) const>
+    class Cursor
     {
-        typedef std::function<ReturnType(Args...)>  FunctionType;
+        Lib::StatementProxy&     statementProxy;
+        public:
+            explicit operator bool();
+            Cursor(Lib::StatementProxy& statementProxy);
+
+            template<bool ValidateOnly, typename F>
+            void activate(F cb);
+
+            template<bool ValidateOnly, typename R, typename... Args>
+            void activate_(std::function<R(Args...)> cb);
+
+            template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
+            void activateWithArgs(F func, A& arguments, std::index_sequence<ids...> const&);
+
+            template<typename V>
+            void retrieve(V& value);
     };
+
 }
 
-// Thus in the subsequent on there is no call to `binds.bindTo()`
-template<typename F, typename... R>
-inline void Statement::execute(BindArgs<R...> const& binds, F cb)
+namespace Lib
 {
-    if (!statementProxy->isSelect())
+
+    class ValidationTmpError: public std::runtime_error
     {
-        throw std::logic_error("ThrosAnvil::SQL::Statement::execute: Passing callback function to non select");
-    }
+        public:
+            ValidationTmpError(std::string const& msg)
+                : std::runtime_error(msg)
+            {}
+    };
 
-    typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
-    // Call before calling execute.
-    // This gets the proxy to validate the conversion of the values returned
-    // by a select into the parameters used by the CB function. If it fails now
-    // we can do less tidy up work at the DB level.
-    Cursor validator(*statementProxy);
-    validator.activate<true, CBTraits>(cb);
-
-    binds.bindTo(*statementProxy);
-    Cursor cursor = statementProxy->execute();
-    try
+    class StatementProxy
     {
-        while (cursor)
-        {
-            cursor.activate<false, CBTraits>(cb);
-        }
-    }
-    catch (...)
-    {
-        statementProxy->abort();
-        throw;
-    }
-}
+        public:
+            virtual ~StatementProxy()
+            {}
+            // abort called if an exception is thrown by the lambda provided to SELECT
+            // After abort returns the exception is re-thrown. So if an exception is
+            // generated during abort() the application will terminate.
+            virtual void   abort()                              = 0;
 
-template<typename F>
-inline void Statement::execute(F cb)
-{
-    execute(BindArgs<>(), cb);
-}
+            // bind() is called for each parameter provided by ThorsAnvil::SQL::Bind()
+            virtual void   bind(char)                           = 0;
+            virtual void   bind(signed char)                    = 0;
+            virtual void   bind(signed short)                   = 0;
+            virtual void   bind(signed int)                     = 0;
+            virtual void   bind(signed long)                    = 0;
+            virtual void   bind(signed long long)               = 0;
+            virtual void   bind(unsigned char)                  = 0;
+            virtual void   bind(unsigned short)                 = 0;
+            virtual void   bind(unsigned int)                   = 0;
+            virtual void   bind(unsigned long)                  = 0;
+            virtual void   bind(unsigned long long)             = 0;
 
-template<typename... R>
-inline void Statement::execute(BindArgs<R...> const& binds)
-{
-    if (statementProxy->isSelect())
-    {
-        throw std::logic_error("ThrosAnvil::SQL::Statement::execute: Not passing callback to SELECT statement");
-    }
+            virtual void   bind(float)                          = 0;
+            virtual void   bind(double)                         = 0;
+            virtual void   bind(long double)                    = 0;
 
-    modifyDone = true;
-    binds.bindTo(*statementProxy);
-    statementProxy->execute();
-    return;
-}
+            virtual void   bind(std::string const&)             = 0;
+            virtual void   bind(std::vector<char> const&)       = 0;
 
-inline void Statement::execute()
-{
-    execute(BindArgs<>());
+            virtual void   bind(UnixTimeStamp const&)           = 0;
+
+            // -----
+
+            Detail::Cursor execute();
+            // After all the bind parameters have been bound with the above calls.
+            // This method is called to initiate the communication with the DB
+            virtual void doExecute()                            = 0;
+
+            // Called from the Detail::Cursor object to see if there are more rows
+            // to be retrieved from the DB
+            virtual bool more()                                 = 0;
+
+            // For each parameter in the lambda one of these functions is called
+            // to retrieve a value returned by the DB. They are called in the order
+            // of the parameters in the lambda
+            virtual void   retrieve(char&)                      = 0;
+            virtual void   retrieve(signed char&)               = 0;
+            virtual void   retrieve(signed short&)              = 0;
+            virtual void   retrieve(signed int&)                = 0;
+            virtual void   retrieve(signed long&)               = 0;
+            virtual void   retrieve(signed long long&)          = 0;
+            virtual void   retrieve(unsigned char&)             = 0;
+            virtual void   retrieve(unsigned short&)            = 0;
+            virtual void   retrieve(unsigned int&)              = 0;
+            virtual void   retrieve(unsigned long&)             = 0;
+            virtual void   retrieve(unsigned long long&)        = 0;
+
+            virtual void   retrieve(float&)                     = 0;
+            virtual void   retrieve(double&)                    = 0;
+            virtual void   retrieve(long double&)               = 0;
+
+            virtual void   retrieve(std::string&)               = 0;
+            virtual void   retrieve(std::vector<char>&)         = 0;
+
+            virtual void   retrieve(UnixTimeStamp&)             = 0;
+
+
+            // Status Info
+            // These functions can be called to get information about
+            // the last call to execute() if this was a modification
+            // statement.
+            virtual bool isSelect() const                       = 0;
+            virtual long rowsAffected() const                   = 0;
+            virtual long lastInsertID() const                   = 0;
+    };
+
 }
 
     }

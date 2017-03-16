@@ -2,39 +2,34 @@
 
 ![ThorStream](../img/stream.jpg)
 
-##Objective:
+## Objective:
 
 * Write a platform/DB neutral SQL library.
 * Do not wrap a C SQL library to achieve this (unless that is the only way).
 * Remove the difference between normal and prepared statements.
 * Remove the need for string escaping (C++ type system should cope with that).
-* Queries are async by default.
+* Queries are async by default. (not achieved yet)
 
-This library is still pre-alpha.  
+This library is Beta.
 
 
-###Example Usage:
+### Example Usage:
 
 This is what I am trying to achieve.
 
 ````c++
     using ThorsSQL = ThorsAnvil::SQL;
 
-    ThorsSQL::Connection    mysql("host", "username", "password");
-    ThorsSQL::Statement     bigEarnerStat(mysql, ThorsSQL::OneTime, 
-                                          "SELECT ID, Name, Salary FROM Employee WHERE Salary > %");
+    ThorsSQL::Connection    mysql("mysql:://host", "username", "password");
+    ThorsSQL::Statement     bigEarnerStat(mysql, "SELECT ID, Name, Salary FROM Employee WHERE Salary > ?");
 
     // Bind variables.
-    // Call function for every row returned.
-    bigEarnerStat.execute(1000000, // parameter bound to % in statement.
+    bigEarnerStat.execute(ThorsSQL::Bind(1000000),          // parameter bound to ? in statement.
+
         // Function executed for each row returned.
-        // Parameters are matched against the SELECT in the statement.
         [](u64 id, std::string const& name, int salary){
-            std::cout << name << " is a fat cat earning $" << salary/100 << "." << salary%100 << "\n";
-        },
-        // Function exectured if the server reports an error.
-        [](int errorID, std::string const& message) {
-            std::cout << "Error: " << errorID << "  Details: " << message << "\n";
+            // Note: Parameters are matched against the SELECT in the statement.
+            std::cout << name << " is a fat cat earning $" << (salary / 100) << "." << (salary % 100) << "\n";
         }
     );
 ````

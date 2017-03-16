@@ -16,7 +16,7 @@ namespace ThorsAnvil
 
 template<typename T> inline T readNullParameter()
 {
-    throw std::runtime_error(
+    throw std::logic_error(
             errorMsg("ThorsAnvil::MySQL::readNullParameter: ",
                      "Undefined for this type ", typeid(T).name()
           ));
