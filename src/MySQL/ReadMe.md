@@ -22,7 +22,7 @@ This protocol is several layers.
 
 ### Layer 1: Simple Stream
 
-The lowest layer is the stream. This is simply an open bidirectional unix socket to the server. This is implemented by the `MySQLStream` class which implements the Interface `PackageStream`. By providing this layer of abstraction I can supply mock out the stream object for testing; thus allowing the testing framework to reply with a specific stream of bytes without actually needing to use a socket.
+The lowest layer is the stream. This is simply an open bidirectional unix socket to the server. This is implemented by the `MySQLStream` class which implements the Interface `PackageStream`. By providing this layer of abstraction I can mock out the stream object for testing; thus allowing the testing framework to replay with a specific stream of bytes without actually needing to use a socket.
 
 ````C++
     Class:

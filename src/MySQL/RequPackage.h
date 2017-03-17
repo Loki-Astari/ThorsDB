@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
-#define THORSANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
+#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
+#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
 
 #include "ConectWriter.h"
 #include "RequPackage.h"
@@ -19,7 +19,7 @@ class RequPackage
         RequPackage(std::string const& humanMessage, std::string const& requName)
             : humanMessage(humanMessage)
         {
-            thorUnused(requName);
+            (void)requName;
         }
         virtual ~RequPackage()  {}
         virtual  std::ostream& print(std::ostream& s)   const = 0;

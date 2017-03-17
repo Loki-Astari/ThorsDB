@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
-#define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
+#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
+#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
 #include "ThorSQL/SQLUtil.h"
 #include <ostream>
@@ -28,7 +28,7 @@ class RespPackage
             , error(false)
             , eof(false)
         {
-            thorUnused(respName);
+            (void)respName;
         }
         virtual ~RespPackage() {}
         virtual  std::ostream& print(std::ostream& s) const = 0;

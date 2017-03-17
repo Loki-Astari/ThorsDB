@@ -1,6 +1,6 @@
 
-#ifndef THORSANVIL_MYSQL_TEST_TABLETEST_H
-#define THORSANVIL_MYSQL_TEST_TABLETEST_H
+#ifndef THORS_ANVIL_MYSQL_TEST_TABLETEST_H
+#define THORS_ANVIL_MYSQL_TEST_TABLETEST_H
 
 #include "ThorSQL/Connection.h"
 #include "ThorSQL/Statement.h"
@@ -67,7 +67,7 @@ inline std::string getSelectCount(std::string const& select)
 inline void checkSelectCount(std::string const& select, int row)
 {
     std::string checkNoRowsLeft = ThorsAnvil::stringBuild(
-        "if [[ $(", getSelectCount(select), ") != \"", row, "\" ]]; then exit 1; fi"
+        "if ( test $(", getSelectCount(select), ") != ", row, " ); then exit 1; fi"
                                                          );
     ASSERT_EQ(
         0,

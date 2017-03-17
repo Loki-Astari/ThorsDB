@@ -16,25 +16,19 @@ using Options=std::map<std::string, std::string>;
 
 /* The following is generic to all ThorsAnvil Code */
 
-/* Totally generic platform independent way of marking unused variables */
-template<typename T>
-inline void thorUnused(T const&)
-{}
-
 /* Build error message or bug report for exceptions */
 template<typename T>
-int printItem(std::ostream& str, T const& msg)
+void printItem(std::ostream& str, T const& msg)
 {
     str << msg;
-    return 1;
 }
 
 template<typename... Args>
 std::string stringBuild(Args const& ...a)
 {
     std::stringstream msg;
-    auto list = {printItem(msg, a)...};
-    thorUnused(list);
+    auto list = {0, (printItem(msg, a), 0) ...};
+    (void)list;
 
     return msg.str();
 }
