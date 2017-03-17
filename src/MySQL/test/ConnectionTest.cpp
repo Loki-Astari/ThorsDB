@@ -1,5 +1,6 @@
 
 #include "Connection.h"
+#include "DefaultMySQLConnection.h"
 #include "ThorSQL/Connection.h"
 #include "ConectReader.h"
 #include "PackageBuffer.h"
@@ -31,7 +32,7 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
-    using Buffer=MySQL::PackageBufferMySQLDebugBuffer<MySQL::MySQLStream>;
+    using Buffer=MySQL::PackageBuffer<MySQL::MySQLStream>;
     std::map<std::string, std::string>      options;
 
     MySQL::MySQLStream      stream("127.0.0.1", 0);

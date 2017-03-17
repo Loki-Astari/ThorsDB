@@ -2,16 +2,17 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 
 #include "RespPackage.h"
+#include <string>
 #include <sstream>
+#include <ostream>
 #include <iomanip>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
+
 class ConectReader;
-        namespace Detail
-        {
 
 class RespPackageHandShake: public RespPackage
 {
@@ -64,7 +65,6 @@ inline std::ostream& RespPackageHandShake::print(std::ostream& s) const
              << std::dec;
 }
 
-        }
     }
 }
 

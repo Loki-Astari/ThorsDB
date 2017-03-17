@@ -1,17 +1,17 @@
 #ifndef THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
 
+#include "ThorMySQL.h"
 #include "RespPackage.h"
 #include "ConectReader.h"
-#include "ThorMySQL.h"
 #include <cassert>
+#include <ostream>
+#include <iomanip>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 class RespPackageEOF: public RespPackage
 {
@@ -38,7 +38,6 @@ class RespPackageEOF: public RespPackage
         long    getStatusFlag() const {return statusFlag;}
 };
 
-        }
     }
 }
 

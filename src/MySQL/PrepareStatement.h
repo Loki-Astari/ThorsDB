@@ -1,94 +1,27 @@
 #ifndef THORS_ANVIL_SQL_PREPARE_STATEMENT_H
 #define THORS_ANVIL_SQL_PREPARE_STATEMENT_H
 
-#include "Statement.h"
-#include "RespPackageOK.h"
+#include "MySQLStream.h"
+#include "ConectReader.h"
 #include "RespPackageResultSet.h"
-#include "TypeReadWrite.h"
-#include "PackageStream.h"
-#include "ConectWriter.h"
+#include "BindBuffer.h"
+#include "Statement.h"
 #include <string>
 #include <vector>
+#include <memory>
+#include <cstddef>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
-            class RespPackagePrepare;
-            class RespPackagePrepareExecute;
-            class RespPackageResultSet;
-            struct RespPackageColumnDefinition;
-        }
 
-    class BindBuffer
-    {
-        class BindStream: public MySQLStream
-        {
-            std::vector<char>& dst;
-            public:
-                BindStream(std::vector<char>& dst)
-                    : MySQLStream(-1)
-                    , dst(dst)
-                {}
-                virtual void read(char*, std::size_t) override {}
-                virtual void write(char const* buffer, std::size_t len)  override
-                {
-                    dst.insert(dst.end(), buffer, buffer + len);
-                }
-        };
-        std::vector<Detail::RespPackageColumnDefinition> const& columns;
-        std::vector<char>                                       typeBuffer;
-        std::vector<char>                                       valueBuffer;
-        std::size_t                                             currentCol;
-        BindStream                                              bindStream;
-        ConectWriter                                            bindWriter;
-
-        public:
-            BindBuffer(std::vector<Detail::RespPackageColumnDefinition> const& col)
-                : columns(col)
-                , currentCol(0)
-                , bindStream(valueBuffer)
-                , bindWriter(bindStream)
-            {}
-            void bindToMySQL(ConectWriter& writer) const
-            {
-                // https://dev.mysql.com/doc/internals/en/com-stmt-execute.html#com-stmt-execute
-                //  Called once to write information about all the bound parameters.
-                if (columns.size() == 0)
-                {
-                    return;
-                }
-                std::vector<char>  null((columns.size() + 7) / 8);
-                writer.writeRawData(&null[0], null.size());
-
-                writer.writeFixedLengthInteger<1>(1);
-                writer.writeRawData(&typeBuffer[0], typeBuffer.size());
-                writer.writeRawData(&valueBuffer[0], valueBuffer.size());
-            }
-            void reset()
-            {
-                currentCol  = 0;
-                typeBuffer.clear();
-                valueBuffer.clear();
-            }
-            std::size_t countBoundParameters() const
-            {
-                return currentCol;
-            }
-            template<typename Src>
-            void bindValue(Src const& value)
-            {
-                //  This is called once for each bound parameter.
-                //  It build's up two chunks of data that are passed to the server.
-                unsigned int type = Detail::writeParameterValue(bindWriter, value);
-                typeBuffer.push_back(type);
-                typeBuffer.push_back(std::is_unsigned<Src>::value ? '\x80' : '\x00');
-                ++currentCol;
-            }
-    };
+class RespPackageOK;
+class RespPackagePrepare;
+class RespPackagePrepareExecute;
+struct RespPackageColumnDefinition;
 class Connection;
+
 class PrepareStatement: public Statement
 {
     /*
@@ -115,27 +48,27 @@ class PrepareStatement: public Statement
      */
     class ValidatorStream: public MySQLStream
     {
-        std::vector<Detail::RespPackageColumnDefinition> const& columns;
+        std::vector<RespPackageColumnDefinition> const& columns;
         std::string                                     validateInfo;
         std::size_t                                     position;
         bool                                            errorReading;
         public:
-            ValidatorStream(std::vector<Detail::RespPackageColumnDefinition> const& colu);
+            ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu);
             virtual void read(char* buffer, std::size_t len) override;
             bool  tooMany() const;
             bool  tooFew() const;
             void  reset() override;
     };
 
-    Connection&                                         connection;
-    std::unique_ptr<Detail::RespPackagePrepare>         prepareResp;
-    int                                                 statementID;
-    ValidatorStream                                     validatorStream;
-    ConectReader                                        validatorReader;
-    std::unique_ptr<Detail::RespPackagePrepareExecute>  prepareExec;
-    std::unique_ptr<Detail::RespPackageResultSet>       nextLine;
-    std::unique_ptr<Detail::RespPackageOK>              modificationOK;
-    BindBuffer                                          bindBuffer;
+    Connection&                                 connection;
+    std::unique_ptr<RespPackagePrepare>         prepareResp;
+    int                                         statementID;
+    ValidatorStream                             validatorStream;
+    ConectReader                                validatorReader;
+    std::unique_ptr<RespPackagePrepareExecute>  prepareExec;
+    std::unique_ptr<RespPackageResultSet>       nextLine;
+    std::unique_ptr<RespPackageOK>              modificationOK;
+    BindBuffer                                  bindBuffer;
 
     public:
         PrepareStatement(Connection& connection, std::string const& statement);

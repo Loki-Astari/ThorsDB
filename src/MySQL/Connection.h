@@ -1,13 +1,9 @@
 #ifndef THORS_ANVIL_MYSQL_CONNECTION_H
 #define THORS_ANVIL_MYSQL_CONNECTION_H
 
-#include "ThorSQL/Connection.h"
-#include "ThorSQL/SQLUtil.h"
 #include "ConectReader.h"
-#include "ConectWriter.h"
-#include "PackageBuffer.h"
-#include "PackageStream.h"
 #include <string>
+#include <memory>
 
 namespace ThorsAnvil
 {
@@ -15,9 +11,9 @@ namespace ThorsAnvil
     {
 
 using ThorsAnvil::SQL::Options;
-
-class ConectWriter;
 class RespPackage;
+class ConectWriter;
+
 class Connection
 {
     public:
@@ -32,34 +28,23 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
+        // Main Interface
+        template<typename Requ>
+        std::unique_ptr<RespPackage> sendMessageGetResponse(Requ const& request, ConectReader::OKMap const&    actions     = {});
+
+        // Some Requests are multi-part this allows them to send a bunch of small request objects.
+        // and retrieve the corresponding reply objects.
+        template<typename Requ>
+        void                         sendMessage(Requ const& request);
         std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions);
+
+        // If things go wrong just drop the current package.
+        void                         removeCurrentPackage();
+    private:
         template<typename Resp, typename Requ>
         std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
         template<typename Requ>
-        std::unique_ptr<RespPackage> sendMessageGetResponse(Requ const& request, ConectReader::OKMap const&    actions     = {});
-        template<typename Requ>
-        void                  sendMessage(Requ const& request);
-        void                  removeCurrentPackage();
-    private:
-        template<typename Requ>
         void sendMessageInternal(Requ const& request, bool resetWriter);
-};
-
-class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
-{
-    private:
-        MySQLStream                                 stream;
-        PackageBufferMySQLDebugBuffer<MySQLStream>  buffer;
-        ConectReader                                reader;
-        ConectWriter                                writer;
-        Connection                                  connection;
-    public:
-        DefaultMySQLConnection(std::string const& host, int port,
-                               std::string const& username,
-                               std::string const& password,
-                               std::string const& database,
-                               ThorsAnvil::SQL::Options const& options);
-        virtual std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
 };
 
     }

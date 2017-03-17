@@ -1,8 +1,6 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
 
-#include "MySQLUtil.h"
-#include "ThorSQL/Statement.h"
 #include <string>
 #include <vector>
 #include <ctime>
@@ -22,6 +20,7 @@ namespace ThorsAnvil
     {
 
 class PackageStream;
+
 class ConectWriter
 {
     protected:
@@ -58,7 +57,6 @@ class ConectWriter
         void        flush();
         void        reset();
 };
-
 
     }
 }

@@ -1,19 +1,23 @@
 #ifndef THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 #define THORSANIVL_MYSQL_TYPE_READ_WRITE_H
 
-#include "ThorSQL/Statement.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorMySQL.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
+#include "ThorSQL/Statement.h"
+#include "ThorSQL/SQLUtil.h"
+#include <map>
+#include <vector>
+#include <string>
+#include <cstddef>
 #include <sstream>
 #include <limits>
+#include <stdexcept>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
 
 using Buffer = std::vector<char>;
 using SQL::UnixTimeStamp;
@@ -438,7 +442,6 @@ inline unsigned int writeParameterValue<unsigned long long>(ConectWriter& p, uns
 template<>
 inline unsigned int writeParameterValue<float>(ConectWriter& p, float const& v)
 {
-    std::cout << "Bind FLOAT " << v << "\n";
     p.writeRawData(reinterpret_cast<char const*>(&v), 4);
     return MYSQL_TYPE_FLOAT;
 }
@@ -446,12 +449,10 @@ inline unsigned int writeParameterValue<float>(ConectWriter& p, float const& v)
 template<>
 inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v)
 {
-    std::cout << "Bind DOUBLE " << v << "\n";
     p.writeRawData(reinterpret_cast<char const*>(&v), 8);
     return MYSQL_TYPE_DOUBLE;
 }
 
-        }
     }
 }
 

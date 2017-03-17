@@ -1,9 +1,8 @@
-#include "ConectReader.h"
 #include "PackageStream.h"
+#include "ConectReader.h"
 #include "RespPackageOK.h"
 #include "RespPackageEOF.h"
 #include "RespPackageERR.h"
-#include <utility>
 
 using namespace ThorsAnvil::MySQL;
 
@@ -23,10 +22,10 @@ bool ConectReader::isEmpty() const
     return stream.isEmpty();
 }
 
-std::unique_ptr<Detail::RespPackageEOF> ConectReader::recvMessageEOF()
+std::unique_ptr<RespPackageEOF> ConectReader::recvMessageEOF()
 {
-    std::unique_ptr<RespPackage> result = recvMessage({{0xFE, [](int firstByte, ConectReader& reader){return new Detail::RespPackageEOF(firstByte, reader);}}});
-    return downcastUniquePtr<Detail::RespPackageEOF>(std::move(result));
+    std::unique_ptr<RespPackage> result = recvMessage({{0xFE, [](int firstByte, ConectReader& reader){return new RespPackageEOF(firstByte, reader);}}});
+    return downcastUniquePtr<RespPackageEOF>(std::move(result));
 }
 
 std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= {}*/)
@@ -39,18 +38,18 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
     }
     else if (packageType == 0x00)
     {
-        return std::unique_ptr<RespPackage>(new Detail::RespPackageOK(packageType, *this));
+        return std::unique_ptr<RespPackage>(new RespPackageOK(packageType, *this));
     }
     else if (packageType == 0xFE)
     {
         // EOF default action: => read and ignore.
-        Detail::RespPackageEOF  eofPackage(packageType, *this);
+        RespPackageEOF  eofPackage(packageType, *this);
         return nullptr;
     }
     else if (packageType == 0xFF)
     {
         // Error default action: => read and throw
-        Detail::RespPackageERR  errorPackage(packageType, *this);
+        RespPackageERR  errorPackage(packageType, *this);
         throw std::runtime_error(
                 errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", errorPackage.message()
               ));

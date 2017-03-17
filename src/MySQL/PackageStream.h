@@ -2,6 +2,7 @@
 #define THORS_ANVIL_MYSQL_PACKAGE_STREAM_H
 
 #include <string>
+#include <cstddef>
 
 namespace ThorsAnvil
 {
@@ -20,26 +21,6 @@ class PackageStream
         virtual void        drop()                                      = 0;
         virtual bool        isEmpty()                                   = 0;
         virtual std::string readRemainingData()                         = 0;
-};
-inline PackageStream::~PackageStream() {}
-
-class MySQLStream: public PackageStream
-{
-    static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
-
-    int socket;
-    public:
-         MySQLStream(std::string const& host, int port);
-         MySQLStream(int socket);
-        ~MySQLStream();
-        virtual void        read(char* buffer, std::size_t len)         override;
-        virtual void        write(char const* buffer, std::size_t len)  override;
-        virtual void        startNewConversation()                      override {}
-        virtual void        flush()                                     override {}
-        virtual void        reset()                                     override {}
-        virtual void        drop()                                      override {}
-        virtual bool        isEmpty()                                   override {return true;}
-        virtual std::string readRemainingData()                         override {return "";}
 };
 
     }

@@ -1,259 +1,17 @@
-#include "PrepareStatement.h"
-#include "TypeReadWrite.h"
 #include "Connection.h"
-#include "ConectReader.h"
 #include "RequPackage.h"
-#include "RespPackageEOF.h"
+#include "RequPackagePrepareReset.h"
+#include "RequPackagePrepareExecute.h"
+#include "RequPackagePrepareClose.h"
+#include "RequPackagePrepare.h"
 #include "RespPackageOK.h"
-#include "RespPackageResultSet.h"
-#include "RespPackageColumnDefinition.h"
-#include "ThorMySQL.h"
-#include <cassert>
-#include <sstream>
+#include "RespPackagePrepare.h"
+#include "RespPackagePrepareExecute.h"
+#include "PrepareStatement.h"
 
+using namespace ThorsAnvil::MySQL;
 
-namespace ThorsAnvil
-{
-    namespace MySQL
-    {
-        namespace Detail
-        {
-
-class RequPackagePrepare: public RequPackage
-{
-    std::string const& statement;
-    public:
-        RequPackagePrepare(std::string const& statement)
-            : RequPackage("RequPackagePrepare", "Prepare")
-            , statement(statement)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const override
-        {
-            return s << "RequPackagePrepare: statement: " << statement << "\n";
-        }
-        virtual  void build(ConectWriter& writer)       const override
-        {
-            // https://dev.mysql.com/doc/internals/en/com-stmt-prepare.html#com-stmt-prepare
-            writer.writeFixedLengthInteger<1>(COM_STMT_PREPARE);
-            writer.writeVariableLengthString(statement);
-        }
-};
-void testPrintRequPackagePrepare(std::ostream& str)
-{
-    str << RequPackagePrepare("Test");
-}
-
-class RequPackagePrepareClose: public RequPackage
-{
-    int statementID;
-    public:
-        RequPackagePrepareClose(int statementID)
-            : RequPackage("RequPackagePrepareClose", "Prepare-Close")
-            , statementID(statementID)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const
-        {
-            return s << "RequPackagePrepareClose: statementID: " << statementID << "\n";
-        }
-        virtual  void build(ConectWriter& writer)       const
-        {
-            // https://dev.mysql.com/doc/internals/en/com-stmt-close.html#com-stmt-close
-            writer.writeFixedLengthInteger<1>(COM_STMT_CLOSE);
-            writer.writeFixedLengthInteger<4>(statementID);
-        }
-};
-void testPrintRequPackagePrepareClose(std::ostream& str)
-{
-    str << RequPackagePrepareClose(1);
-}
-
-class RequPackagePrepareExecute: public RequPackage
-{
-    int                 statementID;
-    BindBuffer const&   bindBuffer;
-    public:
-        RequPackagePrepareExecute(int statementID, BindBuffer const& bindBuffer)
-            : RequPackage("RequPackagePrepareExecute", "Prepare-Execute")
-            , statementID(statementID)
-            , bindBuffer(bindBuffer)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const override
-        {
-            return s << "RequPackagePrepareExecute: statementID: " << statementID << "\n";
-        }
-        virtual  void build(ConectWriter& writer)       const override
-        {
-            // https://dev.mysql.com/doc/internals/en/com-stmt-execute.html#com-stmt-execute
-            writer.writeFixedLengthInteger<1>(COM_STMT_EXECUTE);
-            writer.writeFixedLengthInteger<4>(statementID);
-            /*
-             *  0x00    CURSOR_TYPE_NO_CURSOR
-             *  0x01    CURSOR_TYPE_READ_ONLY
-             *  0x02    CURSOR_TYPE_FOR_UPDATE
-             *  0x04    CURSOR_TYPE_SCROLLABLE
-             */
-            writer.writeFixedLengthInteger<1>(0x00);
-            writer.writeFixedLengthInteger<4>(1);
-            bindBuffer.bindToMySQL(writer);
-        }
-};
-void testPrintRequPackagePrepareExecute(std::ostream& str)
-{
-    std::vector<Detail::RespPackageColumnDefinition>    cols;
-    BindBuffer  bindBuffer(cols);
-    str << RequPackagePrepareExecute(1, bindBuffer);
-}
-
-class RequPackagePrepareReset: public RequPackage
-{
-    int statementID;
-    public:
-        RequPackagePrepareReset(int statementID)
-            : RequPackage("RequPackagePrepareReset", "Prepare-Reset")
-            , statementID(statementID)
-        {}
-        virtual  std::ostream& print(std::ostream& s)   const
-        {
-            return s << "RequPackagePrepareReset: statementID: " << statementID << "\n";
-        }
-        virtual  void build(ConectWriter& writer)       const
-        {
-            // https://dev.mysql.com/doc/internals/en/com-stmt-reset.html#com-stmt-reset
-            writer.writeFixedLengthInteger<1>(COM_STMT_RESET);
-            writer.writeFixedLengthInteger<4>(statementID);
-        }
-};
-void testPrintRequPackagePrepareReset(std::ostream& str)
-{
-    str << RequPackagePrepareReset(1);
-}
-
-class RespPackagePrepare: public RespPackage
-{
-    int     statementID;
-    int     numColumns;
-    int     numParams;
-    int     warningCount;
-    std::vector<RespPackageColumnDefinition>   paramInfo;
-    std::vector<RespPackageColumnDefinition>   columnInfo;
-    public:
-        RespPackagePrepare(int firstByte, ConectReader& reader)
-            : RespPackage(reader, "Prepare")
-        {
-            // https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html#com-stmt-prepare-response
-            assert(firstByte == 0x00);
-
-            // Not We have already read 1 byte (status OK)
-            statementID     = reader.fixedLengthInteger<4>();
-            numColumns      = reader.fixedLengthInteger<2>();
-            numParams       = reader.fixedLengthInteger<2>();
-                              reader.fixedLengthInteger<1>(); // reserved
-            warningCount    = reader.fixedLengthInteger<2>();
-
-            if (numParams > 0)
-            {
-                reader.reset();
-                for (int loop = 0;loop < numParams; ++loop)
-                {
-                    paramInfo.emplace_back(reader);
-                    reader.reset();
-                }
-
-                reader.recvMessageEOF();
-            }
-            if (numColumns > 0)
-            {
-                reader.reset();
-                for (int loop = 0;loop < numColumns; ++loop)
-                {
-                    columnInfo.emplace_back(reader);
-                    reader.reset();
-                }
-                reader.recvMessageEOF();
-            }
-            /* To prevent exceptions in RespPackageResultSet when two many arguments are provided
-             * We are going to push an extra fake column into the columns here.
-             *
-             * This is compensated for in Validation Stream which will detect the error
-             * and generate a more appropriate exception that will happen during validation
-             * rather than at runtime.
-             */
-             columnInfo.push_back(RespPackageColumnDefinition::getFakeColumn(MYSQL_TYPE_TINY));
-        }
-
-        bool isSelect() const
-        {
-            return numColumns != 0;
-        }
-
-        virtual std::ostream& print(std::ostream& s)    const override
-        {
-            s << "RespPackagePrepare: statementID" << statementID
-              << " numColumns: " << numColumns
-              << " numParams: " << numParams
-              << " warningCount: " << warningCount << "\n";
-            s << "\tparamInfo:\n";
-            for (auto const& loop: paramInfo)
-            {
-                s << "\t\t" << loop;
-            }
-            s << "\tcolumnInfo:\n";
-            for (auto const& loop: columnInfo)
-            {
-                s << "\t\t" << loop;
-            }
-            return s;
-        }
-        int     getStatementID()                        const               {return statementID;}
-        std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
-        std::vector<RespPackageColumnDefinition> const&  getParams()  const {return paramInfo;}
-};
-void testPrintRespPackagePrepare(std::ostream& str, int firstByte, ConectReader& reader)
-{
-    str << RespPackagePrepare(firstByte, reader);
-}
-
-class RespPackagePrepareExecute: public RespPackage
-{
-    int  columnCount;
-    bool hasRows;
-    std::vector<RespPackageColumnDefinition>   columnInfo;
-    public:
-        RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
-            : RespPackage(reader, "Prepare-Execute")
-        {
-            // https://dev.mysql.com/doc/internals/en/binary-protocol-resultset.html#binary-protocol-resultset
-            columnCount = firstByte;
-            reader.reset();
-            for (int loop = 0;loop < columnCount; ++loop)
-            {
-                columnInfo.push_back(RespPackageColumnDefinition(reader));
-                reader.reset();
-            }
-            auto mark = reader.recvMessageEOF();
-            hasRows = !(mark->getStatusFlag() & SERVER_STATUS_CURSOR_EXISTS);
-
-            // Stream now contains the data followed by an EOF token
-        }
-        virtual  std::ostream& print(std::ostream& s)   const override
-        {
-            return s << "RespPackagePrepareExecute: columnCount: " << columnCount << " hasRows: " << hasRows << "\n";
-        }
-
-        int  getColumnCount() const {return columnCount;}
-        bool hasDataRows()    const {return hasRows;}
-        std::vector<RespPackageColumnDefinition> const&  getColumns() const {return columnInfo;}
-};
-void testPrintRespPackagePrepareExecute(std::ostream& str, int firstBytePrep, int firstByteExec, ConectReader& reader)
-{
-    RespPackagePrepare  prep(firstBytePrep, reader);
-    str << RespPackagePrepareExecute(firstByteExec, reader, prep);
-}
-
-        }
-
-
-PrepareStatement::ValidatorStream::ValidatorStream(std::vector<Detail::RespPackageColumnDefinition> const& colu)
+PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
     : MySQLStream(0)
     , columns(colu)
     , position(0)
@@ -358,19 +116,14 @@ void PrepareStatement::ValidatorStream::reset()
     position    = 0;
 }
 
-    }
-}
-
-using namespace ThorsAnvil::MySQL;
-
 PrepareStatement::PrepareStatement(Connection& connectn, std::string const& statement)
     : Statement(statement)
     , connection(connectn)
-    , prepareResp(downcastUniquePtr<Detail::RespPackagePrepare>(
+    , prepareResp(downcastUniquePtr<RespPackagePrepare>(
                                 connection.sendMessageGetResponse(
-                                    Detail::RequPackagePrepare(statement),
+                                    RequPackagePrepare(statement),
                                     {{0x00, [](int firstByte, ConectReader& reader)
-                                            {return new Detail::RespPackagePrepare(firstByte, reader);}
+                                            {return new RespPackagePrepare(firstByte, reader);}
                                      }
                                     }
                                 )
@@ -378,13 +131,13 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     , statementID(prepareResp->getStatementID())
     , validatorStream(prepareResp->getColumns())
     , validatorReader(validatorStream)
-    , nextLine(new Detail::RespPackageResultSet(0x00, validatorReader, prepareResp->getColumns()))
+    , nextLine(new RespPackageResultSet(0x00, validatorReader, prepareResp->getColumns()))
     , bindBuffer(prepareResp->getParams())
 {}
 
 PrepareStatement::~PrepareStatement()
 {
-    connection.sendMessage(Detail::RequPackagePrepareClose(statementID));
+    connection.sendMessage(RequPackagePrepareClose(statementID));
 }
 
 void PrepareStatement::doExecute()
@@ -416,11 +169,11 @@ void PrepareStatement::doExecute()
     }
 
     std::unique_ptr<RespPackage> tmp = connection.sendMessageGetResponse(
-                                    Detail::RequPackagePrepareExecute(statementID, bindBuffer),
+                                    RequPackagePrepareExecute(statementID, bindBuffer),
                                     {{-1, // Does not matter what the first byte is
                                         [this](int firstByte, ConectReader& reader)
                                         {
-                                            return new Detail::RespPackagePrepareExecute(
+                                            return new RespPackagePrepareExecute(
                                                                     firstByte,
                                                                     reader,
                                                                     *(this->prepareResp)
@@ -431,11 +184,11 @@ void PrepareStatement::doExecute()
                               );
     if (tmp->isOK())
     {
-        modificationOK = downcastUniquePtr<Detail::RespPackageOK>(std::move(tmp));
+        modificationOK = downcastUniquePtr<RespPackageOK>(std::move(tmp));
     }
     else
     {
-        prepareExec = downcastUniquePtr<Detail::RespPackagePrepareExecute>(std::move(tmp));
+        prepareExec = downcastUniquePtr<RespPackagePrepareExecute>(std::move(tmp));
     }
 }
 
@@ -451,7 +204,7 @@ bool PrepareStatement::more()
                                     {{0x00,
                                         [this](int firstByte, ConectReader& reader)
                                         {
-                                            return new Detail::RespPackageResultSet(
+                                            return new RespPackageResultSet(
                                                                     firstByte,
                                                                     reader,
                                                                     this->prepareExec->getColumns()
@@ -459,19 +212,19 @@ bool PrepareStatement::more()
                                         }
                                      }
                                     });
-    nextLine = downcastUniquePtr<Detail::RespPackageResultSet>(std::move(message));
+    nextLine = downcastUniquePtr<RespPackageResultSet>(std::move(message));
     bool moreResult = nextLine.get() != nullptr;
     if (!moreResult)
     {
-        std::unique_ptr<RespPackage> resp = connection.sendMessageGetResponse(Detail::RequPackagePrepareReset(statementID));
+        std::unique_ptr<RespPackage> resp = connection.sendMessageGetResponse(RequPackagePrepareReset(statementID));
 
         // Need to make sure we got an RespPackageOK
         // Otherwise there is a real problem.
-        downcastUniquePtr<Detail::RespPackageOK>(std::move(resp));
+        downcastUniquePtr<RespPackageOK>(std::move(resp));
 
         validatorStream.reset();
         bindBuffer.reset();
-        nextLine.reset(new Detail::RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
+        nextLine.reset(new RespPackageResultSet(0x00, validatorReader, this->prepareResp->getColumns()));
     }
     return moreResult;
 }
@@ -499,13 +252,3 @@ void PrepareStatement::abort()
         connection.removeCurrentPackage();
     }
 }
-
-#ifdef COVERAGE_MySQL
-/*
- * This code is only compiled into the unit tests for code coverage purposes
- * It is not part of the live code.
- */
-#include "Connection.tpp"
-#include "ConectReader.tpp"
-
-#endif

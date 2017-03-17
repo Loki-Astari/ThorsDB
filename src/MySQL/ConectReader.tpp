@@ -1,6 +1,4 @@
 #include "PackageStream.h"
-#include "RespPackage.h"
-#include "ThorSQL/SQLUtil.h"
 
 namespace ThorsAnvil
 {

@@ -2,17 +2,17 @@
 #define THORSANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
 
 #include "RespPackage.h"
-#include "ConectReader.h"
-#include "ThorMySQL.h"
+#include <string>
+#include <ostream>
+#include <iomanip>
 #include <cassert>
-#include <iostream>
 
 namespace ThorsAnvil
 {
     namespace MySQL
     {
-        namespace Detail
-        {
+
+class ConectReader;
 
 class RespPackageAuthSwitchRequest: public RespPackage
 {
@@ -27,7 +27,6 @@ class RespPackageAuthSwitchRequest: public RespPackage
         {
             // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchRequest
             assert(firstByte == 0xFE);
-            std::cerr << "RespPackageAuthSwitchRequest: " << (*this) << "\n\n";
         }
         virtual  std::ostream& print(std::ostream& s) const
         {
@@ -43,7 +42,6 @@ class RespPackageAuthSwitchRequest: public RespPackage
         }
 };
 
-        }
     }
 }
 

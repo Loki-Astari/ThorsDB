@@ -1,9 +1,9 @@
+#include "ThorMySQL.h"
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageHandShake.h"
-#include "ThorMySQL.h"
 #include "ThorCryptWrapper.h"
 
-using namespace ThorsAnvil::MySQL::Detail;
+using namespace ThorsAnvil::MySQL;
 
 RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& username,
                                                            std::string const& password,
@@ -130,7 +130,7 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
     }
 
     // TODO Add Key Values
-    // For now empty the optins
+    // For now empty the options
     if (localCap & CLIENT_CONNECT_ATTRS)
     {
         std::size_t size = 0;
@@ -145,4 +145,24 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
             writer.writeLengthEncodedString(loop.second);
         }
     }
+}
+
+std::ostream& RequPackageHandShakeResponse::print(std::ostream& s) const
+{
+    std::stringstream authRespDecoded;
+    for (char x: authResponse)
+    {   authRespDecoded << "0x" << std::hex << static_cast<unsigned int>(static_cast<unsigned char>(x)) << " ";
+    }
+    std::stringstream keyValDecoded;
+    for (auto const& val: options)
+    {   keyValDecoded << "KV(" << val.first << " => " << val.second << ") ";
+    }
+
+    return s << "HandshakeResponsePackage: "
+             << "username(" << username << ") "
+             << "authResponse(" << authRespDecoded.str() << ") "
+             << "options(" << keyValDecoded.str() << ") "
+             << "database(" << database << ") "
+             << "authPluginName(" << authPluginName << ") "
+             << "capabilities(" << capabilities << ") ";
 }

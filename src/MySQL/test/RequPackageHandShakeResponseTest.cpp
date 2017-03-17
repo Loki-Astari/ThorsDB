@@ -28,13 +28,13 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
                         "mysql_old_password"    // authPluginName  (Null Terminated)
                         ;
 
-    MockStream                                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
+    MockStream                                 buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader            reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake    handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -65,13 +65,13 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_clear_password)
                         "mysql_clear_password"  // authPluginName  (Null Terminated)
                         ;
 
-    MockStream                                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
+    MockStream                                  buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader             reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake     handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -103,13 +103,13 @@ TEST(RequPackageHandShakeResponseTest, Check_authentication_windows_client)
                         "authentication_windows_client"    // authPluginName  (Null Terminated)
                         ;
 
-    MockStream                                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
+    MockStream                                      buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader                 reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake         handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -141,13 +141,13 @@ TEST(RequPackageHandShakeResponseTest, Check_sha256_password)
                         "sha256_password"       // authPluginName  (Null Terminated)
                         ;
 
-    MockStream                                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
+    MockStream                                  buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader             reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake     handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -179,12 +179,12 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_native_password)
                         "mysql_native_password"    // authPluginName  (Null Terminated)
                         ;
 
-    MockStream                                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
+    MockStream                                    buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader               reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
 
     ASSERT_NO_THROW(
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake)
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake)
     );
 }
 
@@ -207,13 +207,13 @@ TEST(RequPackageHandShakeResponseTest, Check_unknown_type)
                         "Unknown"               // authPluginName  (Null Terminated)
                         ;
 
-    MockStream                                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader                             reader(buffer);
-    ThorsAnvil::MySQL::Detail::RespPackageHandShake             handShake(0x0A, reader);
+    MockStream                                    buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader               reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
 
     bool    didThrow = false;
     try {
-        ThorsAnvil::MySQL::Detail::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Detail::Options(), THOR_TESTING_MYSQL_DB, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;

@@ -3,10 +3,10 @@
 #include "test/MockStream.h"
 #include "gtest/gtest.h"
 
-using ThorsAnvil::MySQL::PackageBufferMySQLDebugBuffer;
-using MySqlBuf=PackageBufferMySQLDebugBuffer<MockStream>;
+using ThorsAnvil::MySQL::PackageBuffer;
+using MySqlBuf=PackageBuffer<MockStream>;
 
-TEST(PackageBufferMySQLDebugBufferTest, isEmpty)
+TEST(PackageBufferTest, isEmpty)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x00"         // id
@@ -17,7 +17,7 @@ TEST(PackageBufferMySQLDebugBufferTest, isEmpty)
 
     ASSERT_TRUE(mysqlBuffer.isEmpty());
 }
-TEST(PackageBufferMySQLDebugBufferTest, read1Block)
+TEST(PackageBufferTest, read1Block)
 {
     char const      data[] = "\x10\x00\x00" // size
                              "\x00"         // id
@@ -32,7 +32,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read1Block)
     mysqlBuffer.read(dst, 16);
     ASSERT_TRUE(mysqlBuffer.isEmpty());
 }
-TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithZero)
+TEST(PackageBufferTest, read2BlockSecondWithZero)
 {
     char            block1Header[] = {'\xFF', '\xFF', '\xFF', '\x00'}; // size + id
     char            block2Header[] = {'\x00', '\x00', '\x00', '\x01'}; // size + id
@@ -56,7 +56,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithZero)
     }
     ASSERT_TRUE(mysqlBuffer.isEmpty());
 }
-TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithTen)
+TEST(PackageBufferTest, read2BlockSecondWithTen)
 {
     char            block1Header[] = {'\xFF', '\xFF', '\xFF', '\x00'}; // size + id
     char            block2Header[] = {'\x0A', '\x00', '\x00', '\x01'}; // size + id
@@ -87,7 +87,7 @@ TEST(PackageBufferMySQLDebugBufferTest, read2BlockSecondWithTen)
     ASSERT_THROW(mysqlBuffer.read(dst, 1), std::domain_error);
 }
 
-TEST(PackageBufferMySQLDebugBufferTest, writeZero)
+TEST(PackageBufferTest, writeZero)
 {
     char const      data[] = "";
     unsigned char   result[4];
@@ -101,7 +101,7 @@ TEST(PackageBufferMySQLDebugBufferTest, writeZero)
     ASSERT_EQ(0, result[2]);
     ASSERT_EQ(0, result[3]);
 }
-TEST(PackageBufferMySQLDebugBufferTest, writeOneBlock)
+TEST(PackageBufferTest, writeOneBlock)
 {
     char const      data[] = "";
     unsigned char   result[14];
@@ -126,7 +126,7 @@ TEST(PackageBufferMySQLDebugBufferTest, writeOneBlock)
     ASSERT_EQ('9', result[12]);
     ASSERT_EQ('0', result[13]);
 }
-TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockZero)
+TEST(PackageBufferTest, writeTwoBlockZero)
 {
     char const      data[] = "";
     std::vector<unsigned char>   result(4 + 0xFFFFFF + 5, '\0');
@@ -172,7 +172,7 @@ TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockZero)
 }
 
 
-TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockTenInOneGo)
+TEST(PackageBufferTest, writeTwoBlockTenInOneGo)
 {
     static char    hugeBlockData[0x2000002] = {0};
     char const      data[] = "";
@@ -185,7 +185,7 @@ TEST(PackageBufferMySQLDebugBufferTest, writeTwoBlockTenInOneGo)
     mysqlBuffer.flush();
     ASSERT_EQ(4 + 0xFFFFFFLL + 4 + 0xFFFFFF + 4 + 4, buffer.writLen());
 }
-TEST(PackageBufferMySQLDebugBufferTest, flush)
+TEST(PackageBufferTest, flush)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
@@ -202,7 +202,7 @@ TEST(PackageBufferMySQLDebugBufferTest, flush)
     // But should fail if done twice without a reset
     ASSERT_THROW(mysqlBuffer.flush(), std::domain_error);
 }
-TEST(PackageBufferMySQLDebugBufferTest, flushAndWrite)
+TEST(PackageBufferTest, flushAndWrite)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
@@ -215,7 +215,7 @@ TEST(PackageBufferMySQLDebugBufferTest, flushAndWrite)
     ASSERT_EQ(4, buffer.writLen());
     ASSERT_THROW(mysqlBuffer.write("10", 2), std::domain_error);
 }
-TEST(PackageBufferMySQLDebugBufferTest, resetWithFlush)
+TEST(PackageBufferTest, resetWithFlush)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
@@ -228,7 +228,7 @@ TEST(PackageBufferMySQLDebugBufferTest, resetWithFlush)
     ASSERT_EQ(4, buffer.writLen());
     mysqlBuffer.reset();
 }
-TEST(PackageBufferMySQLDebugBufferTest, readRemainingData)
+TEST(PackageBufferTest, readRemainingData)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -241,7 +241,7 @@ TEST(PackageBufferMySQLDebugBufferTest, readRemainingData)
     std::string remaining = mysqlBuffer.readRemainingData();
     ASSERT_EQ("1234567890", remaining);
 }
-TEST(PackageBufferMySQLDebugBufferTest, dropDataPreCheck)
+TEST(PackageBufferTest, dropDataPreCheck)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -255,7 +255,7 @@ TEST(PackageBufferMySQLDebugBufferTest, dropDataPreCheck)
     mysqlBuffer.read(result, 2);
     ASSERT_THROW(mysqlBuffer.reset(), std::domain_error);
 }
-TEST(PackageBufferMySQLDebugBufferTest, dropData)
+TEST(PackageBufferTest, dropData)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -275,7 +275,7 @@ TEST(PackageBufferMySQLDebugBufferTest, dropData)
     mysqlBuffer.drop();
     ASSERT_NO_THROW(mysqlBuffer.reset());
 }
-TEST(PackageBufferMySQLDebugBufferTest, dropDataNoneRead)
+TEST(PackageBufferTest, dropDataNoneRead)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -288,7 +288,7 @@ TEST(PackageBufferMySQLDebugBufferTest, dropDataNoneRead)
     mysqlBuffer.drop();
     ASSERT_NO_THROW(mysqlBuffer.reset());
 }
-TEST(PackageBufferMySQLDebugBufferTest, dropDataFromHugePackageSecondEmpty)
+TEST(PackageBufferTest, dropDataFromHugePackageSecondEmpty)
 {
     std::vector<char>      data(4 + 0xFFFFFF + 4 + 0);
     data[0]                 = '\xFF';
@@ -310,7 +310,7 @@ TEST(PackageBufferMySQLDebugBufferTest, dropDataFromHugePackageSecondEmpty)
     ASSERT_NO_THROW(mysqlBuffer.reset());
     ASSERT_EQ(4 + 0xFFFFFF + 4 + 0, buffer.readLen());
 }
-TEST(PackageBufferMySQLDebugBufferTest, dropDataFromHugePackageSecondWithSome)
+TEST(PackageBufferTest, dropDataFromHugePackageSecondWithSome)
 {
     std::vector<char>      data(4 + 0xFFFFFF + 4 + 10);
     data[0]                 = '\xFF';
