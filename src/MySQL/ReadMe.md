@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
+![ThorStream](img/stream.jpg)
 
 ## Usage
 
@@ -7,36 +9,93 @@ To add MySQL functionality you need this object:
 
 This is normally automatically added when you link with -lThorMySQL
 
-    SQL::Connection         connection(<stuff>);
-    SQL::Statement          statement("SQL");
+## Normal Usage
 
+To use this library see the documentation of (ThorsSQL)[https://github.com/Loki-Astari/ThorsSQL/blob/feature-AddSomeDocumentaionToSQL/README.md]
 
 
 ## Internal Documentation
-### Types
 
-    MySQL::Connection:          An object that represents a connection to the DB.
-                                If this was created correctly then the handshake and authentication has completed.
+The MySQL documentation goes into a lot of detail about the on wire protocol used by the MySQL server. This library provides a wrapper around this on-wire protocol talking directly to the MySQL server (i.e. it does not wrap the MySQL C library).
 
-                                This object is usually created via SQL::Connection. Which internally uses the
-                                PIMPL idiom to hold a DB specific connection object.
+This protocol is several layers.
 
-                                SQL::Connection     connection("mysql://<url DB server>", <userName>, <password>, <DB on server>);
+### Layer 1: Simple Stream
+
+The lowest layer is the stream. This is simply an open bidirectional unix socket to the server. This is implemented by the `MySQLStream` class which implements the Interface `PackageStream`. By providing this layer of abstraction I can supply mock out the stream object for testing; thus allowing the testing framework to reply with a specific stream of bytes without actually needing to use a socket.
+
+````C++
+    Class:
+    ==========
+    MySQLStream:    PackageStream
+
+    Interface:
+    ==========
+    PackageStream
+````
+
+### Layer 2: Package Stream
+
+MySQL uses a package based protocol. Each request/response message is wrapped in a set of packages. These packages are numbered and sized to allow validation and some basic error checking of communication between the client and server. The class `PackageBuffer` implements the `PackageStream` interface; but it is used to wrap a Layer 1 stream thus hiding the packages from the next layer and still exposing a simple stream like interface.
+
+````C++
+    Class:
+    ==========
+    PackageBuffer:    PackageStream
+
+    Interface:
+    ==========
+    PackageStream
+````
+
+It should be noted that the implementation of this layer is currently very basic. One of the improvement points is implementing a more efficient version of this package stream.
+
+### Layer 3: Object Layer
+
+This layer knows how to encode/de-code specific objects onto a stream. At this layer we have two classes `ConnectWriter`/`ConectReader`. These classes have methods to encode/de-code each specific type understood by the MySQL server onto a `PackageStream`. Objects of these type are constructed using a `PackageStream` and write/read data from this stream.
+
+````C++
+    Class:
+    ==========
+    ConectReader
+    ConectWriter
+````
+
+### Layer 4: Request/Response Layer
+
+The MySQL communications is a sequence of requests from the client written to a `ConectWriter` which results in a response from the MySQL server that can be read from a `ConectReader`. Each request has a specific one byte request code followed by the request specific body. Each response has a specific one byte response code followed by a response body. **But** some response objects use the same response code and the actual object returned will depend on the proceeding request.
+
+The actual orchestration of the request/response cycle is performed by the `Connection` class. The `Connection` class is constructed with a `ConectReader` and `ConectWriter` objects.
+
+The main interface to the `Connection` class is the `sendMessageGetResponse()` method which sends a specific request object and retrieves the corresponding reply object.
+    
+Note: There is an exception to the Request/Response cycle. When a stream is first opened to a MySQL server; the server immidiately writes a `RespPackageHandShake` onto the stream. The `Connection` object reads this response object to understand how to authenticate with the server and make sure the server supports the required features.
+
+````C++
+    Class:
+    ==========
+    Connection
+````
+
+### Layer 5: Request Response Objects
 
 MySQL communicates by sending specific messages between the client and server.
 These messages are represented by C++ objects that can be constructed.
 
 Messages from client to server:
 
+````C++
     RequPackage
         RequPackageHandShakeResp        Response to the initial handshake message sent by the server.
         RequPackagePrepare              Prepare an SQL statement.
         RequPackagePrepareClose         Close (destroy) an SQL prepared statement.
         RequPackagePrepareExecute       Execute an SQL prepared statement (including binding parameters)
         RequPackagePrepareReset         Reset an SQL prepared statement (so it can be re-used)
+````
 
 Messages from server to client:
 
+````C++
     RespPackage
         RespPackageOK                   A generic OK.   Sent to indicate the end of response was good.
         RespPackageEOF                  A generic OK.   Sent to indicate the end of a stream was good.
@@ -50,7 +109,7 @@ Messages from server to client:
         RespPackagePrepareExecute       Sent as a response to RequPackagePrepareExecute
         RespPackageResultSet            Sent as a part of RespPackagePrepareExecute
             RespPackageColumnDefinition Helper for a result set.
-
+````
 
 To send a message use:
 
@@ -68,19 +127,23 @@ To send a message use:
                                                                        // If no object is created an exception is thrown
                                                         );
 
-    MySQL::ConectReader         Used to read bytes across the connection from the DB.
-    MySQL::ConectWriter         Used to send bytes across the connection to the DB.
+### Layer 6: MySQL command layer
 
-    MySQL::PackageStream        An abstract streaming class for reading and writing objects.
-                                The ConectReader/ConectWriter actualy use this base class for reading/writing
+The ThorsMySQL library provides an implementation of the interfaces needed by ThorsSQL library.
 
-                                When connected to an actual server they use PackageBuffer but for
-                                testing you can simply derive from PackageStream to get a much simpler
-                                object.
+The class `DefaultMySQLConnection` implements the interface `ThorsAnvil::SQL::Lib::ConnectionProxy`. Its main job is creating object of type `PrepareStatement` that implement the interface `ThorsAnvil::SQL::Lib::StatementProxy`.
 
-    MySQL::PackageBuffer        Derived from MySQL::PackageStream.
-                                Buffers the reads/writes by ConectReader/ConectWriter into a MySQL specific
-                                on the wire package structure.
+### Utility classes
+
+````C++
+    Classes
+    ==============
+    BindBuffer
+    ThorCryptWrapper
+    TypeReadWrite
+    MySQLTimeBag
+````
+
 
 
 

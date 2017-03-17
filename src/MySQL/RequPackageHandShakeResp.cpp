@@ -130,7 +130,7 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
     }
 
     // TODO Add Key Values
-    // For now empty the optins
+    // For now empty the options
     if (localCap & CLIENT_CONNECT_ATTRS)
     {
         std::size_t size = 0;
