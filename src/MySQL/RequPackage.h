@@ -19,7 +19,7 @@ class RequPackage
         RequPackage(std::string const& humanMessage, std::string const& requName)
             : humanMessage(humanMessage)
         {
-            thorUnused(requName);
+            (void)requName;
         }
         virtual ~RequPackage()  {}
         virtual  std::ostream& print(std::ostream& s)   const = 0;

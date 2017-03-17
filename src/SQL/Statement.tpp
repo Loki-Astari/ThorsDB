@@ -58,7 +58,7 @@ inline void Detail::Cursor::activateWithArgs(F cb, A& arguments, std::index_sequ
     try
     {
         auto list = {0, (retrieve(std::get<ids>(arguments)), 0)...};
-        thorUnused(list);
+        (void)list;
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
     catch (Lib::ValidationTmpError const&)
@@ -88,7 +88,7 @@ template<std::size_t... ids>
 inline void BindArgs<R...>::bindArgsTo(Lib::StatementProxy& statementProxy, std::index_sequence<ids...>const&) const
 {
     auto list = {0, (bindTheArgument<ids>(statementProxy), 0)...};
-    thorUnused(list);
+    (void)list;
 }
 
 template<typename... R>
