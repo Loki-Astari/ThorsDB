@@ -15,7 +15,7 @@ CREATE TABLE People ( ID  INTEGER, Name VARCHAR(64), Age  SMALLINT, Sex  CHAR(1)
 INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (14, "Tom Smith", 32, 'M', 56.34);
 INSERT INTO  People (ID, Name, Age, Sex, Height) VALUES (38, "Mary Twit", 29, 'F', 34.45678);
 
-CREATE TABLE PeopleExtra ( ID  INTEGER, Name VARCHAR(64), Age  SMALLINT, Sex  CHAR(1), Height DOUBLE);
+CREATE TABLE PeopleExtra ( ID  INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(64), Age  SMALLINT, Sex  CHAR(1), Height DOUBLE);
 
 -- See test/TableIntTest.cpp
 --      Add tests to this file for integers.
