@@ -7,7 +7,7 @@
 #include <ostream>
 #include <vector>
 #include <string>
-#include <cstddef>
+// #include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 #include <stdexcept>
 
 namespace ThorsAnvil
