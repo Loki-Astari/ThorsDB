@@ -67,7 +67,7 @@ inline std::string getSelectCount(std::string const& select)
 inline void checkSelectCount(std::string const& select, int row)
 {
     std::string checkNoRowsLeft = ThorsAnvil::stringBuild(
-        "if [[ $(", getSelectCount(select), ") != \"", row, "\" ]]; then exit 1; fi"
+        "if ( test $(", getSelectCount(select), ") != ", row, " ); then exit 1; fi"
                                                          );
     ASSERT_EQ(
         0,
