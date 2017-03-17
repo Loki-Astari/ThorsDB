@@ -7,6 +7,8 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string.h> // needed for memset() / bcopy()
+#include <stdio.h>  // needed for strerror()
 
 using namespace ThorsAnvil::MySQL;
 
