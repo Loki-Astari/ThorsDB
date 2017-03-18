@@ -118,15 +118,17 @@ To send a message use:
 
         // If a response object from the server is required:
         // Then you need to provide a map of expected package ID to function that know how to build
-        // RespPackages of that type (this is becuase package ID are Request specific and overlap.
-        std::uniqe_ptr<RespType>  connection.sendMessageGetResponse(<RequObject>, {{ 0xA1, std::function<RespPackage*(int byte, ConectReader&)> },
-                                                                        { 0xA2, std::function<RespPackage*(int byte, ConectReader&)> }
-                                                                       }
-                                                                       // OK/EOF/Error are detected automatically.
-                                                                       // -1 for anything that does not match.
-                                                                       // If no object is created an exception is thrown
-                                                        );
-
+        // RespPackages of that type (this is because package ID are Request specific and overlap.
+        std::uniqe_ptr<RespType>  result = 
+            connection.sendMessageGetResponse(
+                <RequObject>,
+                {{ 0x0A, [](int firstByte, ConectReader& reader){return new <RespObjctTypeA>(firstByte, reader();},
+                 { 0x0B, [](int firstByte, ConectReader& reader){return new <RespObjctTypeB>(firstByte, reader();}
+                 // OK/EOF/Error are detected automatically.
+                 // Use -1 as key to match anything not explicitly mentioned.
+                 // If no object is created an exception is thrown
+                }
+            );
 ### Layer 6: MySQL command layer
 
 The ThorsMySQL library provides an implementation of the interfaces needed by ThorsSQL library.
