@@ -4,7 +4,7 @@
 #include "ThorSQL/Statement.h"
 #include <string>
 #include <vector>
-#include <cstddef>
+//#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 namespace ThorsAnvil
 {

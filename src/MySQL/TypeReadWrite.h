@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <cstddef>
+//#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 #include <sstream>
 #include <limits>
 #include <stdexcept>

@@ -11,7 +11,7 @@
 #include <ostream>
 #include <iomanip>
 #include <stdexcept>
-#include <cstddef>
+//#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 namespace ThorsAnvil
 {

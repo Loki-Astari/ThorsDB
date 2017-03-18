@@ -2,7 +2,7 @@
 #define THORS_ANVIL_MYSQL_PACKAGE_STREAM_H
 
 #include <string>
-#include <cstddef>
+//#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 namespace ThorsAnvil
 {

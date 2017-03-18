@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <cstddef>
+//#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 namespace ThorsAnvil
 {
