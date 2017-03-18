@@ -16461,6 +16461,8 @@ if test "${with_TestMySQLDatabase+set}" = set; then :
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking MySQL DB is running" >&5
+$as_echo_n "checking MySQL DB is running... " >&6; }
 mysql_test_host="127.0.0.1"
 mysql_test_user="test"
 mysql_test_pw="testPassword"
@@ -16514,6 +16516,72 @@ Error: Can not connect to mysql server for testing.
                 cat ./src/MySQL/test/data/init.sql | mysql -u root -p
 
                   " "$LINENO" 5
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Postgres DB is running" >&5
+$as_echo_n "checking Postgres DB is running... " >&6; }
+postg_test_host="127.0.0.1"
+postg_test_user="test"
+postg_test_pw="testPassword"
+postg_test_db="test"
+
+if test "x$have_TestPostGHost" = "xyes"; then :
+  postg_test_host=$with_TestPostGHost
+fi
+if test "x$have_TestPostGUser" = "xyes"; then :
+  postg_test_user=$with_TestPostGUser
+fi
+if test "x$have_TestPostGPass" = "xyes"; then :
+  postg_test_pw=$with_TestPostGPass
+fi
+if test "x$have_TestPostGDatabase" = "xyes"; then :
+  postg_test_db=$with_TestPostGDatabase
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MYSQL_HOST "$postg_test_host"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MYSQL_USER "$postg_test_user"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MYSQL_PASS "$postg_test_pw"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MYSQL_DB "$postg_test_db"
+_ACEOF
+
+
+postg_test_connect=`echo "select 3+4" |  PGPASSWORD=$postg_test_pw psql -h $postg_test_host -U $postg_test_user -w -d $postg_test_db 2> /dev/null | tail -3 | head -1`
+if test "x$mysq_test_connect" != "x7"; then :
+  as_fn_error $? "
+
+Error: Can not connect to Postgres server for testing.
+
+        This may be because the Postgress server is not running or the test data has not been created.
+
+        1) Install Postgres server
+        2) Make sure Postgres is running
+        3) Install the test data and users.
+                cat ./src/Postgres/test/data/init.sql | psql -h <hostname>
+
+                  " "$LINENO" 5
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 
 fi
 
@@ -17370,7 +17438,7 @@ END
   fi
 fi
 
-ac_config_headers="$ac_config_headers src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h"
+ac_config_headers="$ac_config_headers src/Postgres/PostgresConfig.h src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h"
 
 ac_config_files="$ac_config_files Makefile.extra Makefile.config"
 
@@ -18485,6 +18553,7 @@ do
   case $ac_config_target in
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
+    "src/Postgres/PostgresConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Postgres/PostgresConfig.h" ;;
     "src/MySQL/MySQLConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/MySQL/MySQLConfig.h" ;;
     "src/SQL/SQLConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/SQL/SQLConfig.h" ;;
     "Makefile.extra") CONFIG_FILES="$CONFIG_FILES Makefile.extra" ;;

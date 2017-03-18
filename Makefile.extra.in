@@ -105,7 +105,8 @@ DIST_COMMON = $(srcdir)/Makefile.extra.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/src/MySQL/MySQLConfig.h \
+CONFIG_HEADER = $(top_builddir)/src/Postgres/PostgresConfig.h \
+	$(top_builddir)/src/MySQL/MySQLConfig.h \
 	$(top_builddir)/src/SQL/SQLConfig.h
 CONFIG_CLEAN_FILES = Makefile.config
 CONFIG_CLEAN_VPATH_FILES =
@@ -174,6 +175,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.config.in \
 	$(top_srcdir)/build/autotools/build/ltmain.sh \
 	$(top_srcdir)/build/autotools/build/missing \
 	$(top_srcdir)/src/MySQL/MySQLConfig.h.in \
+	$(top_srcdir)/src/Postgres/PostgresConfig.h.in \
 	$(top_srcdir)/src/SQL/SQLConfig.h.in \
 	build/autotools/build/ar-lib build/autotools/build/compile \
 	build/autotools/build/config.guess \
@@ -400,28 +402,36 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-src/MySQL/MySQLConfig.h: src/MySQL/stamp-h1
-	@test -f $@ || rm -f src/MySQL/stamp-h1
-	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) src/MySQL/stamp-h1
+src/Postgres/PostgresConfig.h: src/Postgres/stamp-h1
+	@test -f $@ || rm -f src/Postgres/stamp-h1
+	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) src/Postgres/stamp-h1
 
-src/MySQL/stamp-h1: $(top_srcdir)/src/MySQL/MySQLConfig.h.in $(top_builddir)/config.status
-	@rm -f src/MySQL/stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status src/MySQL/MySQLConfig.h
-$(top_srcdir)/src/MySQL/MySQLConfig.h.in:  $(am__configure_deps) 
+src/Postgres/stamp-h1: $(top_srcdir)/src/Postgres/PostgresConfig.h.in $(top_builddir)/config.status
+	@rm -f src/Postgres/stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status src/Postgres/PostgresConfig.h
+$(top_srcdir)/src/Postgres/PostgresConfig.h.in:  $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f src/MySQL/stamp-h1
+	rm -f src/Postgres/stamp-h1
 	touch $@
 
-src/SQL/SQLConfig.h: src/SQL/stamp-h2
-	@test -f $@ || rm -f src/SQL/stamp-h2
-	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) src/SQL/stamp-h2
+src/MySQL/MySQLConfig.h: src/MySQL/stamp-h2
+	@test -f $@ || rm -f src/MySQL/stamp-h2
+	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) src/MySQL/stamp-h2
 
-src/SQL/stamp-h2: $(top_srcdir)/src/SQL/SQLConfig.h.in $(top_builddir)/config.status
-	@rm -f src/SQL/stamp-h2
+src/MySQL/stamp-h2: $(top_srcdir)/src/MySQL/MySQLConfig.h.in $(top_builddir)/config.status
+	@rm -f src/MySQL/stamp-h2
+	cd $(top_builddir) && $(SHELL) ./config.status src/MySQL/MySQLConfig.h
+
+src/SQL/SQLConfig.h: src/SQL/stamp-h3
+	@test -f $@ || rm -f src/SQL/stamp-h3
+	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) src/SQL/stamp-h3
+
+src/SQL/stamp-h3: $(top_srcdir)/src/SQL/SQLConfig.h.in $(top_builddir)/config.status
+	@rm -f src/SQL/stamp-h3
 	cd $(top_builddir) && $(SHELL) ./config.status src/SQL/SQLConfig.h
 
 distclean-hdr:
-	-rm -f src/MySQL/MySQLConfig.h src/MySQL/stamp-h1 src/SQL/SQLConfig.h src/SQL/stamp-h2
+	-rm -f src/Postgres/PostgresConfig.h src/Postgres/stamp-h1 src/MySQL/MySQLConfig.h src/MySQL/stamp-h2 src/SQL/SQLConfig.h src/SQL/stamp-h3
 Makefile.config: $(top_builddir)/config.status $(srcdir)/Makefile.config.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 

@@ -136,6 +136,7 @@ AC_ARG_WITH([TestMySQLUser], AS_HELP_STRING([--with-TestMySQLUser=<User>], [Use 
 AC_ARG_WITH([TestMySQLPass], AS_HELP_STRING([--with-TestMySQLPass=<Pass>], [Use an alternative mysql password for testing with (testPassword)]))
 AC_ARG_WITH([TestMySQLDatabase], AS_HELP_STRING([--with-TestMySQLDatabase=<DB>], [Use an alternative mysql database for testing with (test)]))
 
+AC_MSG_CHECKING([MySQL DB is running])
 mysql_test_host="127.0.0.1"
 mysql_test_user="test"
 mysql_test_pw="testPassword"
@@ -165,9 +166,45 @@ Error: Can not connect to mysql server for testing.
                 cat ./src/MySQL/test/data/init.sql | mysql -u root -p
 
                   ])
+     ],
+     [AC_MSG_RESULT([yes])
+     ])
+
+AC_MSG_CHECKING([Postgres DB is running])
+postg_test_host="127.0.0.1"
+postg_test_user="test"
+postg_test_pw="testPassword"
+postg_test_db="test"
+
+AS_IF([test "x$have_TestPostGHost" = "xyes"], [postg_test_host=$with_TestPostGHost])
+AS_IF([test "x$have_TestPostGUser" = "xyes"], [postg_test_user=$with_TestPostGUser])
+AS_IF([test "x$have_TestPostGPass" = "xyes"], [postg_test_pw=$with_TestPostGPass])
+AS_IF([test "x$have_TestPostGDatabase" = "xyes"], [postg_test_db=$with_TestPostGDatabase])
+
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_HOST], ["$postg_test_host"], [postgres DB host for testing])
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_USER], ["$postg_test_user"], [postgres DB user for testing])
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_PASS], ["$postg_test_pw"],   [postgres DB password for testing])
+AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_DB],   ["$postg_test_db"],   [postgres DB for testing])
+
+postg_test_connect=`echo "select 3+4" |  PGPASSWORD=$postg_test_pw psql -h $postg_test_host -U $postg_test_user -w -d $postg_test_db 2> /dev/null | tail -3 | head -1`
+AS_IF([test "x$mysq_test_connect" != "x7"],
+     [AC_MSG_ERROR([
+
+Error: Can not connect to Postgres server for testing.
+
+        This may be because the Postgress server is not running or the test data has not been created.
+
+        1) Install Postgres server
+        2) Make sure Postgres is running
+        3) Install the test data and users.
+                cat ./src/Postgres/test/data/init.sql | psql -h <hostname>
+
+                  ])
+     ],
+     [AC_MSG_RESULT([yes])
      ])
 
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
-AC_CONFIG_HEADERS([src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h])
+AC_CONFIG_HEADERS([src/Postgres/PostgresConfig.h src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h])
 AC_CONFIG_FILES([Makefile.extra Makefile.config])
 AC_OUTPUT
