@@ -18,7 +18,7 @@ using ThorsAnvil::SQL::StreamSimple;
 
 TEST(StreamSimpleTest, ReadNormal)
 {
-    int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
     char data[16];
@@ -97,7 +97,7 @@ TEST(StreamSimpleTest, ReadBadHost)
 }
 TEST(StreamSimpleTest, ReadPastEOF)
 {
-    int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
     char data[16];
@@ -106,7 +106,7 @@ TEST(StreamSimpleTest, ReadPastEOF)
 }
 TEST(StreamSimpleTest, ReadFail)
 {
-    int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
     close(socket);
 
@@ -115,7 +115,7 @@ TEST(StreamSimpleTest, ReadFail)
 }
 TEST(StreamSimpleTest, WriteNormal)
 {
-    int         socket  = open("test/data/PackageStreamTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+    int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     {
         StreamSimple stream(socket);
 
@@ -123,22 +123,22 @@ TEST(StreamSimpleTest, WriteNormal)
         stream.write(data,8);
     }
     {
-        std::ifstream   test("test/data/PackageStreamTest-WriteNormal");
+        std::ifstream   test("test/data/StreamSimpleTest-WriteNormal");
         std::string     line;
         std::getline(test, line);
         ASSERT_EQ("12345678", line);
     }
-    unlink("test/data/PackageStreamTest-WriteNormal");
+    unlink("test/data/StreamSimpleTest-WriteNormal");
 }
 TEST(StreamSimpleTest, WriteFail)
 {
-    int         socket  = open("test/data/PackageStreamTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+    int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     StreamSimple stream(socket);
     close(socket);
 
     char data[16] = "12345678";
     ASSERT_THROW(stream.write(data,8), std::runtime_error);
-    unlink("test/data/PackageStreamTest-WriteNormal");
+    unlink("test/data/StreamSimpleTest-WriteNormal");
 }
 TEST(StreamSimpleTest, WriteToSlowStreamToGetEAGAIN)
 {
