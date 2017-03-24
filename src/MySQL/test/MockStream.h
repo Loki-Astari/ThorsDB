@@ -2,7 +2,7 @@
 #include <sstream>
 #include <stdexcept>
 
-class MockStream: public ThorsAnvil::MySQL::PackageStream
+class MockStream: public ThorsAnvil::SQL::StreamInterface
 {
     char const*   input;
     unsigned char*output;

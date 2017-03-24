@@ -4,7 +4,7 @@
 #include "ThorSQL/Connection.h"
 #include "ConectReader.h"
 #include "PackageBuffer.h"
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 
 #include "gtest/gtest.h"
 #include "MySQLConfig.h"

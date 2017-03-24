@@ -16,21 +16,23 @@
 
 namespace ThorsAnvil
 {
+    namespace SQL
+    {
+class StreamInterface;
+    }
     namespace MySQL
     {
-
-class PackageStream;
 
 class ConectWriter
 {
     protected:
-    PackageStream&   stream;
+    SQL::StreamInterface&   stream;
     unsigned long    capabilities;
     unsigned long    charset;
 
     public:
 
-        ConectWriter(PackageStream& stream)
+        ConectWriter(SQL::StreamInterface& stream)
             : stream(stream)
             , capabilities(0)
             , charset(0)
