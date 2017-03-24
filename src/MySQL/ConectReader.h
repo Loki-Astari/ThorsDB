@@ -24,7 +24,7 @@ namespace ThorsAnvil
     namespace SQL
     {
 class StreamInterface;
-    };
+    }
     namespace MySQL
     {
 
