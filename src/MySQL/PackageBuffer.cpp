@@ -7,16 +7,16 @@ using namespace ThorsAnvil::MySQL;
  * This code is only compiled into the unit tests for code coverage purposes
  * It is not part of the live code.
  */
-#include "MySQLStream.h"
+#include "ThorSQL/StreamSimple.h"
 #include "PackageBuffer.tpp"
 #include "test/MockStream.h"
 
 
 template
-ThorsAnvil::MySQL::PackageBuffer<ThorsAnvil::MySQL::MySQLStream>::PackageBuffer
-(ThorsAnvil::MySQL::MySQLStream&, bool);
+ThorsAnvil::MySQL::PackageBuffer<ThorsAnvil::SQL::StreamSimple>::PackageBuffer
+(ThorsAnvil::SQL::StreamSimple&, bool);
 
-template void PackageBuffer<MySQLStream>::read(char*, std::size_t);
+template void PackageBuffer<ThorsAnvil::SQL::StreamSimple>::read(char*, std::size_t);
 
 template std::string ThorsAnvil::MySQL::PackageBuffer<MockStream>::readRemainingData();
 template void ThorsAnvil::MySQL::PackageBuffer<MockStream>::read(char*, std::size_t);

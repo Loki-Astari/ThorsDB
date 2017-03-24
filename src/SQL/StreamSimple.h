@@ -1,17 +1,17 @@
-#ifndef THORS_ANVIL_MYSQL_MY_SQL_STREAM_H
-#define THORS_ANVIL_MYSQL_MY_SQL_STREAM_H
+#ifndef THORS_ANVIL_SQL_STREAM_SIMPLE_H
+#define THORS_ANVIL_SQL_STREAM_SIMPLE_H
 
-#include "PackageStream.h"
+#include "StreamInterface.h"
 #include <string>
 #include <functional>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 namespace ThorsAnvil
 {
-    namespace MySQL
+    namespace SQL
     {
 
-class MySQLStream: public PackageStream
+class StreamSimple: public StreamInterface
 {
     static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
 
@@ -19,9 +19,9 @@ class MySQLStream: public PackageStream
     std::function<void()>  readYield;
     std::function<void()>  writeYield;
     public:
-         MySQLStream(std::string const& host, int port, bool nonBlocking = false);
-         MySQLStream(int socket);
-        ~MySQLStream();
+         StreamSimple(std::string const& host, int port, bool nonBlocking = false);
+         StreamSimple(int socket);
+        ~StreamSimple();
         void close();
 
         virtual void        read(char* buffer, std::size_t len)         override;

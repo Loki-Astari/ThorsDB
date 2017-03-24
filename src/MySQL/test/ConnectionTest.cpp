@@ -2,9 +2,10 @@
 #include "Connection.h"
 #include "DefaultMySQLConnection.h"
 #include "ThorSQL/Connection.h"
+#include "ThorSQL/StreamSimple.h"
 #include "ConectReader.h"
 #include "PackageBuffer.h"
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 
 #include "gtest/gtest.h"
 #include "MySQLConfig.h"
@@ -32,9 +33,9 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
-    using Buffer=MySQL::PackageBuffer<MySQL::MySQLStream>;
+    using Buffer=MySQL::PackageBuffer<SQL::StreamSimple>;
 
-    MySQL::MySQLStream      stream("127.0.0.1", 0);
+    SQL::StreamSimple       stream("127.0.0.1", 0);
     Buffer                  buffer(stream, true);
     MySQL::ConectReader     reader(buffer);
     MySQL::ConectWriter     writer(buffer);

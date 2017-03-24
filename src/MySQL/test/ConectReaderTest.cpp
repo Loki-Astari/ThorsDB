@@ -1,6 +1,6 @@
 
 #include "ConectReader.h"
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 #include "RespPackageOK.h"
 #include "test/MockStream.h"
 

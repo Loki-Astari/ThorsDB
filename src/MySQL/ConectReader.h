@@ -21,24 +21,27 @@
 
 namespace ThorsAnvil
 {
+    namespace SQL
+    {
+class StreamInterface;
+    };
     namespace MySQL
     {
 
-class PackageStream;
 class RespPackage;
 class RespPackageEOF;
 
 class ConectReader
 {
-    PackageStream&   stream;
-    unsigned long    capbil;
-    unsigned long    charset;
+    SQL::StreamInterface&   stream;
+    unsigned long           capbil;
+    unsigned long           charset;
 
     unsigned long long lengthEncodedIntegerUsingSize(unsigned char size);
     public:
         using OKAction = std::function<RespPackage*(int byte, ConectReader&)>;
         using OKMap    = std::map<int, OKAction>;
-        ConectReader(PackageStream& stream)
+        ConectReader(SQL::StreamInterface& stream)
             : stream(stream)
             , capbil(0)
             , charset(0)

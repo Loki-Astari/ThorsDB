@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
 #define THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
 
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 #include <vector>
 #include <string>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
@@ -12,7 +12,7 @@ namespace ThorsAnvil
     {
 
 template<typename T>
-class PackageBuffer: public PackageStream
+class PackageBuffer: public SQL::StreamInterface
 {
     T&                  stream;
     std::size_t         readCurrentPacketSize;

@@ -1,6 +1,6 @@
 
 #include "PrepareStatement.h"
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 #include "ConectReader.h"
 #include "ThorSQL/Connection.h"
 #include "ThorSQL/Statement.h"

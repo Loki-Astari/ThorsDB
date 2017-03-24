@@ -1,17 +1,17 @@
 
-#include "MySQLStream.h"
+#include "StreamSimple.h"
 #include <fstream>
 #include <sys/stat.h>
 #include <fcntl.h>
 
 #include <gtest/gtest.h>
 
-using ThorsAnvil::MySQL::MySQLStream;
+using ThorsAnvil::SQL::StreamSimple;
 
 TEST(PackageStreamTest, ReadNormal)
 {
     int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);
-    MySQLStream stream(socket);
+    StreamSimple stream(socket);
 
     char data[16];
     stream.read(data,16);
@@ -21,14 +21,14 @@ TEST(PackageStreamTest, ReadNormal)
 TEST(PackageStreamTest, ReadBadHost)
 {
     ASSERT_THROW(
-        MySQLStream stream("BadHostNotGoingToWork.com", 99872),
+        StreamSimple stream("BadHostNotGoingToWork.com", 99872),
         std::runtime_error
     );
 }
 TEST(PackageStreamTest, ReadPastEOF)
 {
     int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);
-    MySQLStream stream(socket);
+    StreamSimple stream(socket);
 
     char data[16];
     stream.read(data,16);
@@ -37,7 +37,7 @@ TEST(PackageStreamTest, ReadPastEOF)
 TEST(PackageStreamTest, ReadFail)
 {
     int         socket  = open("test/data/PackageStreamTest-ReadNormal", O_RDONLY);
-    MySQLStream stream(socket);
+    StreamSimple stream(socket);
     close(socket);
 
     char data[16];
@@ -47,7 +47,7 @@ TEST(PackageStreamTest, WriteNormal)
 {
     int         socket  = open("test/data/PackageStreamTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     {
-        MySQLStream stream(socket);
+        StreamSimple stream(socket);
 
         char data[16] = "12345678";
         stream.write(data,8);
@@ -63,7 +63,7 @@ TEST(PackageStreamTest, WriteNormal)
 TEST(PackageStreamTest, WriteFail)
 {
     int         socket  = open("test/data/PackageStreamTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
-    MySQLStream stream(socket);
+    StreamSimple stream(socket);
     close(socket);
 
     char data[16] = "12345678";
