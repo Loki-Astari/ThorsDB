@@ -11,10 +11,9 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-template<typename T>
 class PackageBuffer: public SQL::StreamInterface
 {
-    T&                  stream;
+    SQL::StreamInterface& stream;
     std::size_t         readCurrentPacketSize;
     std::size_t         readCurrentPacketPosition;
     unsigned char       currentPacketSequenceID;
@@ -28,7 +27,7 @@ class PackageBuffer: public SQL::StreamInterface
         void writeStream(char const* buffer, std::size_t len);
 
     public:
-        PackageBuffer(T& stream, bool flushed = false);
+        PackageBuffer(SQL::StreamInterface& stream, bool flushed = false);
         virtual void        read(char* buffer, std::size_t len)         override;
         virtual void        write(char const* buffer, std::size_t len)  override;
         virtual bool        isEmpty()                                   override;
@@ -41,9 +40,5 @@ class PackageBuffer: public SQL::StreamInterface
 
     }
 }
-
-#ifndef COVERAGE_MySQL
-#include "PackageBuffer.tpp"
-#endif
 
 #endif

@@ -6,8 +6,7 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-template<typename T>
-PackageBuffer<T>::PackageBuffer(T& stream, bool flushed)
+PackageBuffer::PackageBuffer(SQL::StreamInterface& stream, bool flushed)
     : stream(stream)
     , readCurrentPacketSize(0)
     , readCurrentPacketPosition(0)
@@ -18,8 +17,7 @@ PackageBuffer<T>::PackageBuffer(T& stream, bool flushed)
     sendBuffer.reserve(0xFFFFFF/*16MByte*/);
 }
 
-template<typename T>
-inline void PackageBuffer<T>::read(char* buffer, std::size_t len)
+inline void PackageBuffer::read(char* buffer, std::size_t len)
 {
     std::size_t retrieved = 0;
     do
@@ -36,8 +34,7 @@ inline void PackageBuffer<T>::read(char* buffer, std::size_t len)
     while (len != retrieved);
 }
 
-template<typename T>
-bool PackageBuffer<T>::isEmpty()
+bool PackageBuffer::isEmpty()
 {
     long remaining      = readCurrentPacketSize - readCurrentPacketPosition;
     if ((remaining == 0) && hasMore)
@@ -48,8 +45,7 @@ bool PackageBuffer<T>::isEmpty()
     return remaining == 0;
 }
 
-template<typename T>
-std::string PackageBuffer<T>::readRemainingData()
+std::string PackageBuffer::readRemainingData()
 {
     std::string dst;
     do
@@ -70,8 +66,7 @@ std::string PackageBuffer<T>::readRemainingData()
     return dst;
 }
 
-template<typename T>
-void PackageBuffer<T>::nextPacket()
+void PackageBuffer::nextPacket()
 {
     if (!hasMore)
     {
@@ -105,8 +100,7 @@ void PackageBuffer<T>::nextPacket()
     hasMore = readCurrentPacketSize == 0xFFFFFF;
 }
 
-template<typename T>
-void PackageBuffer<T>::startNewConversation(bool reset)
+void PackageBuffer::startNewConversation(bool reset)
 {
     if (reset)
     {
@@ -115,8 +109,7 @@ void PackageBuffer<T>::startNewConversation(bool reset)
     flushed     = false;
 }
 
-template<typename T>
-void PackageBuffer<T>::write(char const* buffer, std::size_t len)
+void PackageBuffer::write(char const* buffer, std::size_t len)
 {
     if (flushed)
     {
@@ -149,13 +142,12 @@ void PackageBuffer<T>::write(char const* buffer, std::size_t len)
     sendBuffer.insert(sendBuffer.end(), buffer, buffer + len);
 }
 
-template<typename T>
-void PackageBuffer<T>::flush()
+void PackageBuffer::flush()
 {
     if (flushed)
     {
         throw std::domain_error(
-                bugReport("ThorsAnvil::MySQL::PackageBuffer<T>::flush: ",
+                bugReport("ThorsAnvil::MySQL::PackageBuffer::flush: ",
                           "Already flushed"
               ));
     }
@@ -167,8 +159,7 @@ void PackageBuffer<T>::flush()
     sendBuffer.clear();
 }
 
-template<typename T>
-void PackageBuffer<T>::drop()
+void PackageBuffer::drop()
 {
     std::size_t dataLeft;
     std::vector<char>   drop;
@@ -188,8 +179,7 @@ void PackageBuffer<T>::drop()
     while (dataLeft != 0);
 }
 
-template<typename T>
-void PackageBuffer<T>::reset()
+void PackageBuffer::reset()
 {
     std::size_t readDataAvailable = readCurrentPacketSize - readCurrentPacketPosition;
     if (readDataAvailable == 0 && hasMore)
@@ -207,7 +197,7 @@ void PackageBuffer<T>::reset()
             extraData << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(x) << "(" << x << ") ";
         }
         throw std::domain_error(
-                bugReport("ThorsAnvil::MySQL::PackageBuffer<T>::reset: ",
+                bugReport("ThorsAnvil::MySQL::PackageBuffer::reset: ",
                           "reset() before message was read:",
                           extraData.str()
               ));
@@ -216,16 +206,14 @@ void PackageBuffer<T>::reset()
     hasMore     = true; // Will allow us to start reading the next packet
 }
 
-template<typename T>
-void PackageBuffer<T>::writePackageHeader(std::size_t size)
+void PackageBuffer::writePackageHeader(std::size_t size)
 {
     ++currentPacketSequenceID;
     stream.write(reinterpret_cast<char const*>(&size), 3);
     stream.write(reinterpret_cast<char const*>(&currentPacketSequenceID), 1);
 }
 
-template<typename T>
-void PackageBuffer<T>::writeStream(char const* buffer, std::size_t len)
+void PackageBuffer::writeStream(char const* buffer, std::size_t len)
 {
     stream.write(buffer, len);
 }

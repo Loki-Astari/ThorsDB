@@ -19,7 +19,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
 {
     private:
         SQL::StreamSimple                   stream;
-        PackageBuffer<SQL::StreamSimple>    buffer;
+        PackageBuffer                       buffer;
         ConectReader                        reader;
         ConectWriter                        writer;
         ConnectionDefault                   connection;
