@@ -5,6 +5,8 @@
 #include <string>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
+static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
+
 namespace ThorsAnvil
 {
     namespace SQL
@@ -12,8 +14,6 @@ namespace ThorsAnvil
 
 class StreamSimple: public StreamInterface
 {
-    static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
-
     int socket;
     public:
          StreamSimple(std::string const& host, int port);

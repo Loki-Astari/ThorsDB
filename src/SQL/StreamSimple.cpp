@@ -6,6 +6,9 @@
 #include <sys/uio.h>
 #include <netdb.h>
 #include <unistd.h>
+#ifndef EWOULDBLOCK
+#define EWOULDBLOCK EAGAIN
+#endif
 #include <errno.h>
 #include <string.h> // needed for memset() / bcopy()
 #include <stdio.h>  // needed for strerror()
@@ -17,8 +20,6 @@ StreamSimple::StreamSimple(int socket)
 {}
 StreamSimple::StreamSimple(std::string const& host, int port)
 {
-    port    = port ? port : 3306;
-
     sockaddr_in serv_addr;
     memset(&serv_addr, '0', sizeof(serv_addr));
     serv_addr.sin_family    = AF_INET;
@@ -64,7 +65,7 @@ void StreamSimple::read(char* buffer, std::size_t len)
     while (readSoFar != len)
     {
         std::size_t read = ::read(socket, buffer + readSoFar, len - readSoFar);
-        if ((read == ErrorResult) && (errno == EAGAIN || errno == EINTR))
+        if ((read == ErrorResult) && (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK))
         {
             /* Recoverable error. Try again. */
             continue;
@@ -95,18 +96,10 @@ void StreamSimple::write(char const* buffer, std::size_t len)
     while (writenSoFar != len)
     {
         std::size_t writen = ::write(socket, buffer + writenSoFar, len - writenSoFar);
-        if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR))
+        if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK))
         {
             /* Recoverable error. Try again. */
             continue;
-        }
-        else if (writen == 0)
-        {
-            throw std::runtime_error(
-                    errorMsg("ThorsAnvil::SQL::StreamSimple::write: ",
-                             "::write() Failed: ",
-                             "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
-                  ));
         }
         else if (writen == ErrorResult)
         {
