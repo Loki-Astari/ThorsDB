@@ -32,7 +32,7 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
-    using Buffer=MySQL::PackageBuffer<MySQL::MySQLStream>;
+    using Buffer=MySQL::PackageBuffer;
     std::map<std::string, std::string>      options;
 
     MySQL::MySQLStream      stream("127.0.0.1", 0);
