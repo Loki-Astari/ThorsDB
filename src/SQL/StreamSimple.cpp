@@ -1,4 +1,4 @@
-#include "MySQLStream.h"
+#include "StreamSimple.h"
 #include "ThorSQL/SQLUtil.h"
 #include <stdexcept>
 #include <sys/socket.h>
@@ -10,12 +10,12 @@
 #include <string.h> // needed for memset() / bcopy()
 #include <stdio.h>  // needed for strerror()
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::SQL;
 
-MySQLStream::MySQLStream(int socket)
+StreamSimple::StreamSimple(int socket)
     : socket(socket)
 {}
-MySQLStream::MySQLStream(std::string const& host, int port)
+StreamSimple::StreamSimple(std::string const& host, int port)
 {
     port    = port ? port : 3306;
 
@@ -28,7 +28,7 @@ MySQLStream::MySQLStream(std::string const& host, int port)
     if (serv == NULL)
     {
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
+                errorMsg("ThorsAnvil::SQL::StreamSimple::StreamSimple: ",
                          "::gethostbyname() Failed: ", strerror(errno)
               ));
     }
@@ -37,7 +37,7 @@ MySQLStream::MySQLStream(std::string const& host, int port)
     if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         throw std::runtime_error(
-                errorMsg("ThrosAnvil::MySQL::MySQLStream::MySQLStream: ",
+                errorMsg("ThrosAnvil::SQL::StreamSimple::StreamSimple: ",
                          "::socket() Failed: ", strerror(errno)
               ));
     }
@@ -47,18 +47,18 @@ MySQLStream::MySQLStream(std::string const& host, int port)
     {
         ::close(socket);
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
+                errorMsg("ThorsAnvil::SQL::StreamSimple::StreamSimple: ",
                          "::connect() Failed: ", strerror(errno)
               ));
     }
 }
-MySQLStream::~MySQLStream()
+StreamSimple::~StreamSimple()
 {
     ::close(socket);
 }
 
 
-void MySQLStream::read(char* buffer, std::size_t len)
+void StreamSimple::read(char* buffer, std::size_t len)
 {
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
@@ -72,7 +72,7 @@ void MySQLStream::read(char* buffer, std::size_t len)
         else if (read == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::MySQL::MySQLStream::read: "
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::read: "
                              "::read() Failed: ",
                              "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
                   ));
@@ -80,7 +80,7 @@ void MySQLStream::read(char* buffer, std::size_t len)
         else if (read == ErrorResult)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::MySQL::MySQLStream::read: ",
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::read: ",
                              "::read() Failed: ",
                              "errno=", errno, " Message=", strerror(errno)
                   ));
@@ -89,7 +89,7 @@ void MySQLStream::read(char* buffer, std::size_t len)
         readSoFar += read;
     }
 }
-void MySQLStream::write(char const* buffer, std::size_t len)
+void StreamSimple::write(char const* buffer, std::size_t len)
 {
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
@@ -103,7 +103,7 @@ void MySQLStream::write(char const* buffer, std::size_t len)
         else if (writen == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::MySQL::MySQLStream::write: ",
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::write: ",
                              "::write() Failed: ",
                              "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
                   ));
@@ -111,7 +111,7 @@ void MySQLStream::write(char const* buffer, std::size_t len)
         else if (writen == ErrorResult)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::MySQL::MySQLStream::write: ",
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::write: ",
                              "::write() Failed: ",
                              "errno=", errno, " Message=", strerror(errno)
                   ));
