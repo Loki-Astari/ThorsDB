@@ -19,7 +19,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
 {
     private:
         MySQLStream                 stream;
-        PackageBuffer<MySQLStream>  buffer;
+        PackageBuffer               buffer;
         ConectReader                reader;
         ConectWriter                writer;
         Connection                  connection;
