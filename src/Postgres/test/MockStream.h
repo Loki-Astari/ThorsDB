@@ -19,7 +19,7 @@ class MockStream: public ThorsAnvil::SQL::StreamInterface
             , writSoFar(0)
         {
         }
-        virtual void        read(char* buffer, std::size_t size)        override {std::cout << "Reading: " << size << "\n";
+        virtual void        read(char* buffer, std::size_t size)        override {
                                                                                   if (readSoFar + size > len) {
                                                                                     std::stringstream msg;
                                                                                     msg << "Read too much: readSoFar(" << readSoFar << ") Size(" << size << ") Len(" << len << ")";

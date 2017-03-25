@@ -37,7 +37,6 @@ TEST(PrepareStatementTest, Execute)
     long                count = 0;
     statement.execute([&count](int id, std::string name, short age, std::string sex, double height)
                         {
-                            std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                             ++count;
                         });
     ASSERT_EQ(2, count);
@@ -57,7 +56,6 @@ TEST(PrepareStatementTest, ExecuteWithBind)
     long                count = 0;
     statement.execute(SQL::Bind("M"), [&count](int id, std::string name, short age, std::string sex, double height)
                         {
-                            std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                             ++count;
                         });
     ASSERT_EQ(1, count);
@@ -77,7 +75,6 @@ TEST(PrepareStatementTest, ExecuteWithBindTwo)
     long                count = 0;
     statement.execute(SQL::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
                         {
-                            std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                             ++count;
                         });
     ASSERT_EQ(2, count);

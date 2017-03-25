@@ -11,7 +11,6 @@ Connection::Connection(std::string const& connection,
                        std::string const& database,
                        Options const& options)
 {
-    std::cout << "Connecting: " << connection << "\n";
     // Parse a connection URI.
     std::size_t     schemaEnd   = connection.find(':');
     if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/')
@@ -36,7 +35,6 @@ Connection::Connection(std::string const& connection,
     std::string schema      = connection.substr(0, schemaEnd);
     std::string host        = connection.substr(schemaEnd + 3, hostEnd - schemaEnd - 3);
     std::string port        = hasPort ? connection.substr(hostEnd + 1) : "0";
-    std::cout << "Connecting: Schema -> " << schema << "\n";
 
     errno                   = 0;
     char*       endPtr;
@@ -73,7 +71,6 @@ std::map<std::string, Lib::ConnectionCreator>& Connection::getCreators()
 }
 void Connection::registerConnectionType(std::string const& schema, Lib::ConnectionCreator creator)
 {
-    std::cout << "Register: " << schema << "\n\n";
     getCreators().emplace(schema, creator);
 }
 
