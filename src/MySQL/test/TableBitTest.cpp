@@ -1,6 +1,7 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
+#include "ThorSQL/Endian.h"
 #include <arpa/inet.h>
 #include <cstdint>
 
@@ -24,20 +25,6 @@
  * float
  * double
  */
-
-#ifndef htonll
-inline std::uint64_t htonll(std::uint64_t value)
-{
-    uint64_t  result;
-    uint32_t* inputValue    = reinterpret_cast<uint32_t*>(&value);
-    uint32_t* outputValue   = reinterpret_cast<uint32_t*>(&result);
-
-    outputValue[0] = htonl(inputValue[1]);
-    outputValue[1] = htonl(inputValue[0]);
-    return(result);
-}
-#endif
-
 
 // Bit Values can only be read into "unsigned integer types"
 TEST(TableBitTest, ReadBitIntoUChar)      { typeGoodTest<unsigned char>  (0xA, "SELECT B0 FROM IntTypes where Id=1"); }
