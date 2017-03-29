@@ -93,25 +93,16 @@ void PackageBuffer::sendMessage(char type)
     if (type != '\0')
     {
         // Special case for the first hand-shake message sent to the server
-        std::cout << "Send Message: " << type << "\n";
         stream.write(&type, 1);
     }
     // Add four for the size information
     std::uint32_t  size = htonl(sendBuffer.size() + 4);
-    for(int loop = 0;loop < 4;++loop)
-    {
-        std::cout << "  S: " << loop << " : " << std::dec << ((int)*(reinterpret_cast<char*>(&size) + loop)) << " : " << std::hex << ((int)*(reinterpret_cast<char*>(&size) + loop)) << "\n";
-    }
     stream.write(reinterpret_cast<char*>(&size), 4);
     flush();
 }
 
 void PackageBuffer::flush()
 {
-    for(std::size_t loop = 0 ;loop < sendBuffer.size(); ++loop)
-    {
-        std::cout << "  B: " << loop << " : " << std::setfill(' ') << std::setw(3) << std::dec << ((int)sendBuffer[loop]) << " : 0x" << std::setfill('0') << std::setw(2) << std::hex << ((int)sendBuffer[loop]) << " : " << sendBuffer[loop] << "\n";
-    }
     stream.write(&sendBuffer[0], sendBuffer.size());
     sendBuffer.clear();
 }
