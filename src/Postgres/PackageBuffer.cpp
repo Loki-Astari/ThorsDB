@@ -90,7 +90,11 @@ void PackageBuffer::write(char const* buffer, std::size_t len)
 
 void PackageBuffer::sendMessage(char type)
 {
-    stream.write(&type, 1);
+    if (type != '\0')
+    {
+        // Special case for the first hand-shake message sent to the server
+        stream.write(&type, 1);
+    }
     // Add four for the size information
     std::uint32_t  size = htonl(sendBuffer.size() + 4);
     stream.write(reinterpret_cast<char*>(&size), 4);
