@@ -27,6 +27,7 @@ class ConectWriter
         void        flush()             {stream.flush();}
         void        reset()             {stream.reset();}
 
+        void writeChar(char value)          {return writeInt<char>(value);}
         void writeInt16(std::int16_t value) {return writeInt<std::int16_t>(value);}
         void writeInt32(std::int32_t value) {return writeInt<std::int32_t>(value);}
         void writeInt64(std::int64_t value) {return writeInt<std::int64_t>(value);}

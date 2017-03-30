@@ -15,6 +15,7 @@ void ConectWriter::writeString(std::string const& data)
     stream.write(&data[0], data.size() + 1);
 }
 
+template void ConectWriter::writeInt(char);
 template void ConectWriter::writeInt(std::int16_t);
 template void ConectWriter::writeInt(std::int32_t);
 template void ConectWriter::writeInt(std::int64_t);
