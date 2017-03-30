@@ -1,5 +1,5 @@
 #include "StreamSimple.h"
-#include "ThorSQL/SQLUtil.h"
+#include "SQLUtil.h"
 #include <stdexcept>
 #include <sys/socket.h>
 #include <sys/types.h>
