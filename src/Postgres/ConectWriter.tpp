@@ -1,5 +1,6 @@
 #include "ThorSQL/Endian.h"
 #include <type_traits>
+#include <algorithm>
 
 namespace ThorsAnvil
 {
