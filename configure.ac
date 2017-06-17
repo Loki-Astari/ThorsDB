@@ -169,5 +169,5 @@ Error: Can not connect to mysql server for testing.
 
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AC_CONFIG_HEADERS([src/MySQL/MySQLConfig.h src/SQL/SQLConfig.h])
-AC_CONFIG_FILES([Makefile.extra Makefile.config])
+AC_CONFIG_FILES([Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in])
 AC_OUTPUT
