@@ -45,6 +45,12 @@ class Connection
         std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
         template<typename Requ>
         void sendMessageInternal(Requ const& request, bool resetWriter);
+    protected:
+        void conectToServer(std::string const& username,
+                            std::string const& password,
+                            std::string const& database,
+                            Options const& options
+                           );
 };
 
     }
