@@ -9,13 +9,18 @@
 #include <errno.h>
 #include <string.h> // needed for memset() / bcopy()
 #include <stdio.h>  // needed for strerror()
+#include <fcntl.h>
 
 using namespace ThorsAnvil::MySQL;
 
 MySQLStream::MySQLStream(int socket)
     : socket(socket)
+    , readYield([](){})
+    , writeYield([](){})
 {}
-MySQLStream::MySQLStream(std::string const& host, int port)
+MySQLStream::MySQLStream(std::string const& host, int port, bool nonBlocking)
+    : readYield([](){})
+    , writeYield([](){})
 {
     port    = port ? port : 3306;
 
@@ -41,6 +46,15 @@ MySQLStream::MySQLStream(std::string const& host, int port)
                          "::socket() Failed: ", strerror(errno)
               ));
     }
+    if (nonBlocking)
+    {
+        if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1)
+        {
+            throw std::domain_error(errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
+                                                      ": fcntl: ", strerror(errno)
+              ));
+        }
+    }
 
     using SockAddr = struct sockaddr;
     if (::connect(socket, reinterpret_cast<SockAddr*>(&serv_addr), sizeof(serv_addr)) < 0)
@@ -64,9 +78,14 @@ void MySQLStream::read(char* buffer, std::size_t len)
     while (readSoFar != len)
     {
         std::size_t read = ::read(socket, buffer + readSoFar, len - readSoFar);
-        if ((read == ErrorResult) && (errno == EAGAIN || errno == EINTR))
+        if ((read == ErrorResult) && (errno == EINTR))
         {
             /* Recoverable error. Try again. */
+            continue;
+        }
+        else if ((read == ErrorResult) && (errno == EAGAIN || errno == ETIMEDOUT || errno == EWOULDBLOCK))
+        {
+            readYield();
             continue;
         }
         else if (read == 0)
@@ -95,9 +114,14 @@ void MySQLStream::write(char const* buffer, std::size_t len)
     while (writenSoFar != len)
     {
         std::size_t writen = ::write(socket, buffer + writenSoFar, len - writenSoFar);
-        if ((writen == ErrorResult) && (errno == EAGAIN || errno == EINTR))
+        if ((writen == ErrorResult) && (errno == EINTR))
         {
             /* Recoverable error. Try again. */
+            continue;
+        }
+        else if ((writen == ErrorResult) && (errno == EAGAIN || errno == ETIMEDOUT || errno == EWOULDBLOCK))
+        {
+            writeYield();
             continue;
         }
         else if (writen == 0)
