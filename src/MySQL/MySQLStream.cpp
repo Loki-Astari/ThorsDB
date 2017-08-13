@@ -10,6 +10,7 @@
 #include <string.h> // needed for memset() / bcopy()
 #include <stdio.h>  // needed for strerror()
 #include <fcntl.h>
+#include <iostream>
 
 using namespace ThorsAnvil::MySQL;
 
@@ -55,15 +56,18 @@ MySQLStream::MySQLStream(std::string const& host, int port, bool nonBlocking)
               ));
         }
     }
-
     using SockAddr = struct sockaddr;
     if (::connect(socket, reinterpret_cast<SockAddr*>(&serv_addr), sizeof(serv_addr)) < 0)
     {
-        ::close(socket);
-        throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
-                         "::connect() Failed: ", strerror(errno)
-              ));
+        // Not an error if it is in progress
+        if (errno != EINPROGRESS)
+        {
+            ::close(socket);
+            throw std::runtime_error(
+                    errorMsg("ThorsAnvil::MySQL::MySQLStream::MySQLStream: ",
+                             "::connect() Failed: ", strerror(errno)
+                  ));
+        }
     }
 }
 MySQLStream::~MySQLStream()
