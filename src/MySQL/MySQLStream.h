@@ -31,6 +31,8 @@ class MySQLStream: public PackageStream
         virtual void        drop()                                      override {}
         virtual bool        isEmpty()                                   override {return true;}
         virtual std::string readRemainingData()                         override {return "";}
+
+        int getSocketId() const {return socket;}
     private:
         friend class YieldSetter;
 };
