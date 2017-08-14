@@ -37,6 +37,16 @@ namespace ThorsAnvil
                     virtual ~ConnectionProxy()  = 0;
                     // A function for creating DB specific instances of the StatementProxy objects.
                     virtual std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement) = 0;
+
+                    virtual int getSocketId() const {return -1;}
+                    virtual void setYield(std::function<void()>&&, std::function<void()>&&){}
+            };
+            class YieldSetter
+            {
+                ConnectionProxy& connection;
+                public:
+                    YieldSetter(ConnectionProxy& connection, std::function<void()>&& ry, std::function<void()>&& wy);
+                    ~YieldSetter();
             };
             template<typename T>
             class ConnectionCreatorRegister
@@ -70,6 +80,9 @@ class Connection
                       Options const& options = Options{});
 
         static void registerConnectionType(std::string const& schema, Lib::ConnectionCreator creator);
+
+        int getSocketId() const {return proxy->getSocketId();}
+        void setYield(std::function<void()>&& yr, std::function<void()>&& yw){proxy->setYield(std::move(yr), std::move(yw));}
 };
 
 template<typename T>

@@ -11,7 +11,6 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
-class YieldSetter;
 class MySQLStream: public PackageStream
 {
     static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
@@ -33,24 +32,10 @@ class MySQLStream: public PackageStream
         virtual std::string readRemainingData()                         override {return "";}
 
         int getSocketId() const {return socket;}
-    private:
-        friend class YieldSetter;
-};
-
-class YieldSetter
-{
-    MySQLStream&    stream;
-    public:
-        YieldSetter(MySQLStream& stream, std::function<void()>&& ry, std::function<void()>&& wy)
-            : stream(stream)
+        void setYield(std::function<void()>&& yr, std::function<void()>&& yw)
         {
-            stream.readYield    = std::move(ry);
-            stream.writeYield   = std::move(wy);
-        }
-        ~YieldSetter()
-        {
-            stream.readYield    = [](){};
-            stream.writeYield   = [](){};
+            readYield = std::move(yr);
+            writeYield= std::move(yw);
         }
 };
 
