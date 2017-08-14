@@ -28,6 +28,7 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
+
         // Main Interface
         template<typename Requ>
         std::unique_ptr<RespPackage> sendMessageGetResponse(Requ const& request, ConectReader::OKMap const&    actions     = {});

@@ -82,3 +82,13 @@ std::unique_ptr<Lib::StatementProxy> Connection::createStatementProxy(std::strin
 
 Lib::ConnectionProxy::~ConnectionProxy()
 {}
+
+Lib::YieldSetter::YieldSetter(Lib::ConnectionProxy& connection, std::function<void()>&& ry, std::function<void()>&& wy)
+    : connection(connection)
+{
+    connection.setYield(std::move(ry), std::move(wy));
+}
+Lib::YieldSetter::~YieldSetter()
+{
+    connection.setYield([](){}, [](){});
+}
