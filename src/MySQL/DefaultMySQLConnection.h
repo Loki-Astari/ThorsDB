@@ -3,7 +3,7 @@
 
 #include "MySQLStream.h"
 #include "PackageBuffer.h"
-#include "Connection.h"
+#include "ConnectionDefault.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
 #include "ThorSQL/Connection.h"
@@ -22,7 +22,7 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
         PackageBuffer<MySQLStream>  buffer;
         ConectReader                reader;
         ConectWriter                writer;
-        Connection                  connection;
+        ConnectionDefault           connection;
     public:
         DefaultMySQLConnection(std::string const& host, int port,
                                std::string const& username,

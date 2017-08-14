@@ -7,14 +7,27 @@
 using namespace ThorsAnvil::MySQL;
 
 Connection::Connection(
-                    std::string const& username,
-                    std::string const& password,
-                    std::string const& database,
-                    std::map<std::string, std::string> const& options,
+                    std::string const& /*username*/,
+                    std::string const& /*password*/,
+                    std::string const& /*database*/,
+                    Options const& /*options*/,
                     ConectReader& pr,
                     ConectWriter& pw)
     : packageReader(pr)
     , packageWriter(pw)
+{
+    // Don't use this class directly.
+    // It requires a sub-sequent call to connectToServer before
+    // it is fully initialized.
+
+    // See ConnectionDefault (or ConnectionNonBlocking in ThorsNisse)
+}
+
+void Connection::conectToServer(std::string const& username,
+                                std::string const& password,
+                                std::string const& database,
+                                Options const& options
+                                )
 {
     std::unique_ptr<RespPackage> initPack = recvMessage(
                                                 {{0x0A, [](int firstByte, ConectReader& reader
