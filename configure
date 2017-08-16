@@ -686,7 +686,6 @@ StdFlag11
 CXXMaxLanguage
 NO_DEPRECATED_REGISTER_TEST
 NO_UNUSED_PRIVATE_FIELD_TEST
-THOR_TARGETLIBS
 CXXCPP
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -719,6 +718,7 @@ EGREP
 GREP
 CPP
 COV
+THOR_TARGETLIBS
 VERA
 TestVera
 BOOST_PYTHON_LIB
@@ -2343,8 +2343,10 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 # Set up the build system
-git submodule init
-git submodule update
+if [ ! -e build ]; then
+    git submodule init
+    git submodule update
+fi
 
 ac_aux_dir=
 for ac_dir in build/autotools/build "$srcdir"/build/autotools/build; do
@@ -4820,12 +4822,6 @@ fi
 
     if test "${with_thor_build_on_travis}" == ""; then :
 
-else
-
-            git submodule deinit --all
-            rm .git/modules/build/config
-
-
 fi
 
 
@@ -4979,6 +4975,24 @@ fi
 
 fi
     VERA=${VERA}
+
+
+    THOR_TARGETLIBS=""
+    if test "x$enable_shared" == "xyes"; then :
+  THOR_TARGETLIBS+=" slib"
+
+fi
+    if test "x$enable_static" == "xyes"; then :
+  THOR_TARGETLIBS+=" a"
+
+fi
+    if test "x$THOR_TARGETLIBS" == "x"; then :
+  THOR_TARGETLIBS="slib"
+
+fi
+
+    THOR_TARGETLIBS=${THOR_TARGETLIBS}
+
 
 
 
@@ -17318,19 +17332,6 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-
-    THOR_TARGETLIBS=""
-    if test "x$enable_shared" == "xyes"; then :
-  THOR_TARGETLIBS+=" slib"
-
-fi
-    if test "x$enable_static" == "xyes"; then :
-  THOR_TARGETLIBS+=" a"
-
-fi
-    THOR_TARGETLIBS=${THOR_TARGETLIBS}
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts -ansi" >&5
 $as_echo_n "checking whether C compiler accepts -ansi... " >&6; }
 if ${ax_cv_check_cflags___ansi+:} false; then :
@@ -18669,7 +18670,7 @@ fi
 
 ac_config_headers="$ac_config_headers config.h src/MySQL/MySQLConfig.h:config.h.in src/SQL/SQLConfig.h:config.h.in"
 
-ac_config_files="$ac_config_files Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in"
+ac_config_files="$ac_config_files Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -19788,7 +19789,7 @@ do
     "src/MySQL/MySQLConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/MySQL/MySQLConfig.h:config.h.in" ;;
     "src/SQL/SQLConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/SQL/SQLConfig.h:config.h.in" ;;
     "Makefile.extra") CONFIG_FILES="$CONFIG_FILES Makefile.extra" ;;
-    "Makefile.config") CONFIG_FILES="$CONFIG_FILES Makefile.config:build/autotools/build/Makefile.config.in" ;;
+    "Makefile.config") CONFIG_FILES="$CONFIG_FILES Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

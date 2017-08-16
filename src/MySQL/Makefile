@@ -1,7 +1,7 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
 
-TARGET						= ThorMySQL.slib
+TARGET						= ThorMySQL.lib
 LDLIBS						= -lcrypto
 CXXFLAGS					= $(crypto_ROOT_INCDIR)
 LDFLAGS						= $(crypto_ROOT_LIBDIR)
