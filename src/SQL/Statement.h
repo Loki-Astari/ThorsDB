@@ -27,6 +27,7 @@
 #include <string>
 #include <ctime>
 #include <tuple>
+#include <functional>
 
 namespace ThorsAnvil
 {
