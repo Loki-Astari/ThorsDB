@@ -1,7 +1,7 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
 
-TARGET						= ThorSQL.slib
+TARGET						= ThorSQL.lib
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 
