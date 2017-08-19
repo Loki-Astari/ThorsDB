@@ -2343,7 +2343,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 # Set up the build system
-if [ ! -e build ]; then
+if [ ! -e build/Notes ]; then
     git submodule init
     git submodule update
 fi
