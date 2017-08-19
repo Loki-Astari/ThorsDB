@@ -40,13 +40,16 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumn
             case MYSQL_TYPE_LONGLONG:
             case MYSQL_TYPE_DOUBLE:
                 validateInfo.append(4, '\x0'); // 4 and fall => 8 total
+                // fallthrough
             case MYSQL_TYPE_LONG:
             case MYSQL_TYPE_INT24:
             case MYSQL_TYPE_FLOAT:
                 validateInfo.append(2, '\x0'); // 2 and fall => 4 total
+                // fallthrough
             case MYSQL_TYPE_SHORT:
             case MYSQL_TYPE_YEAR:
                 validateInfo.append(1, '\x0'); // 1 and fall => 2 total
+                // fallthrough
             case MYSQL_TYPE_TINY:
                 validateInfo.append(1, '\x0'); // 1          => 1 total
                 break;

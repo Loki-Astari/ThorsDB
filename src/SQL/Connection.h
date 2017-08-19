@@ -20,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <iostream>
+#include <functional>
 
 namespace ThorsAnvil
 {

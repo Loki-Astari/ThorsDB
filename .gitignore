@@ -9,7 +9,6 @@ profile/
 vera/
 makefile_tmp
 Makefile.extra
-Makefile.extra.in
 Makefile.config
 
 aclocal.m4
