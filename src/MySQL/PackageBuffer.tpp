@@ -106,9 +106,13 @@ void PackageBuffer<T>::nextPacket()
 }
 
 template<typename T>
-void PackageBuffer<T>::startNewConversation()
+void PackageBuffer<T>::startNewConversation(bool reset)
 {
-    currentPacketSequenceID = -1;
+    if (reset)
+    {
+        currentPacketSequenceID = -1;
+    }
+    flushed     = false;
 }
 
 template<typename T>
@@ -209,7 +213,6 @@ void PackageBuffer<T>::reset()
               ));
     }
 
-    flushed     = false;
     hasMore     = true; // Will allow us to start reading the next packet
 }
 

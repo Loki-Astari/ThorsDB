@@ -32,7 +32,7 @@ class PackageBuffer: public PackageStream
         virtual void        read(char* buffer, std::size_t len)         override;
         virtual void        write(char const* buffer, std::size_t len)  override;
         virtual bool        isEmpty()                                   override;
-        virtual void        startNewConversation()                      override;
+        virtual void        startNewConversation(bool reset)            override;
         virtual void        flush()                                     override;
         virtual void        drop()                                      override;
         virtual void        reset()                                     override;

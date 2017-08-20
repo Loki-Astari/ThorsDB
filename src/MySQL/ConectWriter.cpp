@@ -80,7 +80,12 @@ void ConectWriter::flush()
 }
 void ConectWriter::reset()
 {
-    stream.startNewConversation();
+    stream.startNewConversation(fullReset);
+    fullReset = true;
+}
+void ConectWriter::simpleReset()
+{
+    fullReset = false;
 }
 
 #ifdef COVERAGE_MySQL

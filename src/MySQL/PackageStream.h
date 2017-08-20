@@ -15,7 +15,7 @@ class PackageStream
         virtual ~PackageStream()                                        = 0;
         virtual void        read(char* buffer, std::size_t len)         = 0;
         virtual void        write(char const* buffer, std::size_t len)  = 0;
-        virtual void        startNewConversation()                      = 0;
+        virtual void        startNewConversation(bool reset)            = 0;
         virtual void        flush()                                     = 0;
         virtual void        reset()                                     = 0;
         virtual void        drop()                                      = 0;

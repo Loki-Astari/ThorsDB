@@ -24,7 +24,7 @@ class MySQLStream: public PackageStream
         ~MySQLStream();
         virtual void        read(char* buffer, std::size_t len)         override;
         virtual void        write(char const* buffer, std::size_t len)  override;
-        virtual void        startNewConversation()                      override {}
+        virtual void        startNewConversation(bool)                  override {}
         virtual void        flush()                                     override {}
         virtual void        reset()                                     override {}
         virtual void        drop()                                      override {}
