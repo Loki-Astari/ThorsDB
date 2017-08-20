@@ -27,6 +27,7 @@ class ConectWriter
     PackageStream&   stream;
     unsigned long    capabilities;
     unsigned long    charset;
+    bool             fullReset;
 
     public:
 
@@ -34,6 +35,7 @@ class ConectWriter
             : stream(stream)
             , capabilities(0)
             , charset(0)
+            , fullReset(true)
         {}
         virtual ~ConectWriter() {}
 
@@ -56,6 +58,8 @@ class ConectWriter
 
         void        flush();
         void        reset();
+
+        void        simpleReset();
 };
 
     }

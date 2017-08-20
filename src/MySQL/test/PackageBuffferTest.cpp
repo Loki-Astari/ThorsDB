@@ -196,8 +196,8 @@ TEST(PackageBufferTest, flush)
 
     mysqlBuffer.flush();
     ASSERT_EQ(4, buffer.writLen());
-    mysqlBuffer.reset();
-    mysqlBuffer.flush();    // Flush OK after a reset
+    mysqlBuffer.startNewConversation(true);
+    mysqlBuffer.flush();    // Flush OK after a startNewConversation()
     ASSERT_EQ(8, buffer.writLen());
     // But should fail if done twice without a reset
     ASSERT_THROW(mysqlBuffer.flush(), std::domain_error);
