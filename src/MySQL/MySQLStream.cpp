@@ -72,7 +72,10 @@ MySQLStream::MySQLStream(std::string const& host, int port, bool nonBlocking)
 }
 MySQLStream::~MySQLStream()
 {
-    ::close(socket);
+    if (socket != -1)
+    {
+        ::close(socket);
+    }
 }
 
 

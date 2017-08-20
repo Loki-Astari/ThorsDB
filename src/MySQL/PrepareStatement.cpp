@@ -12,7 +12,7 @@
 using namespace ThorsAnvil::MySQL;
 
 PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
-    : MySQLStream(0)
+    : MySQLStream(-1)
     , columns(colu)
     , position(0)
     , errorReading(false)
