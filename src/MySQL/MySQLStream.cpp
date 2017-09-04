@@ -74,8 +74,13 @@ MySQLStream::~MySQLStream()
 {
     if (socket != -1)
     {
-        ::close(socket);
+        close();
     }
+}
+void MySQLStream::close()
+{
+    ::close(socket);
+    socket = -1;
 }
 
 
