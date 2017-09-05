@@ -28,6 +28,8 @@ before_script:
 script:
     - ./configure --with-boost=/tmp/extra --with-thor-build-on-travis
     - make
+after_success:
+    - ./uploadcodecovrage
 branches:
   only:
       - master
