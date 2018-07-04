@@ -8,11 +8,11 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include "MySQLConfig.h"
+#include "test/TableTest.h"
 
 TEST(PrepareStatementBindFailureTest, TwoBindBointsThreeProvided)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -28,7 +28,6 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsThreeProvided)
 TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -44,7 +43,6 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
 TEST(PrepareStatementBindFailureTest, ZeroBindBointsTwoProvided)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,

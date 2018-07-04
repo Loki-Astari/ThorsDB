@@ -10,6 +10,8 @@
 #define THOR_SHA1(data, len, dst)   SHA1(data, len, dst)
 #endif
 
+#include <string>
+
 namespace ThorsAnvil
 {
     namespace MySQL

@@ -2,6 +2,7 @@
 #define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
 
 #include "RespPackage.h"
+#include "ConectReader.h"
 #include <string>
 #include <ostream>
 #include <iomanip>
@@ -27,6 +28,13 @@ class RespPackageAuthSwitchRequest: public RespPackage
         {
             // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthSwitchRequest
             assert(firstByte == 0xFE);
+
+            // The packet contains the terminating null as part of the string.
+            // This is not actual part of the string so we strip it here.
+            if (!pluginData.empty())
+            {
+                pluginData.pop_back();
+            }
         }
         virtual  std::ostream& print(std::ostream& s) const
         {

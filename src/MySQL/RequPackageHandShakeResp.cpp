@@ -1,4 +1,5 @@
 #include "ThorMySQL.h"
+#include "Authentication.h"
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageHandShake.h"
 #include "ThorCryptWrapper.h"
@@ -17,62 +18,9 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
     , authPluginName(handshake.getAuthPluginName())
     , capabilities(handshake.getCapabilities())
 {
-    if (authPluginName == "mysql_old_password")
-    {
-        throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
-                         "mysql_old_password: not supported"
-              ));
-    }
-    else if (authPluginName == "mysql_clear_password")
-    {
-        throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
-                         "mysql_clear_password: not supported"
-              ));
-    }
-    else if (authPluginName == "authentication_windows_client")
-    {
-        throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
-                         "authentication_windows_client: not supported"
-              ));
-    }
-    else if (authPluginName == "sha256_password")
-    {
-        throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
-                         "sha256_password: not supported"
-              ));
-    }
-    else if (authPluginName == "mysql_native_password")
-    {
-        // Requires CLIENT_SECURE_CONNECTION
-        // SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
-        ThorSHADigestStore  stage1;
-        thorSHA1(stage1, password);
-
-
-        ThorSHADigestStore  stage2;
-        thorSHA1(stage2, stage1);
-
-        std::string extendedAuth = handshake.getAuthPluginData() + std::string(stage2, stage2 + SHA_DIGEST_LENGTH);
-        ThorSHADigestStore  extendedHash;
-        thorSHA1(extendedHash, extendedAuth);
-
-        for (int loop=0;loop < SHA_DIGEST_LENGTH;++loop)
-        {
-            extendedHash[loop] = extendedHash[loop] ^ stage1[loop];
-        }
-        authResponse    = std::string(extendedHash, extendedHash + SHA_DIGEST_LENGTH);
-    }
-    else
-    {
-        throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
-                         "UNKNOWN authentication method(", authPluginName, "): not supported"
-              ));
-    }
+    auto auth = options.find("default-auth");
+    std::string const& authPluginNameUsed = (auth != options.end()) ? auth->second : authPluginName;
+    authResponse = authentication(authPluginNameUsed, handshake.getAuthPluginData(), username, password, options, database);
 }
 
 void RequPackageHandShakeResponse::build(ConectWriter& writer) const
@@ -126,7 +74,9 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 
     if (localCap & CLIENT_PLUGIN_AUTH)
     {
-        writer.writeNullTerminatedString(authPluginName);
+        auto auth = options.find("default-auth");
+        std::string const& authPluginNameUsed = (auth != options.end()) ? auth->second : authPluginName;
+        writer.writeNullTerminatedString(authPluginNameUsed);
     }
 
     // TODO Add Key Values

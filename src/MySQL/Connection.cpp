@@ -3,6 +3,7 @@
 #include "RespPackageHandShake.h"
 #include "RespPackageAuthSwitchRequest.h"
 #include "RequPackageHandShakeResp.h"
+#include "RequPackageAuthSwitchResp.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -40,19 +41,32 @@ void Connection::conectToServer(std::string const& username,
     packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
 
     RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-    std::unique_ptr<RespPackage>    ok = sendHandshakeMessage<RespPackage>(handshakeresp,
-        {{0xFE, [](int firstByte, ConectReader& reader)
+    std::unique_ptr<RespPackage>    serverResp = sendHandshakeMessage<RespPackage>(handshakeresp,
+        {
+         // The section below assumes only responses are OK/Error/RespPackageAuthSwitchRequest
+         // If this changes to allow other responses then look at the section below were we
+         // handle RespPackageAuthSwitchRequest
+         {0xFE, [](int firstByte, ConectReader& reader)
                 {return new RespPackageAuthSwitchRequest(firstByte, reader);}
          }
         });
 
-    if (!ok)
+    if (!serverResp)
     {
         throw std::domain_error("Connection::Connection: Handshake failed: Unexpected Package");
     }
-    if (!(ok->isOK()))
+    if (serverResp->isOK() == false && serverResp->isError() == false)
     {
-        throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*ok)));
+        RequPackageAuthSwitchResponse   switchResp(username, password, options, database, *dynamic_cast<RespPackageAuthSwitchRequest*>(serverResp.get()));
+        serverResp = sendHandshakeMessage<RespPackage>(switchResp, {});
+        if (!serverResp)
+        {
+            throw std::domain_error("Connection::Connection: Auth Switch failed: Unexpected Package");
+        }
+    }
+    if (serverResp->isOK() == false)
+    {
+        throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*serverResp)));
     }
 }
 

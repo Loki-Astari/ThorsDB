@@ -51,7 +51,6 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanks)
 {
     using namespace ThorsAnvil;
 
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -66,7 +65,6 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,

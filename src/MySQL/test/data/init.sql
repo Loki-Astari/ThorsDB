@@ -4,7 +4,7 @@ DROP    DATABASE IF EXISTS test;
 -- DROP    USER 'test'@'localhost';
 
 CREATE  DATABASE IF NOT EXISTS test;
-CREATE  USER 'test'@'localhost' IDENTIFIED BY 'testPassword';
+CREATE  USER 'test'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'testPassword';
 GRANT   ALL ON test.* TO 'test'@'localhost';
 
 

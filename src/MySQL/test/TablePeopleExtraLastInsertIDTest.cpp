@@ -43,7 +43,6 @@ TEST_F(TablePeopleExtraLastInsertIDTest, ModTomHanks)
 {
     using namespace ThorsAnvil;
 
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,

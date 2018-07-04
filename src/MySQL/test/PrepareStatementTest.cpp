@@ -8,11 +8,11 @@
 #include <algorithm>
 #include <gtest/gtest.h>
 #include "MySQLConfig.h"
+#include "test/TableTest.h"
 
 TEST(PrepareStatementTest, Create)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -25,7 +25,6 @@ TEST(PrepareStatementTest, Create)
 TEST(PrepareStatementTest, Execute)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -45,7 +44,6 @@ TEST(PrepareStatementTest, Execute)
 TEST(PrepareStatementTest, ExecuteWithBind)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -65,7 +63,6 @@ TEST(PrepareStatementTest, ExecuteWithBind)
 TEST(PrepareStatementTest, ExecuteWithBindTwo)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -88,7 +85,8 @@ TEST(PrepareStatementTest, DestructorTest)
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
-                                    THOR_TESTING_MYSQL_DB);
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
     int count = 0;
     {
         SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;

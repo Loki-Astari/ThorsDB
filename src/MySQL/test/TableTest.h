@@ -5,12 +5,15 @@
 #include "ThorSQL/Connection.h"
 #include "ThorSQL/Statement.h"
 #include "MySQLConfig.h"
+
+// Defined in test/BindParametersCharTest.cpp
+extern std::map<std::string, std::string>      options;
+
 template<typename T>
 void typeGoodTest(T expected, std::string const& expr)
 {
     using namespace ThorsAnvil;
 
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -28,7 +31,6 @@ void typeBadTest(std::string const& expr)
 {
     using namespace ThorsAnvil;
 
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,

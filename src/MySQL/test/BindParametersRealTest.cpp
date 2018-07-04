@@ -6,7 +6,6 @@
 TEST(BindParametersReadTest, BindFloatTestAgainstDouble)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -24,7 +23,6 @@ TEST(BindParametersReadTest, BindFloatTestAgainstDouble)
 TEST(BindParametersReadTest, BindFloatTestAgainstFloat)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -42,7 +40,6 @@ TEST(BindParametersReadTest, BindFloatTestAgainstFloat)
 TEST(BindParametersReadTest, BindFloatTestAgainstDecimal)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -60,7 +57,6 @@ TEST(BindParametersReadTest, BindFloatTestAgainstDecimal)
 TEST(BindParametersReadTest, BindFloatTestAgainstNumeric)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -78,7 +74,6 @@ TEST(BindParametersReadTest, BindFloatTestAgainstNumeric)
 TEST(BindParametersReadTest, BindDoubleTestAgainstDouble)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -96,7 +91,6 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstDouble)
 TEST(BindParametersReadTest, BindDoubleTestAgainstFloat)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -114,7 +108,6 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstFloat)
 TEST(BindParametersReadTest, BindDoubleTestAgainstDecimal)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -132,7 +125,6 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstDecimal)
 TEST(BindParametersReadTest, BindDoubleTestAgainstNumeric)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,

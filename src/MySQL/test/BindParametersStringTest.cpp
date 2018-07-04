@@ -6,7 +6,6 @@
 TEST(BindParametersStringTest, BindStringTestAgainstChar1)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -32,7 +31,6 @@ TEST(BindParametersStringTest, BindStringTestAgainstChar1)
 TEST(BindParametersStringTest, BindStringTestAgainstVarChar32)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -58,7 +56,6 @@ TEST(BindParametersStringTest, BindStringTestAgainstVarChar32)
 TEST(BindParametersStringTest, BindStringTestAgainstTinyText)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -84,7 +81,6 @@ TEST(BindParametersStringTest, BindStringTestAgainstTinyText)
 TEST(BindParametersStringTest, BindStringTestAgainstText)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -110,7 +106,6 @@ TEST(BindParametersStringTest, BindStringTestAgainstText)
 TEST(BindParametersStringTest, BindStringTestAgainstMediumText)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -136,7 +131,6 @@ TEST(BindParametersStringTest, BindStringTestAgainstMediumText)
 TEST(BindParametersStringTest, BindStringTestAgainstLongText)
 {
     using namespace ThorsAnvil;
-    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
