@@ -37,10 +37,11 @@ void Connection::conectToServer(std::string const& username,
                                                  }
                                                 });
     std::unique_ptr<RespPackageHandShake> handshake = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
-    packageReader.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
-    packageWriter.initFromHandshake(handshake->getCapabilities(), handshake->getCharset());
-
     RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
+
+    packageReader.initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
+    packageWriter.initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
+
     std::unique_ptr<RespPackage>    serverResp = sendHandshakeMessage<RespPackage>(handshakeresp,
         {
          // The section below assumes only responses are OK/Error/RespPackageAuthSwitchRequest

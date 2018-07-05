@@ -6,6 +6,21 @@
 
 using namespace ThorsAnvil::MySQL;
 
+// These capabilities mirror the `mysql` tool.
+// We will leave this for now but it may change
+// as the understanding of the system updates.
+constexpr unsigned long cap  =
+    CLIENT_SET_CLIENT | CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA | CLIENT_CONNECT_ATTRS
+  | CLIENT_PLUGIN_AUTH | CLIENT_PS_MULTI_RESULTS | CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS
+  | CLIENT_SECURE_CONNECTION | CLIENT_TRANSACTIONS
+  | CLIENT_INTERACTIVE | CLIENT_PROTOCOL_41
+  | CLIENT_LOCAL_FILES
+  // | SERVER_SESSION_STATE_CHANGED
+  // We don't know how to decode the Session State Information in the RespPackageOK
+  // So this must currently be turned off.
+  // Once you have it decoding you can enable this.
+  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD;
+
 RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& username,
                                                            std::string const& password,
                                                            Options const&     options,
@@ -16,7 +31,7 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
     , options(options)
     , database(database)
     , authPluginName(handshake.getAuthPluginName())
-    , capabilities(handshake.getCapabilities())
+    , capabilities(handshake.getCapabilities() & cap)
 {
     auto auth = options.find("default-auth");
     std::string const& authPluginNameUsed = (auth != options.end()) ? auth->second : authPluginName;
@@ -25,20 +40,9 @@ RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& us
 
 void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 {
-    // These capabilities mirror the `mysql` tool.
-    // We will leave this for now but it may change
-    // as the understanding of the system updates.
-    unsigned long cap  = CLIENT_SET_CLIENT | CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA | CLIENT_CONNECT_ATTRS
-                 | CLIENT_PLUGIN_AUTH | CLIENT_PS_MULTI_RESULTS | CLIENT_MULTI_RESULTS | CLIENT_MULTI_STATEMENTS
-                 | CLIENT_SECURE_CONNECTION | CLIENT_TRANSACTIONS
-                 | CLIENT_INTERACTIVE | CLIENT_PROTOCOL_41
-                 | CLIENT_LOCAL_FILES
-                 | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD;
-
     // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeResponse41
     // Turn off flags not supported by the server
-    unsigned long localCap = capabilities & cap;
-    writer.writeFixedLengthInteger<4>(localCap);
+    writer.writeFixedLengthInteger<4>(capabilities);
 
     long maxPacketSize   = 0x01000000;
     writer.writeFixedLengthInteger<4>(maxPacketSize);
@@ -51,12 +55,12 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 
     writer.writeNullTerminatedString(username);
 
-    if (localCap & CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)
+    if (capabilities & CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA)
     {
         writer.writeLengthEncodedInteger(authResponse.size());
         writer.writeFixedLengthString(authResponse, authResponse.size());
     }
-    else if (localCap & CLIENT_SECURE_CONNECTION)
+    else if (capabilities & CLIENT_SECURE_CONNECTION)
     {
         char val = authResponse.size();
         writer.writeFixedLengthInteger<1>(val);
@@ -67,12 +71,12 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
         writer.writeNullTerminatedString(authResponse);
     }
 
-    if (localCap & CLIENT_CONNECT_WITH_DB)
+    if (capabilities & CLIENT_CONNECT_WITH_DB)
     {
         writer.writeNullTerminatedString(database);
     }
 
-    if (localCap & CLIENT_PLUGIN_AUTH)
+    if (capabilities & CLIENT_PLUGIN_AUTH)
     {
         auto auth = options.find("default-auth");
         std::string const& authPluginNameUsed = (auth != options.end()) ? auth->second : authPluginName;
@@ -81,7 +85,7 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 
     // TODO Add Key Values
     // For now empty the options
-    if (localCap & CLIENT_CONNECT_ATTRS)
+    if (capabilities & CLIENT_CONNECT_ATTRS)
     {
         std::size_t size = 0;
         for (auto const& loop: options)

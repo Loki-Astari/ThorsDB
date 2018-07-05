@@ -33,6 +33,7 @@ class RequPackageHandShakeResponse: public RequPackage
 
         virtual  std::ostream& print(std::ostream& s)   const override;
         virtual  void build(ConectWriter& writer)       const override;
+        long getCapabilities()                          const {return capabilities;}
 };
 
     }

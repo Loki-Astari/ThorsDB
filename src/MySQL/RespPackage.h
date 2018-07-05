@@ -2,6 +2,7 @@
 #define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_H
 
 #include "ThorSQL/SQLUtil.h"
+#include "ConectReader.h"
 #include <ostream>
 #include <string>
 #include <memory>
@@ -10,8 +11,6 @@ namespace ThorsAnvil
 {
     namespace MySQL
     {
-
-class ConectReader;
 
 class RespPackage
 {
@@ -37,6 +36,7 @@ class RespPackage
         bool                isError()           const                   {return error;}
         bool                isEOF()             const                   {return eof;}
         std::string const&  message()           const                   {return humanMessage;}
+        bool                hasCap(int c)       const                   {return (reader.getCapabilities() & c) != 0;}
 
         friend std::ostream& operator<<(std::ostream& s, RespPackage const& data)
         {
