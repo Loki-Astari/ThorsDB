@@ -6,6 +6,7 @@ before_install:
     - sudo apt-get update
 install:
     - sudo apt-get install -qq g++-7
+    - sudo apt-get install python-dev -y
     - sudo apt-get install -qq libssl-dev
     - sudo apt-get install -qq libboost-all-dev
     - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
@@ -16,11 +17,8 @@ install:
     - cd ..
     - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
     - cat src/MySQL/test/data/init.sql | mysql --force --user=root --password=testPassword
-before_script:
-    - mv .gitmodules gitmodules.old
-    - sed -e 's#git@\([^:]*\):#https://\1/#' gitmodules.old > .gitmodules
 script:
-    - ./configure --with-boost=/tmp/extra --with-thor-build-on-travis
+    - ./configure --with-boost=/tmp/extra
     - make
 after_success:
-    - ./uploadcodecovrage
+    - bash <(curl -s https://codecov.io/bash)
