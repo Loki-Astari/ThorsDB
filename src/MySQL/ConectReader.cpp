@@ -249,5 +249,6 @@ template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
 template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
+template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<8>();
 
 #endif

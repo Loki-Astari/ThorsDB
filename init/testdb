@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat src/MySQL/test/data/init.sql | mysql -f -u root
