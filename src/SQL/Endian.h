@@ -5,41 +5,79 @@
 
 #ifndef htonll
 
-enum ThorEndianTestValues
+namespace ThorsAnvil
 {
-    O32_LITTLE_ENDIAN   = 0x03020100ul,
-    O32_BIG_ENDIAN      = 0x00010203ul,
-    O32_PDP_ENDIAN      = 0x01000302ul
+    namespace Util
+    {
+
+enum class EndianTypes
+{
+    Error, Little, Big
 };
 
-static constexpr union { unsigned char bytes[4]; uint32_t value; } thorHostOrderCheck = { { 0, 1, 2, 3 } };
-
-#define O32_HOST_ORDER (o32_host_order.value)
-
-#if O32_HOST_ORDER == O32_LITTLE_ENDIAN
-inline std::uint64_t htonll(std::uint64_t value)
+enum EndinatTestValue : uint32_t
 {
-    uint64_t  result;
-    uint32_t* inputValue    = reinterpret_cast<uint32_t*>(&value);
-    uint32_t* outputValue   = reinterpret_cast<uint32_t*>(&result);
+    LittleEndian   = 0x00000001,
+    BigEndian      = 0x01000000,
+};
 
-    outputValue[0] = htonl(inputValue[1]);
-    outputValue[1] = htonl(inputValue[0]);
-    return result;
-}
-inline std::uint64_t ntohll(std::uint64_t value) {return htonll(value);}
-#elif O32_HOST_ORDER == O32_BIG_ENDIAN
-inline std::uint64_t htonll(std::uint64_t value)
+#pragma vera-pushoff
+constexpr EndianTypes getEndianType()
+#pragma vera-pop
 {
-    return value;
+    return ((0xFFFFFFFF & 1) == EndinatTestValue::LittleEndian)
+            ? EndianTypes::Little
+            : ((0xFFFFFFFF & 1) == EndinatTestValue::BigEndian)
+                ? EndianTypes::Big
+                : EndianTypes::Error;
 }
+
+template<EndianTypes>
+struct Endian;
+
+template<>
+struct Endian<EndianTypes::Little>
+{
+    static std::uint64_t ntohll_Impl(std::uint64_t value)
+    {
+        uint64_t  result;
+        uint32_t* inputValue    = reinterpret_cast<uint32_t*>(&value);
+        uint32_t* outputValue   = reinterpret_cast<uint32_t*>(&result);
+
+        outputValue[0] = htonl(inputValue[1]);
+        outputValue[1] = htonl(inputValue[0]);
+        return result;
+    }
+    static std::uint64_t htonll_Impl(std::uint64_t value)
+    {
+        return ntohll_Impl(value);
+    }
+};
+
+template<>
+struct Endian<EndianTypes::Big>
+{
+    static std::uint64_t ntohll_Impl(std::uint64_t value)
+    {
+        return value;
+    }
+    static std::uint64_t htonll_Impl(std::uint64_t value)
+    {
+        return value;
+    }
+};
+
+    }
+}
+
 inline std::uint64_t ntohll(std::uint64_t value)
 {
-    return value;
+    return ThorsAnvil::Util::Endian<ThorsAnvil::Util::getEndianType()>::ntohll_Impl(value);
 }
-#elif O32_HOST_ORDER == O32_PDP_ENDIAN
-#error "Please write a htonll() for machines of PDP Endian"
-#endif
+inline std::uint64_t htonll(std::uint64_t value)
+{
+    return ThorsAnvil::Util::Endian<ThorsAnvil::Util::getEndianType()>::htonll_Impl(value);
+}
 #endif
 
 namespace ThorsAnvil
@@ -69,15 +107,15 @@ inline unsigned char convertToNet(unsigned char value)
 }
 inline std::uint16_t convertToNet(std::uint16_t value)
 {
-    return ntohs(value);
+    return htons(value);
 }
 inline std::uint32_t convertToNet(std::uint32_t value)
 {
-    return ntohl(value);
+    return htonl(value);
 }
 inline std::uint64_t convertToNet(std::uint64_t value)
 {
-    return ntohll(value);
+    return htonll(value);
 }
 
     }
