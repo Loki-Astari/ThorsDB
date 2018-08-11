@@ -17,6 +17,7 @@ static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
 
 inline int fcntlWrapper(int fd, int cmd, int value)         {return ::fcntl(fd, cmd, value);}
 inline ssize_t readWrapper(int fd, void* buf, size_t count) {return ::read(fd, buf, count);}
+inline ssize_t writeWrapper(int fd, void const* buf, size_t count){return ::write(fd, buf, count);}
 
 namespace ThorsAnvil
 {

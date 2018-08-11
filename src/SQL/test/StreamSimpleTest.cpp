@@ -175,11 +175,49 @@ TEST(StreamSimpleTest, WriteNormal)
     }
     unlink("test/data/StreamSimpleTest-WriteNormal");
 }
+TEST(StreamSimpleTest, WriteNormalWithContinue)
+{
+    MOCK_SYS(writeWrapper, [](int socket, void const* buffer, std::size_t len)
+    {
+        static bool firstTime = true;
+        if (firstTime)
+        {
+            firstTime = false;
+            errno = EINTR;
+            return -1L;
+        }
+        return ::write(socket, buffer, len);
+    });
+    int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+    {
+        StreamSimple stream(socket);
+
+        char data[16] = "12345678";
+        stream.write(data,8);
+    }
+    {
+        std::ifstream   test("test/data/StreamSimpleTest-WriteNormal");
+        std::string     line;
+        std::getline(test, line);
+        ASSERT_EQ("12345678", line);
+    }
+    unlink("test/data/StreamSimpleTest-WriteNormal");
+}
 TEST(StreamSimpleTest, WriteFail)
 {
     int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     StreamSimple stream(socket);
     close(socket);
+
+    char data[16] = "12345678";
+    ASSERT_THROW(stream.write(data,8), std::runtime_error);
+    unlink("test/data/StreamSimpleTest-WriteNormal");
+}
+TEST(StreamSimpleTest, WriteFailMocked)
+{
+    MOCK_SYS(writeWrapper, [](int socket, void const* buffer, std::size_t len) {return 0;});
+    int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+    StreamSimple stream(socket);
 
     char data[16] = "12345678";
     ASSERT_THROW(stream.write(data,8), std::runtime_error);

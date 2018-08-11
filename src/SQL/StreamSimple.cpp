@@ -154,7 +154,7 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
     {
-        std::size_t writen = ::write(socket, buffer + writenSoFar, len - writenSoFar);
+        std::size_t writen = ::writeWrapper(socket, buffer + writenSoFar, len - writenSoFar);
         if ((writen == ErrorResult) && (errno == EINTR))
         {
             /* Recoverable error. Try again. */
