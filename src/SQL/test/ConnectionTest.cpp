@@ -53,4 +53,19 @@ TEST(ConnectionTest, BadPort)
     std::logic_error
     );
 }
+class MockConnectionProxy: public ThorsAnvil::SQL::Lib::ConnectionProxy
+{
+    public:
+        virtual std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) {return nullptr;}
 
+        virtual int getSocketId() const  {return -1;}
+        virtual void setYield(std::function<void()>&&, std::function<void()>&&) {}
+};
+TEST(ConnectionTest, YieldSetter)
+{
+    using ThorsAnvil::SQL::Connection;
+    using ThorsAnvil::SQL::Lib::YieldSetter;
+
+    MockConnectionProxy connection;
+    YieldSetter     setYieldFunctions(connection, std::function<void()>([&connection](){}), std::function<void()>([&connection](){}));
+}
