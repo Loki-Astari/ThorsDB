@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_MYSQL_BIND_BUFFER_H
 #define THORS_ANVIL_MYSQL_BIND_BUFFER_H
 
-#include "MySQLStream.h"
+#include "ThorSQL/StreamSimple.h"
 #include "ConectWriter.h"
 #include "RespPackageColumnDefinition.h"
 #include <vector>
@@ -13,12 +13,12 @@ namespace ThorsAnvil
 
 class BindBuffer
 {
-    class BindStream: public MySQLStream
+    class BindStream: public SQL::StreamSimple
     {
         std::vector<char>& dst;
         public:
             BindStream(std::vector<char>& dst)
-                : MySQLStream(-1)
+                : SQL::StreamSimple(-1)
                 , dst(dst)
             {}
             virtual void read(char*, std::size_t) override {}

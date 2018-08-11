@@ -4,7 +4,7 @@
 #include "gtest/gtest.h"
 
 using ThorsAnvil::MySQL::PackageBuffer;
-using MySqlBuf=PackageBuffer<MockStream>;
+using MySqlBuf=PackageBuffer;
 
 TEST(PackageBufferTest, isEmpty)
 {

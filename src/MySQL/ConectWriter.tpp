@@ -1,4 +1,4 @@
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 
 namespace ThorsAnvil
 {

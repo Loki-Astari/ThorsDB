@@ -1,6 +1,6 @@
 
 #include "ConectWriter.h"
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 
 #include "gtest/gtest.h"
 #include "test/MockStream.h"

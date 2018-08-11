@@ -2,7 +2,7 @@
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageHandShake.h"
 #include "ConectReader.h"
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 #include "MySQLConfig.h"
 #include "test/MockStream.h"
 #include <algorithm>

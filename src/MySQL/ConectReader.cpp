@@ -1,4 +1,4 @@
-#include "PackageStream.h"
+#include "ThorSQL/StreamInterface.h"
 #include "ConectReader.h"
 #include "RespPackageOK.h"
 #include "RespPackageEOF.h"

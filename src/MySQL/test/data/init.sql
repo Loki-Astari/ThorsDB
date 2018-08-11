@@ -23,24 +23,24 @@ CREATE TABLE PeopleExtra ( ID  INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT, Name
 --      Add immutable test data below
 CREATE TABLE IntTypes(
      ID  INTEGER
-    ,B0  BIT(4)                 # 4  bit
-    ,B1  Bit(12)                # 12 bit
-    ,B2  Bit(24)                # 24 bit
-    ,B3  Bit(48)                # 48 bit
+    ,B0  BIT(4)                 -- 4  bit
+    ,B1  Bit(12)                -- 12 bit
+    ,B2  Bit(24)                -- 24 bit
+    ,B3  Bit(48)                -- 48 bit
 
-    ,U2  TINYINT     UNSIGNED   # 1 byte    0 -> 255
-    ,U3  SMALLINT    UNSIGNED   # 2 byte    0 -> 65536
-    ,U4  MEDIUMINT   UNSIGNED   # 3 byte    0 -> 16777215
-    ,U5  INT         UNSIGNED   # 4 byte    0 -> 4294967295
+    ,U2  TINYINT     UNSIGNED   -- 1 byte    0 -> 255
+    ,U3  SMALLINT    UNSIGNED   -- 2 byte    0 -> 65536
+    ,U4  MEDIUMINT   UNSIGNED   -- 3 byte    0 -> 16777215
+    ,U5  INT         UNSIGNED   -- 4 byte    0 -> 4294967295
     ,U6  INTEGER     UNSIGNED
-    ,U7  BIGINT      UNSIGNED   # 8 byte    0 -> 18446744073709551615
+    ,U7  BIGINT      UNSIGNED   -- 8 byte    0 -> 18446744073709551615
 
-    ,I2  TINYINT                # 1 byte    -128 -> 127
-    ,I3  SMALLINT               # 2 byte    -32768 -> 32767
-    ,I4  MEDIUMINT              # 3 byte    -8388608 -> 8388607
-    ,I5  INT                    # 4 byte    -2147483648 -> 2147483647
+    ,I2  TINYINT                -- 1 byte    -128 -> 127
+    ,I3  SMALLINT               -- 2 byte    -32768 -> 32767
+    ,I4  MEDIUMINT              -- 3 byte    -8388608 -> 8388607
+    ,I5  INT                    -- 4 byte    -2147483648 -> 2147483647
     ,I6  INTEGER
-    ,I7  BIGINT);               # 8 byte    -9223372036854775808 -> 9223372036854775807
+    ,I7  BIGINT);               -- 8 byte    -9223372036854775808 -> 9223372036854775807
 
 INSERT INTO IntTypes(ID,
                      B0, B1, B2, B3,
