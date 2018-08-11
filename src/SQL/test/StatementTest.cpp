@@ -186,6 +186,25 @@ TEST(StatementTest, InsertGetLastInsertID)
         statement.lastInsertID();
     );
 }
+TEST(StatementTest, ProxyAbort)
+{
+    auto test = []()
+    {
+        using ThorsAnvil::SQL::Connection;
+        using ThorsAnvil::SQL::Statement;
+        using ThorsAnvil::SQL::Bind;
+
+        Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+        Statement       statement(connection, "SELECT 3");
+        int             count = 0;
+
+        statement.execute(Bind(15), CountLines(count));
+    };
+    EXPECT_THROW(
+        test(),
+        std::domain_error
+    );
+}
 
 TEST(StatementTest, UnixTimeStampDefaultInit)
 {

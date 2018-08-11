@@ -73,6 +73,7 @@ template void ThorsAnvil::SQL::Detail::Cursor::activate<true, std::function<void
 
 template void ThorsAnvil::SQL::Statement::execute<SetGoodToTrue>(SetGoodToTrue);
 template void ThorsAnvil::SQL::Statement::execute<SetGoodToTrue, int>(ThorsAnvil::SQL::BindArgs<int> const&, SetGoodToTrue);
+template void ThorsAnvil::SQL::Statement::execute<CountLines, int>(ThorsAnvil::SQL::BindArgs<int> const&, CountLines);
 template void ThorsAnvil::SQL::Statement::execute<int>(ThorsAnvil::SQL::BindArgs<int> const&);
 
 #endif

@@ -4,27 +4,37 @@
 
 #include "Connection.h"
 #include "Statement.h"
+#include <string>
 
 
 using ThorsAnvil::SQL::Lib::StatementProxy;
 using ThorsAnvil::SQL::UnixTimeStamp;
 
+void updateRow(int& nextRow, int& nextField)
+{
+    ++nextField;
+    if (nextField == 5)
+    {
+        nextField   = 0;
+        ++nextRow;
+    }
+}
 template<typename T>
 void getField(int& nextRow, int& nextField, T& value)
 {
+    if (nextRow > 1) {
+        updateRow(nextRow, nextField);
+        throw std::domain_error("Invalid Conversion");
+    }
     switch(nextField)
     {
         case 0: value =     static_cast<T>(nextRow ? 15:32);        break;
-        case 1: throw std::domain_error("Invalid Conversion");
+        case 1: updateRow(nextRow, nextField); throw ThorsAnvil::SQL::Lib::ValidationTmpError("Invalid Conversion");
         case 2: value =     static_cast<T>(nextRow ? 32:29);        break;
         case 3: value =     static_cast<T>(nextRow ? 'M':'F');      break;
         case 4: value =     static_cast<T>(nextRow ? 34.9:33.543);  break;
     }
-    ++nextField;
-    if (nextField == 5) {
-        nextField   = 0;
-        ++nextRow;
-    }
+    updateRow(nextRow, nextField);
 }
 void getFieldString(int& nextRow, int& nextField, std::string& value)
 {
@@ -51,12 +61,14 @@ class MockSQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
             int     nextRow;
             int     nextField;
             bool    isSelectStatement;
+            int     maxRows;
 
             public:
-            MockSQLStatement(bool isSelectStatement)
+            MockSQLStatement(bool isSelectStatement, int maxRows)
                 : nextRow(0)
                 , nextField(0)
                 , isSelectStatement(isSelectStatement)
+                , maxRows(maxRows)
             {}
             virtual void   abort()                              override {}
 
@@ -84,7 +96,7 @@ class MockSQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
             // -----
 
             virtual void doExecute()                            override {}
-            virtual bool more()                                 override {return nextRow < 2;}
+            virtual bool more()                                 override {return nextRow < maxRows;}
             virtual bool isSelect() const                       override {return isSelectStatement;}
             virtual long rowsAffected() const                   override {return 0;}
             virtual long lastInsertID() const                   override {return 0;}
@@ -117,7 +129,9 @@ class MockSQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
         virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement) override
         {
             bool isSelect = statement.find("SELECT") != std::string::npos;
-            return std::unique_ptr<StatementProxy>(new MockSQLStatement(isSelect));
+            std::string maxRowsString = isSelect ? statement.substr(6) : std::string("");
+            int  maxRows  = maxRowsString.empty() ? 2 : std::stoi(maxRowsString);
+            return std::unique_ptr<StatementProxy>(new MockSQLStatement(isSelect, maxRows));
         }
         virtual int    getSocketId() const                  override {return -1;}
         virtual void   setYield(std::function<void()>&&, std::function<void()>&&) override {}
