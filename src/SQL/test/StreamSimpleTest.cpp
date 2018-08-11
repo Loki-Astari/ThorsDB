@@ -398,3 +398,52 @@ TEST(StreamSimpleTest, OpenSSLConnection)
     sslServer.join();
 }
 
+TEST(StreamSimpleTest, startNewConversationNothingTrue)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.startNewConversation(true);
+}
+TEST(StreamSimpleTest, startNewConversationNothingFalse)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.startNewConversation(false);
+}
+TEST(StreamSimpleTest, flushNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.flush();
+}
+TEST(StreamSimpleTest, resetNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.reset();
+}
+TEST(StreamSimpleTest, dropNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.drop();
+}
+TEST(StreamSimpleTest, isEmptyNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    EXPECT_EQ(stream.isEmpty(), true);
+}
+TEST(StreamSimpleTest, readRemainingDataNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    EXPECT_EQ(stream.readRemainingData(), "");
+}
