@@ -1,6 +1,7 @@
 
 #include "StreamSimple.h"
 #include "SSLUtil.h"
+#include "coverage/ThorMock.h"
 #include <fstream>
 #include <thread>
 #include <gtest/gtest.h>
@@ -34,6 +35,24 @@ TEST(StreamSimpleTest, ReadNormal)
 TEST(StreamSimpleTest, ReadGoodHost)
 {
     StreamSimple stream("google.com", 80);
+}
+TEST(StreamSimpleTest, NonBlockingFail)
+{
+    MOCK_SYS(fcntlWrapper, [](int, int, int){return -1;});
+    auto test = []()
+    {
+        StreamSimple stream("google.com", 80, true);
+    };
+
+    EXPECT_THROW(
+        test(),
+        std::domain_error
+    );
+}
+TEST(StreamSimpleTest, NonBlockingOK)
+{
+    MOCK_SYS(fcntlWrapper, [](int, int, int){return 0;});
+    StreamSimple stream("google.com", 80, true);
 }
 TEST(StreamSimpleTest, ReadGoodHostBadPort)
 {

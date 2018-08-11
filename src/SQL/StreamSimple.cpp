@@ -57,7 +57,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     }
     if (nonBlocking)
     {
-        if (fcntl(socket, F_SETFL, O_NONBLOCK) == -1)
+        if (::fcntlWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
         {
             throw std::domain_error(errorMsg("ThorsAnvil::MySQL::StreamSimple::StreamSimple: ",
                                                       ": fcntl: ", strerror(errno)

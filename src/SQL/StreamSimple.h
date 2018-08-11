@@ -12,6 +12,8 @@
 
 static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
 
+inline int fcntlWrapper(int fd, int cmd, int value)         {return ::fcntl(fd, cmd, value);}
+
 namespace ThorsAnvil
 {
     namespace SQL
