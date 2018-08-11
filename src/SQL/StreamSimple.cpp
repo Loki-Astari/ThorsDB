@@ -16,6 +16,7 @@
 #include <string.h> // needed for memset() / bcopy()
 #include <stdio.h>  // needed for strerror()
 #include <fcntl.h>
+#include <iostream>
 
 using namespace ThorsAnvil::SQL;
 
