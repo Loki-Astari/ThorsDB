@@ -187,4 +187,28 @@ TEST(StatementTest, InsertGetLastInsertID)
     );
 }
 
+TEST(StatementTest, UnixTimeStampDefaultInit)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      test;
+    EXPECT_EQ(0, test.time);
+}
+TEST(StatementTest, UnixTimeStampInit)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      test(15);
+    EXPECT_EQ(15, test.time);
+}
+TEST(StatementTest, UnixTimeStampEquiv)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      lhs(15);
+    ThorsAnvil::SQL::UnixTimeStamp      rhs(15);
+
+    EXPECT_TRUE(lhs == rhs);
+}
+TEST(StatementTest, UnixTimeStampNonEquiv)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      lhs;
+    ThorsAnvil::SQL::UnixTimeStamp      rhs(15);
+
+    EXPECT_TRUE(lhs != rhs);
+}
 
