@@ -19,6 +19,8 @@ class DefaultPostGConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
                                std::string const& database,
                                ThorsAnvil::SQL::Options const& options);
         virtual std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
+        virtual int getSocketId() const override {throw std::runtime_error("TODO");}
+        virtual void setYield(std::function<void()>&&, std::function<void()>&&) override {throw std::runtime_error("TODO");}
 };
 
     }
