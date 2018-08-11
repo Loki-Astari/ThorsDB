@@ -54,6 +54,7 @@ void Statement::execute()
 
 #ifdef COVERAGE_SQL
 #include "Statement.tpp"
+#include "MD5.h"
 #include "test/SetGoodToTrue.h"
 
 template
