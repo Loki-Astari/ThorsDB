@@ -8,11 +8,15 @@
 #include <string>
 #include <functional>
 #include <utility>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
 
 inline int fcntlWrapper(int fd, int cmd, int value)         {return ::fcntl(fd, cmd, value);}
+inline ssize_t readWrapper(int fd, void* buf, size_t count) {return ::read(fd, buf, count);}
 
 namespace ThorsAnvil
 {

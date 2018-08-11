@@ -2,10 +2,7 @@
 #include "SQLUtil.h"
 #include <stdexcept>
 #include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/uio.h>
 #include <netdb.h>
-#include <unistd.h>
 #ifndef EWOULDBLOCK
 #define EWOULDBLOCK EAGAIN
 #endif
@@ -121,7 +118,7 @@ void StreamSimple::readFD(char* buffer, std::size_t len)
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
     {
-        std::size_t read = ::read(socket, buffer + readSoFar, len - readSoFar);
+        std::size_t read = ::readWrapper(socket, buffer + readSoFar, len - readSoFar);
         if ((read == ErrorResult) && (errno == EINTR))
         {
             /* Recoverable error. Try again. */

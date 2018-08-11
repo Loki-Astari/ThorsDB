@@ -32,6 +32,27 @@ TEST(StreamSimpleTest, ReadNormal)
 
     ASSERT_EQ(std::string(data, data + 16), std::string("1234567890ABCDEF"));
 }
+TEST(StreamSimpleTest, ReadInterupt)
+{
+    MOCK_SYS(readWrapper, [](int socket, void* buffer, std::size_t len)
+    {
+        static bool firstTime = true;
+        if (firstTime)
+        {
+            firstTime = false;
+            errno = EINTR;
+            return -1L;
+        }
+        return ::read(socket, buffer, len);
+    });
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    char data[16];
+    stream.read(data,16);
+
+    ASSERT_EQ(std::string(data, data + 16), std::string("1234567890ABCDEF"));
+}
 TEST(StreamSimpleTest, ReadGoodHost)
 {
     StreamSimple stream("google.com", 80);

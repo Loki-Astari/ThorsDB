@@ -4,5 +4,6 @@
 
 
 MOCK_SYSTEM_FUNC(fcntlWrapper)
+MOCK_SYSTEM_FUNC(readWrapper)
 
 
