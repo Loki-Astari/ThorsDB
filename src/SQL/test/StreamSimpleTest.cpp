@@ -75,6 +75,10 @@ TEST(StreamSimpleTest, NonBlockingOK)
     MOCK_SYS(fcntlWrapper, [](int, int, int){return 0;});
     StreamSimple stream("google.com", 80, true);
 }
+TEST(StreamSimpleTest, GetCoverageOnTheWrapper)
+{
+    fcntlWrapper(-1, 0, 0);
+}
 TEST(StreamSimpleTest, ReadGoodHostBadPort)
 {
     // ::connect should fail

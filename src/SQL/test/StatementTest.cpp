@@ -230,4 +230,8 @@ TEST(StatementTest, UnixTimeStampNonEquiv)
 
     EXPECT_TRUE(lhs != rhs);
 }
+TEST(StatementTest, ValidationTmpErrorBuild)
+{
+    ThorsAnvil::SQL::Lib::ValidationTmpError    error("Test");
+}
 
