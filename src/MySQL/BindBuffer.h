@@ -21,7 +21,7 @@ class BindBuffer
                 : SQL::StreamSimple(-1)
                 , dst(dst)
             {}
-            virtual void read(char*, std::size_t) override {}
+            virtual void read(char*, std::size_t) override {throw std::domain_error("Invalid");}
             virtual void write(char const* buffer, std::size_t len)  override
             {
                 dst.insert(dst.end(), buffer, buffer + len);
