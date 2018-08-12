@@ -13,6 +13,7 @@
 #include <sstream>
 #include <limits>
 #include <stdexcept>
+#include <time.h>
 
 namespace ThorsAnvil
 {
@@ -451,6 +452,13 @@ inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v
 {
     p.writeRawData(reinterpret_cast<char const*>(&v), 8);
     return MYSQL_TYPE_DOUBLE;
+}
+
+template<>
+inline unsigned int writeParameterValue<ThorsAnvil::SQL::UnixTimeStamp>(ConectWriter& p, ThorsAnvil::SQL::UnixTimeStamp const& v)
+{
+    p.writeDate(v.time);
+    return MYSQL_TYPE_TIMESTAMP;
 }
 
     }

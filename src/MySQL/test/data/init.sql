@@ -114,7 +114,7 @@ CREATE TABLE TimeStampTypes(
     ,ST4  DATETIME
     ,ST5  YEAR);
 
-INSERT INTO TimeStampTypes(ID, ST1, ST2, ST3, ST4, ST5) VALUES (1, '1969-04-25', '06:15:43', '1973-04-25 06:15:43', '1969-04-25 06:15:43', '2016');
+INSERT INTO TimeStampTypes(ID, ST1, ST2, ST3, ST4, ST5) VALUES (1, '1999-04-25', '06:15:43', '1999-04-25 06:15:43', '1999-04-25 06:15:43', '1999');
 
 -- See test/TableBinaryTest.cpp
 --      Add tests to this file for integers.

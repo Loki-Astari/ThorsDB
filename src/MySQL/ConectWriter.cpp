@@ -67,8 +67,17 @@ void ConectWriter::writeLengthEncodedBlob(std::vector<char> const& value)
     stream.write(&value[0], value.size());
 }
 
-void ConectWriter::writeDate(std::time_t const& )
+void ConectWriter::writeDate(std::time_t const& unixTimeUTC)
 {
+    writeFixedLengthInteger<1>(7);
+
+    tm  time = *(gmtime(&unixTimeUTC));
+    writeFixedLengthInteger<2>(time.tm_year + 1900);
+    writeFixedLengthInteger<1>(time.tm_mon + 1);
+    writeFixedLengthInteger<1>(time.tm_mday);
+    writeFixedLengthInteger<1>(time.tm_hour);
+    writeFixedLengthInteger<1>(time.tm_min);
+    writeFixedLengthInteger<1>(time.tm_sec);
 }
 
 void ConectWriter::writeRel(std::time_t const& )
