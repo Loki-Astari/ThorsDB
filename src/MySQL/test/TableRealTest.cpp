@@ -26,6 +26,16 @@ TEST(TableRealTest, ReadFLOAT2longdouble)   {typeGoodTest<long double>  (11, "SE
 TEST(TableRealTest, ReadDOUBLE2float)       {typeBadTest<float,         std::logic_error>("SELECT R1 FROM RealTypes where Id=1");}
 TEST(TableRealTest, ReadDOUBLE2double)      {typeGoodTest<double>       (10, "SELECT R1 FROM RealTypes where Id=1");}
 TEST(TableRealTest, ReadDOUBLE2longdouble)  {typeGoodTest<long double>  (10, "SELECT R1 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadREAL2float)         {typeBadTest<float,          std::logic_error>("SELECT R3 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadREAL2double)        {typeGoodTest<double>       (14, "SELECT R3 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadREAL2doubledouble)  {typeGoodTest<long double>  (14, "SELECT R3 FROM RealTypes where Id=1");}
+
+TEST(TableRealTest, ReadDecimal2float)         {typeGoodTest<float>        (12, "SELECT D1 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadDecimal2double)        {typeGoodTest<double>       (12, "SELECT D1 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadDecimal2doubledouble)  {typeGoodTest<long double>  (12, "SELECT D1 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadNumeric2float)         {typeGoodTest<float>        (13, "SELECT D2 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadNumeric2double)        {typeGoodTest<double>       (13, "SELECT D2 FROM RealTypes where Id=1");}
+TEST(TableRealTest, ReadNumeric2doubledouble)  {typeGoodTest<long double>  (13, "SELECT D2 FROM RealTypes where Id=1");}
 
 
 TEST(TableRealTest, ReadDOUBLE2ULL)         {typeBadTest<unsigned long long,std::logic_error>("SELECT R1 FROM RealTypes where Id=1");}

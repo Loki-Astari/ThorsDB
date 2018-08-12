@@ -96,11 +96,12 @@ CREATE TABLE RealTypes(
 
     ,R1  DOUBLE
     ,R2  FLOAT
+    ,R3  REAL
 
     ,D1  DECIMAL
     ,D2  NUMERIC);
 
-INSERT INTO RealTypes(ID, R1, R2, D1, D2) VALUES(1, 10, 11, 12, 13);
+INSERT INTO RealTypes(ID, R1, R2, R3, D1, D2) VALUES(1, 10, 11, 14, 12, 13);
 
 -- See test/TableTimeTest.cpp
 --      Add tests to this file for integers.
