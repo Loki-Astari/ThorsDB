@@ -357,3 +357,707 @@ TEST(BindParametersCharTest, BindCharTestAgainstLongText)
     ASSERT_EQ(1, count);
 }
 
+TEST(BindParametersCharTest, BindUSCharTestAgainstBit4)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B0=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstBit12)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B1=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long v1, unsigned long v2){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstBit24)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long v1, unsigned long v2){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstBit48)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstUTinyInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstTinyInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstUSmallInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstSmallInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstUMedInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U4=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstMedInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I4=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstUInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U5=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I5=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstULongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U6=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstLongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I6=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstULongLongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U7=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstLongLongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I7=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstChar)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S1=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstVarChar)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstTinyText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S4=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstMedText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S5=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindUSCharTestAgainstLongText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S6=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<unsigned char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstBit4)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B0=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstBit12)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B1=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long v1, unsigned long v2){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstBit24)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long v1, unsigned long v2){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstBit48)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE B3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstUTinyInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstTinyInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstUSmallInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstSmallInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstUMedInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U4=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstMedInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I4=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstUInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U5=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I5=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstULongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U6=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstLongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I6=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstULongLongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE U7=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstLongLongInt)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, B0,B1 FROM IntTypes WHERE I7=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('8')),[&count](long id, unsigned long, unsigned long){if (id==4){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstChar)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S1=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstVarChar)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S2=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstTinyText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S3=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S4=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstMedText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S5=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
+TEST(BindParametersCharTest, BindSICharTestAgainstLongText)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID, S1, S2 FROM StringTypes WHERE S6=?");
+    long count = 0;
+    statement.execute(SQL::Bind(static_cast<signed char>('F')),[&count](long id, std::string const& , std::string const&){if (id==2){++count;}});
+    ASSERT_EQ(1, count);
+}
+
