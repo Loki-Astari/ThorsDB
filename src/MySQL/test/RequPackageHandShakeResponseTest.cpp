@@ -243,3 +243,35 @@ TEST(RequPackageHandShakeResponseTest, Check_unknown_type)
     ASSERT_NE(false, didThrow);
 }
 
+TEST(RequPackageHandShakeResponseTest, LetsJustPrintIt)
+{
+
+    // capabilities = capabilities | (cap2 << 16)
+    // authPluginData  = (authPluginData + authPluginData2).substr(0, authPluginLength-1);
+    char const data[]
+                      = "FakeServer\0"          // serverVersion
+                        "\x01\x02\x03\x04"      // Connection ID
+                        "12345678"              // authPluginData       initial 8 characters.
+                        "\x05"                  // check
+                        "\x06\x87"              // capabilities
+                        "\x08"                  // charset
+                        "\x09\x0A"              // statusFlag
+                        "\x0B\x0C"              // cap2
+                        "\x08"                  // authPluginLength
+                        "ABCDEFGHIJ"            // reserved
+                        "1234567890ABC"         // authPluginData2 (Length => std::max(13, authPluginLength - 8))
+                        "mysql_native_password"    // authPluginName  (Null Terminated)
+                        ;
+
+    MockStream                                    buffer(data, sizeof(data));
+    ThorsAnvil::MySQL::ConectReader               reader(buffer);
+    ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
+
+    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
+    std::stringstream message;
+    auto test = [&message, handShakeResp](){message << handShakeResp;};
+
+    ASSERT_NO_THROW(test());
+    EXPECT_NE(message.str(), "");
+}
+
