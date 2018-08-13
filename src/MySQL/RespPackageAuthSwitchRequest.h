@@ -43,7 +43,7 @@ class RespPackageAuthSwitchRequest: public RespPackage
               << "pluginData(";
             for (auto c: pluginData)
             {
-                s << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(c) << " ";
+                s << "0x" << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(c) << " ";
             }
             s << ") " << std::dec;
             return s;
