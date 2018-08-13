@@ -154,3 +154,14 @@ INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
 INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
  VALUES(2, 'F', "F", "F", "F", "F", "F");
 
+CREATE TABLE TypesNotCovered(
+     ID  INTEGER
+
+    ,enumColour ENUM('Red', 'Green', 'Blue')
+    ,setColor   SET('Red', 'Green', 'Blue')
+    ,jsonCol    JSON
+);
+
+INSERT INTO TypesNotCovered (ID, enumColour, setColor, jsonCol)
+ VALUES(1, 'Red', 'Red', '{}');
+
