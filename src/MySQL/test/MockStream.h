@@ -32,7 +32,7 @@ class MockStream: public ThorsAnvil::SQL::StreamInterface
         virtual void        drop()                                      override {readSoFar = len;}
         virtual void        reset()                                     override {}
         virtual bool        isEmpty()                                   override {return len == readSoFar;}
-        virtual std::string readRemainingData()                         override {return std::string(input + readSoFar, input + len);}
+        virtual std::string readRemainingData()                         override {std::size_t from = readSoFar; readSoFar = len; return std::string(input + from, input + len);}
 
         virtual void        establishSSLConnection()                    override {}
 

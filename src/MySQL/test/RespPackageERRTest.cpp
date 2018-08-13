@@ -17,15 +17,15 @@ TEST(RespPackageERRTest, DefaultERRMessage)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageERR      eof(0xFF, reader);
+    RespPackageERR      err(0xFF, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_TRUE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(err.isOK());
+    EXPECT_TRUE(err.isError());
+    EXPECT_FALSE(err.isEOF());
+    EXPECT_TRUE(err.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << err;
 
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage(Plop)"); // The rest of the buffer
@@ -36,5 +36,7 @@ TEST(RespPackageERRTest, DefaultERRMessage)
     EXPECT_NE(std::string::npos, findHash);
     auto findState = message.str().find("stateSQL(12345)");     // next 5 bytes
     EXPECT_NE(std::string::npos, findState);
+
+    EXPECT_TRUE(reader.isEmpty());
 }
 

@@ -34,5 +34,7 @@ TEST(RespPackageEOFTest, DefaultEOFMessage)
     EXPECT_NE(std::string::npos, findWarning);
     auto findStatus = message.str().find("statusFlag(0x00000003)");
     EXPECT_NE(std::string::npos, findStatus);
+
+    EXPECT_TRUE(reader.isEmpty());
 }
 

@@ -30,23 +30,23 @@ TEST(RespPackageHandShakeTest, DefaultHandShakeMessage)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x07088302, eof.getCapabilities());
-    EXPECT_EQ(0x04, eof.getCharset());
-    EXPECT_EQ("PluginName", eof.getAuthPluginName());
-    EXPECT_EQ("12345678", eof.getAuthPluginData());
+    EXPECT_EQ(0x07088302, handShake.getCapabilities());
+    EXPECT_EQ(0x04, handShake.getCharset());
+    EXPECT_EQ("PluginName", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);
@@ -79,23 +79,23 @@ TEST(RespPackageHandShakeTest, V9Handshake)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x00000000, eof.getCapabilities());
-    EXPECT_EQ(0x00, eof.getCharset());
-    EXPECT_EQ("", eof.getAuthPluginName());
-    EXPECT_EQ("12345678", eof.getAuthPluginData());
+    EXPECT_EQ(0x00000000, handShake.getCapabilities());
+    EXPECT_EQ(0x00, handShake.getCharset());
+    EXPECT_EQ("", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);
@@ -130,23 +130,23 @@ TEST(RespPackageHandShakeTest, SmallMessage)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x00008302, eof.getCapabilities());
-    EXPECT_EQ(0x00, eof.getCharset());
-    EXPECT_EQ("", eof.getAuthPluginName());
-    EXPECT_EQ("12345678", eof.getAuthPluginData());
+    EXPECT_EQ(0x00008302, handShake.getCapabilities());
+    EXPECT_EQ(0x00, handShake.getCharset());
+    EXPECT_EQ("", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);
@@ -187,23 +187,23 @@ TEST(RespPackageHandShakeTest, HandShakeNOAuth)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x07078302, eof.getCapabilities());
-    EXPECT_EQ(0x04, eof.getCharset());
-    EXPECT_EQ("", eof.getAuthPluginName());
-    EXPECT_EQ("12345678", eof.getAuthPluginData());
+    EXPECT_EQ(0x07078302, handShake.getCapabilities());
+    EXPECT_EQ(0x04, handShake.getCharset());
+    EXPECT_EQ("", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);
@@ -244,23 +244,23 @@ TEST(RespPackageHandShakeTest, HandShakeNOConnect)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x07087302, eof.getCapabilities());
-    EXPECT_EQ(0x04, eof.getCharset());
-    EXPECT_EQ("PluginName", eof.getAuthPluginName());
-    EXPECT_EQ("12345678", eof.getAuthPluginData());
+    EXPECT_EQ(0x07087302, handShake.getCapabilities());
+    EXPECT_EQ(0x04, handShake.getCharset());
+    EXPECT_EQ("PluginName", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);
@@ -300,23 +300,23 @@ TEST(RespPackageHandShakeTest, NoExtraFlags)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x07077302, eof.getCapabilities());
-    EXPECT_EQ(0x04, eof.getCharset());
-    EXPECT_EQ("", eof.getAuthPluginName());
-    EXPECT_EQ("12345678", eof.getAuthPluginData());
+    EXPECT_EQ(0x07077302, handShake.getCapabilities());
+    EXPECT_EQ(0x04, handShake.getCharset());
+    EXPECT_EQ("", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);
@@ -358,23 +358,23 @@ TEST(RespPackageHandShakeTest, LongAuthData)
     ConectReader        reader(stream);
     reader.initFromHandshake(CLIENT_PROTOCOL_41, 0);
 
-    RespPackageHandShake      eof(0x0A, reader);
+    RespPackageHandShake      handShake(0x0A, reader);
 
-    EXPECT_FALSE(eof.isOK());
-    EXPECT_FALSE(eof.isError());
-    EXPECT_FALSE(eof.isEOF());
-    EXPECT_TRUE(eof.hasCap(CLIENT_PROTOCOL_41));
+    EXPECT_FALSE(handShake.isOK());
+    EXPECT_FALSE(handShake.isError());
+    EXPECT_FALSE(handShake.isEOF());
+    EXPECT_TRUE(handShake.hasCap(CLIENT_PROTOCOL_41));
 
     std::stringstream message;
-    message << eof;
+    message << handShake;
     EXPECT_NE(message.str(), "");
     auto findHumanMassage = message.str().find("humanMessage()"); // The rest of the buffer
     EXPECT_NE(std::string::npos, findHumanMassage);
 
-    EXPECT_EQ(0x07088302, eof.getCapabilities());
-    EXPECT_EQ(0x04, eof.getCharset());
-    EXPECT_EQ("PluginName", eof.getAuthPluginName());
-    EXPECT_EQ("12345678123456789ABCD", eof.getAuthPluginData());
+    EXPECT_EQ(0x07088302, handShake.getCapabilities());
+    EXPECT_EQ(0x04, handShake.getCharset());
+    EXPECT_EQ("PluginName", handShake.getAuthPluginName());
+    EXPECT_EQ("12345678123456789ABCD", handShake.getAuthPluginData());
 
     auto findServerVersion = message.str().find("serverVersion(MockServer)");
     EXPECT_NE(std::string::npos, findServerVersion);

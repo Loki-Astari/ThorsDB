@@ -269,7 +269,7 @@ TEST(RequPackageHandShakeResponseTest, LetsJustPrintIt)
 
     ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
     std::stringstream message;
-    auto test = [&message, handShakeResp](){message << handShakeResp;};
+    auto test = [&message, &handShakeResp](){message << handShakeResp;};
 
     ASSERT_NO_THROW(test());
     EXPECT_NE(message.str(), "");
