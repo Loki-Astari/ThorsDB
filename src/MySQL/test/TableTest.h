@@ -10,7 +10,7 @@
 extern std::map<std::string, std::string>      options;
 
 template<typename T>
-void typeGoodTest(T expected, std::string const& expr)
+inline void typeGoodTest(T expected, std::string const& expr)
 {
     using namespace ThorsAnvil;
 
@@ -26,7 +26,7 @@ void typeGoodTest(T expected, std::string const& expr)
     });
 }
 template<>
-void typeGoodTest(std::vector<char> expected, std::string const& expr)
+inline void typeGoodTest(std::vector<char> expected, std::string const& expr)
 {
     using namespace ThorsAnvil;
 
@@ -46,7 +46,7 @@ void typeGoodTest(std::vector<char> expected, std::string const& expr)
 }
 
 template<typename T, typename ExceptionType>
-void typeBadTest(std::string const& expr)
+inline void typeBadTest(std::string const& expr)
 {
     using namespace ThorsAnvil;
 
