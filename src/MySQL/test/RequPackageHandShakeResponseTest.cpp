@@ -41,6 +41,7 @@ using ThorsAnvil::MySQL::Authetication;
 static const std::string testUser = THOR_TESTING_MYSQL_USER;
 static const std::string testPass = THOR_TESTING_MYSQL_PASS;
 static const std::string testDaBa = THOR_TESTING_MYSQL_DB;
+static const ThorsAnvil::MySQL::Options testOptions;
 
 TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
 {
@@ -70,7 +71,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
     bool    didThrow = false;
     try {
         std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -110,7 +111,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_clear_password)
     bool    didThrow = false;
     try {
         std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -151,7 +152,7 @@ TEST(RequPackageHandShakeResponseTest, Check_authentication_windows_client)
     bool    didThrow = false;
     try {
         std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -192,7 +193,7 @@ TEST(RequPackageHandShakeResponseTest, Check_sha256_password)
     bool    didThrow = false;
     try {
         std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -234,8 +235,7 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_native_password)
         std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
     );
     // MIY CHECK
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, ThorsAnvil::MySQL::Options(), THOR_TESTING_MYSQL_DB, handShake);
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
 
     EXPECT_TRUE(buffer.isEmpty());
 }
@@ -268,7 +268,7 @@ TEST(RequPackageHandShakeResponseTest, Check_unknown_type)
     bool    didThrow = false;
     try {
         std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
     }
     catch(std::runtime_error const& e) {
         didThrow    = true;
@@ -304,9 +304,27 @@ TEST(RequPackageHandShakeResponseTest, UsingSecureConnection)
     MockStream                                    buffer(data, sizeof(data), output);
     ThorsAnvil::MySQL::ConectReader               reader(buffer);
     ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
-
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
     EXPECT_TRUE(buffer.isEmpty());
+
+    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
+    std::cerr << handShakeResp << "\n\n";
+
+    std::stringstream message;
+    message << handShakeResp;
+    auto findusername = message.str().find("username(test)");
+    EXPECT_NE(std::string::npos, findusername);
+    auto findauthResponse = message.str().find("authResponse(0x62 0xa7 0x7f 0x30 0x28 0x50 0x3c 0x1f 0x24 0x71 0xa2 0xe2 0xa2 0xe6 0x97 0x9c 0xf9 0x58 0xc4 0x56 )");
+    EXPECT_NE(std::string::npos, findauthResponse);
+    auto findoptions = message.str().find("options()");
+    EXPECT_NE(std::string::npos, findoptions);
+    auto finddatabase = message.str().find("database(test)");
+    EXPECT_NE(std::string::npos, finddatabase);
+    auto findauthPluginName = message.str().find("authPluginName(mysql_native_password)");
+    EXPECT_NE(std::string::npos, findauthPluginName);
+    auto findcapabilities = message.str().find("capabilities(755204)");
+    EXPECT_NE(std::string::npos, findcapabilities);
+    auto findhumanMessage = message.str().find("humanMessage(RequPackageHandShakeResponse)");
+    EXPECT_NE(std::string::npos, findhumanMessage);
 
     ThorsAnvil::MySQL::ConectWriter               writer(buffer);
     handShakeResp.build(writer);
@@ -326,22 +344,6 @@ TEST(RequPackageHandShakeResponseTest, UsingSecureConnection)
         EXPECT_EQ(result[loop], output[loop]);
     }
 
-    std::stringstream message;
-    message << handShakeResp;
-    auto findusername = message.str().find("username(test)");
-    EXPECT_NE(std::string::npos, findusername);
-    auto findauthResponse = message.str().find("authResponse(0x62 0xa7 0x7f 0x30 0x28 0x50 0x3c 0x1f 0x24 0x71 0xa2 0xe2 0xa2 0xe6 0x97 0x9c 0xf9 0x58 0xc4 0x56 )");
-    EXPECT_NE(std::string::npos, findauthResponse);
-    auto findoptions = message.str().find("options()");
-    EXPECT_NE(std::string::npos, findoptions);
-    auto finddatabase = message.str().find("database(test)");
-    EXPECT_NE(std::string::npos, finddatabase);
-    auto findauthPluginName = message.str().find("authPluginName(mysql_native_password)");
-    EXPECT_NE(std::string::npos, findauthPluginName);
-    auto findcapabilities = message.str().find("capabilities(755204)");
-    EXPECT_NE(std::string::npos, findcapabilities);
-    auto findhumanMessage = message.str().find("humanMessage(RequPackageHandShakeResponse)");
-    EXPECT_NE(std::string::npos, findhumanMessage);
 }
 TEST(RequPackageHandShakeResponseTest, UsingNoSecureConnection)
 {
@@ -367,7 +369,7 @@ TEST(RequPackageHandShakeResponseTest, UsingNoSecureConnection)
     ThorsAnvil::MySQL::ConectReader               reader(buffer);
     ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
 
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, ThorsAnvil::MySQL::Options(), testDaBa, handShake);
+    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa, handShake);
     EXPECT_TRUE(buffer.isEmpty());
 
     ThorsAnvil::MySQL::ConectWriter               writer(buffer);
