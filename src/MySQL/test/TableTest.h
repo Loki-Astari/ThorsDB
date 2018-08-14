@@ -25,6 +25,25 @@ void typeGoodTest(T expected, std::string const& expr)
         ASSERT_EQ(expected, select);
     });
 }
+template<>
+void typeGoodTest(std::vector<char> expected, std::string const& expr)
+{
+    using namespace ThorsAnvil;
+
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+    SQL::Statement      statement(connection, expr);
+    statement.execute([&expected](std::vector<char> const& select){
+        for(int loop = 0; loop < select.size(); ++loop)
+        {
+            ASSERT_EQ(expected[loop], select[loop]);
+        }
+    });
+}
 
 template<typename T, typename ExceptionType>
 void typeBadTest(std::string const& expr)

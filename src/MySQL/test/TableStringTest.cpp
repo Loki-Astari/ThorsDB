@@ -31,4 +31,15 @@ TEST(TableStringTest, ReadTEXT2String)      {typeGoodTest<std::string>("This is 
 TEST(TableStringTest, ReadMEDTEXT2String)   {typeGoodTest<std::string>("This is some medium length test", "SELECT S5 from StringTypes WHERE Id=1");}// MEDIUMTEXT => MYSQL_TYPE_BLOB
 TEST(TableStringTest, ReadLONGTEXT2String)  {typeGoodTest<std::string>("This is some long text",          "SELECT S6 from StringTypes WHERE Id=1");}// LONGTEXT   => MYSQL_TYPE_BLOB
 
+std::vector<char> makeVector(std::string const& input)
+{
+    return std::vector<char>(std::begin(input), std::end(input));
+}
+
+TEST(TableStringTest, ReadCHAR2Vector)      {typeGoodTest<std::vector<char>>(makeVector("x"),                               "SELECT S1 from StringTypes WHERE Id=1");}// CHAR       => MYSQL_TYPE_STRING
+TEST(TableStringTest, ReadVARCHAR2Vector)   {typeGoodTest<std::vector<char>>(makeVector("A normal Var char"),               "SELECT S2 from StringTypes WHERE Id=1");}// VARCHAR    => MYSQL_TYPE_VAR_STRING
+TEST(TableStringTest, ReadTINYTEXT2Vector)  {typeGoodTest<std::vector<char>>(makeVector("Tiny Text"),                       "SELECT S3 from StringTypes WHERE Id=1");}// TINYTEXT   => MYSQL_TYPE_BLOB
+TEST(TableStringTest, ReadTEXT2Vector)      {typeGoodTest<std::vector<char>>(makeVector("This is normal text"),             "SELECT S4 from StringTypes WHERE Id=1");}// TEXT       => MYSQL_TYPE_BLOB
+TEST(TableStringTest, ReadMEDTEXT2Vector)   {typeGoodTest<std::vector<char>>(makeVector("This is some medium length test"), "SELECT S5 from StringTypes WHERE Id=1");}// MEDIUMTEXT => MYSQL_TYPE_BLOB
+TEST(TableStringTest, ReadLONGTEXT2Vector)  {typeGoodTest<std::vector<char>>(makeVector("This is some long text"),          "SELECT S6 from StringTypes WHERE Id=1");}// LONGTEXT   => MYSQL_TYPE_BLOB
 
