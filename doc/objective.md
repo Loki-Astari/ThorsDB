@@ -8,7 +8,7 @@
 * Do not wrap a C SQL library to achieve this (unless that is the only way).
 * Remove the difference between normal and prepared statements.
 * Remove the need for string escaping (C++ type system should cope with that).
-* Queries are async by default. (not achieved yet)
+* Queries are async by default. (Available via [ThorsNisse](https://github.com/Loki-Astari/ThorsNisse))
 
 This library is Beta.
 
