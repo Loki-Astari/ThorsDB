@@ -2,6 +2,7 @@
 #define THORS_ANVIL_MYSQL_AUTHENTICATION_H
 
 #include "ConectReader.h"
+#include "RespPackage.h"
 #include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <utility>

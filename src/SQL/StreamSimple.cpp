@@ -191,7 +191,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
     {
-        std::size_t read = ssl->read(buffer + readSoFar, len - readSoFar);
+        int read = ssl->read(buffer + readSoFar, len - readSoFar);
         if (read < 0)
         {
             int errorCode = ssl->errorCode(read);
@@ -226,7 +226,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
     {
-        std::size_t writen = ssl->write(buffer + writenSoFar, len - writenSoFar);
+        int writen = ssl->write(buffer + writenSoFar, len - writenSoFar);
         if (writen < 0)
         {
             int errorCode = ssl->errorCode(writen);
