@@ -17,7 +17,6 @@ install:
     - cd ..
     - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
     - cat src/MySQL/test/data/init.sql | mysql --force --user=root --password=testPassword
-    - sudo apt-get install postgresql -y
     - cat src/Postgres/test/data/init.sql | sudo -u postgres psql 
     - echo "ALTER USER postgres WITH PASSWORD 'testPassword';" | sudo -u postgres psql postgres
 script:
