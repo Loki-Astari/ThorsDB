@@ -8,6 +8,7 @@
 #include <string>
 #include <functional>
 #include <utility>
+#include <memory>
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
