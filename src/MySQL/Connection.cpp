@@ -7,6 +7,7 @@
 #include "RespPackageAuthMoreData.h"
 #include "RequPackageSSLRequest.h"
 #include "RequPackageAuthSwitchResp.h"
+#include "ThorMySQL.h"
 
 using namespace ThorsAnvil::MySQL;
 
@@ -48,9 +49,13 @@ void Connection::conectToServer(std::string const& username,
                                                   handshake->getCapabilities(),
                                                   authentication->getPluginName(),
                                                   authResponse);
-    RequPackageSSLRequest           sslRequest(handshakeresp.getCapabilities());;
-    sendMessage(sslRequest, false);
-    establishSSLConnection();
+
+    if (handshakeresp.getCapabilities() & CLIENT_SSL)
+    {
+        RequPackageSSLRequest           sslRequest(handshakeresp.getCapabilities());;
+        sendMessage(sslRequest, false);
+        establishSSLConnection();
+    }
 
 
     initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
