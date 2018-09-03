@@ -21,7 +21,7 @@ class RequPackageHandShakeResponse: public RequPackage
     std::string        authResponse;
     Options const&     options;
     std::string const& database;
-    std::string const& authPluginName;
+    std::string const  authPluginName;
     long               capabilities;
 
     public:

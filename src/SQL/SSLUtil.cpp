@@ -121,11 +121,13 @@ SSLctx::SSLctx(SSLMethod& method)
 SSLctx::SSLctx(SSLMethod& method, std::string const& certFile, std::string const& keyFile)
     : SSLctx(method)
 {
+#if (OPENSSL_VERSION_NUMBER >= 0x10002000)
     if (SSL_CTX_set_ecdh_auto(ctx, 1) != 1)
     {
         SSL_CTX_free(ctx);
         throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLctx::SSLctx: SSL_CTX_set_ecdh_auto() failed: ", SSLUtil::errorMessage()));
     }
+#endif
     if (SSL_CTX_use_certificate_file(ctx, certFile.c_str(), SSL_FILETYPE_PEM) != 1)
     {
         SSL_CTX_free(ctx);
