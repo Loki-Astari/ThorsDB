@@ -6,7 +6,7 @@
 using ThorsAnvil::MySQL::PackageBuffer;
 using MySqlBuf=PackageBuffer;
 
-TEST(PackageBufferTest, isEmpty)
+TEST(PackageBuffferTest, isEmpty)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x00"         // id
@@ -17,7 +17,7 @@ TEST(PackageBufferTest, isEmpty)
 
     ASSERT_TRUE(mysqlBuffer.isEmpty());
 }
-TEST(PackageBufferTest, read1Block)
+TEST(PackageBuffferTest, read1Block)
 {
     char const      data[] = "\x10\x00\x00" // size
                              "\x00"         // id
@@ -32,7 +32,7 @@ TEST(PackageBufferTest, read1Block)
     mysqlBuffer.read(dst, 16);
     ASSERT_TRUE(mysqlBuffer.isEmpty());
 }
-TEST(PackageBufferTest, read2BlockSecondWithZero)
+TEST(PackageBuffferTest, read2BlockSecondWithZero)
 {
     char            block1Header[] = {'\xFF', '\xFF', '\xFF', '\x00'}; // size + id
     char            block2Header[] = {'\x00', '\x00', '\x00', '\x01'}; // size + id
@@ -56,7 +56,7 @@ TEST(PackageBufferTest, read2BlockSecondWithZero)
     }
     ASSERT_TRUE(mysqlBuffer.isEmpty());
 }
-TEST(PackageBufferTest, read2BlockSecondWithTen)
+TEST(PackageBuffferTest, read2BlockSecondWithTen)
 {
     char            block1Header[] = {'\xFF', '\xFF', '\xFF', '\x00'}; // size + id
     char            block2Header[] = {'\x0A', '\x00', '\x00', '\x01'}; // size + id
@@ -87,7 +87,7 @@ TEST(PackageBufferTest, read2BlockSecondWithTen)
     ASSERT_THROW(mysqlBuffer.read(dst, 1), std::domain_error);
 }
 
-TEST(PackageBufferTest, writeZero)
+TEST(PackageBuffferTest, writeZero)
 {
     char const      data[] = "";
     unsigned char   result[4];
@@ -101,7 +101,7 @@ TEST(PackageBufferTest, writeZero)
     ASSERT_EQ(0, result[2]);
     ASSERT_EQ(0, result[3]);
 }
-TEST(PackageBufferTest, writeOneBlock)
+TEST(PackageBuffferTest, writeOneBlock)
 {
     char const      data[] = "";
     unsigned char   result[14];
@@ -126,7 +126,7 @@ TEST(PackageBufferTest, writeOneBlock)
     ASSERT_EQ('9', result[12]);
     ASSERT_EQ('0', result[13]);
 }
-TEST(PackageBufferTest, writeTwoBlockZero)
+TEST(PackageBuffferTest, writeTwoBlockZero)
 {
     char const      data[] = "";
     std::vector<unsigned char>   result(4 + 0xFFFFFF + 5, '\0');
@@ -172,7 +172,7 @@ TEST(PackageBufferTest, writeTwoBlockZero)
 }
 
 
-TEST(PackageBufferTest, writeTwoBlockTenInOneGo)
+TEST(PackageBuffferTest, writeTwoBlockTenInOneGo)
 {
     static char    hugeBlockData[0x2000002] = {0};
     char const      data[] = "";
@@ -185,7 +185,7 @@ TEST(PackageBufferTest, writeTwoBlockTenInOneGo)
     mysqlBuffer.flush();
     ASSERT_EQ(4 + 0xFFFFFFLL + 4 + 0xFFFFFF + 4 + 4, buffer.writLen());
 }
-TEST(PackageBufferTest, flush)
+TEST(PackageBuffferTest, flush)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
@@ -202,7 +202,7 @@ TEST(PackageBufferTest, flush)
     // But should fail if done twice without a reset
     ASSERT_THROW(mysqlBuffer.flush(), std::domain_error);
 }
-TEST(PackageBufferTest, flushAndWrite)
+TEST(PackageBuffferTest, flushAndWrite)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
@@ -215,7 +215,7 @@ TEST(PackageBufferTest, flushAndWrite)
     ASSERT_EQ(4, buffer.writLen());
     ASSERT_THROW(mysqlBuffer.write("10", 2), std::domain_error);
 }
-TEST(PackageBufferTest, resetWithFlush)
+TEST(PackageBuffferTest, resetWithFlush)
 {
     char const      data[] = "\x00\x00\x00" // size
                              "\x01"         // id
@@ -228,7 +228,7 @@ TEST(PackageBufferTest, resetWithFlush)
     ASSERT_EQ(4, buffer.writLen());
     mysqlBuffer.reset();
 }
-TEST(PackageBufferTest, readRemainingData)
+TEST(PackageBuffferTest, readRemainingData)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -241,7 +241,7 @@ TEST(PackageBufferTest, readRemainingData)
     std::string remaining = mysqlBuffer.readRemainingData();
     ASSERT_EQ("1234567890", remaining);
 }
-TEST(PackageBufferTest, dropDataPreCheck)
+TEST(PackageBuffferTest, dropDataPreCheck)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -255,7 +255,7 @@ TEST(PackageBufferTest, dropDataPreCheck)
     mysqlBuffer.read(result, 2);
     ASSERT_THROW(mysqlBuffer.reset(), std::domain_error);
 }
-TEST(PackageBufferTest, dropData)
+TEST(PackageBuffferTest, dropData)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -275,7 +275,7 @@ TEST(PackageBufferTest, dropData)
     mysqlBuffer.drop();
     ASSERT_NO_THROW(mysqlBuffer.reset());
 }
-TEST(PackageBufferTest, dropDataNoneRead)
+TEST(PackageBuffferTest, dropDataNoneRead)
 {
     char const      data[] = "\x0A\x00\x00" // size
                              "\x00"         // id
@@ -288,7 +288,7 @@ TEST(PackageBufferTest, dropDataNoneRead)
     mysqlBuffer.drop();
     ASSERT_NO_THROW(mysqlBuffer.reset());
 }
-TEST(PackageBufferTest, dropDataFromHugePackageSecondEmpty)
+TEST(PackageBuffferTest, dropDataFromHugePackageSecondEmpty)
 {
     std::vector<char>      data(4 + 0xFFFFFF + 4 + 0);
     data[0]                 = '\xFF';
@@ -310,7 +310,7 @@ TEST(PackageBufferTest, dropDataFromHugePackageSecondEmpty)
     ASSERT_NO_THROW(mysqlBuffer.reset());
     ASSERT_EQ(4 + 0xFFFFFF + 4 + 0, buffer.readLen());
 }
-TEST(PackageBufferTest, dropDataFromHugePackageSecondWithSome)
+TEST(PackageBuffferTest, dropDataFromHugePackageSecondWithSome)
 {
     std::vector<char>      data(4 + 0xFFFFFF + 4 + 10);
     data[0]                 = '\xFF';

@@ -8,7 +8,7 @@
 
 using ThorsAnvil::MySQL::ConectWriter;
 
-TEST(ConectWriter, writeFixedLengthInteger)
+TEST(ConectWriterTest, writeFixedLengthInteger)
 {
     char const      data[] = "";
     unsigned char   result[15];
@@ -38,7 +38,7 @@ TEST(ConectWriter, writeFixedLengthInteger)
     ASSERT_EQ(result[13],   0x00);
 }
 
-TEST(ConectWriter, writeLengthEncodedInteger)
+TEST(ConectWriterTest, writeLengthEncodedInteger)
 {
     char const      data[] = "";
     unsigned char   result[17];
@@ -74,7 +74,7 @@ TEST(ConectWriter, writeLengthEncodedInteger)
     ASSERT_EQ(result[15], 0x00);
     ASSERT_EQ(result[16], 0x00);
 }
-TEST(ConectWriter, writeFixedLengthString)
+TEST(ConectWriterTest, writeFixedLengthString)
 {
     char const      data[] = "";
     unsigned char   result[15];
@@ -89,7 +89,7 @@ TEST(ConectWriter, writeFixedLengthString)
     ASSERT_EQ(result[3], 'P');
     ASSERT_EQ(result[4], 'l');
 }
-TEST(ConectWriter, writeNullTerminatedString)
+TEST(ConectWriterTest, writeNullTerminatedString)
 {
     char const      data[] = "";
     unsigned char   result[15];
@@ -104,7 +104,7 @@ TEST(ConectWriter, writeNullTerminatedString)
     ASSERT_EQ(result[3], 'p');
     ASSERT_EQ(result[4], '\0');
 }
-TEST(ConectWriter, writeVariableLengthString)
+TEST(ConectWriterTest, writeVariableLengthString)
 {
     char const      data[] = "";
     unsigned char   result[15];
@@ -118,7 +118,7 @@ TEST(ConectWriter, writeVariableLengthString)
     ASSERT_EQ(result[2], 'o');
     ASSERT_EQ(result[3], 'p');
 }
-TEST(ConectWriter, writeLengthEncodedString)
+TEST(ConectWriterTest, writeLengthEncodedString)
 {
     char const      data[] = "";
     unsigned char   result[15];
@@ -137,7 +137,7 @@ TEST(ConectWriter, writeLengthEncodedString)
     ASSERT_EQ(result[7], 'U');
     ASSERT_EQ(result[8], 'p');
 }
-TEST(ConectWriter, writeHugeStringOneUnder)
+TEST(ConectWriterTest, writeHugeStringOneUnder)
 {
     char const      data[] = "";
     std::vector<unsigned char> result(0xFFFFFF + 20, '\0');
@@ -149,7 +149,7 @@ TEST(ConectWriter, writeHugeStringOneUnder)
     // 2 bytes Package buffer
     ASSERT_EQ(4 + 0XFFFFFE, buffer.writLen());
 }
-TEST(ConectWriter, writeHugeStringJustBig)
+TEST(ConectWriterTest, writeHugeStringJustBig)
 {
     char const          data[] = "";
     std::vector<unsigned char>   result(0xFFFFFF + 20, '\0');
@@ -160,7 +160,7 @@ TEST(ConectWriter, writeHugeStringJustBig)
     writer.writeLengthEncodedString(str);
     ASSERT_EQ(4 + 0XFFFFFF, buffer.writLen());
 }
-TEST(ConectWriter, writeHugeStringOneOver)
+TEST(ConectWriterTest, writeHugeStringOneOver)
 {
     char const          data[] = "";
     std::vector<unsigned char>   result(0xFFFFFF + 20, '\0');
