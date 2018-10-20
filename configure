@@ -718,7 +718,7 @@ GREP
 CPP
 COV
 THOR_TARGETLIBS
-VERA
+VERATOOL
 TestVera
 BOOST_PYTHON_LIB
 PYTHON_EXTRA_LDFLAGS
@@ -4775,14 +4775,14 @@ if test "${enable_vera+set}" = set; then :
 fi
 
 
-    VERA="";
+    VERATOOL="";
     if test "x$enable_vera" == "xno"; then :
 
-            VERA='echo "Disabled Static Analysis" ||';
+            VERATOOL='echo "Disabled Static Analysis" ||';
 
 else
 
-            VERA='vera++';
+            VERATOOL='vera++';
             ./build/third/vera-install
             for ac_prog in vera++
 do
@@ -4843,7 +4843,7 @@ fi
 
 
 fi
-    VERA=${VERA}
+    VERATOOL=${VERATOOL}
 
 
     THOR_TARGETLIBS=""
