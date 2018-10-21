@@ -16,7 +16,7 @@ PackageBuffer::PackageBuffer(SQL::StreamInterface& stream, bool flushed)
     sendBuffer.reserve(0xFFFFFF/*16MByte*/);
 }
 
-inline void PackageBuffer::read(char* buffer, std::size_t len)
+void PackageBuffer::read(char* buffer, std::size_t len)
 {
     std::size_t retrieved = 0;
     do
