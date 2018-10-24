@@ -62,6 +62,11 @@ std::string PackageBuffer::readRemainingData()
     return buffer;
 }
 
+void PackageBuffer::establishSSLConnection()
+{
+    stream.establishSSLConnection();
+}
+
 void PackageBuffer::reset()
 {
     drop();
