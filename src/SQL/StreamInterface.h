@@ -21,6 +21,8 @@ class StreamInterface
         virtual void        drop()                                      = 0;
         virtual bool        isEmpty()                                   = 0;
         virtual std::string readRemainingData()                         = 0;
+
+        virtual void        establishSSLConnection()                    = 0;
 };
 inline StreamInterface::~StreamInterface() {}
 

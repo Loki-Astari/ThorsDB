@@ -2,8 +2,12 @@
 #define THORS_ANVIL_SQL_STREAM_SIMPLE_H
 
 #include "StreamInterface.h"
+#include "SSLUtil.h"
+
+// C++
 #include <string>
 #include <functional>
+#include <utility>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
@@ -15,7 +19,10 @@ namespace ThorsAnvil
 
 class StreamSimple: public StreamInterface
 {
-    int socket;
+    int                     socket;
+    std::unique_ptr<SSLctx> ctx;
+    std::unique_ptr<SSLObj> ssl;
+
     std::function<void()>  readYield;
     std::function<void()>  writeYield;
     public:
@@ -39,6 +46,13 @@ class StreamSimple: public StreamInterface
             readYield = std::move(yr);
             writeYield= std::move(yw);
         }
+
+        virtual void        establishSSLConnection()                    override;
+    private:
+        void        readFD(char* buffer, std::size_t len);
+        void        writeFD(char const* buffer, std::size_t len);
+        void        readSSL(char* buffer, std::size_t len);
+        void        writeSSL(char const* buffer, std::size_t len);
 };
 
     }
