@@ -17,6 +17,7 @@ class SSLUtil
     public:
         static SSLUtil& getInstance();
         static std::string errorMessage();
+        static std::string sslError(SSL* ssl, int ret);
 
         SSLUtil(SSLUtil const&)                 = delete;
         SSLUtil& operator=(SSLUtil const&)      = delete;
