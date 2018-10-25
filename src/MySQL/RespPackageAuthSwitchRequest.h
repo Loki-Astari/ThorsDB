@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
+#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_PACKAGE_AUTH_SWITCH_REQUEST_H
+#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_PACKAGE_AUTH_SWITCH_REQUEST_H
 
 #include "RespPackage.h"
 #include "ConectReader.h"
@@ -17,10 +17,10 @@ class ConectReader;
 
 class RespPackageAuthSwitchRequest: public RespPackage
 {
-    public:
-        std::string pluginName;
-        std::string pluginData;
+    std::string pluginName;
+    std::string pluginData;
 
+    public:
         RespPackageAuthSwitchRequest(int firstByte, ConectReader& reader)
             : RespPackage(reader, "AuthSwitchRequest")
             , pluginName(reader.nulTerminatedString())
@@ -48,6 +48,9 @@ class RespPackageAuthSwitchRequest: public RespPackage
             s << ") " << std::dec;
             return s;
         }
+
+        std::string const& getPluginName() const {return pluginName;}
+        std::string const& getPluginData() const {return pluginData;}
 };
 
     }

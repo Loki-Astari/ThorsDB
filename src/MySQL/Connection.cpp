@@ -1,4 +1,5 @@
 #include "Connection.h"
+#include "Authentication.h"
 #include "ConectWriter.h"
 #include "RespPackageHandShake.h"
 #include "RespPackageAuthSwitchRequest.h"
@@ -36,30 +37,23 @@ void Connection::conectToServer(std::string const& username,
                                                         {return new RespPackageHandShake(firstByte, reader);}
                                                  }
                                                 });
-    std::unique_ptr<RespPackageHandShake> handshake = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
-    RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
-
-    packageReader.initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
-    packageWriter.initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
-
-    std::unique_ptr<RespPackage>    serverResp = sendHandshakeMessage<RespPackage>(handshakeresp,
-        {
-         // The section below assumes only responses are OK/Error/RespPackageAuthSwitchRequest
-         // If this changes to allow other responses then look at the section below were we
-         // handle RespPackageAuthSwitchRequest
-         {0xFE, [](int firstByte, ConectReader& reader)
-                {return new RespPackageAuthSwitchRequest(firstByte, reader);}
-         }
-        });
+    std::unique_ptr<RespPackageHandShake> handshake      = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
+    std::unique_ptr<Authetication>        authentication = getAuthenticatonMethod(*this, handshake->getAuthPluginName(), options);
+    std::unique_ptr<RespPackage>          serverResp     = authentication->sendHandShakeResponse(username, password, database, handshake->getAuthPluginData(), handshake->getCapabilities(), handshake->getCharset());
 
     if (!serverResp)
     {
         throw std::domain_error("Connection::Connection: Handshake failed: Unexpected Package");
     }
+    // Authetication::sendHandShakeResponse() assumes only responses are OK/Error/RespPackageAuthSwitchRequest
+    // If that logic changes this logic also has to change.
+    // If not OK and not an Error then we assume "Auth Switch" request has been made by the server.
     if (serverResp->isOK() == false && serverResp->isError() == false)
     {
-        RequPackageAuthSwitchResponse   switchResp(username, password, options, database, *dynamic_cast<RespPackageAuthSwitchRequest*>(serverResp.get()));
-        serverResp = sendHandshakeMessage<RespPackage>(switchResp, {});
+        std::unique_ptr<RespPackageAuthSwitchRequest>   authSwitchRequest   = downcastUniquePtr<RespPackageAuthSwitchRequest>(std::move(serverResp));
+        authentication  = getAuthenticatonMethod(*this, authSwitchRequest->getPluginName());
+        serverResp      = authentication->sendSwitchResponse(username, password, database, handshake->getAuthPluginData());
+
         if (!serverResp)
         {
             throw std::domain_error("Connection::Connection: Auth Switch failed: Unexpected Package");
@@ -69,6 +63,12 @@ void Connection::conectToServer(std::string const& username,
     {
         throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*serverResp)));
     }
+}
+
+void Connection::initFromHandshake(unsigned long capabilities, unsigned long charset)
+{
+    packageReader.initFromHandshake(capabilities, charset);
+    packageWriter.initFromHandshake(capabilities, charset);
 }
 
 Connection::~Connection()
@@ -99,9 +99,8 @@ std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& 
 #include "RequPackagePrepareReset.h"
 #include "RequPackagePrepareExecute.h"
 
-template
-std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageHandShakeResponse>
-(RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
+template std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageHandShakeResponse>(RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
+template std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageAuthSwitchResponse>(RequPackageAuthSwitchResponse const&, ConectReader::OKMap const&);
 
 template void Connection::sendMessage<RequPackagePrepareClose>(RequPackagePrepareClose const&);
 template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepare>(RequPackagePrepare const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);

@@ -25,7 +25,7 @@ class RequPackageAuthSwitchResponse: public RequPackage
                                  std::string const& password,
                                  Options const& options,
                                  std::string const& database,
-                                 RespPackageAuthSwitchRequest const& handshake);
+                                 std::string const& authResponse);
 
         virtual  std::ostream& print(std::ostream& s)   const override;
         virtual  void build(ConectWriter& writer)       const override;

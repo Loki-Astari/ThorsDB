@@ -13,7 +13,7 @@ namespace ThorsAnvil
 using ThorsAnvil::SQL::Options;
 class RespPackage;
 class ConectWriter;
-
+class Authentication;
 class Connection
 {
     public:
@@ -28,6 +28,7 @@ class Connection
                    ConectWriter& packageWriter);
         virtual ~Connection();
 
+        void initFromHandshake(unsigned long capabilities, unsigned long charset);
 
         // Main Interface
         template<typename Requ>
@@ -42,6 +43,7 @@ class Connection
         // If things go wrong just drop the current package.
         void                         removeCurrentPackage();
     private:
+        friend class Authetication;
         template<typename Resp, typename Requ>
         std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
     protected:
