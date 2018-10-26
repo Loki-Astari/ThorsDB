@@ -48,12 +48,21 @@ TEST(ConnectionTest, MySQLNativePassword)
                                     options);
 }
 
-TEST(ConnectionTest, CachingSHA2Password)
+TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
     using namespace ThorsAnvil;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluserEmpty",
                                     "",
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+}
+TEST(ConnectionTest, CachingSHA2Password)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    "ssluser",
+                                    "sslPassword",
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 }
