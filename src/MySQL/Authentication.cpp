@@ -57,10 +57,10 @@ std::unique_ptr<RespPackage> Authetication::sendSwitchResponse(std::string const
     return connection.sendHandshakeMessage<RespPackage>(switchResp, {});
 }
 
-class AutheticationMysqlNativePassword: public Authetication
+class AutheticationMySQLNativePassword: public Authetication
 {
     public:
-        AutheticationMysqlNativePassword(Connection& connection, Options const& options)
+        AutheticationMySQLNativePassword(Connection& connection, Options const& options)
             : Authetication(connection, options)
         {}
 
@@ -110,7 +110,7 @@ std::unique_ptr<Authetication> getAuthenticatonMethod(Connection& connection, st
 
     if (authPluginNameUsed == "mysql_native_password")
     {
-        return std::unique_ptr<Authetication>(new AutheticationMysqlNativePassword(connection, options));
+        return std::unique_ptr<Authetication>(new AutheticationMySQLNativePassword(connection, options));
     }
     else
     {
