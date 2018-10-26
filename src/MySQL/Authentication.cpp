@@ -94,6 +94,26 @@ class AutheticationMySQLNativePassword: public Authetication
             return "mysql_native_password";
         }
 };
+class AutheticationCachingSHA2Password: public Authetication
+{
+    public:
+        AutheticationCachingSHA2Password(Connection& connection, Options const& options)
+            : Authetication(connection, options)
+        {}
+
+        virtual std::string getAuthenticationString(
+                       std::string const& /*username*/,
+                       std::string const& /*password*/,
+                       std::string const& /*database*/,
+                       std::string const& /*pluginData*/) override
+        {
+            return "";
+        }
+        virtual std::string getPluginName() const override
+        {
+            return "caching_sha2_password";
+        }
+};
 
 namespace ThorsAnvil
 {
@@ -111,6 +131,10 @@ std::unique_ptr<Authetication> getAuthenticatonMethod(Connection& connection, st
     if (authPluginNameUsed == "mysql_native_password")
     {
         return std::unique_ptr<Authetication>(new AutheticationMySQLNativePassword(connection, options));
+    }
+    else if (authPluginNameUsed == "caching_sha2_password")
+    {
+        return std::unique_ptr<Authetication>(new AutheticationCachingSHA2Password(connection, options));
     }
     else
     {
@@ -143,13 +167,6 @@ std::unique_ptr<Authetication> getAuthenticatonMethod(Connection& connection, st
             throw std::runtime_error(
                     errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
                              "sha256_password: not supported yet. Feel free to add handler."
-                  ));
-        }
-        else if (authPluginNameUsed == "caching_sha2_password")
-        {
-            throw std::runtime_error(
-                    errorMsg("ThorsAnvil::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
-                             "caching_sha2_password: not supported yet. Feel free to add handler."
                   ));
         }
         else
