@@ -21,7 +21,7 @@ class RespPackageOK: public RespPackage
     long    warningFlags;
     public:
         RespPackageOK(int firstByte, ConectReader& reader)
-            : RespPackage(reader, "OK")
+            : RespPackage(RespType::Ok, reader)
             , affectedRows(reader.lengthEncodedInteger())
             , lastInsertID(reader.lengthEncodedInteger())
             // https://dev.mysql.com/doc/internals/en/status-flags.html

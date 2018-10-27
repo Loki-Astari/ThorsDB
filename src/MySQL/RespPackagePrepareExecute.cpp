@@ -3,7 +3,7 @@
 using namespace ThorsAnvil:: MySQL;
 
 RespPackagePrepareExecute::RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
-    : RespPackage(reader, "Prepare-Execute")
+    : RespPackage(RespType::PrepareExecute, reader)
 {
     // https://dev.mysql.com/doc/internals/en/binary-protocol-resultset.html#binary-protocol-resultset
     columnCount = firstByte;

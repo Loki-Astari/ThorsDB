@@ -22,7 +22,7 @@ class RespPackageAuthSwitchRequest: public RespPackage
 
     public:
         RespPackageAuthSwitchRequest(int firstByte, ConectReader& reader)
-            : RespPackage(reader, "AuthSwitchRequest")
+            : RespPackage(RespType::AuthSwitchRequest, reader)
             , pluginName(reader.nulTerminatedString())
             , pluginData(reader.restOfPacketString())
         {

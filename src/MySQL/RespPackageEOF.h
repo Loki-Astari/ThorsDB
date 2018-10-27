@@ -19,7 +19,7 @@ class RespPackageEOF: public RespPackage
     long    statusFlag;
     public:
         RespPackageEOF(int firstByte, ConectReader& reader)
-            : RespPackage(reader, "EOF")
+            : RespPackage(RespType::Eof, reader)
             , warningCount(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
             , statusFlag(reader.fixedLengthInteger<2>(CLIENT_PROTOCOL_41))
         {

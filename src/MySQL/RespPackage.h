@@ -12,26 +12,29 @@ namespace ThorsAnvil
     namespace MySQL
     {
 
+enum class RespType {Ok, Err, Eof, HandShake, AuthSwitchRequest, Prepare, PrepareExecute, ResultSet, Authentication};
+
 class RespPackage
 {
     protected:
         ConectReader&   reader;
+        RespType        type;
         bool            ok;
         bool            error;
         bool            eof;
         std::string     humanMessage;
     public:
-        RespPackage(ConectReader& reader, std::string const& respName)
+        RespPackage(RespType type, ConectReader& reader)
             : reader(reader)
+            , type(type)
             , ok(false)
             , error(false)
             , eof(false)
-        {
-            (void)respName;
-        }
+        {}
         virtual ~RespPackage() {}
         virtual  std::ostream& print(std::ostream& s) const = 0;
 
+        RespType            is()                const                   {return type;}
         bool                isOK()              const                   {return ok;}
         bool                isError()           const                   {return error;}
         bool                isEOF()             const                   {return eof;}
