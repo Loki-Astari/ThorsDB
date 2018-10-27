@@ -45,10 +45,7 @@ void Connection::conectToServer(std::string const& username,
     {
         throw std::domain_error("Connection::Connection: Handshake failed: Unexpected Package");
     }
-    // Authetication::sendHandShakeResponse() assumes only responses are OK/Error/RespPackageAuthSwitchRequest
-    // If that logic changes this logic also has to change.
-    // If not OK and not an Error then we assume "Auth Switch" request has been made by the server.
-    if (serverResp->isOK() == false && serverResp->isError() == false)
+    if (serverResp->is() == RespType::AuthSwitchRequest)
     {
         std::unique_ptr<RespPackageAuthSwitchRequest>   authSwitchRequest   = downcastUniquePtr<RespPackageAuthSwitchRequest>(std::move(serverResp));
         authentication  = getAuthenticatonMethod(*this, authSwitchRequest->getPluginName());

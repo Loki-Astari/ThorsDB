@@ -6,6 +6,7 @@
 #include "RequPackageHandShakeResp.h"
 #include "RequPackageAuthSwitchResp.h"
 #include "RespPackageAuthSwitchRequest.h"
+#include "RespPackageAuthMoreData.h"
 
 #include "ThorCryptWrapper.h"
 #include <ostream>
@@ -34,16 +35,11 @@ std::unique_ptr<RespPackage> Authetication::sendHandShakeResponse(std::string co
                                                   authResponse);
 
     connection.initFromHandshake(handshakeresp.getCapabilities(), charset);
-
     return connection.sendHandshakeMessage<RespPackage>(handshakeresp,
         {
-         // Connection::conectToServer() assumes only responses are OK/Error/RespPackageAuthSwitchRequest
-         // If this changes to allow other responses then look at Connection::conectToServer() where we
-         // handle RespPackageAuthSwitchRequest
-         {0xFE, [](int firstByte, ConectReader& reader)
-                {return new RespPackageAuthSwitchRequest(firstByte, reader);}
-         }
-        });
+            {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}}
+        }
+    );
 }
 
 std::unique_ptr<RespPackage> Authetication::sendSwitchResponse(std::string const& username,
