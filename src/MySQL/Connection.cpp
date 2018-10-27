@@ -4,6 +4,7 @@
 #include "RespPackageHandShake.h"
 #include "RespPackageAuthSwitchRequest.h"
 #include "RequPackageHandShakeResp.h"
+#include "RespPackageAuthMoreData.h"
 #include "RequPackageAuthSwitchResp.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -56,6 +57,17 @@ void Connection::conectToServer(std::string const& username,
             throw std::domain_error("Connection::Connection: Auth Switch failed: Unexpected Package");
         }
     }
+
+    if (serverResp->is() == RespType::Authentication)
+    {
+        serverResp = authentication->customAuthenticate(downcastUniquePtr<RespPackageAuthMoreData>(std::move(serverResp)), username, password, database, handshake->getAuthPluginData());
+
+        if (!serverResp)
+        {
+            throw std::domain_error("Connection::Connection: Custom Auth failed: Unexpected Package");
+        }
+    }
+
     if (serverResp->isOK() == false)
     {
         throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*serverResp)));

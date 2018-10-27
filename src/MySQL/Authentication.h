@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_MYSQL_AUTHENTICATION_H
 #define THORS_ANVIL_MYSQL_AUTHENTICATION_H
 
+#include "ConectReader.h"
 #include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <utility>
@@ -14,11 +15,13 @@ using ThorsAnvil::SQL::Options;
 
 class Connection;
 class RespPackage;
+class RespPackageAuthMoreData;
 
 class Authetication
 {
-    Connection&                 connection;
-    Options const&              options;
+    protected:
+        Connection&                 connection;
+        Options const&              options;
 
     public:
         Authetication(Connection& connection, Options const& options);
@@ -30,14 +33,20 @@ class Authetication
                                                            long capabilities,
                                                            unsigned long charset);
         std::unique_ptr<RespPackage> sendSwitchResponse(std::string const& username,
-                                                           std::string const& password,
-                                                           std::string const& database,
-                                                           std::string const& pluginData);
+                                                        std::string const& password,
+                                                        std::string const& database,
+                                                        std::string const& pluginData);
 
         virtual std::string getAuthenticationString(std::string const& username,
                                                     std::string const& password,
                                                     std::string const& database,
                                                     std::string const& pluginData) = 0;
+
+        virtual std::unique_ptr<RespPackage> customAuthenticate(std::unique_ptr<RespPackageAuthMoreData> /*msg*/,
+                                                                std::string const& /*username*/,
+                                                                std::string const& /*password*/,
+                                                                std::string const& /*database*/,
+                                                                std::string const& /*pluginData*/) {return nullptr;}
         virtual std::string getPluginName() const = 0;
 };
 

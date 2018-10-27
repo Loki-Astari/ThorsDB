@@ -7,6 +7,7 @@
 #include "RequPackageAuthSwitchResp.h"
 #include "RespPackageAuthSwitchRequest.h"
 #include "RespPackageAuthMoreData.h"
+#include "RespPackageERR.h"
 
 #include "ThorCryptWrapper.h"
 #include <ostream>
@@ -37,7 +38,8 @@ std::unique_ptr<RespPackage> Authetication::sendHandShakeResponse(std::string co
     connection.initFromHandshake(handshakeresp.getCapabilities(), charset);
     return connection.sendHandshakeMessage<RespPackage>(handshakeresp,
         {
-            {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}}
+            {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}},
+            {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
         }
     );
 }
@@ -50,7 +52,12 @@ std::unique_ptr<RespPackage> Authetication::sendSwitchResponse(std::string const
     std::string authResponse  = getAuthenticationString(username, password, database, pluginData);
 
     RequPackageAuthSwitchResponse   switchResp(username, password, options, database, authResponse);
-    return connection.sendHandshakeMessage<RespPackage>(switchResp, {});
+
+    return connection.sendHandshakeMessage<RespPackage>(switchResp,
+        {
+            {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
+        }
+    );
 }
 
 class AutheticationMySQLNativePassword: public Authetication
@@ -99,15 +106,62 @@ class AutheticationCachingSHA2Password: public Authetication
 
         virtual std::string getAuthenticationString(
                        std::string const& /*username*/,
-                       std::string const& /*password*/,
+                       std::string const& password,
                        std::string const& /*database*/,
-                       std::string const& /*pluginData*/) override
+                       std::string const& pluginData) override
         {
-            return "";
+            // Empty Password is special.
+            if (password == "")
+            {
+                return "";
+            }
+
+            // Fast Authentication start
+            return scramble(password, pluginData);
+
+        }
+        std::string scramble(std::string const& password, std::string const& pluginData)
+        {
+            // Scramble - XOR(SHA256(password), SHA256(SHA256(SHA256(password)), Nonce))
+            ThorSHA256DigestStore  stage1;
+            thorSHA256(stage1, password);
+
+            ThorSHA256DigestStore  stage2;
+            thorSHA256(stage2, stage1);
+
+            std::string extendedAuth = std::string(stage2, stage2 + SHA256_DIGEST_LENGTH) + pluginData;
+
+            ThorSHA256DigestStore  stage3;
+            thorSHA256(stage3, extendedAuth);
+
+            for (int loop=0;loop < SHA256_DIGEST_LENGTH;++loop)
+            {
+                stage3[loop] = stage3[loop] ^ stage1[loop];
+            }
+            return std::string(stage3, stage3 + SHA256_DIGEST_LENGTH);
+
         }
         virtual std::string getPluginName() const override
         {
             return "caching_sha2_password";
+        }
+        virtual std::unique_ptr<RespPackage> customAuthenticate(std::unique_ptr<RespPackageAuthMoreData> msg,
+                                                                std::string const& /*username*/,
+                                                                std::string const& /*password*/,
+                                                                std::string const& /*database*/,
+                                                                std::string const& /*pluginData*/) override
+        {
+            //static char constexpr request_public_key            = '\2';
+            static char constexpr fast_auth_success             = '\3';
+            //static char constexpr perform_full_authentication   = '\4';
+
+            std::string const& msgData = msg->getPluginMoreData();
+            if (msgData.size() == 1 && msgData[0] == fast_auth_success)
+            {
+                // Should be the OK message.
+                return connection.recvMessage();
+            }
+            return nullptr;
         }
 };
 
