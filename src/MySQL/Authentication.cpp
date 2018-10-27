@@ -72,15 +72,15 @@ class AutheticationMySQLNativePassword: public Authetication
         {
             // Requires CLIENT_SECURE_CONNECTION
             // SHA1( password ) XOR SHA1( "20-bytes random data from server" <concat> SHA1( SHA1( password ) ) )
-            ThorSHADigestStore  stage1;
+            ThorSHA1DigestStore  stage1;
             thorSHA1(stage1, password);
 
 
-            ThorSHADigestStore  stage2;
+            ThorSHA1DigestStore  stage2;
             thorSHA1(stage2, stage1);
 
             std::string extendedAuth = pluginData + std::string(stage2, stage2 + SHA_DIGEST_LENGTH);
-            ThorSHADigestStore  extendedHash;
+            ThorSHA1DigestStore  extendedHash;
             thorSHA1(extendedHash, extendedAuth);
 
             for (int loop=0;loop < SHA_DIGEST_LENGTH;++loop)
