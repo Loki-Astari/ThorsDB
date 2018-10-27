@@ -41,6 +41,7 @@ TEST(ConnectionTest, TryLocalMySQLConnection)
 TEST(ConnectionTest, MySQLNativePassword)
 {
     using namespace ThorsAnvil;
+    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
@@ -51,6 +52,7 @@ TEST(ConnectionTest, MySQLNativePassword)
 TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
     using namespace ThorsAnvil;
+    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluserEmpty",
                                     "",
@@ -60,6 +62,7 @@ TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 TEST(ConnectionTest, CachingSHA2Password)
 {
     using namespace ThorsAnvil;
+    std::map<std::string, std::string>      options;
     SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluser",
                                     "sslPassword",
