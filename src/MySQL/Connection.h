@@ -38,7 +38,7 @@ class Connection
         // and retrieve the corresponding reply objects.
         template<typename Requ>
         void                         sendMessage(Requ const& request);
-        std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions);
+        std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions = {});
 
         // If things go wrong just drop the current package.
         void                         removeCurrentPackage();
