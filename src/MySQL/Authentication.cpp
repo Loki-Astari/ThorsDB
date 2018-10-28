@@ -5,6 +5,7 @@
 #include "RespPackage.h"
 #include "RequPackageHandShakeResp.h"
 #include "RequPackageAuthSwitchResp.h"
+#include "RequPackageString.h"
 #include "RespPackageAuthSwitchRequest.h"
 #include "RespPackageAuthMoreData.h"
 #include "RespPackageERR.h"
@@ -109,19 +110,24 @@ class AutheticationCachingSHA2Password: public Authetication
         }
         virtual std::unique_ptr<RespPackage> customAuthenticate(std::unique_ptr<RespPackageAuthMoreData> msg,
                                                                 std::string const& /*username*/,
-                                                                std::string const& /*password*/,
+                                                                std::string const& password,
                                                                 std::string const& /*database*/,
                                                                 std::string const& /*pluginData*/) override
         {
             //static char constexpr request_public_key            = '\2';
             static char constexpr fast_auth_success             = '\3';
-            //static char constexpr perform_full_authentication   = '\4';
+            static char constexpr perform_full_authentication   = '\4';
 
             std::string const& msgData = msg->getPluginMoreData();
             if (msgData.size() == 1 && msgData[0] == fast_auth_success)
             {
                 // Should be the OK message.
                 return connection.recvMessage();
+            }
+            if (msgData.size() == 1 && msgData[0] == perform_full_authentication)
+            {
+                RequPackageString       passwordMessage(password);
+                return connection.sendMessageGetResponse(passwordMessage, false);
             }
             return nullptr;
         }
