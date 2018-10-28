@@ -36,7 +36,8 @@ std::unique_ptr<RespPackage> Authetication::sendHandShakeResponse(std::string co
                                                   authResponse);
 
     connection.initFromHandshake(handshakeresp.getCapabilities(), charset);
-    return connection.sendHandshakeMessage<RespPackage>(handshakeresp,
+    return connection.sendMessageGetResponse(handshakeresp,
+        false,
         {
             {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}},
             {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
@@ -53,7 +54,8 @@ std::unique_ptr<RespPackage> Authetication::sendSwitchResponse(std::string const
 
     RequPackageAuthSwitchResponse   switchResp(username, password, options, database, authResponse);
 
-    return connection.sendHandshakeMessage<RespPackage>(switchResp,
+    return connection.sendMessageGetResponse(switchResp,
+        false,
         {
             {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
         }

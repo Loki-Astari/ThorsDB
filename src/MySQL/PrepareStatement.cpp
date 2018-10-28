@@ -125,6 +125,7 @@ PrepareStatement::PrepareStatement(Connection& connectn, std::string const& stat
     , prepareResp(downcastUniquePtr<RespPackagePrepare>(
                                 connection.sendMessageGetResponse(
                                     RequPackagePrepare(statement),
+                                    true,
                                     {{0x00, [](int firstByte, ConectReader& reader)
                                             {return new RespPackagePrepare(firstByte, reader);}
                                      }
@@ -173,6 +174,7 @@ void PrepareStatement::doExecute()
 
     std::unique_ptr<RespPackage> tmp = connection.sendMessageGetResponse(
                                     RequPackagePrepareExecute(statementID, bindBuffer),
+                                    true,
                                     {{-1, // Does not matter what the first byte is
                                         [this](int firstByte, ConectReader& reader)
                                         {

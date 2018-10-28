@@ -12,6 +12,7 @@ namespace ThorsAnvil
 
 using ThorsAnvil::SQL::Options;
 class RespPackage;
+class RequPackage;
 class ConectWriter;
 class Authentication;
 class Connection
@@ -31,21 +32,12 @@ class Connection
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
 
         // Main Interface
-        template<typename Requ>
-        std::unique_ptr<RespPackage> sendMessageGetResponse(Requ const& request, ConectReader::OKMap const&    actions     = {});
-
-        // Some Requests are multi-part this allows them to send a bunch of small request objects.
-        // and retrieve the corresponding reply objects.
-        template<typename Requ>
-        void                         sendMessage(Requ const& request);
+        std::unique_ptr<RespPackage> sendMessageGetResponse(RequPackage const& request, bool startConv = true, ConectReader::OKMap const&    actions     = {});
+        void                         sendMessage(RequPackage const& request, bool startConv = true);
         std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions = {});
 
         // If things go wrong just drop the current package.
         void                         removeCurrentPackage();
-    private:
-        friend class Authetication;
-        template<typename Resp, typename Requ>
-        std::unique_ptr<Resp> sendHandshakeMessage(Requ const& hs, ConectReader::OKMap const& actions);
     protected:
         void conectToServer(std::string const& username,
                             std::string const& password,
@@ -56,9 +48,5 @@ class Connection
 
     }
 }
-
-#ifndef COVERAGE_MySQL
-#include "Connection.tpp"
-#endif
 
 #endif

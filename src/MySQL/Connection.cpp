@@ -95,25 +95,24 @@ std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& 
     std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions));
     return result;
 }
+void Connection::sendMessage(RequPackage const& request, bool startConv)
+{
+    if (!startConv)
+    {
+        packageWriter.simpleReset();
+    }
+    packageWriter.reset();
+    request.send(packageWriter);
+}
+std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(RequPackage const& request, bool startConv, ConectReader::OKMap const& actions)
+{
+    if (!startConv)
+    {
+        packageWriter.simpleReset();
+    }
+    packageWriter.reset();
+    request.send(packageWriter);
 
-#ifdef COVERAGE_MySQL
-/*
- * This code is only compiled into the unit tests for code coverage purposes
- * It is not part of the live code.
- */
-#include "Connection.tpp"
-#include "ConectReader.h"
-#include "RequPackagePrepare.h"
-#include "RequPackagePrepareClose.h"
-#include "RequPackagePrepareReset.h"
-#include "RequPackagePrepareExecute.h"
-
-template std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageHandShakeResponse>(RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
-template std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageAuthSwitchResponse>(RequPackageAuthSwitchResponse const&, ConectReader::OKMap const&);
-
-template void Connection::sendMessage<RequPackagePrepareClose>(RequPackagePrepareClose const&);
-template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepare>(RequPackagePrepare const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);
-template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepareReset>(RequPackagePrepareReset const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);
-template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepareExecute>(RequPackagePrepareExecute const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);
-
-#endif
+    packageReader.reset();
+    return recvMessage(actions);
+}
