@@ -38,12 +38,12 @@ TEST(RequPackageAuthSwitchRespTest, DefaultOKMessage)
     auto findHumanMessage = message.str().find("humanMessage(RequPackageAuthSwitchResponse)");
     EXPECT_NE(std::string::npos, findHumanMessage);
 
-    auto findauthResponse = message.str().find("authResponse(0x79 0xac 0x1a 0xbb 0xd4 0x5d 0x50 0x55 0x6d 0xcd 0x20 0xb0 0x25 0xb0 0x7d 0xb5 0x4f 0x2f 0x9f 0x56 )");
+    auto findauthResponse = message.str().find("authResponse(0x41 0x42 0x43 0x44 0x45 0x46 0x47 0x48 )");
     EXPECT_NE(std::string::npos, findauthResponse);
 
 
     ConectWriter        writer(stream);
     authSwitch.build(writer);
-    EXPECT_EQ(stream.writLen(), 20);
+    EXPECT_EQ(stream.writLen(), 8);
 }
 
