@@ -216,3 +216,8 @@ void PackageBuffer::writeStream(char const* buffer, std::size_t len)
 {
     stream.write(buffer, len);
 }
+
+void PackageBuffer::establishSSLConnection()
+{
+    stream.establishSSLConnection();
+}

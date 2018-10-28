@@ -5,7 +5,7 @@
 using namespace ThorsAnvil::MySQL;
 
 RespPackagePrepare::RespPackagePrepare(int firstByte, ConectReader& reader)
-    : RespPackage(reader, "Prepare")
+    : RespPackage(RespType::Prepare, reader)
 {
     // https://dev.mysql.com/doc/internals/en/com-stmt-prepare-response.html#com-stmt-prepare-response
     assert(firstByte == 0x00);

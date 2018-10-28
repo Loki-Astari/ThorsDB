@@ -30,6 +30,7 @@ class PackageBuffer: public SQL::StreamInterface
         virtual void        drop()                                      override;
         virtual void        reset()                                     override;
         virtual std::string readRemainingData()                         override;
+        virtual void        establishSSLConnection()                    override;
 
         void sendMessage(char type);
         char getMessage();

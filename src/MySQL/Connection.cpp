@@ -1,8 +1,11 @@
 #include "Connection.h"
+#include "Authentication.h"
 #include "ConectWriter.h"
 #include "RespPackageHandShake.h"
 #include "RespPackageAuthSwitchRequest.h"
 #include "RequPackageHandShakeResp.h"
+#include "RespPackageAuthMoreData.h"
+#include "RequPackageSSLRequest.h"
 #include "RequPackageAuthSwitchResp.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -30,45 +33,86 @@ void Connection::conectToServer(std::string const& username,
                                 Options const& options
                                 )
 {
+    std::unique_ptr<RespPackage> serverResp;
+
     std::unique_ptr<RespPackage> initPack = recvMessage(
                                                 {{0x0A, [](int firstByte, ConectReader& reader
                                                           )
                                                         {return new RespPackageHandShake(firstByte, reader);}
                                                  }
                                                 });
-    std::unique_ptr<RespPackageHandShake> handshake = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
-    RequPackageHandShakeResponse    handshakeresp(username, password, options, database, *handshake);
+    std::unique_ptr<RespPackageHandShake> handshake      = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
+    std::unique_ptr<Authetication>        authentication = getAuthenticatonMethod(*this, handshake->getAuthPluginName(), options);
+    std::string authResponse  = authentication->getAuthenticationString(username, password, database, handshake->getAuthPluginData());
+    RequPackageHandShakeResponse    handshakeresp(username, password, options, database,
+                                                  handshake->getCapabilities(),
+                                                  authentication->getPluginName(),
+                                                  authResponse);
+    RequPackageSSLRequest           sslRequest(handshakeresp.getCapabilities());;
+    sendMessage(sslRequest, false);
+    establishSSLConnection();
 
-    packageReader.initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
-    packageWriter.initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
 
-    std::unique_ptr<RespPackage>    serverResp = sendHandshakeMessage<RespPackage>(handshakeresp,
+    initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
+    serverResp =  sendMessageGetResponse(handshakeresp,
+        false,
         {
-         // The section below assumes only responses are OK/Error/RespPackageAuthSwitchRequest
-         // If this changes to allow other responses then look at the section below were we
-         // handle RespPackageAuthSwitchRequest
-         {0xFE, [](int firstByte, ConectReader& reader)
-                {return new RespPackageAuthSwitchRequest(firstByte, reader);}
-         }
-        });
+            {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}},
+            {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
+        }
+    );
+
 
     if (!serverResp)
     {
         throw std::domain_error("Connection::Connection: Handshake failed: Unexpected Package");
     }
-    if (serverResp->isOK() == false && serverResp->isError() == false)
+    if (serverResp->is() == RespType::AuthSwitchRequest)
     {
-        RequPackageAuthSwitchResponse   switchResp(username, password, options, database, *dynamic_cast<RespPackageAuthSwitchRequest*>(serverResp.get()));
-        serverResp = sendHandshakeMessage<RespPackage>(switchResp, {});
+        std::unique_ptr<RespPackageAuthSwitchRequest>   authSwitchRequest   = downcastUniquePtr<RespPackageAuthSwitchRequest>(std::move(serverResp));
+        authentication  = getAuthenticatonMethod(*this, authSwitchRequest->getPluginName());
+        std::string authResponse  = authentication->getAuthenticationString(username, password, database, handshake->getAuthPluginData());
+
+        RequPackageAuthSwitchResponse   switchResp(username, password, options, database, authResponse);
+
+        serverResp = sendMessageGetResponse(switchResp,
+            false,
+            {
+                {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
+            }
+        );
+
         if (!serverResp)
         {
             throw std::domain_error("Connection::Connection: Auth Switch failed: Unexpected Package");
         }
     }
+
+    if (serverResp->is() == RespType::Authentication)
+    {
+        serverResp = authentication->customAuthenticate(downcastUniquePtr<RespPackageAuthMoreData>(std::move(serverResp)), username, password, database, handshake->getAuthPluginData());
+
+        if (!serverResp)
+        {
+            throw std::domain_error("Connection::Connection: Custom Auth failed: Unexpected Package");
+        }
+    }
+
     if (serverResp->isOK() == false)
     {
         throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*serverResp)));
     }
+}
+
+void Connection::initFromHandshake(unsigned long capabilities, unsigned long charset)
+{
+    packageReader.initFromHandshake(capabilities, charset);
+    packageWriter.initFromHandshake(capabilities, charset);
+}
+
+void Connection::establishSSLConnection()
+{
+    packageWriter.establishSSLConnection();
 }
 
 Connection::~Connection()
@@ -86,26 +130,24 @@ std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& 
     std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions));
     return result;
 }
+void Connection::sendMessage(RequPackage const& request, bool startConv)
+{
+    if (!startConv)
+    {
+        packageWriter.simpleReset();
+    }
+    packageWriter.reset();
+    request.send(packageWriter);
+}
+std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(RequPackage const& request, bool startConv, ConectReader::OKMap const& actions)
+{
+    if (!startConv)
+    {
+        packageWriter.simpleReset();
+    }
+    packageWriter.reset();
+    request.send(packageWriter);
 
-#ifdef COVERAGE_MySQL
-/*
- * This code is only compiled into the unit tests for code coverage purposes
- * It is not part of the live code.
- */
-#include "Connection.tpp"
-#include "ConectReader.h"
-#include "RequPackagePrepare.h"
-#include "RequPackagePrepareClose.h"
-#include "RequPackagePrepareReset.h"
-#include "RequPackagePrepareExecute.h"
-
-template
-std::unique_ptr<RespPackage> Connection::sendHandshakeMessage<RespPackage, RequPackageHandShakeResponse>
-(RequPackageHandShakeResponse const&, ConectReader::OKMap const&);
-
-template void Connection::sendMessage<RequPackagePrepareClose>(RequPackagePrepareClose const&);
-template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepare>(RequPackagePrepare const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);
-template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepareReset>(RequPackagePrepareReset const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);
-template std::unique_ptr<RespPackage> Connection::sendMessageGetResponse<RequPackagePrepareExecute>(RequPackagePrepareExecute const&, std::map<int, std::function<RespPackage* (int, ConectReader&)>> const&);
-
-#endif
+    packageReader.reset();
+    return recvMessage(actions);
+}

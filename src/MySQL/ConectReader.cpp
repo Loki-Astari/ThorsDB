@@ -62,7 +62,7 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
             return std::unique_ptr<RespPackage>(find->second(packageType, *this));
         }
         throw std::domain_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Unknown Result Type: ", packageType));
+                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Unknown Result Type: ", packageType, ": >", restOfPacketString(), "<"));
     }
 }
 

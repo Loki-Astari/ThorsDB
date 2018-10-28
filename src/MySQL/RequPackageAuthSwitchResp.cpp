@@ -7,15 +7,14 @@
 
 using namespace ThorsAnvil::MySQL;
 
-RequPackageAuthSwitchResponse::RequPackageAuthSwitchResponse(std::string const& username,
-                                                           std::string const& password,
-                                                           Options const&     options,
-                                                           std::string const& database,
-                                                           RespPackageAuthSwitchRequest const& handshake)
+RequPackageAuthSwitchResponse::RequPackageAuthSwitchResponse(std::string const& /*username*/,
+                                                           std::string const& /*password*/,
+                                                           Options const&     /*options*/,
+                                                           std::string const& /*database*/,
+                                                           std::string const& authResponse)
     : RequPackage("RequPackageAuthSwitchResponse", "AuthSwitch-Response")
-{
-    authResponse = authentication(handshake.pluginName, handshake.pluginData, username, password, options, database);
-}
+    , authResponse(authResponse)
+{}
 
 void RequPackageAuthSwitchResponse::build(ConectWriter& writer) const
 {

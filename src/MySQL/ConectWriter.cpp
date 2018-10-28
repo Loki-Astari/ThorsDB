@@ -9,6 +9,11 @@ void ConectWriter::initFromHandshake(unsigned long newCapabilities, unsigned lon
     charset         = newCharset;
 }
 
+void ConectWriter::establishSSLConnection()
+{
+    stream.establishSSLConnection();
+}
+
 void ConectWriter::writeLengthEncodedInteger(unsigned long long value)
 {
     /*

@@ -9,11 +9,16 @@
 #ifndef EWOULDBLOCK
 #define EWOULDBLOCK EAGAIN
 #endif
+
+// C++
+#include <iostream>
+#include <sstream>
+
+// C
 #include <errno.h>
 #include <string.h> // needed for memset() / bcopy()
 #include <stdio.h>  // needed for strerror()
 #include <fcntl.h>
-#include <iostream>
 
 using namespace ThorsAnvil::SQL;
 
@@ -82,12 +87,36 @@ StreamSimple::~StreamSimple()
 }
 void StreamSimple::close()
 {
+    ssl.reset(nullptr);
+    ctx.reset(nullptr);
     ::close(socket);
     socket = -1;
 }
 
 
 void StreamSimple::read(char* buffer, std::size_t len)
+{
+    if (ssl)
+    {
+        readSSL(buffer, len);
+    }
+    else
+    {
+        readFD(buffer, len);
+    }
+}
+void StreamSimple::write(char const* buffer, std::size_t len)
+{
+    if (ssl)
+    {
+        writeSSL(buffer, len);
+    }
+    else
+    {
+        writeFD(buffer, len);
+    }
+}
+void StreamSimple::readFD(char* buffer, std::size_t len)
 {
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
@@ -106,7 +135,7 @@ void StreamSimple::read(char* buffer, std::size_t len)
         else if (read == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::SQL::StreamSimple::read: "
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::readFD: "
                              "::read() Failed: ",
                              "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
                   ));
@@ -114,7 +143,7 @@ void StreamSimple::read(char* buffer, std::size_t len)
         else if (read == ErrorResult)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::SQL::StreamSimple::read: ",
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::readFD: ",
                              "::read() Failed: ",
                              "errno=", errno, " Message=", strerror(errno)
                   ));
@@ -123,7 +152,7 @@ void StreamSimple::read(char* buffer, std::size_t len)
         readSoFar += read;
     }
 }
-void StreamSimple::write(char const* buffer, std::size_t len)
+void StreamSimple::writeFD(char const* buffer, std::size_t len)
 {
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
@@ -142,7 +171,7 @@ void StreamSimple::write(char const* buffer, std::size_t len)
         else if (writen == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::SQL::StreamSimple::write: ",
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::writeFD: ",
                              "::write() Failed: ",
                              "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
                   ));
@@ -150,7 +179,7 @@ void StreamSimple::write(char const* buffer, std::size_t len)
         else if (writen == ErrorResult)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::SQL::StreamSimple::write: ",
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::writeFD: ",
                              "::write() Failed: ",
                              "errno=", errno, " Message=", strerror(errno)
                   ));
@@ -158,4 +187,82 @@ void StreamSimple::write(char const* buffer, std::size_t len)
 
         writenSoFar += writen;
     }
+}
+void StreamSimple::readSSL(char* buffer, std::size_t len)
+{
+    std::size_t     readSoFar    = 0;
+    while (readSoFar != len)
+    {
+        std::size_t read = ssl->read(buffer + readSoFar, len - readSoFar);
+        if (read < 0)
+        {
+            int errorCode = ssl->errorCode(read);
+            if (errorCode == SSL_ERROR_WANT_READ)
+            {
+                readYield();
+                continue;
+            }
+            else
+            {
+                throw std::runtime_error(
+                        errorMsg("ThorsAnvil::SQL::StreamSimple::readSSL: ",
+                                 "::SSL_read() Failed: ",
+                                 "errno=", errorCode, " Message=", SSLUtil::errorMessage()
+                      ));
+            }
+        }
+        else if (read == 0)
+        {
+            throw std::runtime_error(
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::readSSL: "
+                             "SSL_read() Failed: ",
+                             "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
+                  ));
+        }
+
+        readSoFar += read;
+    }
+}
+void StreamSimple::writeSSL(char const* buffer, std::size_t len)
+{
+    std::size_t     writenSoFar    = 0;
+    while (writenSoFar != len)
+    {
+        std::size_t writen = ssl->write(buffer + writenSoFar, len - writenSoFar);
+        if (writen < 0)
+        {
+            int errorCode = ssl->errorCode(writen);
+            if (errorCode == SSL_ERROR_WANT_WRITE)
+            {
+                writeYield();
+                continue;
+            }
+            else
+            {
+                throw std::runtime_error(
+                        errorMsg("ThorsAnvil::SQL::StreamSimple::writeSSL: ",
+                                 "::SSL_write() Failed: ",
+                                 "errno=", errorCode, " Message=", SSLUtil::errorMessage()
+                      ));
+            }
+        }
+        else if (writen == 0)
+        {
+            throw std::runtime_error(
+                    errorMsg("ThorsAnvil::SQL::StreamSimple::writeSSL: ",
+                             "::SSL_write() Failed: ",
+                             "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
+                  ));
+        }
+
+        writenSoFar += writen;
+    }
+}
+
+void StreamSimple::establishSSLConnection()
+{
+    SSLMethod   method(SSLMethodType::Client);
+    ctx     = std::make_unique<SSLctx>(method);
+    ssl     = std::make_unique<SSLObj>(*ctx, socket);
+    ssl->connect();
 }

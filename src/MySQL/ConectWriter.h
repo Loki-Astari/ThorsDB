@@ -43,6 +43,7 @@ class ConectWriter
         virtual ~ConectWriter() {}
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
+        void establishSSLConnection();
 
         template<int len>
         void        writeFixedLengthInteger(unsigned long long value);

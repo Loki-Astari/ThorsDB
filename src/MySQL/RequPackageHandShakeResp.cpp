@@ -19,24 +19,24 @@ constexpr unsigned long cap  =
   // We don't know how to decode the Session State Information in the RespPackageOK
   // So this must currently be turned off.
   // Once you have it decoding you can enable this.
-  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD;
+  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD
+  | CLIENT_SSL;
 
 RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& username,
-                                                           std::string const& password,
+                                                           std::string const& /*password*/,
                                                            Options const&     options,
                                                            std::string const& database,
-                                                           RespPackageHandShake const& handshake)
+                                                           long               capabilities,
+                                                           std::string const& authPluginName,
+                                                           std::string const& authResponse)
     : RequPackage("RequPackageHandShakeResponse", "HandShake-Response")
     , username(username)
+    , authResponse(authResponse)
     , options(options)
     , database(database)
-    , authPluginName(handshake.getAuthPluginName())
-    , capabilities(handshake.getCapabilities() & cap)
-{
-    auto auth = options.find("default-auth");
-    std::string const& authPluginNameUsed = (auth != options.end()) ? auth->second : authPluginName;
-    authResponse = authentication(authPluginNameUsed, handshake.getAuthPluginData(), username, password, options, database);
-}
+    , authPluginName(authPluginName)
+    , capabilities(capabilities & cap)
+{}
 
 void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 {
@@ -78,9 +78,7 @@ void RequPackageHandShakeResponse::build(ConectWriter& writer) const
 
     if (capabilities & CLIENT_PLUGIN_AUTH)
     {
-        auto auth = options.find("default-auth");
-        std::string const& authPluginNameUsed = (auth != options.end()) ? auth->second : authPluginName;
-        writer.writeNullTerminatedString(authPluginNameUsed);
+        writer.writeNullTerminatedString(authPluginName);
     }
 
     // TODO Add Key Values

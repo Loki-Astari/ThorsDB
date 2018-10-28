@@ -8,7 +8,7 @@ RespPackageResultSet::RespPackageResultSet(
                             ConectReader& reader,
                             std::vector<RespPackageColumnDefinition> const& columns
                         )
-    : RespPackage(reader, "Result-Set")
+    : RespPackage(RespType::ResultSet, reader)
     , reader(reader)
     , columns(columns)
     , nextColumn(0)

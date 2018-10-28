@@ -29,7 +29,9 @@ class RequPackageHandShakeResponse: public RequPackage
                                  std::string const& password,
                                  Options const& options,
                                  std::string const& database,
-                                 RespPackageHandShake const& handshake);
+                                 long capabilities,
+                                 std::string const& authPluginName,
+                                 std::string const& authResponse);
 
         virtual  std::ostream& print(std::ostream& s)   const override;
         virtual  void build(ConectWriter& writer)       const override;

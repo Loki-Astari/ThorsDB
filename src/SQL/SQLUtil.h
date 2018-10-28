@@ -17,10 +17,33 @@ using Options=std::map<std::string, std::string>;
 /* The following is generic to all ThorsAnvil Code */
 
 /* Build error message or bug report for exceptions */
+
+template<typename T>
+struct ItemPrinter
+{
+    std::ostream& str;
+    ItemPrinter(std::ostream& str) : str(str) {}
+    void print(T const& msg){str << msg;}
+};
+template<typename P>
+struct ItemPrinter<P*>
+{
+    std::ostream& str;
+    ItemPrinter(std::ostream& str) : str(str) {}
+    void print(P* const& msg)
+    {
+        if (msg)
+        {
+            str << (*msg);
+        }
+    }
+};
+
 template<typename T>
 void printItem(std::ostream& str, T const& msg)
 {
-    str << msg;
+    ItemPrinter<T>  printer(str);
+    printer.print(msg);
 }
 
 template<typename... Args>

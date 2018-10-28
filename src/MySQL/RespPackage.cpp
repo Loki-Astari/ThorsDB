@@ -12,7 +12,9 @@
 #include "RespPackagePrepare.h"
 #include "RespPackageHandShake.h"
 #include "RespPackageResultSet.h"
+#include "RespPackageAuthMoreData.h"
 #include "RespPackagePrepareExecute.h"
+#include "RespPackageAuthSwitchRequest.h"
 #include "PrepareStatement.h"
 
 template std::unique_ptr<ThorsAnvil::MySQL::RespPackage> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackage>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
@@ -21,6 +23,8 @@ template std::unique_ptr<ThorsAnvil::MySQL::RespPackageEOF> ThorsAnvil::MySQL::d
 template std::unique_ptr<ThorsAnvil::MySQL::RespPackagePrepare> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackagePrepare>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
 template std::unique_ptr<ThorsAnvil::MySQL::RespPackageHandShake> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackageHandShake>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
 template std::unique_ptr<ThorsAnvil::MySQL::RespPackageResultSet> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackageResultSet>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
+template std::unique_ptr<ThorsAnvil::MySQL::RespPackageAuthMoreData> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackageAuthMoreData>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
 template std::unique_ptr<ThorsAnvil::MySQL::RespPackagePrepareExecute> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackagePrepareExecute>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
+template std::unique_ptr<ThorsAnvil::MySQL::RespPackageAuthSwitchRequest> ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackageAuthSwitchRequest>(std::unique_ptr<ThorsAnvil::MySQL::RespPackage>&&);
 
 #endif
