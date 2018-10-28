@@ -82,6 +82,7 @@ TEST(ConnectionTest, MySQLNativePassword)
                                     options);
 }
 
+#if MYSQL_MAJOR_VERSION >= 6
 TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
     using namespace ThorsAnvil;
@@ -102,5 +103,6 @@ TEST(ConnectionTest, CachingSHA2Password)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 }
+#endif
 
 

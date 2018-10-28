@@ -54,6 +54,9 @@
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
+/* "Get mysql version into #define. That way we can turn off some tests" */
+#undef MYSQL_MAJOR_VERSION
+
 /* Name of package */
 #undef PACKAGE
 

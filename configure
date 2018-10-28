@@ -17685,6 +17685,13 @@ Error: Can not connect to mysql server for testing.
 
 fi
 
+version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
+
+cat >>confdefs.h <<_ACEOF
+#define MYSQL_MAJOR_VERSION ${version}
+_ACEOF
+
+
 am__api_version='1.16'
 
 # Find a good install program.  We prefer a C program (faster),

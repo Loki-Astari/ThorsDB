@@ -171,6 +171,9 @@ Error: Can not connect to mysql server for testing.
                   ])
      ])
 
+version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
+AC_DEFINE_UNQUOTED([MYSQL_MAJOR_VERSION], [${version}], ["Get mysql version into #define. That way we can turn off some tests"])
+
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/SQL/SQLConfig.h:config.h.in])
 AC_CONFIG_FILES([Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in])
