@@ -51,6 +51,7 @@ Error: Could not find libcrypto
         On Linux you will need to install openssl
 
             sudo apt-get install openssl
+            sudo apt-get install libssl-dev
 
                 ], [1])]
     )
