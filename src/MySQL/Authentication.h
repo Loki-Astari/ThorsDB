@@ -26,16 +26,6 @@ class Authetication
     public:
         Authetication(Connection& connection, Options const& options);
         virtual ~Authetication();
-        std::unique_ptr<RespPackage> sendHandShakeResponse(std::string const& username,
-                                                           std::string const& password,
-                                                           std::string const& database,
-                                                           std::string const& pluginData,
-                                                           long capabilities,
-                                                           unsigned long charset);
-        std::unique_ptr<RespPackage> sendSwitchResponse(std::string const& username,
-                                                        std::string const& password,
-                                                        std::string const& database,
-                                                        std::string const& pluginData);
 
         virtual std::string getAuthenticationString(std::string const& username,
                                                     std::string const& password,

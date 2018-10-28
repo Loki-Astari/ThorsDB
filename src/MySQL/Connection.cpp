@@ -40,7 +40,21 @@ void Connection::conectToServer(std::string const& username,
                                                 });
     std::unique_ptr<RespPackageHandShake> handshake      = downcastUniquePtr<RespPackageHandShake>(std::move(initPack));
     std::unique_ptr<Authetication>        authentication = getAuthenticatonMethod(*this, handshake->getAuthPluginName(), options);
-    std::unique_ptr<RespPackage>          serverResp     = authentication->sendHandShakeResponse(username, password, database, handshake->getAuthPluginData(), handshake->getCapabilities(), handshake->getCharset());
+    std::string authResponse  = authentication->getAuthenticationString(username, password, database, handshake->getAuthPluginData());
+    RequPackageHandShakeResponse    handshakeresp(username, password, options, database,
+                                                  handshake->getCapabilities(),
+                                                  authentication->getPluginName(),
+                                                  authResponse);
+
+    initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
+    std::unique_ptr<RespPackage> serverResp =  sendMessageGetResponse(handshakeresp,
+        false,
+        {
+            {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}},
+            {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
+        }
+    );
+
 
     if (!serverResp)
     {
@@ -50,7 +64,16 @@ void Connection::conectToServer(std::string const& username,
     {
         std::unique_ptr<RespPackageAuthSwitchRequest>   authSwitchRequest   = downcastUniquePtr<RespPackageAuthSwitchRequest>(std::move(serverResp));
         authentication  = getAuthenticatonMethod(*this, authSwitchRequest->getPluginName());
-        serverResp      = authentication->sendSwitchResponse(username, password, database, handshake->getAuthPluginData());
+        std::string authResponse  = authentication->getAuthenticationString(username, password, database, handshake->getAuthPluginData());
+
+        RequPackageAuthSwitchResponse   switchResp(username, password, options, database, authResponse);
+
+        serverResp = sendMessageGetResponse(switchResp,
+            false,
+            {
+                {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
+            }
+        );
 
         if (!serverResp)
         {

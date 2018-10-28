@@ -22,46 +22,6 @@ Authetication::Authetication(Connection& connection, Options const& options)
 Authetication::~Authetication()
 {}
 
-std::unique_ptr<RespPackage> Authetication::sendHandShakeResponse(std::string const& username,
-                                                                  std::string const& password,
-                                                                  std::string const& database,
-                                                                  std::string const& pluginData,
-                                                                  long capabilities,
-                                                                  unsigned long charset)
-{
-    std::string authResponse  = getAuthenticationString(username, password, database, pluginData);
-    RequPackageHandShakeResponse    handshakeresp(username, password, options, database,
-                                                  capabilities,
-                                                  getPluginName(),
-                                                  authResponse);
-
-    connection.initFromHandshake(handshakeresp.getCapabilities(), charset);
-    return connection.sendMessageGetResponse(handshakeresp,
-        false,
-        {
-            {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}},
-            {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
-        }
-    );
-}
-
-std::unique_ptr<RespPackage> Authetication::sendSwitchResponse(std::string const& username,
-                                                               std::string const& password,
-                                                               std::string const& database,
-                                                               std::string const& pluginData)
-{
-    std::string authResponse  = getAuthenticationString(username, password, database, pluginData);
-
-    RequPackageAuthSwitchResponse   switchResp(username, password, options, database, authResponse);
-
-    return connection.sendMessageGetResponse(switchResp,
-        false,
-        {
-            {0x01, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthMoreData(firstByte, reader);}}
-        }
-    );
-}
-
 class AutheticationMySQLNativePassword: public Authetication
 {
     public:
