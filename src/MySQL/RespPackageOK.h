@@ -66,8 +66,8 @@ class RespPackageOK: public RespPackage
         virtual  std::ostream& print(std::ostream& s) const
         {
             return s << "OKPackage: "
-                     << "affectedRows(" << affectedRows << ") "
-                     << "lastInsertID(" << lastInsertID << ") "
+                     << "affectedRows( 0x" << std::hex << std::setw(8) << std::setfill('0') << affectedRows << ") "
+                     << "lastInsertID( 0x" << std::hex << std::setw(8) << std::setfill('0') << lastInsertID << ") "
                      << "statusFlags( 0x"  << std::hex << std::setw(8) << std::setfill('0') << statusFlags << ") "
                      << "warningFlags( 0x" << std::hex << std::setw(8) << std::setfill('0') << warningFlags << ") "
                      << std::dec;

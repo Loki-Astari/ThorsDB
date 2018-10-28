@@ -1,6 +1,7 @@
 
 #include "StreamSimple.h"
 #include "SSLUtil.h"
+#include "coverage/ThorMock.h"
 #include <fstream>
 #include <thread>
 #include <gtest/gtest.h>
@@ -31,9 +32,52 @@ TEST(StreamSimpleTest, ReadNormal)
 
     ASSERT_EQ(std::string(data, data + 16), std::string("1234567890ABCDEF"));
 }
+TEST(StreamSimpleTest, ReadInterupt)
+{
+    MOCK_SYS(readWrapper, [](int socket, void* buffer, std::size_t len)
+    {
+        static bool firstTime = true;
+        if (firstTime)
+        {
+            firstTime = false;
+            errno = EINTR;
+            return -1L;
+        }
+        return ::read(socket, buffer, len);
+    });
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    char data[16];
+    stream.read(data,16);
+
+    ASSERT_EQ(std::string(data, data + 16), std::string("1234567890ABCDEF"));
+}
 TEST(StreamSimpleTest, ReadGoodHost)
 {
     StreamSimple stream("google.com", 80);
+}
+TEST(StreamSimpleTest, NonBlockingFail)
+{
+    MOCK_SYS(fcntlWrapper, [](int, int, int){return -1;});
+    auto test = []()
+    {
+        StreamSimple stream("google.com", 80, true);
+    };
+
+    EXPECT_THROW(
+        test(),
+        std::domain_error
+    );
+}
+TEST(StreamSimpleTest, NonBlockingOK)
+{
+    MOCK_SYS(fcntlWrapper, [](int, int, int){return 0;});
+    StreamSimple stream("google.com", 80, true);
+}
+TEST(StreamSimpleTest, GetCoverageOnTheWrapper)
+{
+    fcntlWrapper(-1, 0, 0);
 }
 TEST(StreamSimpleTest, ReadGoodHostBadPort)
 {
@@ -135,11 +179,49 @@ TEST(StreamSimpleTest, WriteNormal)
     }
     unlink("test/data/StreamSimpleTest-WriteNormal");
 }
+TEST(StreamSimpleTest, WriteNormalWithContinue)
+{
+    MOCK_SYS(writeWrapper, [](int socket, void const* buffer, std::size_t len)
+    {
+        static bool firstTime = true;
+        if (firstTime)
+        {
+            firstTime = false;
+            errno = EINTR;
+            return -1L;
+        }
+        return ::write(socket, buffer, len);
+    });
+    int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+    {
+        StreamSimple stream(socket);
+
+        char data[16] = "12345678";
+        stream.write(data,8);
+    }
+    {
+        std::ifstream   test("test/data/StreamSimpleTest-WriteNormal");
+        std::string     line;
+        std::getline(test, line);
+        ASSERT_EQ("12345678", line);
+    }
+    unlink("test/data/StreamSimpleTest-WriteNormal");
+}
 TEST(StreamSimpleTest, WriteFail)
 {
     int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     StreamSimple stream(socket);
     close(socket);
+
+    char data[16] = "12345678";
+    ASSERT_THROW(stream.write(data,8), std::runtime_error);
+    unlink("test/data/StreamSimpleTest-WriteNormal");
+}
+TEST(StreamSimpleTest, WriteFailMocked)
+{
+    MOCK_SYS(writeWrapper, [](int socket, void const* buffer, std::size_t len) {return 0;});
+    int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+    StreamSimple stream(socket);
 
     char data[16] = "12345678";
     ASSERT_THROW(stream.write(data,8), std::runtime_error);
@@ -320,3 +402,52 @@ TEST(StreamSimpleTest, OpenSSLConnection)
     sslServer.join();
 }
 
+TEST(StreamSimpleTest, startNewConversationNothingTrue)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.startNewConversation(true);
+}
+TEST(StreamSimpleTest, startNewConversationNothingFalse)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.startNewConversation(false);
+}
+TEST(StreamSimpleTest, flushNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.flush();
+}
+TEST(StreamSimpleTest, resetNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.reset();
+}
+TEST(StreamSimpleTest, dropNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    stream.drop();
+}
+TEST(StreamSimpleTest, isEmptyNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    EXPECT_EQ(stream.isEmpty(), true);
+}
+TEST(StreamSimpleTest, readRemainingDataNothing)
+{
+    int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
+    StreamSimple stream(socket);
+
+    EXPECT_EQ(stream.readRemainingData(), "");
+}

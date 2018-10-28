@@ -77,7 +77,7 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumn
             default:
                 throw std::domain_error(
                         bugReport("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: ",
-                                  "Unknown Type returned by server. Type: ", std::hex, col.type
+                                  "Unknown Type returned by server. Type: ", std::hex, col.type, " " , mapMySQLTypeToString(col.type)
                       ));
 
         }

@@ -1,0 +1,10 @@
+
+#include <fcntl.h>
+#include "StreamSimple.h"
+
+
+MOCK_SYSTEM_FUNC(fcntlWrapper)
+MOCK_SYSTEM_FUNC(readWrapper)
+MOCK_SYSTEM_FUNC(writeWrapper)
+
+

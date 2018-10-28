@@ -13,6 +13,7 @@
 #include <sstream>
 #include <limits>
 #include <stdexcept>
+#include <time.h>
 
 namespace ThorsAnvil
 {
@@ -331,10 +332,45 @@ template<> inline float  readParameterValue<MYSQL_TYPE_FLOAT,         float>(Con
     p.read(reinterpret_cast<char*>(&result), 4);
     return result;
 }
+// https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_DECIMAL
+template<> inline long double  readParameterValue<MYSQL_TYPE_DECIMAL, long double>(ConectReader& p)
+{
+    std::string value = p.lengthEncodedString();
+    long double result = std::stold(value);
+    return result;
+}
+template<> inline double  readParameterValue<MYSQL_TYPE_DECIMAL,      double>(ConectReader& p)
+{
+    std::string value = p.lengthEncodedString();
+    double result = std::stod(value);
+    return result;
+}
+template<> inline float  readParameterValue<MYSQL_TYPE_DECIMAL,       float>(ConectReader& p)
+{
+    std::string value = p.lengthEncodedString();
+    float result = std::stof(value);
+    return result;
+}
+//https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_NEWDECIMAL
+template<> inline long double  readParameterValue<MYSQL_TYPE_NEWDECIMAL, long double>(ConectReader& p)
+{
+    return readParameterValue<MYSQL_TYPE_DECIMAL, long double>(p);
+}
+template<> inline double  readParameterValue<MYSQL_TYPE_NEWDECIMAL,      double>(ConectReader& p)
+{
+    return readParameterValue<MYSQL_TYPE_DECIMAL, double>(p);
+}
+template<> inline float  readParameterValue<MYSQL_TYPE_NEWDECIMAL,       float>(ConectReader& p)
+{
+    return readParameterValue<MYSQL_TYPE_DECIMAL, float>(p);
+}
 
 /*
  * Time/Date
  */
+// https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_DATE
+// https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_TIME
+// https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_TIMESTAMP
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_DATE,      UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIME,      UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readRel());}
 template<> inline UnixTimeStamp readParameterValue<MYSQL_TYPE_TIMESTAMP, UnixTimeStamp>(ConectReader& p){return UnixTimeStamp(p.readDate());}
@@ -451,6 +487,13 @@ inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v
 {
     p.writeRawData(reinterpret_cast<char const*>(&v), 8);
     return MYSQL_TYPE_DOUBLE;
+}
+
+template<>
+inline unsigned int writeParameterValue<ThorsAnvil::SQL::UnixTimeStamp>(ConectWriter& p, ThorsAnvil::SQL::UnixTimeStamp const& v)
+{
+    p.writeDate(v.time);
+    return MYSQL_TYPE_TIMESTAMP;
 }
 
     }

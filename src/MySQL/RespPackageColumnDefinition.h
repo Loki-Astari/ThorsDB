@@ -28,13 +28,13 @@ struct RespPackageColumnDefinition
     std::string     orgTable;
     std::string     name;
     std::string     orgName;
-    std::size_t     lengthOfFixedField;
-    int             charSet;
-    int             columnLength;
-    int             type;
-    int             flags;
-    int             decimal;
-    int             filler;
+    std::size_t     lengthOfFixedField  = 0;
+    int             charSet             = 0;
+    int             columnLength        = 0;
+    int             type                = 0;
+    int             flags               = 0;
+    int             decimal             = 0;
+    int             filler              = 0;
     std::vector<std::string>    defaultValues;
 
     friend std::ostream& operator<<(std::ostream& s, RespPackageColumnDefinition const& data)

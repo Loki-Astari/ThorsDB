@@ -130,6 +130,12 @@ std::unique_ptr<RespPackage> Connection::recvMessage(ConectReader::OKMap const& 
     std::unique_ptr<RespPackage>   result(packageReader.recvMessage(actions));
     return result;
 }
+std::unique_ptr<RespPackage> Connection::getResponse(ConectReader::OKMap const& actions)
+{
+    packageReader.reset();
+    return recvMessage(actions);
+}
+
 void Connection::sendMessage(RequPackage const& request, bool startConv)
 {
     if (!startConv)
@@ -148,6 +154,5 @@ std::unique_ptr<RespPackage> Connection::sendMessageGetResponse(RequPackage cons
     packageWriter.reset();
     request.send(packageWriter);
 
-    packageReader.reset();
-    return recvMessage(actions);
+    return getResponse(actions);
 }

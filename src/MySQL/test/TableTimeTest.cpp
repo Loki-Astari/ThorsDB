@@ -43,11 +43,11 @@ TTS getEpochFromTime(std::string const& time)
 // 1969-04-25
 
 #ifndef THOR_USE_TIMEGM_FLASE
-TEST(TableTimeTest, ReadDate)        {typeGoodTest<TTS>        (getEpochFromDate("1969-04-25"), "SELECT ST1 FROM TimeStampTypes WHERE Id=1");}
+TEST(TableTimeTest, ReadDate)        {typeGoodTest<TTS>        (getEpochFromDate("1999-04-25"), "SELECT ST1 FROM TimeStampTypes WHERE Id=1");}
 TEST(TableTimeTest, ReadTime)        {typeGoodTest<TTS>        (getEpochFromTime("06:15:43"), "SELECT ST2 FROM TimeStampTypes WHERE Id=1");}
-TEST(TableTimeTest, ReadTS)          {typeGoodTest<TTS>        (getEpochFromTimeStamp("1973-04-25 06:15:43"), "SELECT ST3 FROM TimeStampTypes WHERE Id=1");}
-TEST(TableTimeTest, ReadDateTime)    {typeGoodTest<TTS>        (getEpochFromTimeStamp("1969-04-25 06:15:43"), "SELECT ST4 FROM TimeStampTypes WHERE Id=1");}
+TEST(TableTimeTest, ReadTS)          {typeGoodTest<TTS>        (getEpochFromTimeStamp("1999-04-25 06:15:43"), "SELECT ST3 FROM TimeStampTypes WHERE Id=1");}
+TEST(TableTimeTest, ReadDateTime)    {typeGoodTest<TTS>        (getEpochFromTimeStamp("1999-04-25 06:15:43"), "SELECT ST4 FROM TimeStampTypes WHERE Id=1");}
 #endif
-TEST(TableTimeTest, ReadYear)        {typeGoodTest<int>        (2016, "SELECT ST5 FROM TimeStampTypes WHERE Id=1");}
+TEST(TableTimeTest, ReadYear)        {typeGoodTest<int>        (1999, "SELECT ST5 FROM TimeStampTypes WHERE Id=1");}
 
 

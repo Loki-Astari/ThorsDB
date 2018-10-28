@@ -2,10 +2,12 @@ show databases;
 
 DROP    DATABASE IF EXISTS test;
 DROP    USER IF EXISTS 'test'@'localhost';
+DROP    USER IF EXISTS 'ssluser'@'localhost';
+DROP    USER IF EXISTS 'ssluserEmpty'@'localhost';
 
 CREATE  DATABASE IF NOT EXISTS test;
 CREATE  USER 'test'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'testPassword';
-CREATE  USER 'test'@'localhost' IDENTIFIED BY 'testPassword';
+-- CREATE  USER 'test'@'localhost' IDENTIFIED BY 'testPassword';
 CREATE  USER 'ssluser'@'localhost' IDENTIFIED BY 'sslPassword';
 CREATE  USER 'ssluserEmpty'@'localhost' IDENTIFIED BY '';
 GRANT   ALL ON test.* TO 'test'@'localhost';
@@ -96,11 +98,12 @@ CREATE TABLE RealTypes(
 
     ,R1  DOUBLE
     ,R2  FLOAT
+    ,R3  REAL
 
     ,D1  DECIMAL
     ,D2  NUMERIC);
 
-INSERT INTO RealTypes(ID, R1, R2, D1, D2) VALUES(1, 10, 11, 12, 13);
+INSERT INTO RealTypes(ID, R1, R2, R3, D1, D2) VALUES(1, 10, 11, 14, 12, 13);
 
 -- See test/TableTimeTest.cpp
 --      Add tests to this file for integers.
@@ -114,7 +117,7 @@ CREATE TABLE TimeStampTypes(
     ,ST4  DATETIME
     ,ST5  YEAR);
 
-INSERT INTO TimeStampTypes(ID, ST1, ST2, ST3, ST4, ST5) VALUES (1, '1969-04-25', '06:15:43', '1973-04-25 06:15:43', '1969-04-25 06:15:43', '2016');
+INSERT INTO TimeStampTypes(ID, ST1, ST2, ST3, ST4, ST5) VALUES (1, '1999-04-25', '06:15:43', '1999-04-25 06:15:43', '1999-04-25 06:15:43', '1999');
 
 -- See test/TableBinaryTest.cpp
 --      Add tests to this file for integers.
@@ -152,4 +155,15 @@ INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
  VALUES(1, 'x', "A normal Var char", "Tiny Text", "This is normal text", "This is some medium length test", "This is some long text");
 INSERT INTO StringTypes(ID, S1, S2, S3, S4, S5, S6)
  VALUES(2, 'F', "F", "F", "F", "F", "F");
+
+CREATE TABLE TypesNotCovered(
+     ID  INTEGER
+
+    ,enumColour ENUM('Red', 'Green', 'Blue')
+    ,setColor   SET('Red', 'Green', 'Blue')
+    ,jsonCol    JSON
+);
+
+INSERT INTO TypesNotCovered (ID, enumColour, setColor, jsonCol)
+ VALUES(1, 'Red', 'Red', '{}');
 

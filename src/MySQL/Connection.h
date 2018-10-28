@@ -36,6 +36,7 @@ class Connection
         std::unique_ptr<RespPackage> sendMessageGetResponse(RequPackage const& request, bool startConv = true, ConectReader::OKMap const&    actions     = {});
         void                         sendMessage(RequPackage const& request, bool startConv = true);
         std::unique_ptr<RespPackage> recvMessage(ConectReader::OKMap const& actions = {});
+        std::unique_ptr<RespPackage> getResponse(ConectReader::OKMap const& actions = {});
 
         // If things go wrong just drop the current package.
         void                         removeCurrentPackage();

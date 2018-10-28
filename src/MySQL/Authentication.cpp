@@ -122,7 +122,7 @@ class AutheticationCachingSHA2Password: public Authetication
             if (msgData.size() == 1 && msgData[0] == fast_auth_success)
             {
                 // Should be the OK message.
-                return connection.recvMessage();
+                return connection.getResponse();
             }
             if (msgData.size() == 1 && msgData[0] == perform_full_authentication)
             {

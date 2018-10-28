@@ -39,8 +39,8 @@ namespace ThorsAnvil
                     // A function for creating DB specific instances of the StatementProxy objects.
                     virtual std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement) = 0;
 
-                    virtual int getSocketId() const {return -1;}
-                    virtual void setYield(std::function<void()>&&, std::function<void()>&&){}
+                    virtual int getSocketId() const  = 0;
+                    virtual void setYield(std::function<void()>&&, std::function<void()>&&) = 0;
             };
             class YieldSetter
             {

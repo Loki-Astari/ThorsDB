@@ -20,7 +20,40 @@ ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysql
  * Default port 3306
  * Has a user called test with password testPassword
  */
-TEST(ConnectionTest, TryLocalMySQLConnection)
+TEST(ConnectionTest, CreateMySQLOnGeneric)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+}
+
+TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+    EXPECT_NE(-1, connection.getSocketId());
+}
+
+TEST(ConnectionTest, CreateMySQLOnGenericSetYield)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+    connection.setYield([](){}, [](){});
+}
+
+TEST(ConnectionTest, Create)
 {
     using namespace ThorsAnvil;
     using Buffer=MySQL::PackageBuffer;

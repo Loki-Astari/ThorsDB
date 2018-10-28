@@ -15,6 +15,7 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     , authPluginLength(0)
     , isV9(false)
     , capabilities(0)
+    , charset(0)
 {
     // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeV10
     assert(firstbyte = 0x0A);
@@ -35,7 +36,6 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     charset         = reader.fixedLengthInteger<1>();
     statusFlag      = reader.fixedLengthInteger<2>();
     long cap2       = reader.fixedLengthInteger<2>();
-    authPluginLength= 0;
 
     capabilities    = capabilities | (cap2 << 16);
 
@@ -45,6 +45,7 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     }
     else
     {
+        authPluginLength = 9; // 8 + '\0'
         int fill = reader.fixedLengthInteger<1>();
         assert(fill == 0);
     }

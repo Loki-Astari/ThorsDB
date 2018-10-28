@@ -37,6 +37,23 @@ TEST(BindParametersReadTest, BindFloatTestAgainstFloat)
     ASSERT_EQ(1, count);
 }
 
+TEST(BindParametersReadTest, BindFloatTestAgainstReal)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID FROM RealTypes WHERE R3=?");
+    long count = 0;
+    float rbind = 14;
+    statement.execute(SQL::Bind(rbind),[&count](long id){++count;});
+    ASSERT_EQ(1, count);
+}
+
 TEST(BindParametersReadTest, BindFloatTestAgainstDecimal)
 {
     using namespace ThorsAnvil;
@@ -84,6 +101,22 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstDouble)
     SQL::Statement      statement(connection, "SELECT ID FROM RealTypes WHERE R1=?");
     long count = 0;
     double rbind = 10;
+    statement.execute(SQL::Bind(rbind),[&count](long id){++count;});
+    ASSERT_EQ(1, count);
+}
+TEST(BindParametersReadTest, BindDoubleTestAgainstReal)
+{
+    using namespace ThorsAnvil;
+    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+                                    THOR_TESTING_MYSQL_USER,
+                                    THOR_TESTING_MYSQL_PASS,
+                                    THOR_TESTING_MYSQL_DB,
+                                    options);
+
+
+    SQL::Statement      statement(connection, "SELECT ID FROM RealTypes WHERE R3=?");
+    long count = 0;
+    double rbind = 14;
     statement.execute(SQL::Bind(rbind),[&count](long id){++count;});
     ASSERT_EQ(1, count);
 }

@@ -30,8 +30,8 @@ class RespPackageEOF: public RespPackage
         virtual  std::ostream& print(std::ostream& s) const
         {
             return s << "EOFPackage: "
-                     << "warningCount( 0x" << std::hex << std::setw(8) << std::setfill('0') << warningCount << ") "
-                     << "statusFlag( 0x"   << std::hex << std::setw(8) << std::setfill('0') << statusFlag << ") "
+                     << "warningCount(0x" << std::hex << std::setw(8) << std::setfill('0') << warningCount << ") "
+                     << "statusFlag(0x"   << std::hex << std::setw(8) << std::setfill('0') << statusFlag << ") "
                      << std::dec;
         }
 

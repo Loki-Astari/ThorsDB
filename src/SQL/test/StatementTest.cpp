@@ -12,7 +12,7 @@ TEST(StatementTest, SelectWithParamOK)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
     bool            good = false;
 
@@ -26,7 +26,7 @@ TEST(StatementTest, SelectNoParamOK)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
     bool            good = false;
 
@@ -40,7 +40,7 @@ TEST(StatementTest, SelectWithParamFail)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
 
     ASSERT_THROW(
@@ -55,7 +55,7 @@ TEST(StatementTest, SelectNoParamFail)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
 
     ASSERT_THROW(
@@ -70,7 +70,7 @@ TEST(StatementTest, InsertParamFail)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
     bool            good = false;
 
@@ -85,7 +85,7 @@ TEST(StatementTest, InsertNoParamFail)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
     bool            good = false;
 
@@ -100,7 +100,7 @@ TEST(StatementTest, InsertParamOK)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
 
     ASSERT_NO_THROW(
@@ -114,7 +114,7 @@ TEST(StatementTest, InsertNoParamOK)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
 
     ASSERT_NO_THROW(
@@ -128,7 +128,7 @@ TEST(StatementTest, SelectGetRowsAffected)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
     bool            good = false;
 
@@ -145,7 +145,7 @@ TEST(StatementTest, SelectGetLastInsertID)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
     bool            good = false;
 
@@ -163,7 +163,7 @@ TEST(StatementTest, InsertGetRowsAffected)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
 
     statement.execute(Bind(15));
@@ -178,7 +178,7 @@ TEST(StatementTest, InsertGetLastInsertID)
     using ThorsAnvil::SQL::Statement;
     using ThorsAnvil::SQL::Bind;
 
-    Connection      connection("mysql://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+    Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
 
     statement.execute(Bind(15));
@@ -186,5 +186,52 @@ TEST(StatementTest, InsertGetLastInsertID)
         statement.lastInsertID();
     );
 }
+TEST(StatementTest, ProxyAbort)
+{
+    auto test = []()
+    {
+        using ThorsAnvil::SQL::Connection;
+        using ThorsAnvil::SQL::Statement;
+        using ThorsAnvil::SQL::Bind;
 
+        Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
+        Statement       statement(connection, "SELECT 3");
+        int             count = 0;
+
+        statement.execute(Bind(15), CountLines(count));
+    };
+    EXPECT_THROW(
+        test(),
+        std::domain_error
+    );
+}
+
+TEST(StatementTest, UnixTimeStampDefaultInit)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      test;
+    EXPECT_EQ(0, test.time);
+}
+TEST(StatementTest, UnixTimeStampInit)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      test(15);
+    EXPECT_EQ(15, test.time);
+}
+TEST(StatementTest, UnixTimeStampEquiv)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      lhs(15);
+    ThorsAnvil::SQL::UnixTimeStamp      rhs(15);
+
+    EXPECT_TRUE(lhs == rhs);
+}
+TEST(StatementTest, UnixTimeStampNonEquiv)
+{
+    ThorsAnvil::SQL::UnixTimeStamp      lhs;
+    ThorsAnvil::SQL::UnixTimeStamp      rhs(15);
+
+    EXPECT_TRUE(lhs != rhs);
+}
+TEST(StatementTest, ValidationTmpErrorBuild)
+{
+    ThorsAnvil::SQL::Lib::ValidationTmpError    error("Test");
+}
 
