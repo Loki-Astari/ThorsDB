@@ -5,6 +5,7 @@
 #include "RespPackageAuthSwitchRequest.h"
 #include "RequPackageHandShakeResp.h"
 #include "RespPackageAuthMoreData.h"
+#include "RequPackageSSLRequest.h"
 #include "RequPackageAuthSwitchResp.h"
 
 using namespace ThorsAnvil::MySQL;
@@ -32,6 +33,8 @@ void Connection::conectToServer(std::string const& username,
                                 Options const& options
                                 )
 {
+    std::unique_ptr<RespPackage> serverResp;
+
     std::unique_ptr<RespPackage> initPack = recvMessage(
                                                 {{0x0A, [](int firstByte, ConectReader& reader
                                                           )
@@ -45,9 +48,13 @@ void Connection::conectToServer(std::string const& username,
                                                   handshake->getCapabilities(),
                                                   authentication->getPluginName(),
                                                   authResponse);
+    RequPackageSSLRequest           sslRequest(handshakeresp.getCapabilities());;
+    sendMessage(sslRequest, false);
+    establishSSLConnection();
+
 
     initFromHandshake(handshakeresp.getCapabilities(), handshake->getCharset());
-    std::unique_ptr<RespPackage> serverResp =  sendMessageGetResponse(handshakeresp,
+    serverResp =  sendMessageGetResponse(handshakeresp,
         false,
         {
             {0xFE, [](int firstByte, ConectReader& reader) -> RespPackage* {return new RespPackageAuthSwitchRequest(firstByte, reader);}},
@@ -101,6 +108,11 @@ void Connection::initFromHandshake(unsigned long capabilities, unsigned long cha
 {
     packageReader.initFromHandshake(capabilities, charset);
     packageWriter.initFromHandshake(capabilities, charset);
+}
+
+void Connection::establishSSLConnection()
+{
+    packageWriter.establishSSLConnection();
 }
 
 Connection::~Connection()

@@ -19,7 +19,8 @@ constexpr unsigned long cap  =
   // We don't know how to decode the Session State Information in the RespPackageOK
   // So this must currently be turned off.
   // Once you have it decoding you can enable this.
-  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD;
+  | CLIENT_CONNECT_WITH_DB | CLIENT_LONG_FLAG | CLIENT_LONG_PASSWORD
+  | CLIENT_SSL;
 
 RequPackageHandShakeResponse::RequPackageHandShakeResponse(std::string const& username,
                                                            std::string const& /*password*/,

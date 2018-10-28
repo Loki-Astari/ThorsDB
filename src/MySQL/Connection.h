@@ -30,6 +30,7 @@ class Connection
         virtual ~Connection();
 
         void initFromHandshake(unsigned long capabilities, unsigned long charset);
+        void establishSSLConnection();
 
         // Main Interface
         std::unique_ptr<RespPackage> sendMessageGetResponse(RequPackage const& request, bool startConv = true, ConectReader::OKMap const&    actions     = {});
