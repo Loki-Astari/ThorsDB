@@ -30,7 +30,7 @@ TEST(RequPackageAuthSwitchRespTest, DefaultOKMessage)
     RespPackageAuthSwitchRequest      switchReq(0xFE, reader);
 
 
-    RequPackageAuthSwitchResponse   authSwitch("test", "test", options, "test", switchReq);
+    RequPackageAuthSwitchResponse   authSwitch("test", "test", options, "test", switchReq.getPluginData());
 
     std::stringstream  message;
     message << authSwitch;
