@@ -168,6 +168,7 @@ Error: Can not connect to mysql server for testing.
         2) Make sure MySQL is running
         3) Install the test data and users.
                 cat ./src/MySQL/test/data/init.sql | mysql -u root -p
+                cat ./src/MySQL/test/data/data.sql | mysql -u root -p
 
                   ])
      ])

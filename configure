@@ -796,6 +796,7 @@ with_boost
 with_boost_libdir
 with_boost_python
 enable_vera
+with_hostbuild
 with_cryptoroot
 with_timegm
 with_modtests
@@ -1475,6 +1476,8 @@ Optional Packages:
                           libraries are located.
   --with-boost-python     specify yes/no or the boost python library or suffix
                           to use
+  --with-hostbuild=<dir>  Use the build tools located at <dir>
+
   --with-cryptoroot=<location>
                           Directory of CRYPTO_ROOT
 
@@ -4776,9 +4779,11 @@ fi
 
 
     VERATOOL="";
+    subconfigvera=""
     if test "x$enable_vera" == "xno"; then :
 
-            VERATOOL='echo "Disabled Static Analysis" ||';
+            VERATOOL='off';
+            subconfigvera="--disable-vera";
 
 else
 
@@ -4865,10 +4870,30 @@ fi
 
 
 
-    pushd build/third
-    ./setup "$CXX" || as_fn_error 1 "Failed to set up the test utilities" "$LINENO" 5
-    popd
 
+# Check whether --with-hostbuild was given.
+if test "${with_hostbuild+set}" = set; then :
+  withval=$with_hostbuild;
+fi
+
+
+    if test "${with_hostbuild}" != ""; then :
+
+            rm -rf build;
+            ln -s ${with_hostbuild} build
+
+
+fi
+
+
+    if test "${with_hostbuild}" == ""; then :
+
+            pushd build/third
+            ./setup "$CXX" || as_fn_error 1 "Failed to set up the test utilities" "$LINENO" 5
+            popd
+
+
+fi
 
 
 
@@ -17681,6 +17706,7 @@ Error: Can not connect to mysql server for testing.
         2) Make sure MySQL is running
         3) Install the test data and users.
                 cat ./src/MySQL/test/data/init.sql | mysql -u root -p
+                cat ./src/MySQL/test/data/data.sql | mysql -u root -p
 
                   " "$LINENO" 5
 
