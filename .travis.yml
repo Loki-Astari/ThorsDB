@@ -16,8 +16,7 @@ install:
     - sudo ./b2 --with-system --with-context --with-coroutine install | awk 'NR == 1 || NR % 25 == 0'
     - cd ..
     - sudo apt-get install mysql-server
-    - sudo systemctl start mysql
-    - sudo apt-get install mysql
+    - sudo systemctl start mysql; sleep 10
     - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
     - cat src/MySQL/test/data/init.travis.sql | mysql --force --user=root --password=testPassword
     - cat src/MySQL/test/data/data.sql | mysql --force --user=root --password=testPassword
