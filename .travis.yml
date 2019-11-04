@@ -5,6 +5,9 @@ before_install:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
 install:
+    - sudo apt-get install mysql-server
+    - sudo systemctl start mysql; sleep 10
+    - echo "ALTER USER 'root'@'localhost' IDENTIFIED BY 'testPassword';FLUSH PRIVILEGES;" | mysql -u root
     - sudo apt-get install -qq g++-7
     - sudo apt-get install python-dev -y
     - sudo apt-get install -qq libssl-dev
@@ -15,9 +18,6 @@ install:
     - ./b2 cxxflags="-Wno-strict-aliasing -Wno-unused-local-typedefs -Wno-maybe-uninitialized -Wno-deprecated-declarations -Wno-placement-new" --with-system --with-context --with-coroutine
     - sudo ./b2 --with-system --with-context --with-coroutine install | awk 'NR == 1 || NR % 25 == 0'
     - cd ..
-    - sudo apt-get install mysql-server
-    - sudo systemctl start mysql; sleep 10
-    - echo "UPDATE mysql.user SET Password=PASSWORD('testPassword') WHERE User='root';FLUSH PRIVILEGES;" | mysql -u root
     - cat src/MySQL/test/data/init.travis.sql | mysql --force --user=root --password=testPassword
     - cat src/MySQL/test/data/data.sql | mysql --force --user=root --password=testPassword
     - cat src/Postgres/test/data/init.sql | sudo -u postgres psql 
