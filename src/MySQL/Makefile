@@ -8,8 +8,6 @@ LDFLAGS						= $(crypto_ROOT_LIBDIR)
 LINK_LIBS					= ThorSQL
 UNITTEST_LINK_LIBS			= ThorSQL
 
-COVERAGE_REQUIRED			= 70
-
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 
 

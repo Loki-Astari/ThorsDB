@@ -13,8 +13,6 @@ NO_HEADER					= 1
 %/ConectWriter.o:			FILE_WARNING_FLAGS += -Wno-unknown-pragmas
 %/Connection.o:				FILE_WARNING_FLAGS += -Wno-unknown-pragmas
 
-COVERAGE_REQUIRED			= 70
-
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 
 
