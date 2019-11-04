@@ -16,11 +16,12 @@ install:
     - sudo ./b2 --with-system --with-context --with-coroutine install | awk 'NR == 1 || NR % 25 == 0'
     - cd ..
     - sudo apt-get install mysql-server
-    - sudo systemctl start mysql; sleep 10
+    - sudo systemctl start mysql
     - echo "ALTER USER 'root'@'localhost' IDENTIFIED BY 'testPassword';FLUSH PRIVILEGES;" | mysql -u root
     - cat src/MySQL/test/data/init.travis.sql | mysql --force --user=root --password=testPassword
     - cat src/MySQL/test/data/data.sql | mysql --force --user=root --password=testPassword
     - sudo apt install postgresql postgresql-contrib
+    - sudo systemctl start postgresql
     - cat src/Postgres/test/data/init.sql | sudo -u postgres psql 
     - echo "ALTER USER postgres WITH PASSWORD 'testPassword';" | sudo -u postgres psql postgres
 script:
