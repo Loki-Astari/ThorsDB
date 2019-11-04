@@ -5833,8 +5833,6 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
-
-
 # Check whether --with-cryptoroot was given.
 if test "${with_cryptoroot+set}" = set; then :
   withval=$with_cryptoroot;

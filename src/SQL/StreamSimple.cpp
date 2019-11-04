@@ -55,7 +55,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     }
     if (nonBlocking)
     {
-        if (::fcntlWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
+        if (::fcntlMYSQLWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
         {
             throw std::domain_error(errorMsg("ThorsAnvil::MySQL::StreamSimple::StreamSimple: ",
                                                       ": fcntl: ", strerror(errno)
@@ -119,7 +119,7 @@ void StreamSimple::readFD(char* buffer, std::size_t len)
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
     {
-        std::size_t read = ::readWrapper(socket, buffer + readSoFar, len - readSoFar);
+        std::size_t read = ::readMYSQLWrapper(socket, buffer + readSoFar, len - readSoFar);
         if ((read == ErrorResult) && (errno == EINTR))
         {
             /* Recoverable error. Try again. */
@@ -155,7 +155,7 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
     {
-        std::size_t writen = ::writeWrapper(socket, buffer + writenSoFar, len - writenSoFar);
+        std::size_t writen = ::writeMYSQLWrapper(socket, buffer + writenSoFar, len - writenSoFar);
         if ((writen == ErrorResult) && (errno == EINTR))
         {
             /* Recoverable error. Try again. */

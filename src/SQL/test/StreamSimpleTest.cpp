@@ -34,7 +34,7 @@ TEST(StreamSimpleTest, ReadNormal)
 }
 TEST(StreamSimpleTest, ReadInterupt)
 {
-    MOCK_SYS(readWrapper, [](int socket, void* buffer, std::size_t len)
+    MOCK_SYS(readMYSQLWrapper, [](int socket, void* buffer, std::size_t len)
     {
         static bool firstTime = true;
         if (firstTime)
@@ -59,7 +59,7 @@ TEST(StreamSimpleTest, ReadGoodHost)
 }
 TEST(StreamSimpleTest, NonBlockingFail)
 {
-    MOCK_SYS(fcntlWrapper, [](int, int, int){return -1;});
+    MOCK_SYS(fcntlMYSQLWrapper, [](int, int, int){return -1;});
     auto test = []()
     {
         StreamSimple stream("google.com", 80, true);
@@ -72,12 +72,12 @@ TEST(StreamSimpleTest, NonBlockingFail)
 }
 TEST(StreamSimpleTest, NonBlockingOK)
 {
-    MOCK_SYS(fcntlWrapper, [](int, int, int){return 0;});
+    MOCK_SYS(fcntlMYSQLWrapper, [](int, int, int){return 0;});
     StreamSimple stream("google.com", 80, true);
 }
 TEST(StreamSimpleTest, GetCoverageOnTheWrapper)
 {
-    fcntlWrapper(-1, 0, 0);
+    fcntlMYSQLWrapper(-1, 0, 0);
 }
 TEST(StreamSimpleTest, ReadGoodHostBadPort)
 {
@@ -181,7 +181,7 @@ TEST(StreamSimpleTest, WriteNormal)
 }
 TEST(StreamSimpleTest, WriteNormalWithContinue)
 {
-    MOCK_SYS(writeWrapper, [](int socket, void const* buffer, std::size_t len)
+    MOCK_SYS(writeMYSQLWrapper, [](int socket, void const* buffer, std::size_t len)
     {
         static bool firstTime = true;
         if (firstTime)
@@ -219,7 +219,7 @@ TEST(StreamSimpleTest, WriteFail)
 }
 TEST(StreamSimpleTest, WriteFailMocked)
 {
-    MOCK_SYS(writeWrapper, [](int socket, void const* buffer, std::size_t len) {return 0;});
+    MOCK_SYS(writeMYSQLWrapper, [](int socket, void const* buffer, std::size_t len) {return 0;});
     int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     StreamSimple stream(socket);
 
