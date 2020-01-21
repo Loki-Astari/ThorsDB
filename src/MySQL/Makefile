@@ -1,5 +1,6 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
+COVERAGE_REQUIRED			= 73
 
 TARGET						= ThorMySQL.lib
 LDLIBS						= -lcrypto
