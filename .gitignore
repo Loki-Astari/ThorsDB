@@ -19,3 +19,5 @@ libtool
 stamp-*
 confdefs.h
 config.h
+
+build
