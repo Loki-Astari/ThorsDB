@@ -5,9 +5,9 @@
 #include "ThorSQL/Endian.h"
 #include "gtest/gtest.h"
 
-using ThorsAnvil::Postgres::PackageBuffer;
-using ThorsAnvil::Postgres::ConectWriter;
-using ThorsAnvil::Util::convertToHost;
+using ThorsAnvil::DB::Postgres::PackageBuffer;
+using ThorsAnvil::DB::Postgres::ConectWriter;
+using ThorsAnvil::DB::Util::convertToHost;
 
 TEST(ConectWriterTest, OpenMessageGetType)
 {

@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_POSTG_PACKAGE_WRITER_H
-#define THORS_ANVIL_POSTG_PACKAGE_WRITER_H
+#ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_WRITER_H
+#define THORS_ANVIL_DB_POSTGRESS_PACKAGE_WRITER_H
 
 #include "PackageBuffer.h"
 
 #include <vector>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class ConectWriter
 {
@@ -46,7 +44,6 @@ class ConectWriter
         void writeIntVector(std::vector<T> const& data);
 };
 
-    }
 }
 
 #ifndef COVERAGE_Postgres

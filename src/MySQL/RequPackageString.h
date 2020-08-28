@@ -1,14 +1,12 @@
-#ifndef THORS_ANVIL_MYSQL_PACKAGE_REQU_STRING_H
-#define THORS_ANVIL_MYSQL_PACKAGE_REQU_STRING_H
+#ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_STRING_H
+#define THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_STRING_H
 
 #include "RequPackage.h"
 #include <string>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectWriter;
 
@@ -23,7 +21,6 @@ class RequPackageString: public RequPackage
         virtual  void build(ConectWriter& writer)       const override;
 };
 
-    }
 }
 
 #endif

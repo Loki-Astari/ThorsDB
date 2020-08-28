@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_AUTHENTICATION_H
-#define THORS_ANVIL_MYSQL_AUTHENTICATION_H
+#ifndef THORS_ANVIL_DB_MYSQL_AUTHENTICATION_H
+#define THORS_ANVIL_DB_MYSQL_AUTHENTICATION_H
 
 #include "ConectReader.h"
 #include "RespPackage.h"
@@ -7,12 +7,10 @@
 #include <string>
 #include <utility>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
-using ThorsAnvil::SQL::Options;
+using ThorsAnvil::DB::SQL::Options;
 
 class Connection;
 class RespPackage;
@@ -43,7 +41,6 @@ class Authetication
 
 std::unique_ptr<Authetication> getAuthenticatonMethod(Connection& connection, std::string const& authPluginName, Options const& options = Options());
 
-    }
 }
 
 #endif

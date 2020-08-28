@@ -1,6 +1,7 @@
 
 #include "StreamSimple.h"
 #include "SSLUtil.h"
+#include "ThorsIOUtil/Utility.h"
 #include "coverage/ThorMock.h"
 #include <fstream>
 #include <thread>
@@ -19,8 +20,9 @@
 #include <netdb.h>
 
 
-using ThorsAnvil::SQL::StreamSimple;
-using ThorsAnvil::errorMsg;
+using ThorsAnvil::DB::SQL::StreamSimple;
+using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::systemErrorMessage;
 
 TEST(StreamSimpleTest, ReadNormal)
 {
@@ -296,7 +298,7 @@ class ServerSocket
         {
             if (socketId == -1)
             {
-                throw std::runtime_error(errorMsg("Test:ServerSocket: socket() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ServerSocket", "socket", "failed: ", systemErrorMessage()));
             }
             struct sockaddr_in    serverAddr = {};
             serverAddr.sin_family       = AF_INET;
@@ -306,13 +308,13 @@ class ServerSocket
             if (::bind(socketId, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) != 0)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test::ServerSocket: bind() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test::ServerSocket", "bind", "failed: ", systemErrorMessage()));
             }
 
             if (::listen(socketId, maxWaitingConnections) != 0)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test::ServerSocket: listen() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test::ServerSocket", "listen", "failed: ", systemErrorMessage()));
             }
         }
         ~ServerSocket()
@@ -324,7 +326,7 @@ class ServerSocket
             int newSocket = ::accept(socketId, nullptr, nullptr);
             if (newSocket == -1)
             {
-                throw std::runtime_error(errorMsg("Test::ServerSocket: accept() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test::ServerSocket", "accept", "failed: ", systemErrorMessage()));
             }
             return newSocket;
         }
@@ -339,14 +341,14 @@ class ConnectSocket
         {
             if (socketId == -1)
             {
-                throw std::runtime_error(errorMsg("Test:ConnectSocket: socket() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ConnectSocket", "socket", "failed: ", systemErrorMessage()));
             }
 
             struct hostent* serv = ::gethostbyname(host.c_str());
             if (serv == nullptr)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test:ConnectSocket: gethostbyname() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ConnectSocket", "gethostbyname", "failed: ", systemErrorMessage()));
             }
 
             struct sockaddr_in serverAddr{};
@@ -357,7 +359,7 @@ class ConnectSocket
             if (::connect(socketId, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) != 0)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test:ConnectSocket: connect() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ConnectSocket", "connect", "failed: ", systemErrorMessage()));
             }
         }
         ~ConnectSocket()
@@ -376,11 +378,11 @@ TEST(StreamSimpleTest, OpenSSLConnection)
     int port    = 2022;
 
     std::thread sslServer([port]() {
-        ThorsAnvil::SQL::SSLMethod  method(ThorsAnvil::SQL::SSLMethodType::Server);
-        ThorsAnvil::SQL::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
+        ThorsAnvil::DB::SQL::SSLMethod  method(ThorsAnvil::DB::SQL::SSLMethodType::Server);
+        ThorsAnvil::DB::SQL::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
         ServerSocket                server(port);
         int                         client  = server.accept();
-        ThorsAnvil::SQL::SSLObj     sslConnection(ctx, client);
+        ThorsAnvil::DB::SQL::SSLObj     sslConnection(ctx, client);
 
         sslConnection.accept();
         sslConnection.write("1234", 4);
@@ -388,10 +390,10 @@ TEST(StreamSimpleTest, OpenSSLConnection)
 
     sleep(2);
 
-    ThorsAnvil::SQL::SSLMethod  method(ThorsAnvil::SQL::SSLMethodType::Client);
-    ThorsAnvil::SQL::SSLctx     ctx(method);
+    ThorsAnvil::DB::SQL::SSLMethod  method(ThorsAnvil::DB::SQL::SSLMethodType::Client);
+    ThorsAnvil::DB::SQL::SSLctx     ctx(method);
     ConnectSocket               connection("127.0.0.1", port);
-    ThorsAnvil::SQL::SSLObj     sslConnection(ctx, connection.getSocketId());
+    ThorsAnvil::DB::SQL::SSLObj     sslConnection(ctx, connection.getSocketId());
     sslConnection.connect();
 
     char buffer[10] = {0};

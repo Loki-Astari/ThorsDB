@@ -1,11 +1,11 @@
-#ifndef THORSANIVL_MYSQL_TYPE_READ_WRITE_H
-#define THORSANIVL_MYSQL_TYPE_READ_WRITE_H
+#ifndef THORS_ANVIL_DB_MYSQL_TYPE_READ_WRITE_H
+#define THORS_ANVIL_DB_MYSQL_TYPE_READ_WRITE_H
 
 #include "ThorMySQL.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
 #include "ThorSQL/Statement.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsIOUtil/Utility.h"
 #include <map>
 #include <vector>
 #include <string>
@@ -15,13 +15,12 @@
 #include <stdexcept>
 #include <time.h>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 using Buffer = std::vector<char>;
 using SQL::UnixTimeStamp;
+using ThorsAnvil::Utility::buildErrorMessage;
 
 template<typename T>
 inline T standardConverter(std::string const& t, std::size_t* p)
@@ -49,7 +48,7 @@ inline T stringtointeger(ConectReader& p)
     if (pos != t.size())
     {
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::stringtointeger: ",
+                buildErrorMessage("ThorsAnvil::DB::MySQL", "stringtointeger",
                          "Failed to convert whole integer: ", t,
                          "\nOnly read the first ", pos, "bytes from this string."
               ));
@@ -136,7 +135,7 @@ inline T readParameterValue(ConectReader&)
     // Default action is to throw.
     // The translations we know about are defined below.
     throw std::logic_error(
-            errorMsg("ThorsAnvil::MySQL::readParameterValue: ",
+            buildErrorMessage("ThorsAnvil::DB::MySQL", "readParameterValue",
                      "Unknown conversion\n",
                      "\n",
                      "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n",
@@ -150,7 +149,7 @@ unsigned int writeParameterValue(ConectWriter&, Src const&)
     // Default action is to throw.
     // The translations we know about are defined below.
     throw std::logic_error(
-            errorMsg("ThorsAnvil::MySQL::writeParameterValue: ",
+            buildErrorMessage("ThorsAnvil::DB::MySQL", "writeParameterValue",
                      "Unknown conversion",
                      getErrorMessage<-1, Src>()
           ));
@@ -163,7 +162,7 @@ T getBitField(ConectReader& p)
     if (bitField.size() > sizeof(T))
     {
         throw std::logic_error(
-                errorMsg("ThorsAnvil::MySQL::getBitField: Bitfield to large for destination\n",
+                buildErrorMessage("ThorsAnvil::DB::MySQL", "getBitField", "Bitfield to large for destination\n",
                          "   From DB:     ", bitField.size(), " bytes\n",
                          "   Output Type: ", typeid(T).name(), "\n"));
     }
@@ -490,13 +489,12 @@ inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v
 }
 
 template<>
-inline unsigned int writeParameterValue<ThorsAnvil::SQL::UnixTimeStamp>(ConectWriter& p, ThorsAnvil::SQL::UnixTimeStamp const& v)
+inline unsigned int writeParameterValue<ThorsAnvil::DB::SQL::UnixTimeStamp>(ConectWriter& p, ThorsAnvil::DB::SQL::UnixTimeStamp const& v)
 {
     p.writeDate(v.time);
     return MYSQL_TYPE_TIMESTAMP;
 }
 
-    }
 }
 
 #endif

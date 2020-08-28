@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
+#ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
+#define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_EOF_H
 
 #include "ThorMySQL.h"
 #include "RespPackage.h"
@@ -8,10 +8,8 @@
 #include <ostream>
 #include <iomanip>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RespPackageEOF: public RespPackage
 {
@@ -38,7 +36,6 @@ class RespPackageEOF: public RespPackage
         long    getStatusFlag() const {return statusFlag;}
 };
 
-    }
 }
 
 #endif

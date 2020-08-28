@@ -8,7 +8,7 @@
 #include "ConectWriter.tpp"
 #endif
 
-using namespace ThorsAnvil::Postgres;
+using namespace ThorsAnvil::DB::Postgres;
 
 void ConectWriter::writeString(std::string const& data)
 {

@@ -1,14 +1,12 @@
-#ifndef THORS_ANVIL_MYSQL_REQU_PACKAGE_PREPARE_RESET_H
-#define THORS_ANVIL_MYSQL_REQU_PACKAGE_PREPARE_RESET_H
+#ifndef THORS_ANVIL_DB_MYSQL_REQU_PACKAGE_PREPARE_RESET_H
+#define THORS_ANVIL_DB_MYSQL_REQU_PACKAGE_PREPARE_RESET_H
 
 #include "ThorMySQL.h"
 #include "RequPackage.h"
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackagePrepareReset: public RequPackage
 {
@@ -35,7 +33,6 @@ inline void testPrintRequPackagePrepareReset(std::ostream& str)
     str << RequPackagePrepareReset(1);
 }
 
-    }
 }
 
 #endif

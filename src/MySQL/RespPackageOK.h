@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_OK_H
+#ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_OK_H
+#define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_OK_H
 
 #include "ConectReader.h"
 #include "RespPackage.h"
@@ -8,10 +8,8 @@
 #include <iomanip>
 #include <cassert>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RespPackageOK: public RespPackage
 {
@@ -74,7 +72,6 @@ class RespPackageOK: public RespPackage
         }
 };
 
-    }
 }
 
 #endif

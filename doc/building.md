@@ -1,12 +1,12 @@
-[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsDB.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsDB)
 
 ![ThorStream](../img/stream.jpg)
 
 
 # Building Instructions:
 ````bash
-    > git clone git@github.com:Loki-Astari/ThorsSQL.git
-    > cd ThorsSQL
+    > git clone git@github.com:Loki-Astari/ThorsDB.git
+    > cd ThorsDB
     > ./configure
     > make
     > sudo make install
@@ -54,6 +54,6 @@ All these options can be modified using config arguments.
 
 This library uses features from C++14 so you will need a compiler that supports this. The generic makefile also does code coverage tests so your compiler will also need to support a code coverage tool that has an interface similar to gcov.
 
-It has been tested on [travis-ci.org](https://travis-ci.org/Loki-Astari/ThorsSQL) using clang 3.5 and g++ 4.9 (on mac and ubuntu). Though clang 3.4 also supports C++14 its code coverage tool is very basic and the generic makefiles will fail when attempting to perform code coverage tests.
+It has been tested on [travis-ci.org](https://travis-ci.org/Loki-Astari/ThorsDB) using clang 3.5 and g++ 4.9 (on mac and ubuntu). Though clang 3.4 also supports C++14 its code coverage tool is very basic and the generic makefiles will fail when attempting to perform code coverage tests.
 
 

@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_MYSQL_PACKAGE_REQU_HANDSHAKE_RESPONSE_H
-#define THORS_ANVIL_MYSQL_PACKAGE_REQU_HANDSHAKE_RESPONSE_H
+#ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_HANDSHAKE_RESPONSE_H
+#define THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_HANDSHAKE_RESPONSE_H
 
 #include "RequPackage.h"
 #include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 using Options=SQL::Options;
 class RespPackageHandShake;
@@ -38,7 +36,6 @@ class RequPackageHandShakeResponse: public RequPackage
         long getCapabilities()                          const {return capabilities;}
 };
 
-    }
 }
 
 #endif

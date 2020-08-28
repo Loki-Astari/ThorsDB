@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_POSTG_STATEMENT_H
-#define THORS_ANVIL_POSTG_STATEMENT_H
+#ifndef THORS_ANVIL_DB_POSTGRESS_STATEMENT_H
+#define THORS_ANVIL_DB_POSTGRESS_STATEMENT_H
 
 #include "ThorSQL/Statement.h"
 #include <string>
 #include <vector>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class Statement: public SQL::Lib::StatementProxy
 {
@@ -72,7 +70,6 @@ class Statement: public SQL::Lib::StatementProxy
     private:
 };
 
-    }
 }
 
 #endif

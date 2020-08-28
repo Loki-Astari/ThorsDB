@@ -7,8 +7,8 @@
 #include <string>
 
 
-using ThorsAnvil::SQL::Lib::StatementProxy;
-using ThorsAnvil::SQL::UnixTimeStamp;
+using ThorsAnvil::DB::SQL::Lib::StatementProxy;
+using ThorsAnvil::DB::SQL::UnixTimeStamp;
 
 void updateRow(int& nextRow, int& nextField)
 {
@@ -29,7 +29,7 @@ void getField(int& nextRow, int& nextField, T& value)
     switch(nextField)
     {
         case 0: value =     static_cast<T>(nextRow ? 15:32);        break;
-        case 1: updateRow(nextRow, nextField); throw ThorsAnvil::SQL::Lib::ValidationTmpError("Invalid Conversion");
+        case 1: updateRow(nextRow, nextField); throw ThorsAnvil::DB::SQL::Lib::ValidationTmpError("Invalid Conversion");
         case 2: value =     static_cast<T>(nextRow ? 32:29);        break;
         case 3: value =     static_cast<T>(nextRow ? 'M':'F');      break;
         case 4: value =     static_cast<T>(nextRow ? 34.9:33.543);  break;
@@ -49,7 +49,7 @@ void getFieldString(int& nextRow, int& nextField, std::string& value)
     }
 }
 
-class MockSQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
+class MockSQLConnection: public ThorsAnvil::DB::SQL::Lib::ConnectionProxy
 {
     public:
         class MockSQLStatement: public StatementProxy
@@ -123,7 +123,7 @@ class MockSQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
 
             virtual void   retrieve(UnixTimeStamp& value)       override {value=UnixTimeStamp(static_cast<std::time_t>(0));}
         };
-        MockSQLConnection(std::string const&, int, std::string const&, std::string const&, std::string const&, ThorsAnvil::SQL::Options const&)
+        MockSQLConnection(std::string const&, int, std::string const&, std::string const&, std::string const&, ThorsAnvil::DB::SQL::Options const&)
         {
         }
         virtual std::unique_ptr<StatementProxy> createStatementProxy(std::string const& statement) override

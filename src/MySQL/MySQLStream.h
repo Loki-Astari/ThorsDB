@@ -1,12 +1,10 @@
-#ifndef THORS_ANVIL_MYSQL_MYSQL_STREAM_H
-#define THORS_ANVIL_MYSQL_MYSQL_STREAM_H
+#ifndef THORS_ANVIL_DB_MYSQL_MYSQL_STREAM_H
+#define THORS_ANVIL_DB_MYSQL_MYSQL_STREAM_H
 
 #include "ThorSQL/StreamSimple.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class MySQLStream: public SQL::StreamSimple
 {
@@ -19,7 +17,6 @@ class MySQLStream: public SQL::StreamSimple
         {}
 };
 
-    }
 }
 
 #endif

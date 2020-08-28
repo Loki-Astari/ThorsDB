@@ -5,7 +5,9 @@
 
 #include <iostream>
 
-using namespace ThorsAnvil::Postgres;
+using namespace ThorsAnvil::DB::Postgres;
+using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::buildBugReport;
 
 Connection::Connection(
                     std::string const& username,
@@ -34,13 +36,13 @@ void Connection::startupMessage(std::string const& username, std::string const& 
         std::unique_ptr<Message>    response = getMessage();
         if (response->isError())
         {
-            throw std::runtime_error(errorMsg("ThorsAnvil::Postgres::Connection::startupMessage: ", "Got an Error: ", *response));
+            throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::Postgres::Connection", "startupMessage", "Got an Error: ", *response));
         }
 
         std::unique_ptr<Authentication> auth(dynamic_cast<Authentication*>(response.get()));
         if (!auth)
         {
-            throw std::domain_error(bugReport("ThorsAnvil::Postgres::Connection::startupMessage: ", "Unexpected Response: ", *response));
+            throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::Connection", "startupMessage", "Unexpected Response: ", *response));
         }
         response.release();
         startupMessage = auth->authenticateWithServer(username, password);
@@ -61,7 +63,7 @@ std::unique_ptr<Message> Connection::getMessage()
         case 'E':   return std::make_unique<ErrorMessage>(packageReader);
         case '1':   return std::make_unique<ParseComplete>(packageReader);
         default:
-            throw std::domain_error(bugReport("ThorsAnvil::Postgres::Connection::getMessage: ", "Unknown Message Type: ", message));
+            throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::Connection", "getMessage", "Unknown Message Type: ", message));
     }
 }
 
@@ -79,6 +81,6 @@ std::unique_ptr<Message> Connection::getAuthenticationMessage()
         case 8: return std::make_unique<AuthenticationGSSContinue>(packageReader);
         case 9: return std::make_unique<AuthenticationSSPI>(packageReader);
         default:
-            throw std::domain_error(bugReport("ThorsAnvil::Postgres::Connection::getAuthenticationMessage: ", "Invalid Authentication Reply: ", authMessageType));
+            throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::Connection", "getAuthenticationMessage", "Invalid Authentication Reply: ", authMessageType));
     }
 }

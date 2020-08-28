@@ -1,7 +1,7 @@
 #include "ThorMySQL.h"
 #include "RequPackageSSLRequest.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 RequPackageSSLRequest::RequPackageSSLRequest(long capabilities)
     : RequPackage("RequPackageSSLRequest", "SSL Request")

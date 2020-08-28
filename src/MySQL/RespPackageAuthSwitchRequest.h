@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_PACKAGE_AUTH_SWITCH_REQUEST_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_PACKAGE_AUTH_SWITCH_REQUEST_H
+#ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_PACKAGE_AUTH_SWITCH_REQUEST_H
+#define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_PACKAGE_AUTH_SWITCH_REQUEST_H
 
 #include "RespPackage.h"
 #include "ConectReader.h"
@@ -8,10 +8,8 @@
 #include <iomanip>
 #include <cassert>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -53,7 +51,6 @@ class RespPackageAuthSwitchRequest: public RespPackage
         std::string const& getPluginData() const {return pluginData;}
 };
 
-    }
 }
 
 #endif

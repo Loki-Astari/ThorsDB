@@ -1,7 +1,6 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
-#include "ThorSQL/SQLUtil.h"
 #include <arpa/inet.h>
 #include <cstdint>
 
@@ -51,13 +50,13 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanks)
 {
     using namespace ThorsAnvil;
 
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = 21");
+    DB::SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = 21");
     statement.execute();
 }
 
@@ -65,14 +64,14 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
-    statement.execute(SQL::Bind(21));
+    DB::SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
+    statement.execute(DB::SQL::Bind(21));
 }
 
 #endif

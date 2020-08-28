@@ -4,10 +4,10 @@
 #include "DefaultPostGConnection.h"
 #include <gtest/gtest.h>
 
-namespace TSQL = ThorsAnvil::SQL;
-namespace PSQL = ThorsAnvil::Postgres;
+namespace TSQL = ThorsAnvil::DB::SQL;
+namespace PSQL = ThorsAnvil::DB::Postgres;
 
-ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<PSQL::DefaultPostGConnection>    postGTestConnection("postgres");
+ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<PSQL::DefaultPostGConnection>    postGTestConnection("postgres");
 
 
 TEST(PostgresTest, BaseLine)

@@ -1,13 +1,11 @@
-#ifndef THORS_ANVIL_SQL_STREAM_INTERFACE_H
-#define THORS_ANVIL_SQL_STREAM_INTERFACE_H
+#ifndef THORS_ANVIL_DB_SQL_STREAM_INTERFACE_H
+#define THORS_ANVIL_DB_SQL_STREAM_INTERFACE_H
 
 #include <string>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
 
 class StreamInterface
 {
@@ -26,7 +24,6 @@ class StreamInterface
 };
 inline StreamInterface::~StreamInterface() {}
 
-    }
 }
 
 #endif

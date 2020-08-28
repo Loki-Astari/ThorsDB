@@ -2,7 +2,7 @@
 #include "RespPackagePrepare.h"
 #include <cassert>
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 RespPackagePrepare::RespPackagePrepare(int firstByte, ConectReader& reader)
     : RespPackage(RespType::Prepare, reader)

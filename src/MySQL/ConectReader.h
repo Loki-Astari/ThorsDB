@@ -1,8 +1,7 @@
-#ifndef THORS_ANVIL_MYSQL_PACKAGE_READER_H
-#define THORS_ANVIL_MYSQL_PACKAGE_READER_H
+#ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_READER_H
+#define THORS_ANVIL_DB_MYSQL_PACKAGE_READER_H
 
 #include "MySQLTimeBag.h"
-#include "ThorSQL/SQLUtil.h"
 #include <memory>
 #include <functional>
 #include <vector>
@@ -19,14 +18,13 @@
 #error  Unknow Endianess
 #endif
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
-class StreamInterface;
-    }
-    namespace MySQL
-    {
+    class StreamInterface;
+}
+
+namespace ThorsAnvil::DB::MySQL
+{
 
 class RespPackage;
 class RespPackageEOF;
@@ -87,7 +85,6 @@ class ConectReader
 };
 
 
-    }
 }
 
 #ifndef COVERAGE_MySQL

@@ -1,16 +1,14 @@
-#ifndef THORS_ANVIL_POSTG_CONNECTION_H
-#define THORS_ANVIL_POSTG_CONNECTION_H
+#ifndef THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
+#define THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
 
 #include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <memory>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
-using ThorsAnvil::SQL::Options;
+using ThorsAnvil::DB::SQL::Options;
 class ConectReader;
 class ConectWriter;
 class Message;
@@ -36,7 +34,6 @@ class Connection
         std::unique_ptr<Message> getAuthenticationMessage();
 };
 
-    }
 }
 
 //#ifndef COVERAGE_Postgres

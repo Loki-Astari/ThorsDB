@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
-#define THORS_ANVIL_MYSQL_PACKAGE_BUFFER_H
+#ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_BUFFER_H
+#define THORS_ANVIL_DB_MYSQL_PACKAGE_BUFFER_H
 
 #include "ThorSQL/StreamInterface.h"
 #include <vector>
 #include <string>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class PackageBuffer: public SQL::StreamInterface
 {
@@ -39,7 +37,6 @@ class PackageBuffer: public SQL::StreamInterface
         virtual void        establishSSLConnection()                    override;
 };
 
-    }
 }
 
 #endif

@@ -1,10 +1,10 @@
-#ifndef THORS_ANVIL_SQL_STATEMENT_H
-#define THORS_ANVIL_SQL_STATEMENT_H
+#ifndef THORS_ANVIL_DB_SQL_STATEMENT_H
+#define THORS_ANVIL_DB_SQL_STATEMENT_H
 
 /*
- *      ThorsAnvil::SQL::Statement      Represent an SQL statement.
- *      ThorsAnvil::SQL::BindArgs:      Used to bind arguments to a statement.
- *      ThorsAnvil::SQL::UnixTimeStamp: Used as a Bind type for Date/Time/DateTime/TimeStamp fields in a DB.
+ *      ThorsAnvil::DB::SQL::Statement      Represent an SQL statement.
+ *      ThorsAnvil::DB::SQL::BindArgs:      Used to bind arguments to a statement.
+ *      ThorsAnvil::DB::SQL::UnixTimeStamp: Used as a Bind type for Date/Time/DateTime/TimeStamp fields in a DB.
  *
  *                See: doc/usage.md for usage details
  *                See: doc/internal.md for implementation details
@@ -21,7 +21,6 @@
  *
  */
 
-#include "SQLUtil.h"
 #include <memory>
 #include <vector>
 #include <string>
@@ -29,10 +28,8 @@
 #include <tuple>
 #include <functional>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
         namespace Detail
         {
             class Cursor;
@@ -148,7 +145,7 @@ namespace Lib
             // generated during abort() the application will terminate.
             virtual void   abort()                              = 0;
 
-            // bind() is called for each parameter provided by ThorsAnvil::SQL::Bind()
+            // bind() is called for each parameter provided by ThorsAnvil::DB::SQL::Bind()
             virtual void   bind(char)                           = 0;
             virtual void   bind(signed char)                    = 0;
             virtual void   bind(signed short)                   = 0;
@@ -217,7 +214,6 @@ namespace Lib
 
 }
 
-    }
 }
 
 #ifndef COVERAGE_SQL

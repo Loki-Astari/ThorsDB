@@ -1,13 +1,12 @@
-#ifndef THORS_ANVIL_POSTGRES_MESSAGES_H
-#define THORS_ANVIL_POSTGRES_MESSAGES_H
+#ifndef THORS_ANVIL_DB_POSTGRES_MESSAGES_H
+#define THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 
 #include "ThorSQL/MD5.h"
+#include "ThorsIOUtil/Utility.h"
 #include <iostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 // --------
 class Message
@@ -181,7 +180,7 @@ class Authentication: public Message
         virtual void send(ConectWriter&) override {}
         virtual std::unique_ptr<Message> authenticateWithServer(std::string const& /*username*/, std::string const& /*password*/)
         {
-            throw std::runtime_error(errorMsg("ThorsAnvil::Postgres::Authentication::authenticateWithServer: ", *this, ": technique is not implemented"));
+            throw std::runtime_error(ThorsAnvil::Utility::buildErrorMessage("ThorsAnvil::DB::Postgres::Authentication", "authenticateWithServer", *this, ": technique is not implemented"));
         }
 };
 class AuthenticationOk: public Authentication
@@ -287,7 +286,6 @@ class ParseComplete: public Message
 };
 // -------
 
-    }
 }
 
 #endif

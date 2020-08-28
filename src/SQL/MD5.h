@@ -30,16 +30,14 @@ documentation and/or software.
 
 */
 
-#ifndef THORSANVIL_UTIL_MD5_H
-#define THORSANVIL_UTIL_MD5_H
+#ifndef THORS_ANVIL_DB_UTIL_MD5_H
+#define THORS_ANVIL_DB_UTIL_MD5_H
 
 #include <cstring>
 #include <iostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Util
 {
-    namespace Util
-    {
 
 // a small class for calculating MD5 hashes of strings or byte arrays
 // it is not meant to be fast or secure
@@ -97,7 +95,6 @@ private:
 
 std::string md5(std::string const& str);
 
-    }
 }
 
 #endif

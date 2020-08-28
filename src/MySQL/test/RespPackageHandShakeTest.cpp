@@ -6,9 +6,9 @@
 #include "RespPackageHandShake.h"
 #include "test/MockStream.h"
 
-using ThorsAnvil::SQL::Options;
-using ThorsAnvil::MySQL::ConectReader;
-using ThorsAnvil::MySQL::RespPackageHandShake;
+using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::MySQL::ConectReader;
+using ThorsAnvil::DB::MySQL::RespPackageHandShake;
 
 TEST(RespPackageHandShakeTest, DefaultHandShakeMessage)
 {

@@ -1,7 +1,7 @@
 #include "ThorSQL/StreamInterface.h"
 #include "ConectWriter.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 void ConectWriter::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
@@ -109,10 +109,10 @@ void ConectWriter::simpleReset()
  */
 #include "ConectWriter.tpp"
 
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<1>(unsigned long long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<2>(unsigned long long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<3>(unsigned long long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsigned long long);
-template void ThorsAnvil::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long long);
+template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<1>(unsigned long long);
+template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<2>(unsigned long long);
+template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<3>(unsigned long long);
+template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsigned long long);
+template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long long);
 
 #endif

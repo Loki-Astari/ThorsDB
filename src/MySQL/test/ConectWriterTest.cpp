@@ -6,7 +6,7 @@
 #include "test/MockStream.h"
 
 
-using ThorsAnvil::MySQL::ConectWriter;
+using ThorsAnvil::DB::MySQL::ConectWriter;
 
 TEST(ConectWriterTest, writeFixedLengthInteger)
 {

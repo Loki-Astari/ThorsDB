@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
+#ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
+#define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_HAND_SHAKE_H
 
 #include "RespPackage.h"
 #include <string>
@@ -7,10 +7,8 @@
 #include <ostream>
 #include <iomanip>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -65,7 +63,6 @@ inline std::ostream& RespPackageHandShake::print(std::ostream& s) const
              << std::dec;
 }
 
-    }
 }
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_REQU_PACKAGE_PREPARE_H
-#define THORS_ANVIL_MYSQL_REQU_PACKAGE_PREPARE_H
+#ifndef THORS_ANVIL_DB_MYSQL_REQU_PACKAGE_PREPARE_H
+#define THORS_ANVIL_DB_MYSQL_REQU_PACKAGE_PREPARE_H
 
 #include "ThorMySQL.h"
 #include "ConectWriter.h"
@@ -7,10 +7,8 @@
 #include <ostream>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackagePrepare: public RequPackage
 {
@@ -37,7 +35,6 @@ inline void testPrintRequPackagePrepare(std::ostream& str)
     str << RequPackagePrepare("Test");
 }
 
-    }
 }
 
 #endif

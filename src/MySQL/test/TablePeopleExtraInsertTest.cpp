@@ -47,13 +47,13 @@ TEST_F(TablePeopleExtraInsertTest, InsertTomHanks)
 {
     using namespace ThorsAnvil;
 
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (15, 'Tom Hanks', 67, 'M', 5.67)");
+    DB::SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (15, 'Tom Hanks', 67, 'M', 5.67)");
     statement.execute();
 }
 
@@ -61,14 +61,14 @@ TEST_F(TablePeopleExtraInsertTest, InsertTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (?, 'Tom Hanks', 67, 'M', 5.67)");
-    statement.execute(SQL::Bind(15));
+    DB::SQL::Statement      statement(connection, "INSERT INTO PeopleExtra (ID, Name, Age, Sex, Height) VALUES (?, 'Tom Hanks', 67, 'M', 5.67)");
+    statement.execute(DB::SQL::Bind(15));
 }
 
 #endif

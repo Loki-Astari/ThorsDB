@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_MYSQL_REQU_PACKAGE_PREPARE_EXECUTE_H
-#define THORS_ANVIL_MYSQL_REQU_PACKAGE_PREPARE_EXECUTE_H
+#ifndef THORS_ANVIL_DB_MYSQL_REQU_PACKAGE_PREPARE_EXECUTE_H
+#define THORS_ANVIL_DB_MYSQL_REQU_PACKAGE_PREPARE_EXECUTE_H
 
 #include "RequPackage.h"
 #include "BindBuffer.h"
 #include <ostream>
 #include <vector>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackagePrepareExecute: public RequPackage
 {
@@ -49,7 +47,6 @@ inline void testPrintRequPackagePrepareExecute(std::ostream& str)
     str << RequPackagePrepareExecute(1, bindBuffer);
 }
 
-    }
 }
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef  THORS_ANVIL_MYSQL_RESP_PACKAGE_PREPARE_EXECUTE_H
-#define  THORS_ANVIL_MYSQL_RESP_PACKAGE_PREPARE_EXECUTE_H
+#ifndef THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_PREPARE_EXECUTE_H
+#define THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_PREPARE_EXECUTE_H
 
 #include "ConectReader.h"
 #include "RespPackage.h"
@@ -9,10 +9,8 @@
 #include <vector>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 class RespPackagePrepare;
@@ -37,7 +35,6 @@ inline void testPrintRespPackagePrepareExecute(std::ostream& str, int firstByteP
     str << RespPackagePrepareExecute(firstByteExec, reader, prep);
 }
 
-    }
 }
 
 #endif

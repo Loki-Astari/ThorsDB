@@ -1,7 +1,7 @@
 #include "RespPackageResultSet.h"
 #include <cassert>
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 RespPackageResultSet::RespPackageResultSet(
                             int firstByte,

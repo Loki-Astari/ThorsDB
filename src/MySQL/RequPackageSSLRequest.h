@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_MYSQL_PACKAGE_REQU_SSL_REQUEST_H
-#define THORS_ANVIL_MYSQL_PACKAGE_REQU_SSL_REQUEST_H
+#ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_SSL_REQUEST_H
+#define THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_SSL_REQUEST_H
 
 #include "RequPackage.h"
 #include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 using Options=SQL::Options;
 class RespPackageHandShake;
@@ -27,7 +25,6 @@ class RequPackageSSLRequest: public RequPackage
         long getCapabilities()                          const {return capabilities;}
 };
 
-    }
 }
 
 #endif

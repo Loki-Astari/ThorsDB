@@ -1,6 +1,6 @@
 #include "RespPackagePrepareExecute.h"
 
-using namespace ThorsAnvil:: MySQL;
+using namespace ThorsAnvil::DB:: MySQL;
 
 RespPackagePrepareExecute::RespPackagePrepareExecute(int firstByte, ConectReader& reader, RespPackagePrepare& /*prepareResp*/)
     : RespPackage(RespType::PrepareExecute, reader)

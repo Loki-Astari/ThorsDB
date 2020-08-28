@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
-#define THORS_ANVIL_MYSQL_PACKAGE_WRITER_H
+#ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_WRITER_H
+#define THORS_ANVIL_DB_MYSQL_PACKAGE_WRITER_H
 
 #include <string>
 #include <vector>
@@ -14,15 +14,12 @@
 #error  Unknow Endianess
 #endif
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
-class StreamInterface;
-    }
-    namespace MySQL
-    {
-
+    class StreamInterface;
+}
+namespace ThorsAnvil::DB::MySQL
+{
 
 class ConectWriter
 {
@@ -66,7 +63,6 @@ class ConectWriter
         void        simpleReset();
 };
 
-    }
 }
 
 #ifndef COVERAGE_MySQL

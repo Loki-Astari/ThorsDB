@@ -1,41 +1,42 @@
+#ifndef THORS_ANVIL_DB_SQL_STATEMENT_TPP
+#define THORS_ANVIL_DB_SQL_STATEMENT_TPP
+
 #include <iostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
+    namespace Detail
     {
-        namespace Detail
+
+        template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
+        class CallWithArgs
         {
+            public:
+                CallWithArgs(F, A, std::index_sequence<ids...> const&)
+                {}
+        };
+        template<typename F, typename A, std::size_t... ids>
+        class CallWithArgs<false, F, A, ids...>
+        {
+            public:
+                CallWithArgs(F cb, A args, std::index_sequence<ids...> const&)
+                {
+                    cb(std::get<ids>(args)...);
+                }
+        };
 
-            template<bool ValidateOnly, typename F, typename A, std::size_t... ids>
-            class CallWithArgs
-            {
-                public:
-                    CallWithArgs(F, A, std::index_sequence<ids...> const&)
-                    {}
-            };
-            template<typename F, typename A, std::size_t... ids>
-            class CallWithArgs<false, F, A, ids...>
-            {
-                public:
-                    CallWithArgs(F cb, A args, std::index_sequence<ids...> const&)
-                    {
-                        cb(std::get<ids>(args)...);
-                    }
-            };
+        template<typename T>
+        struct FunctionTraits
+            : public FunctionTraits<decltype(&T::operator())>
+        {};
 
-            template<typename T>
-            struct FunctionTraits
-                : public FunctionTraits<decltype(&T::operator())>
-            {};
+        template <typename ClassType, typename ReturnType, typename... Args>
+        struct FunctionTraits<ReturnType(ClassType::*)(Args...) const>
+        {
+            typedef std::function<ReturnType(Args...)>  FunctionType;
+        };
 
-            template <typename ClassType, typename ReturnType, typename... Args>
-            struct FunctionTraits<ReturnType(ClassType::*)(Args...) const>
-            {
-                typedef std::function<ReturnType(Args...)>  FunctionType;
-            };
-
-        }
+    }
 
 // -- Detail::Cursor
 //      Used internally to loop over each row as it is read from the DB
@@ -152,5 +153,6 @@ inline void Statement::execute(BindArgs<R...> const& binds)
     return;
 }
 
-    }
 }
+
+#endif

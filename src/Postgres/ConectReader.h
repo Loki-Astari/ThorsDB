@@ -1,14 +1,12 @@
-#ifndef THORS_ANVIL_POSTG_PACKAGE_READER_H
-#define THORS_ANVIL_POSTG_PACKAGE_READER_H
+#ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_READER_H
+#define THORS_ANVIL_DB_POSTGRESS_PACKAGE_READER_H
 
 #include "PackageBuffer.h"
 #include <vector>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class ConectReader
 {
@@ -45,7 +43,6 @@ class ConectReader
 };
 
 
-    }
 }
 #ifndef COVERAGE_Postgres
 #include "ConectReader.tpp"

@@ -1,12 +1,10 @@
-#ifndef THORS_ANVIL_MYSQL_CONNECTION_DEFAULT_H
-#define THORS_ANVIL_MYSQL_CONNECTION_DEFAULT_H
+#ifndef THORS_ANVIL_DB_MYSQL_CONNECTION_DEFAULT_H
+#define THORS_ANVIL_DB_MYSQL_CONNECTION_DEFAULT_H
 
 #include "Connection.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConnectionDefault: public Connection
 {
@@ -23,7 +21,6 @@ class ConnectionDefault: public Connection
         }
 };
 
-    }
 }
 
 #endif

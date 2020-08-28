@@ -1,6 +1,10 @@
 #include "SSLUtil.h"
+#include "ThorsIOUtil/Utility.h"
+#include <sstream>
 
-using namespace ThorsAnvil::SQL;
+using namespace ThorsAnvil::DB::SQL;
+using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::systemErrorMessage;
 
 SSLUtil::SSLUtil()
 {
@@ -93,7 +97,7 @@ std::string SSLUtil::sslError(SSL* ssl, int ret)
         // Some non-recoverable I/O error occurred.
         // The OpenSSL error queue may contain more information on the error.
         // For socket I/O on Unix systems, consult errno for details.
-        case SSL_ERROR_SYSCALL:         return std::string("SSL_ERROR_SYSCALL: ") + strerror(errno);
+        case SSL_ERROR_SYSCALL:         return std::string("SSL_ERROR_SYSCALL: ") + systemErrorMessage();
 
         // This value can also be returned for other errors, check the error queue for details.
         case SSL_ERROR_SSL:             return "SSL_ERROR_SSL";
@@ -114,7 +118,7 @@ SSLctx::SSLctx(SSLMethod& method)
 {
     if (!ctx)
     {
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLctx::SSLctx: SSL_CTX_new() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLctx", "SSLctx", "SSL_CTX_new() failed: ", SSLUtil::errorMessage()));
     }
 }
 
@@ -125,18 +129,18 @@ SSLctx::SSLctx(SSLMethod& method, std::string const& certFile, std::string const
     if (SSL_CTX_set_ecdh_auto(ctx, 1) != 1)
     {
         SSL_CTX_free(ctx);
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLctx::SSLctx: SSL_CTX_set_ecdh_auto() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLctx", "SSLctx", "SSL_CTX_set_ecdh_auto() failed: ", SSLUtil::errorMessage()));
     }
 #endif
     if (SSL_CTX_use_certificate_file(ctx, certFile.c_str(), SSL_FILETYPE_PEM) != 1)
     {
         SSL_CTX_free(ctx);
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLctx::SSLctx: SSL_CTX_use_certificate_file() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLctx", "SSLctx", "SSL_CTX_use_certificate_file() failed: ", SSLUtil::errorMessage()));
     }
     if (SSL_CTX_use_PrivateKey_file(ctx, keyFile.c_str(), SSL_FILETYPE_PEM) != 1 )
     {
         SSL_CTX_free(ctx);
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLctx::SSLctx: SSL_CTX_use_PrivateKey_file() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLctx", "SSLctx", "SSL_CTX_use_PrivateKey_file() failed: ", SSLUtil::errorMessage()));
     }
 }
 
@@ -150,12 +154,12 @@ SSLObj::SSLObj(SSLctx const& ctx, int client)
 {
     if (!ssl)
     {
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLObj::SSLObj: SSL_new() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLObj", "SSLObj", "SSL_new() failed: ", SSLUtil::errorMessage()));
     }
     if (SSL_set_fd(ssl, client) != 1)
     {
         SSL_free(ssl);
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLObj::SSLObj: SSL_set_fd() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLObj", "SSLObj", "SSL_set_fd() failed: ", SSLUtil::errorMessage()));
     }
 }
 
@@ -169,7 +173,7 @@ void SSLObj::accept()
 {
     if (SSL_accept(ssl) != 1)
     {
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLObj::SSLObj: SSL_accept() failed: ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLObj", "SSLObj", "SSL_accept() failed: ", SSLUtil::errorMessage()));
     }
 }
 void SSLObj::connect()
@@ -177,7 +181,7 @@ void SSLObj::connect()
     int ret = SSL_connect(ssl);
     if (ret != 1)
     {
-        throw std::runtime_error(errorMsg("ThorsAnvil::SQL::SSLObj::SSLObj: SSL_connect() failed: ", SSLUtil::sslError(ssl, ret), " - ", SSLUtil::errorMessage()));
+        throw std::runtime_error(buildErrorMessage("ThorsAnvil::DB::SQL::SSLObj", "SSLObj", "SSL_connect() failed: ", SSLUtil::sslError(ssl, ret), " - ", SSLUtil::errorMessage()));
     }
 }
 

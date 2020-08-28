@@ -4,7 +4,7 @@
 #include "RespPackageHandShake.h"
 #include "ThorCryptWrapper.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 // These capabilities mirror the `mysql` tool.
 // We will leave this for now but it may change

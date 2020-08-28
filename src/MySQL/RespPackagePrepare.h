@@ -1,15 +1,13 @@
-#ifndef THORS_ANVIL_MYSQL_RESP_PACKAGE_PREPARE_H
-#define THORS_ANVIL_MYSQL_RESP_PACKAGE_PREPARE_H
+#ifndef THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_PREPARE_H
+#define THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_PREPARE_H
 
 #include "RespPackage.h"
 #include "RespPackageColumnDefinition.h"
 #include <vector>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -36,7 +34,6 @@ inline void testPrintRespPackagePrepare(std::ostream& str, int firstByte, Conect
     str << RespPackagePrepare(firstByte, reader);
 }
 
-    }
 }
 
 #endif

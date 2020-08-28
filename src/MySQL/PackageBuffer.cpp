@@ -1,9 +1,11 @@
 #include "PackageBuffer.h"
 #include "MySQLStream.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsIOUtil/Utility.h"
 #include <iomanip>
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
+using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::buildBugReport;
 
 PackageBuffer::PackageBuffer(SQL::StreamInterface& stream, bool flushed)
     : stream(stream)
@@ -70,7 +72,7 @@ void PackageBuffer::nextPacket()
     if (!hasMore)
     {
         throw std::domain_error(
-                errorMsg("ThorsAnvil::MySQL::PackageBuffer::nextPacket: ",
+                buildErrorMessage("ThorsAnvil::DB::MySQL::PackageBuffer", "nextPacket",
                          "No more data expected from server"
               ));
     }
@@ -90,7 +92,7 @@ void PackageBuffer::nextPacket()
     if (currentPacketSequenceID != actualSequenceID)
     {
         throw std::domain_error(
-                errorMsg("ThorsAnvil::MySQL::PackageBuffer::nextPacket: ",
+                buildErrorMessage("ThorsAnvil::DB::MySQL::PackageBuffer", "nextPacket",
                          "currentPacketSequenceID(", currentPacketSequenceID, ")",
                          " != actual sequence on input stream(",  actualSequenceID, ")"
               ));
@@ -113,7 +115,7 @@ void PackageBuffer::write(char const* buffer, std::size_t len)
     if (flushed)
     {
         throw std::domain_error(
-                bugReport("ThorsAnvil::MySQL::PackageBuffer::write: ",
+                buildBugReport("ThorsAnvil::DB::MySQL::PackageBuffer", "write",
                          "Writting to a flushed buffer"
               ));
     }
@@ -146,7 +148,7 @@ void PackageBuffer::flush()
     if (flushed)
     {
         throw std::domain_error(
-                bugReport("ThorsAnvil::MySQL::PackageBuffer::flush: ",
+                buildBugReport("ThorsAnvil::DB::MySQL::PackageBuffer", "flush",
                           "Already flushed"
               ));
     }
@@ -196,7 +198,7 @@ void PackageBuffer::reset()
             extraData << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(x) << "(" << x << ") ";
         }
         throw std::domain_error(
-                bugReport("ThorsAnvil::MySQL::PackageBuffer::reset: ",
+                buildBugReport("ThorsAnvil::DB::MySQL::PackageBuffer", "reset",
                           "reset() before message was read:",
                           extraData.str()
               ));

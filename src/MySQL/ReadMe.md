@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsDB.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsDB)
 ![ThorStream](img/stream.jpg)
 
 ## Usage
@@ -11,7 +11,7 @@ This is normally automatically added when you link with -lThorMySQL
 
 ## Normal Usage
 
-To use this library see the documentation of (ThorsSQL)[https://github.com/Loki-Astari/ThorsSQL/blob/feature-AddSomeDocumentaionToSQL/README.md]
+To use this library see the documentation of (ThorsDB)[https://github.com/Loki-Astari/ThorsDB/blob/feature-AddSomeDocumentaionToSQL/README.md]
 
 
 ## Internal Documentation
@@ -131,7 +131,7 @@ To send a message use:
             );
 ### Layer 6: MySQL command layer
 
-The ThorsMySQL library provides an implementation of the interfaces needed by ThorsSQL library.
+The ThorsMySQL library provides an implementation of the interfaces needed by ThorsDB library.
 
 The class `DefaultMySQLConnection` implements the interface `ThorsAnvil::SQL::Lib::ConnectionProxy`. Its main job is creating object of type `PrepareStatement` that implement the interface `ThorsAnvil::SQL::Lib::StatementProxy`.
 

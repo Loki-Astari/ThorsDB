@@ -12,7 +12,7 @@
 
 #include "gtest/gtest.h"
 
-using ThorsAnvil::MySQL::Authetication;
+using ThorsAnvil::DB::MySQL::Authetication;
 //
 // The default capabilities in the following tests are:
 //      capabilities    "\x06\x07"
@@ -41,7 +41,7 @@ using ThorsAnvil::MySQL::Authetication;
 static const std::string testUser = THOR_TESTING_MYSQL_USER;
 static const std::string testPass = THOR_TESTING_MYSQL_PASS;
 static const std::string testDaBa = THOR_TESTING_MYSQL_DB;
-static const ThorsAnvil::MySQL::Options testOptions;
+static const ThorsAnvil::DB::MySQL::Options testOptions;
 
 TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
 {
@@ -63,16 +63,16 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_old_password)
                         ;
 
     MockStream                                 buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader            reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter            writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake    handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader            reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter            writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake    handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
     bool    didThrow = false;
     try {
-        std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+        std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
         std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+        ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                             handShake.getCapabilities(),
                                                                             auth->getPluginName(),
                                                                             authResponse);
@@ -107,16 +107,16 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_clear_password)
                         ;
 
     MockStream                                  buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader             reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter            writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake     handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader             reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter            writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake     handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
     bool    didThrow = false;
     try {
-        std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+        std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
         std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+        ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                             handShake.getCapabilities(),
                                                                             auth->getPluginName(),
                                                                             authResponse);
@@ -152,16 +152,16 @@ TEST(RequPackageHandShakeResponseTest, Check_authentication_windows_client)
                         ;
 
     MockStream                                 buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader            reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter            writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake    handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader            reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter            writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake    handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
     bool    didThrow = false;
     try {
-        std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+        std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
         std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+        ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                             handShake.getCapabilities(),
                                                                             auth->getPluginName(),
                                                                             authResponse);
@@ -197,16 +197,16 @@ TEST(RequPackageHandShakeResponseTest, Check_sha256_password)
                         ;
 
     MockStream                                 buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader            reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter            writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake    handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader            reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter            writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake    handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
     bool    didThrow = false;
     try {
-        std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+        std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
         std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+        ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                             handShake.getCapabilities(),
                                                                             auth->getPluginName(),
                                                                             authResponse);
@@ -242,18 +242,18 @@ TEST(RequPackageHandShakeResponseTest, Check_mysql_native_password)
                         ;
 
     MockStream                                 buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader            reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter            writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake    handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader            reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter            writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake    handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
     std::unique_ptr<Authetication> auth;
     ASSERT_NO_THROW(
-        auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+        auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
     );
     // MIY CHECK
     std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+    ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                       handShake.getCapabilities(),
                                                                       auth->getPluginName(),
                                                                       authResponse);
@@ -281,16 +281,16 @@ TEST(RequPackageHandShakeResponseTest, Check_unknown_type)
                         ;
 
     MockStream                                 buffer(data, sizeof(data));
-    ThorsAnvil::MySQL::ConectReader            reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter            writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake    handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader            reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter            writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake    handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection              connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
     bool    didThrow = false;
     try {
-        std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+        std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
         std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-        ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+        ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                             handShake.getCapabilities(),
                                                                             auth->getPluginName(),
                                                                             authResponse);
@@ -327,15 +327,15 @@ TEST(RequPackageHandShakeResponseTest, UsingSecureConnection)
 
     unsigned char output[500];
     MockStream                                    buffer(data, sizeof(data), output);
-    ThorsAnvil::MySQL::ConectReader               reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter               writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection                 connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader               reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter               writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake       handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection                 connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
     EXPECT_TRUE(buffer.isEmpty());
 
-    std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+    std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
     std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+    ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                       handShake.getCapabilities(),
                                                                       auth->getPluginName(),
                                                                       authResponse);
@@ -358,7 +358,7 @@ TEST(RequPackageHandShakeResponseTest, UsingSecureConnection)
     auto findhumanMessage = message.str().find("humanMessage(RequPackageHandShakeResponse)");
     EXPECT_NE(std::string::npos, findhumanMessage);
 
-    ThorsAnvil::MySQL::ConectWriter               writer(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter               writer(buffer);
     handShakeResp.build(writer);
 
     unsigned char result[] =
@@ -398,20 +398,20 @@ TEST(RequPackageHandShakeResponseTest, UsingNoSecureConnection)
 
     unsigned char output[500];
     MockStream                                    buffer(data, sizeof(data), output);
-    ThorsAnvil::MySQL::ConectReader               reader(buffer);
-    ThorsAnvil::MySQL::ConectWriter               writter(buffer);
-    ThorsAnvil::MySQL::RespPackageHandShake       handShake(0x0A, reader);
-    ThorsAnvil::MySQL::Connection                 connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::MySQL::Options(),reader, writter);
+    ThorsAnvil::DB::MySQL::ConectReader               reader(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter               writter(buffer);
+    ThorsAnvil::DB::MySQL::RespPackageHandShake       handShake(0x0A, reader);
+    ThorsAnvil::DB::MySQL::Connection                 connection(THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB, ThorsAnvil::DB::MySQL::Options(),reader, writter);
 
-    std::unique_ptr<Authetication> auth = ThorsAnvil::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
+    std::unique_ptr<Authetication> auth = ThorsAnvil::DB::MySQL::getAuthenticatonMethod(connection, handShake.getAuthPluginName());
     std::string authResponse = auth->getAuthenticationString(testUser, testPass, testDaBa, handShake.getAuthPluginData());
-    ThorsAnvil::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
+    ThorsAnvil::DB::MySQL::RequPackageHandShakeResponse     handShakeResp(testUser, testPass, testOptions, testDaBa,
                                                                       handShake.getCapabilities(),
                                                                       auth->getPluginName(),
                                                                       authResponse);
     EXPECT_TRUE(buffer.isEmpty());
 
-    ThorsAnvil::MySQL::ConectWriter               writer(buffer);
+    ThorsAnvil::DB::MySQL::ConectWriter               writer(buffer);
     handShakeResp.build(writer);
 
     unsigned char result[] =

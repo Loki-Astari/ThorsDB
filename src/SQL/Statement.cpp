@@ -1,7 +1,7 @@
 #include "Statement.h"
 #include "Connection.h"
 
-using namespace ThorsAnvil::SQL;
+using namespace ThorsAnvil::DB::SQL;
 
 std::unique_ptr<Lib::StatementProxy>    statementProxy;
 
@@ -58,22 +58,22 @@ void Statement::execute()
 #include "test/SetGoodToTrue.h"
 
 template
-void ThorsAnvil::SQL::Detail::Cursor::activate<false, std::function<void (int, std::string const&, short, char, double)>>
+void ThorsAnvil::DB::SQL::Detail::Cursor::activate<false, std::function<void (int, std::string const&, short, char, double)>>
 (std::function<void (int, std::string const&, short, char, double)>);
 
-template void ThorsAnvil::SQL::Detail::Cursor::activate<true,  std::function<void (int, std::string const&, short, char, double)>>
+template void ThorsAnvil::DB::SQL::Detail::Cursor::activate<true,  std::function<void (int, std::string const&, short, char, double)>>
 (std::function<void (int, std::string const&, short, char, double)>);
 
-template void ThorsAnvil::SQL::BindArgs<int>::bindTo(ThorsAnvil::SQL::Lib::StatementProxy&) const;
+template void ThorsAnvil::DB::SQL::BindArgs<int>::bindTo(ThorsAnvil::DB::SQL::Lib::StatementProxy&) const;
 
-template void ThorsAnvil::SQL::BindArgs<>::bindTo(ThorsAnvil::SQL::Lib::StatementProxy&) const;
+template void ThorsAnvil::DB::SQL::BindArgs<>::bindTo(ThorsAnvil::DB::SQL::Lib::StatementProxy&) const;
 
-template void ThorsAnvil::SQL::Detail::Cursor::activate<false, std::function<void (int)> >(std::function<void (int)>);
-template void ThorsAnvil::SQL::Detail::Cursor::activate<true, std::function<void (int)> >(std::function<void (int)>);
+template void ThorsAnvil::DB::SQL::Detail::Cursor::activate<false, std::function<void (int)> >(std::function<void (int)>);
+template void ThorsAnvil::DB::SQL::Detail::Cursor::activate<true, std::function<void (int)> >(std::function<void (int)>);
 
-template void ThorsAnvil::SQL::Statement::execute<SetGoodToTrue>(SetGoodToTrue);
-template void ThorsAnvil::SQL::Statement::execute<SetGoodToTrue, int>(ThorsAnvil::SQL::BindArgs<int> const&, SetGoodToTrue);
-template void ThorsAnvil::SQL::Statement::execute<CountLines, int>(ThorsAnvil::SQL::BindArgs<int> const&, CountLines);
-template void ThorsAnvil::SQL::Statement::execute<int>(ThorsAnvil::SQL::BindArgs<int> const&);
+template void ThorsAnvil::DB::SQL::Statement::execute<SetGoodToTrue>(SetGoodToTrue);
+template void ThorsAnvil::DB::SQL::Statement::execute<SetGoodToTrue, int>(ThorsAnvil::DB::SQL::BindArgs<int> const&, SetGoodToTrue);
+template void ThorsAnvil::DB::SQL::Statement::execute<CountLines, int>(ThorsAnvil::DB::SQL::BindArgs<int> const&, CountLines);
+template void ThorsAnvil::DB::SQL::Statement::execute<int>(ThorsAnvil::DB::SQL::BindArgs<int> const&);
 
 #endif

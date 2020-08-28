@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_AUTH_MORE_DATA_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_RESP_AUTH_MORE_DATA_H
+#ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_AUTH_MORE_DATA_H
+#define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_AUTH_MORE_DATA_H
 
 #include "RespPackage.h"
 #include <string>
@@ -7,10 +7,8 @@
 #include <ostream>
 #include <iomanip>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -35,7 +33,6 @@ inline std::ostream& RespPackageAuthMoreData::print(std::ostream& s) const
     return s << "RespPackageAuthMoreData: pluginMoreData(" << pluginMoreDataDecoded.str() << ")";
 }
 
-    }
 }
 
 #endif

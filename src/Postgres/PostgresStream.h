@@ -1,12 +1,10 @@
-#ifndef THORS_ANVIL_PostG_POSTGRES_STREAM_H
-#define THORS_ANVIL_PostG_POSTGRES_STREAM_H
+#ifndef THORS_ANVIL_DB_POSTGRESS_POSTGRES_STREAM_H
+#define THORS_ANVIL_DB_POSTGRESS_POSTGRES_STREAM_H
 
 #include "ThorSQL/StreamSimple.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class PostgresStream: public SQL::StreamSimple
 {
@@ -19,7 +17,6 @@ class PostgresStream: public SQL::StreamSimple
         {}
 };
 
-    }
 }
 
 #endif

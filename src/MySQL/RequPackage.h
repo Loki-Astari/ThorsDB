@@ -1,16 +1,13 @@
-#ifndef THORS_ANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
-#define THORS_ANVIL_MYSQL_DETAILS_PACKAGE_REQU_H
+#ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_REQU_H
+#define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_REQU_H
 
 #include "ConectWriter.h"
 #include "RequPackage.h"
-#include "ThorSQL/SQLUtil.h"
 #include <ostream>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackage
 {
@@ -37,7 +34,6 @@ class RequPackage
         }
 };
 
-    }
 }
 
 #endif

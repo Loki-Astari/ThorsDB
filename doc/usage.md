@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsDB.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsDB)
 
 ![ThorStream](../img/stream.jpg)
 
@@ -73,18 +73,18 @@ Then you should use `execute()` or `execute(<BindArguments>)`. Note: Using a ver
 After a statement has been executes you can use the methods `rowsAffected()` and `lastInsertID()` to get basic information about the query.
 
 ````C++ Exmple
-    // ThorsSQL::Statement stat(<DB Connect>, <Query String>);
-    // stat.execute([ThorsSQL::Bind(Arg [,Arg]*),]?);
+    // ThorsDB::Statement stat(<DB Connect>, <Query String>);
+    // stat.execute([ThorsDB::Bind(Arg [,Arg]*),]?);
 
     ThorSQL::Statement  insert(conect, "INSERT INTO People(Name, Age, Sex, Description) VALUES(?, ?, ?, ?)");
     ThorSQL::Statement  update(conect, "UPDATE People SET Name = ? WHERE Id = ?");
     ThorSQL::Statement  delete(conect, "DELETE FROM People WHERE Id = ?");
 
-    insert.execute(ThorsSQL::Bind("Loki Was Bad", 456, 'M', "God of Bad Stuff"));
+    insert.execute(ThorsDB::Bind("Loki Was Bad", 456, 'M', "God of Bad Stuff"));
     long lokiId = insert.lastInsertID();
 
-    update.exectue(ThorsSQL::Bind("Loki", lokiId));
-    delete.execute(ThorsSQL::Bind(lokiId));
+    update.exectue(ThorsDB::Bind("Loki", lokiId));
+    delete.execute(ThorsDB::Bind(lokiId));
 ````
 
 #### `execute()` Query Statements:
@@ -94,10 +94,10 @@ Then you should use `execute(<lambda>)` or `execute(<BindArguments>, <lambda>)`.
 When the select is execute the lambda function will be called for each row retrieved from the DB.
 
 ````C++ Example
-    // ThorsSQL::Statement stat(<DB Connect>, <Query String>);
-    // stat.execute([ThorsSQL::Bind(Arg [,Arg]*),]? <Functor>);
+    // ThorsDB::Statement stat(<DB Connect>, <Query String>);
+    // stat.execute([ThorsDB::Bind(Arg [,Arg]*),]? <Functor>);
 
-    ThorsSQL::Statement getPeople(conect, "SELECT Name, Age, Sex, Description FROM People");
+    ThorsDB::Statement getPeople(conect, "SELECT Name, Age, Sex, Description FROM People");
 
     getPeople.execute([](std::string name const& name, int age, char sex, std::string const& description) {
         std::cout << "Person: " << name << " (" << age << ") (" << sex << ")  : " << description << "\n";
@@ -119,7 +119,7 @@ But the general guidance is that:
 * DB Date/Time types bind to C++ `ThrosAnvil::SQL::UnixTimeStamp` (see below)
 
 ````C++ Example:
-    ThorsSQL::Statement getNames(conect, "SELECT Name FROM People");
+    ThorsDB::Statement getNames(conect, "SELECT Name FROM People");
 
     // This should be OK (assuming the column name has a type that will bind to std::string).
     getNames.execute([](std::string const& name) { /* STUFF */});
@@ -133,7 +133,7 @@ Used as a Bind type for Date/Time fields in a DB.
 Basically to distinguish time objects from integer objects.
 
 ````C++ Example
-    ThorsSQL::Statement getDOB(conect, "SELECT Name, DateOfBirth from BirthRecord");
+    ThorsDB::Statement getDOB(conect, "SELECT Name, DateOfBirth from BirthRecord");
 
     getDOB.execute([](std::string const& name, ThrosAnvil::SQL::UnixTimeStamp const& dob) {
         std::cout << name << " : " << dob << "\n";      // Note: this is a simple wrapper around unix time stamp.
