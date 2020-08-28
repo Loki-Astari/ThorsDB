@@ -17845,6 +17845,11 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+export cwd=`pwd`
+pushd third/ThorsIOUtil
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
+popd
+
 am__api_version='1.16'
 
 # Find a good install program.  We prefer a C program (faster),

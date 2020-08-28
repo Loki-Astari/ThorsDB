@@ -1,6 +1,6 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
-COVERAGE_REQUIRED			= 70
+COVERAGE_REQUIRED			= 50
 
 TARGET						= ThorPostgres.slib
 LDLIBS						= -lcrypto
