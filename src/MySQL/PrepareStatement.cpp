@@ -8,8 +8,11 @@
 #include "RespPackagePrepare.h"
 #include "RespPackagePrepareExecute.h"
 #include "PrepareStatement.h"
+#include "ThorsIOUtil/Utility.h"
 
 using namespace ThorsAnvil::DB::MySQL;
+using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::buildBugReport;
 
 PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
     : SQL::StreamSimple(-1)
@@ -76,7 +79,7 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumn
             case MYSQL_TYPE_GEOMETRY:
             default:
                 throw std::domain_error(
-                        bugReport("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream::ValidatorStream: ",
+                        buildBugReport("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream", "ValidatorStream",
                                   "Unknown Type returned by server. Type: ", std::hex, col.type, " " , mapMySQLTypeToString(col.type)
                       ));
 
@@ -169,7 +172,7 @@ void PrepareStatement::doExecute()
     if (!errorMessage.empty())
     {
         throw std::logic_error(
-                errorMsg("ThrosAnvil::MySQL::PrepareStatement::doExecute: ", errorMessage));
+                buildErrorMessage("ThrosAnvil::MySQL::PrepareStatement", "doExecute", errorMessage));
     }
 
     std::unique_ptr<RespPackage> tmp = connection.sendMessageGetResponse(

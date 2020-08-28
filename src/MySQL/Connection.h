@@ -2,6 +2,7 @@
 #define THORS_ANVIL_DB_MYSQL_CONNECTION_H
 
 #include "ConectReader.h"
+#include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <memory>
 

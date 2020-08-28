@@ -1,6 +1,7 @@
 
 #include "StreamSimple.h"
 #include "SSLUtil.h"
+#include "ThorsIOUtil/Utility.h"
 #include "coverage/ThorMock.h"
 #include <fstream>
 #include <thread>
@@ -20,7 +21,7 @@
 
 
 using ThorsAnvil::DB::SQL::StreamSimple;
-using ThorsAnvil::DB::errorMsg;
+using ThorsAnvil::Utility::buildErrorMessage;
 
 TEST(StreamSimpleTest, ReadNormal)
 {
@@ -296,7 +297,7 @@ class ServerSocket
         {
             if (socketId == -1)
             {
-                throw std::runtime_error(errorMsg("Test:ServerSocket: socket() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ServerSocket", "socket", "failed: ", strerror(errno)));
             }
             struct sockaddr_in    serverAddr = {};
             serverAddr.sin_family       = AF_INET;
@@ -306,13 +307,13 @@ class ServerSocket
             if (::bind(socketId, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) != 0)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test::ServerSocket: bind() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test::ServerSocket", "bind", "failed: ", strerror(errno)));
             }
 
             if (::listen(socketId, maxWaitingConnections) != 0)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test::ServerSocket: listen() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test::ServerSocket", "listen", "failed: ", strerror(errno)));
             }
         }
         ~ServerSocket()
@@ -324,7 +325,7 @@ class ServerSocket
             int newSocket = ::accept(socketId, nullptr, nullptr);
             if (newSocket == -1)
             {
-                throw std::runtime_error(errorMsg("Test::ServerSocket: accept() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test::ServerSocket", "accept", "failed: ", strerror(errno)));
             }
             return newSocket;
         }
@@ -339,14 +340,14 @@ class ConnectSocket
         {
             if (socketId == -1)
             {
-                throw std::runtime_error(errorMsg("Test:ConnectSocket: socket() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ConnectSocket", "socket", "failed: ", strerror(errno)));
             }
 
             struct hostent* serv = ::gethostbyname(host.c_str());
             if (serv == nullptr)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test:ConnectSocket: gethostbyname() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ConnectSocket", "gethostbyname", "failed: ", strerror(errno)));
             }
 
             struct sockaddr_in serverAddr{};
@@ -357,7 +358,7 @@ class ConnectSocket
             if (::connect(socketId, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) != 0)
             {
                 ::close(socketId);
-                throw std::runtime_error(errorMsg("Test:ConnectSocket: connect() failed: ", strerror(errno)));
+                throw std::runtime_error(buildErrorMessage("Test:ConnectSocket", "connect", "failed: ", strerror(errno)));
             }
         }
         ~ConnectSocket()

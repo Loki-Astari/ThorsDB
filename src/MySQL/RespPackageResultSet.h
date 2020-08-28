@@ -4,6 +4,7 @@
 #include "RespPackage.h"
 #include "RespPackageColumnDefinition.h"
 #include "TypeReadWrite.h"
+#include "ThorsIOUtil/Utility.h"
 #include <ostream>
 #include <vector>
 #include <string>
@@ -15,8 +16,9 @@ namespace ThorsAnvil::DB::MySQL
 
 template<typename T> inline T readNullParameter()
 {
+    using ThorsAnvil::Utility::buildErrorMessage;
     throw std::logic_error(
-            errorMsg("ThorsAnvil::DB::MySQL::readNullParameter: ",
+            buildErrorMessage("ThorsAnvil::DB::MySQL", "readNullParameter",
                      "Undefined for this type ", typeid(T).name()
           ));
 }
@@ -45,7 +47,7 @@ class RespPackageResultSet: public RespPackage
                      Because this should never happen it is a domain_error
             */
             throw std::domain_error(
-                    bugReport("ThorsAnvil::DB::MySQL::RespPackageResultSet::readNextValue: ",
+                     ThorsAnvil::Utility::buildBugReport("ThorsAnvil::DB::MySQL::RespPackageResultSet", "readNextValue",
                               "Trying to read more parameters than exist"
                   ));
         }
@@ -95,7 +97,7 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_SET:
             case MYSQL_TYPE_GEOMETRY:
                 throw std::logic_error(
-                         errorMsg(  "ThorsAnvil::DB::MySQL::RespPackageResultSet::readNextValue:\n",
+                          ThorsAnvil::Utility::buildErrorMessage(  "ThorsAnvil::DB::MySQL::RespPackageResultSet", "readNextValue",
                                     "This type is currently NOT unsupported.\n",
                                     "\n",
                                     "\tMySQL Type: ",  mapMySQLTypeToString(columns[currentColumn].type), "\n",
@@ -104,7 +106,7 @@ class RespPackageResultSet: public RespPackage
                                 ));
             default:
                 throw std::domain_error(
-                        bugReport("ThorsAnvil::DB::MySQL::RespPackageResultSet::readNextValue: ",
+                         ThorsAnvil::Utility::buildBugReport("ThorsAnvil::DB::MySQL::RespPackageResultSet", "readNextValue",
                                   "Unimplemented Column Type"
                       ));
         }

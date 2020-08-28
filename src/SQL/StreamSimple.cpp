@@ -1,5 +1,5 @@
 #include "StreamSimple.h"
-#include "SQLUtil.h"
+#include "ThorsIOUtil/Utility.h"
 #include <stdexcept>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -19,6 +19,7 @@
 #include <iostream>
 
 using namespace ThorsAnvil::DB::SQL;
+using ThorsAnvil::Utility::buildErrorMessage;
 
 StreamSimple::StreamSimple(int socket)
     : socket(socket)
@@ -40,7 +41,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     if (serv == NULL)
     {
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::DB::SQL::StreamSimple::StreamSimple: ",
+                buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "StreamSimple",
                          "::gethostbyname() Failed: ", strerror(errno)
               ));
     }
@@ -49,7 +50,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         throw std::runtime_error(
-                errorMsg("ThrosAnvil::SQL::StreamSimple::StreamSimple: ",
+                buildErrorMessage("ThrosAnvil::SQL::StreamSimple", "StreamSimple",
                          "::socket() Failed: ", strerror(errno)
               ));
     }
@@ -57,7 +58,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     {
         if (::fcntlMYSQLWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
         {
-            throw std::domain_error(errorMsg("ThorsAnvil::DB::MySQL::StreamSimple::StreamSimple: ",
+            throw std::domain_error(buildErrorMessage("ThorsAnvil::DB::MySQL::StreamSimple", "StreamSimple",
                                                       ": fcntl: ", strerror(errno)
               ));
         }
@@ -70,7 +71,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
         {
             ::close(socket);
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::MySQL::StreamSimple::StreamSimple: ",
+                    buildErrorMessage("ThorsAnvil::DB::MySQL::StreamSimple", "StreamSimple",
                              "::connect() Failed: ", strerror(errno)
                   ));
         }
@@ -133,7 +134,7 @@ void StreamSimple::readFD(char* buffer, std::size_t len)
         else if (read == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::SQL::StreamSimple::readFD: "
+                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readFD",
                              "::read() Failed: ",
                              "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
                   ));
@@ -141,7 +142,7 @@ void StreamSimple::readFD(char* buffer, std::size_t len)
         else if (read == ErrorResult)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::SQL::StreamSimple::readFD: ",
+                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readFD",
                              "::read() Failed: ",
                              "errno=", errno, " Message=", strerror(errno)
                   ));
@@ -169,7 +170,7 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
         else if (writen == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::SQL::StreamSimple::writeFD: ",
+                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeFD",
                              "::write() Failed: ",
                              "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
                   ));
@@ -177,7 +178,7 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
         else if (writen == ErrorResult)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::SQL::StreamSimple::writeFD: ",
+                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeFD",
                              "::write() Failed: ",
                              "errno=", errno, " Message=", strerror(errno)
                   ));
@@ -203,7 +204,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
             else
             {
                 throw std::runtime_error(
-                        errorMsg("ThorsAnvil::DB::SQL::StreamSimple::readSSL: ",
+                        buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readSSL",
                                  "::SSL_read() Failed: ",
                                  "errno=", errorCode, " Message=", SSLUtil::errorMessage()
                       ));
@@ -212,7 +213,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
         else if (read == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::SQL::StreamSimple::readSSL: "
+                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readSSL",
                              "SSL_read() Failed: ",
                              "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
                   ));
@@ -238,7 +239,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
             else
             {
                 throw std::runtime_error(
-                        errorMsg("ThorsAnvil::DB::SQL::StreamSimple::writeSSL: ",
+                        buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeSSL",
                                  "::SSL_write() Failed: ",
                                  "errno=", errorCode, " Message=", SSLUtil::errorMessage()
                       ));
@@ -247,7 +248,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
         else if (writen == 0)
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::SQL::StreamSimple::writeSSL: ",
+                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeSSL",
                              "::SSL_write() Failed: ",
                              "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
                   ));

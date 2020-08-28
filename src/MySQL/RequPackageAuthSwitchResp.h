@@ -3,7 +3,6 @@
 
 #include "RequPackage.h"
 #include "RespPackageAuthSwitchRequest.h"
-#include "ThorSQL/SQLUtil.h"
 #include <string>
 #include <ostream>
 

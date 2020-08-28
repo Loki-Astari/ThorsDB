@@ -2,7 +2,6 @@
 #define THORS_ANVIL_DB_MYSQL_PACKAGE_READER_H
 
 #include "MySQLTimeBag.h"
-#include "ThorSQL/SQLUtil.h"
 #include <memory>
 #include <functional>
 #include <vector>

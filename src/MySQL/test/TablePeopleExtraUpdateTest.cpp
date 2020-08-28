@@ -1,7 +1,6 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
-#include "ThorSQL/SQLUtil.h"
 #include <arpa/inet.h>
 #include <cstdint>
 

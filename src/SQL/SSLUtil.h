@@ -1,9 +1,9 @@
 #ifndef THORS_ANVIL_DB_SQL_SSL_UTIL_H
 #define THORS_ANVIL_DB_SQL_SSL_UTIL_H
 
-#include "SQLUtil.h"
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <string>
 
 
 namespace ThorsAnvil::DB::SQL

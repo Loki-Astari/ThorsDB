@@ -4,6 +4,7 @@
 #include "ThorSQL/Connection.h"
 #include "ThorSQL/Statement.h"
 #include "MySQLConfig.h"
+#include "ThorsIOUtil/Utility.h"
 
 // Defined in test/BindParametersCharTest.cpp
 extern std::map<std::string, std::string>      options;
@@ -66,7 +67,8 @@ inline void typeBadTest(std::string const& expr)
 
 inline std::string getMySQL()
 {
-    return ThorsAnvil::DB::stringBuild("mysql --user=", THOR_TESTING_MYSQL_USER,
+    return ThorsAnvil::Utility::buildStringFromParts(
+                                       "mysql --user=", THOR_TESTING_MYSQL_USER,
                                         " --password=", THOR_TESTING_MYSQL_PASS,
                                         " ", THOR_TESTING_MYSQL_DB,
                                         " 2> /dev/null");
@@ -74,7 +76,8 @@ inline std::string getMySQL()
 
 inline std::string getSelectCount(std::string const& select)
 {
-    return ThorsAnvil::DB::stringBuild("echo '", select, "'",
+    return ThorsAnvil::Utility::buildStringFromParts(
+                                    "echo '", select, "'",
                                     " | ",
                                     getMySQL(),
                                     " | ",
@@ -86,7 +89,7 @@ inline std::string getSelectCount(std::string const& select)
 
 inline void checkSelectCount(std::string const& select, int row)
 {
-    std::string checkNoRowsLeft = ThorsAnvil::DB::stringBuild(
+    std::string checkNoRowsLeft = ThorsAnvil::Utility::buildStringFromParts(
         "if ( test $(", getSelectCount(select), ") != ", row, " ); then exit 1; fi"
                                                          );
     ASSERT_EQ(
@@ -97,7 +100,7 @@ inline void checkSelectCount(std::string const& select, int row)
 
 static void executeModification(std::string const& mod)
 {
-    std::string modString = ThorsAnvil::DB::stringBuild("echo '", mod , "' | ", getMySQL());
+    std::string modString = ThorsAnvil::Utility::buildStringFromParts("echo '", mod , "' | ", getMySQL());
     ASSERT_EQ(
         0,
         system(modString.c_str())

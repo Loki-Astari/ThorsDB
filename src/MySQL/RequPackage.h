@@ -3,7 +3,6 @@
 
 #include "ConectWriter.h"
 #include "RequPackage.h"
-#include "ThorSQL/SQLUtil.h"
 #include <ostream>
 #include <string>
 

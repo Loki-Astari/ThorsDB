@@ -1,7 +1,6 @@
 #ifndef THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_H
 #define THORS_ANVIL_DB_MYSQL_DETAILS_PACKAGE_RESP_H
 
-#include "ThorSQL/SQLUtil.h"
 #include "ConectReader.h"
 #include <ostream>
 #include <string>

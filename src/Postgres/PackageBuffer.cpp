@@ -1,11 +1,13 @@
 #include "PackageBuffer.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsIOUtil/Utility.h"
 #include <iomanip>
 #include <algorithm>
 #include <arpa/inet.h>
 #include <iostream>
 
 using namespace ThorsAnvil::DB::Postgres;
+using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::buildBugReport;
 
 PackageBuffer::PackageBuffer(SQL::StreamInterface& stream)
     : stream(stream)
@@ -20,7 +22,7 @@ char PackageBuffer::getMessage()
 {
     if (!isEmpty())
     {
-        throw std::domain_error(bugReport("ThorsAnvil::DB::Postgres::PackageBuffer::getMessage: Called while processing another message"));
+        throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::PackageBuffer", "getMessage", "Called while processing another message"));
     }
 
     return openMessage();
@@ -30,7 +32,7 @@ void PackageBuffer::read(char* buffer, std::size_t len)
 {
     if (messageRead + len > messageSize)
     {
-        throw std::domain_error(bugReport("ThorsAnvil::DB::Postgres::PackageBuffer::read: read passed the end of a message"));
+        throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::PackageBuffer", "read", "read passed the end of a message"));
     }
     stream.read(buffer, len);
     messageRead += len;

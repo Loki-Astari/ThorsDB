@@ -11,6 +11,7 @@
 #include "RespPackageERR.h"
 
 #include "ThorCryptWrapper.h"
+#include "ThorsIOUtil/Utility.h"
 #include <ostream>
 
 using namespace ThorsAnvil::DB::MySQL;
@@ -154,41 +155,41 @@ std::unique_ptr<Authetication> getAuthenticatonMethod(Connection& connection, st
     }
     else
     {
-        using ThorsAnvil::DB::errorMsg;
+        using ThorsAnvil::Utility::buildErrorMessage;
         // All other methods are unsupported.
         // But it is nice to have specific error messages to show that we know they exist.
         if (authPluginNameUsed == "mysql_old_password")
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                    buildErrorMessage("ThorsAnvil::DB::MySQL::HandshakeResponsePackage", "HandshakeResponsePackage",
                              "mysql_old_password: not supported yet. Feel free to add handler."
                   ));
         }
         else if (authPluginNameUsed == "mysql_clear_password")
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                    buildErrorMessage("ThorsAnvil::DB::MySQL::HandshakeResponsePackage", "HandshakeResponsePackage",
                              "mysql_clear_password: not supported yet. Feel free to add handler."
                   ));
         }
         else if (authPluginNameUsed == "authentication_windows_client")
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                    buildErrorMessage("ThorsAnvil::DB::MySQL::HandshakeResponsePackage", "HandshakeResponsePackage",
                              "authentication_windows_client: not supported yet. Feel free to add handler."
                   ));
         }
         else if (authPluginNameUsed == "sha256_password")
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                    buildErrorMessage("ThorsAnvil::DB::MySQL::HandshakeResponsePackage", "HandshakeResponsePackage",
                              "sha256_password: not supported yet. Feel free to add handler."
                   ));
         }
         else
         {
             throw std::runtime_error(
-                    errorMsg("ThorsAnvil::DB::MySQL::HandshakeResponsePackage::HandshakeResponsePackage: ",
+                    buildErrorMessage("ThorsAnvil::DB::MySQL::HandshakeResponsePackage", "HandshakeResponsePackage",
                              "UNKNOWN authentication method(", authPluginNameUsed, "): not supported"
                   ));
         }

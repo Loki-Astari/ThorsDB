@@ -8,8 +8,10 @@
 #include "RequPackageSSLRequest.h"
 #include "RequPackageAuthSwitchResp.h"
 #include "ThorMySQL.h"
+#include "ThorsIOUtil/Utility.h"
 
 using namespace ThorsAnvil::DB::MySQL;
+using ThorsAnvil::Utility::buildErrorMessage;
 
 Connection::Connection(
                     std::string const& /*username*/,
@@ -105,7 +107,7 @@ void Connection::conectToServer(std::string const& username,
 
     if (serverResp->isOK() == false)
     {
-        throw std::domain_error(errorMsg("Connection::Connection: Handshake failed: Got: ", (*serverResp)));
+        throw std::domain_error(buildErrorMessage("Connection::Connection:", "", "Handshake failed: Got: ", (*serverResp)));
     }
 }
 

@@ -1,6 +1,5 @@
 
 #include <gtest/gtest.h>
-#include "ThorSQL/SQLUtil.h"
 #include "test/MockStream.h"
 #include "Authentication.h"
 #include "Connection.h"
