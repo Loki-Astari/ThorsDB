@@ -1,3 +1,6 @@
+#ifndef THORS_ANVIL_DB_MYSQL_CONECT_WRITTER_TPP
+#define THORS_ANVIL_DB_MYSQL_CONECT_WRITTER_TPP
+
 #include "ThorSQL/StreamInterface.h"
 
 namespace ThorsAnvil::DB::MySQL
@@ -10,3 +13,5 @@ void ConectWriter::writeFixedLengthInteger(unsigned long long value)
 }
 
 }
+
+#endif

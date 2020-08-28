@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_CONNECTION_H
-#define THORS_ANVIL_MYSQL_CONNECTION_H
+#ifndef THORS_ANVIL_DB_MYSQL_CONNECTION_H
+#define THORS_ANVIL_DB_MYSQL_CONNECTION_H
 
 #include "ConectReader.h"
 #include <string>

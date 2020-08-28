@@ -1,3 +1,6 @@
+#ifndef THORS_ANVIL_DB_POSTGRES_CONECT_READER_TPP
+#define THORS_ANVIL_DB_POSTGRES_CONECT_READER_TPP
+
 #include "ThorSQL/Endian.h"
 #include <type_traits>
 
@@ -27,3 +30,5 @@ std::vector<T> ConectReader::readIntVector(int len)
 }
 
 }
+
+#endif

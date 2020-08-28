@@ -1,3 +1,6 @@
+#ifndef THORS_ANVIL_DB_SQL_STATEMENT_TPP
+#define THORS_ANVIL_DB_SQL_STATEMENT_TPP
+
 #include <iostream>
 
 namespace ThorsAnvil::DB::SQL
@@ -151,3 +154,5 @@ inline void Statement::execute(BindArgs<R...> const& binds)
 }
 
 }
+
+#endif

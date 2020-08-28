@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_STATEMENT_H
-#define THORS_ANVIL_MYSQL_STATEMENT_H
+#ifndef THORS_ANVIL_DB_MYSQL_STATEMENT_H
+#define THORS_ANVIL_DB_MYSQL_STATEMENT_H
 
 #include "ThorSQL/Statement.h"
 #include <string>

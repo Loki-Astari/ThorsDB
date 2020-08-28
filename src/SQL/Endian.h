@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_UTIL_ENDIAN_H
-#define THORSANVIL_UTIL_ENDIAN_H
+#ifndef THORS_ANVIL_DB_UTIL_ENDIAN_H
+#define THORS_ANVIL_DB_UTIL_ENDIAN_H
 
 #include <arpa/inet.h>
 

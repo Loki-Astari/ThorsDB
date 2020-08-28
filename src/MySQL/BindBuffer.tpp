@@ -1,3 +1,6 @@
+#ifndef THORS_ANVIL_DB_MYSQL_BIND_BUFFER_TPP
+#define THORS_ANVIL_DB_MYSQL_BIND_BUFFER_TPP
+
 namespace ThorsAnvil::DB::MySQL
 {
 
@@ -13,3 +16,5 @@ void BindBuffer::bindValue(Src const& value)
 }
 
 }
+
+#endif

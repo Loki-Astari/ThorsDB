@@ -30,8 +30,8 @@ documentation and/or software.
 
 */
 
-#ifndef THORSANVIL_UTIL_MD5_H
-#define THORSANVIL_UTIL_MD5_H
+#ifndef THORS_ANVIL_DB_UTIL_MD5_H
+#define THORS_ANVIL_DB_UTIL_MD5_H
 
 #include <cstring>
 #include <iostream>

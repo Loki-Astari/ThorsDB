@@ -1,3 +1,6 @@
+#ifndef THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_TPP
+#define THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_TPP
+
 namespace ThorsAnvil::DB::MySQL
 {
 
@@ -28,3 +31,5 @@ std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item)
 }
 
 }
+
+#endif

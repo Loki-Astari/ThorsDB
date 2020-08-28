@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_SQL_STREAM_SIMPLE_H
-#define THORS_ANVIL_SQL_STREAM_SIMPLE_H
+#ifndef THORS_ANVIL_DB_SQL_STREAM_SIMPLE_H
+#define THORS_ANVIL_DB_SQL_STREAM_SIMPLE_H
 
 #include "StreamInterface.h"
 #include "SSLUtil.h"

@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_SQL_SQL_UTIL_H
-#define THORS_ANVIL_SQL_SQL_UTIL_H
+#ifndef THORS_ANVIL_DB_SQL_SQL_UTIL_H
+#define THORS_ANVIL_DB_SQL_SQL_UTIL_H
 
 #include <map>
 #include <string>
