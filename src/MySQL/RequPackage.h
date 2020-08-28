@@ -7,10 +7,8 @@
 #include <ostream>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackage
 {
@@ -37,7 +35,6 @@ class RequPackage
         }
 };
 
-    }
 }
 
 #endif

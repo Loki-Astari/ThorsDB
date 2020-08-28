@@ -7,10 +7,8 @@
 #include <algorithm>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class PackageBuffer: public SQL::StreamInterface
 {
@@ -40,7 +38,6 @@ class PackageBuffer: public SQL::StreamInterface
 
 };
 
-    }
 }
 
 #endif

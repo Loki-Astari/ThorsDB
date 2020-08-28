@@ -8,13 +8,13 @@
 
 TEST(CornerCaseTest, UnknownMySQLType)
 {
-    EXPECT_EQ("Unknown???", ThorsAnvil::MySQL::mapMySQLTypeToString(0xF0));
+    EXPECT_EQ("Unknown???", ThorsAnvil::DB::MySQL::mapMySQLTypeToString(0xF0));
 }
 
 class BadCorner {};
 TEST(CornerCaseTest, WriteUnknownTYpe)
 {
-    using ThorsAnvil::MySQL::ConectWriter;
+    using ThorsAnvil::DB::MySQL::ConectWriter;
 
     auto test = []()
     {
@@ -24,7 +24,7 @@ TEST(CornerCaseTest, WriteUnknownTYpe)
         ConectWriter    writer(stream);
 
         BadCorner       corner;
-        ThorsAnvil::MySQL::writeParameterValue<BadCorner>(writer, corner);
+        ThorsAnvil::DB::MySQL::writeParameterValue<BadCorner>(writer, corner);
     };
     EXPECT_THROW(
         test(),

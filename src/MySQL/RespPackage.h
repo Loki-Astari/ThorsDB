@@ -7,10 +7,8 @@
 #include <string>
 #include <memory>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 enum class RespType {Ok, Err, Eof, HandShake, AuthSwitchRequest, Prepare, PrepareExecute, ResultSet, Authentication};
 
@@ -51,7 +49,6 @@ class RespPackage
 template<typename To>
 std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item);
 
-    }
 }
 
 #ifndef COVERAGE_MySQL

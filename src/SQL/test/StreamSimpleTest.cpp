@@ -19,8 +19,8 @@
 #include <netdb.h>
 
 
-using ThorsAnvil::SQL::StreamSimple;
-using ThorsAnvil::errorMsg;
+using ThorsAnvil::DB::SQL::StreamSimple;
+using ThorsAnvil::DB::errorMsg;
 
 TEST(StreamSimpleTest, ReadNormal)
 {
@@ -376,11 +376,11 @@ TEST(StreamSimpleTest, OpenSSLConnection)
     int port    = 2022;
 
     std::thread sslServer([port]() {
-        ThorsAnvil::SQL::SSLMethod  method(ThorsAnvil::SQL::SSLMethodType::Server);
-        ThorsAnvil::SQL::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
+        ThorsAnvil::DB::SQL::SSLMethod  method(ThorsAnvil::DB::SQL::SSLMethodType::Server);
+        ThorsAnvil::DB::SQL::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
         ServerSocket                server(port);
         int                         client  = server.accept();
-        ThorsAnvil::SQL::SSLObj     sslConnection(ctx, client);
+        ThorsAnvil::DB::SQL::SSLObj     sslConnection(ctx, client);
 
         sslConnection.accept();
         sslConnection.write("1234", 4);
@@ -388,10 +388,10 @@ TEST(StreamSimpleTest, OpenSSLConnection)
 
     sleep(2);
 
-    ThorsAnvil::SQL::SSLMethod  method(ThorsAnvil::SQL::SSLMethodType::Client);
-    ThorsAnvil::SQL::SSLctx     ctx(method);
+    ThorsAnvil::DB::SQL::SSLMethod  method(ThorsAnvil::DB::SQL::SSLMethodType::Client);
+    ThorsAnvil::DB::SQL::SSLctx     ctx(method);
     ConnectSocket               connection("127.0.0.1", port);
-    ThorsAnvil::SQL::SSLObj     sslConnection(ctx, connection.getSocketId());
+    ThorsAnvil::DB::SQL::SSLObj     sslConnection(ctx, connection.getSocketId());
     sslConnection.connect();
 
     char buffer[10] = {0};

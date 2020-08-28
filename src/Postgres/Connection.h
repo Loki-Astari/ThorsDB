@@ -5,12 +5,10 @@
 #include <string>
 #include <memory>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
-using ThorsAnvil::SQL::Options;
+using ThorsAnvil::DB::SQL::Options;
 class ConectReader;
 class ConectWriter;
 class Message;
@@ -36,7 +34,6 @@ class Connection
         std::unique_ptr<Message> getAuthenticationMessage();
 };
 
-    }
 }
 
 //#ifndef COVERAGE_Postgres

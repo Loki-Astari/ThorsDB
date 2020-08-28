@@ -14,15 +14,12 @@
 #error  Unknow Endianess
 #endif
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
-class StreamInterface;
-    }
-    namespace MySQL
-    {
-
+    class StreamInterface;
+}
+namespace ThorsAnvil::DB::MySQL
+{
 
 class ConectWriter
 {
@@ -66,7 +63,6 @@ class ConectWriter
         void        simpleReset();
 };
 
-    }
 }
 
 #ifndef COVERAGE_MySQL

@@ -3,5 +3,5 @@ layout: plain
 generate: false
 ---
 
-[ThorsSQL](https://github.com/Loki-Astari/ThorsSQL) A modern C++ interface to SQL.
+[ThorsDB](https://github.com/Loki-Astari/ThorsDB) A modern C++ interface to SQL.
 

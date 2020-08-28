@@ -52,13 +52,13 @@ TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanks)
 {
     using namespace ThorsAnvil;
 
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = 18");
+    DB::SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = 18");
     statement.execute();
 }
 
@@ -66,14 +66,14 @@ TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
-    SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = ?");
-    statement.execute(SQL::Bind(18));
+    DB::SQL::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = ?");
+    statement.execute(DB::SQL::Bind(18));
 }
 
 #endif

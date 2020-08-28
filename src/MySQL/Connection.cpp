@@ -9,7 +9,7 @@
 #include "RequPackageAuthSwitchResp.h"
 #include "ThorMySQL.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 Connection::Connection(
                     std::string const& /*username*/,

@@ -6,9 +6,9 @@
 #include "RespPackageEOF.h"
 #include "test/MockStream.h"
 
-using ThorsAnvil::SQL::Options;
-using ThorsAnvil::MySQL::ConectReader;
-using ThorsAnvil::MySQL::RespPackageEOF;
+using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::MySQL::ConectReader;
+using ThorsAnvil::DB::MySQL::RespPackageEOF;
 
 TEST(RespPackageEOFTest, DefaultEOFMessage)
 {

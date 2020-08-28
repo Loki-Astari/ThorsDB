@@ -8,7 +8,7 @@
 #include "ConectReader.tpp"
 #endif
 
-using namespace ThorsAnvil::Postgres;
+using namespace ThorsAnvil::DB::Postgres;
 
 std::string ConectReader::readString()
 {

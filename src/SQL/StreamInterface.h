@@ -4,10 +4,8 @@
 #include <string>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
 
 class StreamInterface
 {
@@ -26,7 +24,6 @@ class StreamInterface
 };
 inline StreamInterface::~StreamInterface() {}
 
-    }
 }
 
 #endif

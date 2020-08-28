@@ -3,7 +3,7 @@
 #include "RespPackageAuthMoreData.h"
 #include <cassert>
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 RespPackageAuthMoreData::RespPackageAuthMoreData(int firstbyte, ConectReader& reader)
     : RespPackage(RespType::Authentication, reader)

@@ -6,8 +6,8 @@
 #include "test/MockStream.h"
 #include "ConectReader.h"
 
-using ThorsAnvil::MySQL::ConectReader;
-using ThorsAnvil::MySQL::RespPackageColumnDefinition;
+using ThorsAnvil::DB::MySQL::ConectReader;
+using ThorsAnvil::DB::MySQL::RespPackageColumnDefinition;
 
 TEST(RespPackageColumnDefinitionTest, Client41)
 {

@@ -8,10 +8,8 @@
 #include <ostream>
 #include <iomanip>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RespPackageEOF: public RespPackage
 {
@@ -38,7 +36,6 @@ class RespPackageEOF: public RespPackage
         long    getStatusFlag() const {return statusFlag;}
 };
 
-    }
 }
 
 #endif

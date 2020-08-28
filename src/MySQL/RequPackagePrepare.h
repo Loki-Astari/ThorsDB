@@ -7,10 +7,8 @@
 #include <ostream>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackagePrepare: public RequPackage
 {
@@ -37,7 +35,6 @@ inline void testPrintRequPackagePrepare(std::ostream& str)
     str << RequPackagePrepare("Test");
 }
 
-    }
 }
 
 #endif

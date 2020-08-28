@@ -7,16 +7,16 @@
 #include "ConectReader.h"
 #include "ConectWriter.h"
 
-using ThorsAnvil::SQL::Options;
+using ThorsAnvil::DB::SQL::Options;
 
 TEST(AuthenticationTest, MySQLOldPassword)
 {
     auto test = []()
     {
         MockStream                          stream(nullptr,0);
-        ThorsAnvil::MySQL::ConectReader     reader(stream);
-        ThorsAnvil::MySQL::ConectWriter     writer(stream);
-        ThorsAnvil::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
+        ThorsAnvil::DB::MySQL::ConectReader     reader(stream);
+        ThorsAnvil::DB::MySQL::ConectWriter     writer(stream);
+        ThorsAnvil::DB::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
                                                         THOR_TESTING_MYSQL_PASS,
                                                         THOR_TESTING_MYSQL_DB,
                                                         Options{},
@@ -35,9 +35,9 @@ TEST(AuthenticationTest, MySQLClearPassword)
     auto test = []()
     {
         MockStream                          stream(nullptr,0);
-        ThorsAnvil::MySQL::ConectReader     reader(stream);
-        ThorsAnvil::MySQL::ConectWriter     writer(stream);
-        ThorsAnvil::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
+        ThorsAnvil::DB::MySQL::ConectReader     reader(stream);
+        ThorsAnvil::DB::MySQL::ConectWriter     writer(stream);
+        ThorsAnvil::DB::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
                                                         THOR_TESTING_MYSQL_PASS,
                                                         THOR_TESTING_MYSQL_DB,
                                                         Options{},
@@ -56,9 +56,9 @@ TEST(AuthenticationTest, MySQLWindowsClient)
     auto test = []()
     {
         MockStream                          stream(nullptr,0);
-        ThorsAnvil::MySQL::ConectReader     reader(stream);
-        ThorsAnvil::MySQL::ConectWriter     writer(stream);
-        ThorsAnvil::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
+        ThorsAnvil::DB::MySQL::ConectReader     reader(stream);
+        ThorsAnvil::DB::MySQL::ConectWriter     writer(stream);
+        ThorsAnvil::DB::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
                                                         THOR_TESTING_MYSQL_PASS,
                                                         THOR_TESTING_MYSQL_DB,
                                                         Options{},
@@ -77,9 +77,9 @@ TEST(AuthenticationTest, MySQLSH256)
     auto test = []()
     {
         MockStream                          stream(nullptr,0);
-        ThorsAnvil::MySQL::ConectReader     reader(stream);
-        ThorsAnvil::MySQL::ConectWriter     writer(stream);
-        ThorsAnvil::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
+        ThorsAnvil::DB::MySQL::ConectReader     reader(stream);
+        ThorsAnvil::DB::MySQL::ConectWriter     writer(stream);
+        ThorsAnvil::DB::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
                                                         THOR_TESTING_MYSQL_PASS,
                                                         THOR_TESTING_MYSQL_DB,
                                                         Options{},
@@ -96,16 +96,16 @@ TEST(AuthenticationTest, MySQLSH256)
 TEST(AuthenticationTest, MySQLCachingSHA2)
 {
     MockStream                          stream(nullptr,0);
-    ThorsAnvil::MySQL::ConectReader     reader(stream);
-    ThorsAnvil::MySQL::ConectWriter     writer(stream);
-    ThorsAnvil::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
+    ThorsAnvil::DB::MySQL::ConectReader     reader(stream);
+    ThorsAnvil::DB::MySQL::ConectWriter     writer(stream);
+    ThorsAnvil::DB::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
                                                     THOR_TESTING_MYSQL_PASS,
                                                     THOR_TESTING_MYSQL_DB,
                                                     Options{},
                                                     reader,
                                                     writer
                                                   );
-    std::unique_ptr<ThorsAnvil::MySQL::Authetication> auth = getAuthenticatonMethod(connection, "caching_sha2_password", Options{});
+    std::unique_ptr<ThorsAnvil::DB::MySQL::Authetication> auth = getAuthenticatonMethod(connection, "caching_sha2_password", Options{});
     std::string result = auth->getAuthenticationString("test", "testPassword", "test", "Plop");
     char data[] = "\x4B\x8A\x7D\x52\xAB\xC4\xE4\x64\xCD\x88\xD1\x3D\xAD\x60\xF3\x7D\x90\x1D\x68\xDC\xE7\xD5\x9A\x00\xA3\xAF\xC3\xFE\x5B\x4D\xF0\x1C";
     EXPECT_EQ(std::string(data, 32), result);
@@ -113,18 +113,18 @@ TEST(AuthenticationTest, MySQLCachingSHA2)
 TEST(AuthenticationTest, MySQLNativePassword)
 {
     MockStream                          stream(nullptr,0);
-    ThorsAnvil::MySQL::ConectReader     reader(stream);
-    ThorsAnvil::MySQL::ConectWriter     writer(stream);
-    ThorsAnvil::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
+    ThorsAnvil::DB::MySQL::ConectReader     reader(stream);
+    ThorsAnvil::DB::MySQL::ConectWriter     writer(stream);
+    ThorsAnvil::DB::MySQL::Connection       connection( THOR_TESTING_MYSQL_USER,
                                                      THOR_TESTING_MYSQL_PASS,
                                                      THOR_TESTING_MYSQL_DB,
                                                      Options{},
                                                      reader,
                                                      writer
                                                   );
-    std::unique_ptr<ThorsAnvil::MySQL::Authetication> auth = getAuthenticatonMethod(connection, "mysql_native_password", Options{});
+    std::unique_ptr<ThorsAnvil::DB::MySQL::Authetication> auth = getAuthenticatonMethod(connection, "mysql_native_password", Options{});
     std::string result = auth->getAuthenticationString("test", "testPassword", "test", "Plop");
-    //std::string result = ThorsAnvil::MySQL::authentication("mysql_native_password", "Plop", "test", "testPassword", Options{}, "test");
+    //std::string result = ThorsAnvil::DB::MySQL::authentication("mysql_native_password", "Plop", "test", "testPassword", Options{}, "test");
     EXPECT_EQ("\x5b\xd1\x0c\x5a\x53\x54\x6c\xff\x41\xe2\xb8\xf0\x69\x05\xd5\x74\x0b\x16\xa5\x8f", result);
 }
 

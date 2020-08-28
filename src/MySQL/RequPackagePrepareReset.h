@@ -5,10 +5,8 @@
 #include "RequPackage.h"
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackagePrepareReset: public RequPackage
 {
@@ -35,7 +33,6 @@ inline void testPrintRequPackagePrepareReset(std::ostream& str)
     str << RequPackagePrepareReset(1);
 }
 
-    }
 }
 
 #endif

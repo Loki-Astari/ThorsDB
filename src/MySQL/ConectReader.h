@@ -19,14 +19,13 @@
 #error  Unknow Endianess
 #endif
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
-class StreamInterface;
-    }
-    namespace MySQL
-    {
+    class StreamInterface;
+}
+
+namespace ThorsAnvil::DB::MySQL
+{
 
 class RespPackage;
 class RespPackageEOF;
@@ -87,7 +86,6 @@ class ConectReader
 };
 
 
-    }
 }
 
 #ifndef COVERAGE_MySQL

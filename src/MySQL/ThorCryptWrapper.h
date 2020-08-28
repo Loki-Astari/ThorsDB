@@ -14,10 +14,8 @@
 
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 typedef unsigned char           ThorSHA1DigestStore[SHA_DIGEST_LENGTH];
 typedef unsigned char           ThorSHA256DigestStore[SHA256_DIGEST_LENGTH];
@@ -39,7 +37,6 @@ inline void thorSHA256(ThorSHA256DigestStore& dest, std::string const& src)
     THOR_SHA256(reinterpret_cast<const unsigned char*>(&src[0]), src.length(), dest);
 }
 
-    }
 }
 
 #endif

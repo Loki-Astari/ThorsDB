@@ -5,12 +5,10 @@
 #include <string>
 #include <memory>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
-using ThorsAnvil::SQL::Options;
+using ThorsAnvil::DB::SQL::Options;
 class RespPackage;
 class RequPackage;
 class ConectWriter;
@@ -48,7 +46,6 @@ class Connection
                            );
 };
 
-    }
 }
 
 #endif

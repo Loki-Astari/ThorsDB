@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
-[![codecov.io](http://codecov.io/github/Loki-Astari/ThorsSQL/coverage.svg?branch=master)](http://codecov.io/github/Loki-Astari/ThorsSQL?branch=master)  
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsDB.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsDB)
+[![codecov.io](http://codecov.io/github/Loki-Astari/ThorsDB/coverage.svg?branch=master)](http://codecov.io/github/Loki-Astari/ThorsDB?branch=master)  
 [![Code Review](http://www.zomis.net/codereview/shield/?qid=94901)](http://codereview.stackexchange.com/q/94901/507)
 [![Code Review](http://www.zomis.net/codereview/shield/?qid=94899)](http://codereview.stackexchange.com/q/94899/507)
 

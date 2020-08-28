@@ -6,10 +6,8 @@
 #include <openssl/err.h>
 
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
-    {
 
 class SSLUtil
 {
@@ -69,7 +67,6 @@ class SSLObj
 };
 
 
-    }
 }
 
 #endif

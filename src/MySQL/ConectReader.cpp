@@ -4,7 +4,7 @@
 #include "RespPackageEOF.h"
 #include "RespPackageERR.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 void ConectReader::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
@@ -51,7 +51,7 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
         // Error default action: => read and throw
         RespPackageERR  errorPackage(packageType, *this);
         throw std::runtime_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", errorPackage.message()
+                errorMsg("ThorsAnvil::DB::MySQL::ConectReader::recvMessage: ", "Error Message from Server: ", errorPackage.message()
               ));
     }
     else
@@ -62,7 +62,7 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
             return std::unique_ptr<RespPackage>(find->second(packageType, *this));
         }
         throw std::domain_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::recvMessage: ", "Unknown Result Type: ", packageType, ": >", restOfPacketString(), "<"));
+                errorMsg("ThorsAnvil::DB::MySQL::ConectReader::recvMessage: ", "Unknown Result Type: ", packageType, ": >", restOfPacketString(), "<"));
     }
 }
 
@@ -82,7 +82,7 @@ unsigned long long ConectReader::lengthEncodedIntegerUsingSize(unsigned char typ
         case 0xFB:
         case 0xFF:
             throw std::domain_error(
-                    errorMsg("ThorsAnvil::MySQL::ConectReader::lengthEncodedInteger: ", "Invalid length encoding: ", type));
+                    errorMsg("ThorsAnvil::DB::MySQL::ConectReader::lengthEncodedInteger: ", "Invalid length encoding: ", type));
         case 0xFC:  result  = fixedLengthInteger<2>(); break;
         case 0xFD:  result  = fixedLengthInteger<3>(); break;
         case 0xFE:  result  = fixedLengthInteger<8>(); break;
@@ -160,7 +160,7 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
     if (size != 11 && size != 7 && size != 4 && size != 0)
     {
         throw std::domain_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::readDate: ", "Invalid Date Size", size, "\nExpecting: 11/7/4/0"));
+                errorMsg("ThorsAnvil::DB::MySQL::ConectReader::readDate: ", "Invalid Date Size", size, "\nExpecting: 11/7/4/0"));
     }
     if (size == 11 || size == 7 || size == 4)
     {
@@ -202,7 +202,7 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     if (size != 12 && size != 8 && size != 0)
     {
         throw std::domain_error(
-                errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ", "Invalid Time Size: ", size, "\nExpecting 12/8/0"));
+                errorMsg("ThorsAnvil::DB::MySQL::ConectReader::readTime: ", "Invalid Time Size: ", size, "\nExpecting 12/8/0"));
     }
     timeBag.type    = MySQLTimeBag::RelativePositive;
     if (size == 12 || size == 8)
@@ -210,7 +210,7 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
         long    negativeTest    = fixedLengthInteger<1>();
         if (negativeTest < 0 || negativeTest > 1)
         {
-            throw std::domain_error( errorMsg("ThorsAnvil::MySQL::ConectReader::readTime: ", "Invalid Negative Test"));
+            throw std::domain_error( errorMsg("ThorsAnvil::DB::MySQL::ConectReader::readTime: ", "Invalid Negative Test"));
         }
         if (negativeTest == 1)
         {
@@ -245,10 +245,10 @@ void ConectReader::reset()
  */
 #include "ConectReader.tpp"
 
-template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<1>();
-template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<2>();
-template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<3>();
-template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<4>();
-template unsigned long long ThorsAnvil::MySQL::ConectReader::fixedLengthInteger<8>();
+template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<1>();
+template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<2>();
+template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<3>();
+template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<4>();
+template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<8>();
 
 #endif

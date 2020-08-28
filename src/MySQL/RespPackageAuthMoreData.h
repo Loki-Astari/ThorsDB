@@ -7,10 +7,8 @@
 #include <ostream>
 #include <iomanip>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -35,7 +33,6 @@ inline std::ostream& RespPackageAuthMoreData::print(std::ostream& s) const
     return s << "RespPackageAuthMoreData: pluginMoreData(" << pluginMoreDataDecoded.str() << ")";
 }
 
-    }
 }
 
 #endif

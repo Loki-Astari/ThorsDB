@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 
-using namespace ThorsAnvil::Postgres;
+using namespace ThorsAnvil::DB::Postgres;
 
 PackageBuffer::PackageBuffer(SQL::StreamInterface& stream)
     : stream(stream)
@@ -20,7 +20,7 @@ char PackageBuffer::getMessage()
 {
     if (!isEmpty())
     {
-        throw std::domain_error(bugReport("ThorsAnvil::Postgres::PackageBuffer::getMessage: Called while processing another message"));
+        throw std::domain_error(bugReport("ThorsAnvil::DB::Postgres::PackageBuffer::getMessage: Called while processing another message"));
     }
 
     return openMessage();
@@ -30,7 +30,7 @@ void PackageBuffer::read(char* buffer, std::size_t len)
 {
     if (messageRead + len > messageSize)
     {
-        throw std::domain_error(bugReport("ThorsAnvil::Postgres::PackageBuffer::read: read passed the end of a message"));
+        throw std::domain_error(bugReport("ThorsAnvil::DB::Postgres::PackageBuffer::read: read passed the end of a message"));
     }
     stream.read(buffer, len);
     messageRead += len;

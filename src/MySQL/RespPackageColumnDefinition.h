@@ -13,10 +13,8 @@
 #include <stdexcept>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -91,7 +89,7 @@ struct RespPackageColumnDefinition
             if (lengthOfFixedField != 0x0c)
             {
                 throw std::domain_error(
-                        errorMsg("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
+                        errorMsg("ThorsAnvil::DB::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
                                  "Expected 0x0c: length of fixed-length fields [0c]"
                       ));
             }
@@ -105,7 +103,7 @@ struct RespPackageColumnDefinition
             if (filler != 0)
             {
                 throw std::domain_error(
-                        errorMsg("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
+                        errorMsg("ThorsAnvil::DB::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
                                  "Expected 0x00 for filler"
                       ));
             }
@@ -118,7 +116,7 @@ struct RespPackageColumnDefinition
             if (len != 0x03)
             {
                 throw std::domain_error(
-                        errorMsg("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
+                        errorMsg("ThorsAnvil::DB::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
                                  "Expected 0x03: length of the column_length field [03]"
                       ));
             }
@@ -127,7 +125,7 @@ struct RespPackageColumnDefinition
             if (len != 0x01)
             {
                 throw std::domain_error(
-                        errorMsg("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
+                        errorMsg("ThorsAnvil::DB::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
                                  "Expected 0x01: length of type field [01]"
                       ));
             }
@@ -139,7 +137,7 @@ struct RespPackageColumnDefinition
                 if (len != 0x03)
                 {
                     throw std::domain_error(
-                            errorMsg("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
+                            errorMsg("ThorsAnvil::DB::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
                                      "Expected 0x03: length of flags+decimals fields [03]"
                           ));
                 }
@@ -152,7 +150,7 @@ struct RespPackageColumnDefinition
                 if (len != 0x02)
                 {
                     throw std::domain_error(
-                            errorMsg("ThorsAnvil::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
+                            errorMsg("ThorsAnvil::DB::MySQL::RespPackageColumnDefinition::RespPackageColumnDefinition: ",
                                      "Expected 0x02: length of flags+decimals fields [02]"
                           ));
                 }
@@ -171,7 +169,6 @@ struct RespPackageColumnDefinition
     }
 };
 
-    }
 }
 
 #endif

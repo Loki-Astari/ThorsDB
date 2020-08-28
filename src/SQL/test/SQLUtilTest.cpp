@@ -8,12 +8,12 @@
 
 TEST(SQLUtilTest, ErrorMessage)
 {
-    std::string message = ThorsAnvil::errorMsg("This", "is", "a", "list");
+    std::string message = ThorsAnvil::DB::errorMsg("This", "is", "a", "list");
     ASSERT_EQ(message, "Thisisalist");
 }
 TEST(SQLUtilTest, ErrorMessageWithNull)
 {
     char* data = nullptr;
-    std::string message = ThorsAnvil::errorMsg("This", "is", data, "a", "list");
+    std::string message = ThorsAnvil::DB::errorMsg("This", "is", data, "a", "list");
     ASSERT_EQ(message, "Thisisalist");
 }

@@ -1,7 +1,5 @@
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 template<typename To>
 std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item)
@@ -20,7 +18,7 @@ std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item)
     }
     catch (std::bad_cast const&)
     {
-        throw std::domain_error("ThorsAnvil::SQL::downcastUniquePtr: Casting reponse to expected type failed");
+        throw std::domain_error("ThorsAnvil::DB::SQL::downcastUniquePtr: Casting reponse to expected type failed");
     }
     // Now that ownership has been transferred.
     // Release the original pointer.
@@ -29,5 +27,4 @@ std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item)
     return result;
 }
 
-    }
 }

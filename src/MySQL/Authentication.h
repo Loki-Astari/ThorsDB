@@ -7,12 +7,10 @@
 #include <string>
 #include <utility>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
-using ThorsAnvil::SQL::Options;
+using ThorsAnvil::DB::SQL::Options;
 
 class Connection;
 class RespPackage;
@@ -43,7 +41,6 @@ class Authetication
 
 std::unique_ptr<Authetication> getAuthenticatonMethod(Connection& connection, std::string const& authPluginName, Options const& options = Options());
 
-    }
 }
 
 #endif

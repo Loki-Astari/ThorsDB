@@ -1,10 +1,8 @@
 #ifndef THORS_ANVIL_MYSQL_MYSQL_TIME_BAG_H
 #define THORS_ANVIL_MYSQL_MYSQL_TIME_BAG_H
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 struct MySQLTimeBag
 {
@@ -23,7 +21,6 @@ struct MySQLTimeBag
     {}
 };
 
-    }
 }
 
 #endif

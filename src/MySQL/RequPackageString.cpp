@@ -1,7 +1,7 @@
 #include "ThorMySQL.h"
 #include "RequPackageString.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 RequPackageString::RequPackageString(std::string const& message)
     : RequPackage("RequPackageMessage", "String Message")

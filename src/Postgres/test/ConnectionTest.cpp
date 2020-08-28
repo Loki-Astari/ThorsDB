@@ -6,11 +6,11 @@
 #include "PostgresStream.h"
 #include "gtest/gtest.h"
 
-using ThorsAnvil::Postgres::Connection;
-using ThorsAnvil::Postgres::ConectReader;
-using ThorsAnvil::Postgres::ConectWriter;
-using ThorsAnvil::Postgres::PackageBuffer;
-using ThorsAnvil::Postgres::PostgresStream;
+using ThorsAnvil::DB::Postgres::Connection;
+using ThorsAnvil::DB::Postgres::ConectReader;
+using ThorsAnvil::DB::Postgres::ConectWriter;
+using ThorsAnvil::DB::Postgres::PackageBuffer;
+using ThorsAnvil::DB::Postgres::PostgresStream;
 
 TEST(ConnectionTest, ConnectToDB)
 {

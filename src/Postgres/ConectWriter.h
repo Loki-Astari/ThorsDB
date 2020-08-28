@@ -6,10 +6,8 @@
 #include <vector>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class ConectWriter
 {
@@ -46,7 +44,6 @@ class ConectWriter
         void writeIntVector(std::vector<T> const& data);
 };
 
-    }
 }
 
 #ifndef COVERAGE_Postgres

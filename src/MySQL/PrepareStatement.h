@@ -11,10 +11,8 @@
 #include <memory>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RespPackageOK;
 class RespPackagePrepare;
@@ -127,7 +125,6 @@ class PrepareStatement: public Statement
         virtual void   retrieve(SQL::UnixTimeStamp& value)  override    {nextLine->retrieve(value);}
 };
 
-    }
 }
 
 #endif

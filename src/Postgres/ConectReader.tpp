@@ -1,10 +1,8 @@
 #include "ThorSQL/Endian.h"
 #include <type_traits>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 template<typename T>
 T ConectReader::readInt()
@@ -28,5 +26,4 @@ std::vector<T> ConectReader::readIntVector(int len)
     return result;
 }
 
-    }
 }

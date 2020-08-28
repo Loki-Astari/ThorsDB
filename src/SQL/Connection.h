@@ -2,7 +2,7 @@
 #define THORS_ANVIL_SQL_CONNECTION_H
 
 /*
- * ThorsAnvil::SQL::Connection      Represents a connection to a DB.
+ * ThorsAnvil::DB::SQL::Connection  Represents a connection to a DB.
  *                                  It is used to initialize `Statement Objects`.
  *
  *                                  See: doc/usage.md for usage details
@@ -22,46 +22,44 @@
 #include <iostream>
 #include <functional>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::SQL
 {
-    namespace SQL
+    namespace Lib
     {
-        namespace Lib
+        class StatementProxy;
+
+        class ConnectionProxy
         {
-            class StatementProxy;
+            public:
+                // constructor is called with host/port/username/password/database/options
+                // See ConnectionCreator below.
+                virtual ~ConnectionProxy()  = 0;
+                // A function for creating DB specific instances of the StatementProxy objects.
+                virtual std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement) = 0;
 
-            class ConnectionProxy
-            {
-                public:
-                    // constructor is called with host/port/username/password/database/options
-                    // See ConnectionCreator below.
-                    virtual ~ConnectionProxy()  = 0;
-                    // A function for creating DB specific instances of the StatementProxy objects.
-                    virtual std::unique_ptr<Lib::StatementProxy> createStatementProxy(std::string const& statement) = 0;
+                virtual int getSocketId() const  = 0;
+                virtual void setYield(std::function<void()>&&, std::function<void()>&&) = 0;
+        };
+        class YieldSetter
+        {
+            ConnectionProxy& connection;
+            public:
+                YieldSetter(ConnectionProxy& connection, std::function<void()>&& ry, std::function<void()>&& wy);
+                ~YieldSetter();
+        };
+        template<typename T>
+        class ConnectionCreatorRegister
+        {
+            public:
+                ConnectionCreatorRegister(std::string const& schema);
+        };
 
-                    virtual int getSocketId() const  = 0;
-                    virtual void setYield(std::function<void()>&&, std::function<void()>&&) = 0;
-            };
-            class YieldSetter
-            {
-                ConnectionProxy& connection;
-                public:
-                    YieldSetter(ConnectionProxy& connection, std::function<void()>&& ry, std::function<void()>&& wy);
-                    ~YieldSetter();
-            };
-            template<typename T>
-            class ConnectionCreatorRegister
-            {
-                public:
-                    ConnectionCreatorRegister(std::string const& schema);
-            };
-
-            using ConnectionCreator= std::function<std::unique_ptr<Lib::ConnectionProxy>(std::string const& host, int port,
-                                                                                         std::string const& username,
-                                                                                         std::string const& password,
-                                                                                         std::string const& database,
-                                                                                         Options const& options)>;
-        }
+        using ConnectionCreator= std::function<std::unique_ptr<Lib::ConnectionProxy>(std::string const& host, int port,
+                                                                                     std::string const& username,
+                                                                                     std::string const& password,
+                                                                                     std::string const& database,
+                                                                                     Options const& options)>;
+    }
 
 class Statement;
 class Connection
@@ -100,7 +98,6 @@ Lib::ConnectionCreatorRegister<T>::ConnectionCreatorRegister(std::string const& 
             });
 }
 
-    }
 }
 
 #endif

@@ -5,10 +5,8 @@
 #include <vector>
 #include <string>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class ConectReader
 {
@@ -45,7 +43,6 @@ class ConectReader
 };
 
 
-    }
 }
 #ifndef COVERAGE_Postgres
 #include "ConectReader.tpp"

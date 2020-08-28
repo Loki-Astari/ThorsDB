@@ -8,9 +8,9 @@
 
 TEST(StatementTest, SelectWithParamOK)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
@@ -22,9 +22,9 @@ TEST(StatementTest, SelectWithParamOK)
 
 TEST(StatementTest, SelectNoParamOK)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
@@ -36,9 +36,9 @@ TEST(StatementTest, SelectNoParamOK)
 
 TEST(StatementTest, SelectWithParamFail)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
@@ -51,9 +51,9 @@ TEST(StatementTest, SelectWithParamFail)
 
 TEST(StatementTest, SelectNoParamFail)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
@@ -66,9 +66,9 @@ TEST(StatementTest, SelectNoParamFail)
 
 TEST(StatementTest, InsertParamFail)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
@@ -81,9 +81,9 @@ TEST(StatementTest, InsertParamFail)
 
 TEST(StatementTest, InsertNoParamFail)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
@@ -96,9 +96,9 @@ TEST(StatementTest, InsertNoParamFail)
 
 TEST(StatementTest, InsertParamOK)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
@@ -110,9 +110,9 @@ TEST(StatementTest, InsertParamOK)
 
 TEST(StatementTest, InsertNoParamOK)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
@@ -124,9 +124,9 @@ TEST(StatementTest, InsertNoParamOK)
 
 TEST(StatementTest, SelectGetRowsAffected)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
@@ -141,9 +141,9 @@ TEST(StatementTest, SelectGetRowsAffected)
 
 TEST(StatementTest, SelectGetLastInsertID)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "SELECT");
@@ -159,9 +159,9 @@ TEST(StatementTest, SelectGetLastInsertID)
 
 TEST(StatementTest, InsertGetRowsAffected)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
@@ -174,9 +174,9 @@ TEST(StatementTest, InsertGetRowsAffected)
 
 TEST(StatementTest, InsertGetLastInsertID)
 {
-    using ThorsAnvil::SQL::Connection;
-    using ThorsAnvil::SQL::Statement;
-    using ThorsAnvil::SQL::Bind;
+    using ThorsAnvil::DB::SQL::Connection;
+    using ThorsAnvil::DB::SQL::Statement;
+    using ThorsAnvil::DB::SQL::Bind;
 
     Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
     Statement       statement(connection, "INSERT");
@@ -190,9 +190,9 @@ TEST(StatementTest, ProxyAbort)
 {
     auto test = []()
     {
-        using ThorsAnvil::SQL::Connection;
-        using ThorsAnvil::SQL::Statement;
-        using ThorsAnvil::SQL::Bind;
+        using ThorsAnvil::DB::SQL::Connection;
+        using ThorsAnvil::DB::SQL::Statement;
+        using ThorsAnvil::DB::SQL::Bind;
 
         Connection      connection("mock://" THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB);
         Statement       statement(connection, "SELECT 3");
@@ -208,30 +208,30 @@ TEST(StatementTest, ProxyAbort)
 
 TEST(StatementTest, UnixTimeStampDefaultInit)
 {
-    ThorsAnvil::SQL::UnixTimeStamp      test;
+    ThorsAnvil::DB::SQL::UnixTimeStamp      test;
     EXPECT_EQ(0, test.time);
 }
 TEST(StatementTest, UnixTimeStampInit)
 {
-    ThorsAnvil::SQL::UnixTimeStamp      test(15);
+    ThorsAnvil::DB::SQL::UnixTimeStamp      test(15);
     EXPECT_EQ(15, test.time);
 }
 TEST(StatementTest, UnixTimeStampEquiv)
 {
-    ThorsAnvil::SQL::UnixTimeStamp      lhs(15);
-    ThorsAnvil::SQL::UnixTimeStamp      rhs(15);
+    ThorsAnvil::DB::SQL::UnixTimeStamp      lhs(15);
+    ThorsAnvil::DB::SQL::UnixTimeStamp      rhs(15);
 
     EXPECT_TRUE(lhs == rhs);
 }
 TEST(StatementTest, UnixTimeStampNonEquiv)
 {
-    ThorsAnvil::SQL::UnixTimeStamp      lhs;
-    ThorsAnvil::SQL::UnixTimeStamp      rhs(15);
+    ThorsAnvil::DB::SQL::UnixTimeStamp      lhs;
+    ThorsAnvil::DB::SQL::UnixTimeStamp      rhs(15);
 
     EXPECT_TRUE(lhs != rhs);
 }
 TEST(StatementTest, ValidationTmpErrorBuild)
 {
-    ThorsAnvil::SQL::Lib::ValidationTmpError    error("Test");
+    ThorsAnvil::DB::SQL::Lib::ValidationTmpError    error("Test");
 }
 

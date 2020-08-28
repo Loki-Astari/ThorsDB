@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 RequPackageAuthSwitchResponse::RequPackageAuthSwitchResponse(std::string const& /*username*/,
                                                            std::string const& /*password*/,

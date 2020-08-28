@@ -10,15 +10,13 @@
 #include <string>
 #include <memory>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
-class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
+class DefaultMySQLConnection: public ThorsAnvil::DB::SQL::Lib::ConnectionProxy
 {
     private:
-        SQL::StreamSimple                   stream;
+        DB::SQL::StreamSimple               stream;
         PackageBuffer                       buffer;
         ConectReader                        reader;
         ConectWriter                        writer;
@@ -28,14 +26,13 @@ class DefaultMySQLConnection: public ThorsAnvil::SQL::Lib::ConnectionProxy
                                std::string const& username,
                                std::string const& password,
                                std::string const& database,
-                               ThorsAnvil::SQL::Options const& options);
-        virtual std::unique_ptr<ThorsAnvil::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
+                               ThorsAnvil::DB::SQL::Options const& options);
+        virtual std::unique_ptr<ThorsAnvil::DB::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
 
         virtual int getSocketId() const override;
         virtual void setYield(std::function<void()>&&, std::function<void()>&&) override;
 };
 
-    }
 }
 
 #endif

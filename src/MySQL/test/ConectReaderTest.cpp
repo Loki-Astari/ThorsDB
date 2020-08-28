@@ -8,7 +8,7 @@
 #include "ThorMySQL.h"
 
 
-using ThorsAnvil::MySQL::ConectReader;
+using ThorsAnvil::DB::MySQL::ConectReader;
 
 TEST(ConectReaderTest, isEmpty)
 {
@@ -199,7 +199,7 @@ TEST(ConectReaderTest, readDateIntoTimeBag11)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    ThorsAnvil::MySQL::MySQLTimeBag tb = reader.readDateIntoTimeBag();
+    ThorsAnvil::DB::MySQL::MySQLTimeBag tb = reader.readDateIntoTimeBag();
 
     ASSERT_EQ(2015, tb.year);
     ASSERT_EQ(4,    tb.month);
@@ -222,7 +222,7 @@ TEST(ConectReaderTest, readDateIntoTimeBag7)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    ThorsAnvil::MySQL::MySQLTimeBag tb = reader.readDateIntoTimeBag();
+    ThorsAnvil::DB::MySQL::MySQLTimeBag tb = reader.readDateIntoTimeBag();
 
     ASSERT_EQ(2015, tb.year);
     ASSERT_EQ(4,    tb.month);
@@ -242,7 +242,7 @@ TEST(ConectReaderTest, readDateIntoTimeBag4)
     MockStream          buffer(data, sizeof(data) - 1);
     ConectReader        reader(buffer);
 
-    ThorsAnvil::MySQL::MySQLTimeBag tb = reader.readDateIntoTimeBag();
+    ThorsAnvil::DB::MySQL::MySQLTimeBag tb = reader.readDateIntoTimeBag();
 
     ASSERT_EQ(2015, tb.year);
     ASSERT_EQ(4,    tb.month);
@@ -398,8 +398,8 @@ TEST(ConectReaderTest, ThrowOnErrorMessage)
 
     try
     {
-        std::unique_ptr<ThorsAnvil::MySQL::RespPackage> message = reader.recvMessage();
-        ThorsAnvil::MySQL::downcastUniquePtr<ThorsAnvil::MySQL::RespPackageOK>(std::move(message));
+        std::unique_ptr<ThorsAnvil::DB::MySQL::RespPackage> message = reader.recvMessage();
+        ThorsAnvil::DB::MySQL::downcastUniquePtr<ThorsAnvil::DB::MySQL::RespPackageOK>(std::move(message));
         FAIL();
     }
     catch(std::runtime_error const& e) {

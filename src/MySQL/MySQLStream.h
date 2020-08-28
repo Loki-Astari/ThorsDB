@@ -3,10 +3,8 @@
 
 #include "ThorSQL/StreamSimple.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class MySQLStream: public SQL::StreamSimple
 {
@@ -19,7 +17,6 @@ class MySQLStream: public SQL::StreamSimple
         {}
 };
 
-    }
 }
 
 #endif

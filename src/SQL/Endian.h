@@ -5,10 +5,8 @@
 
 #ifndef htonll
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Util
 {
-    namespace Util
-    {
 
 enum class EndianTypes
 {
@@ -67,23 +65,20 @@ struct Endian<EndianTypes::Big>
     }
 };
 
-    }
 }
 
 inline std::uint64_t ntohll(std::uint64_t value)
 {
-    return ThorsAnvil::Util::Endian<ThorsAnvil::Util::getEndianType()>::ntohll_Impl(value);
+    return ThorsAnvil::DB::Util::Endian<ThorsAnvil::DB::Util::getEndianType()>::ntohll_Impl(value);
 }
 inline std::uint64_t htonll(std::uint64_t value)
 {
-    return ThorsAnvil::Util::Endian<ThorsAnvil::Util::getEndianType()>::htonll_Impl(value);
+    return ThorsAnvil::DB::Util::Endian<ThorsAnvil::DB::Util::getEndianType()>::htonll_Impl(value);
 }
 #endif
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Util
 {
-    namespace Util
-    {
 
 inline unsigned char convertToHost(unsigned char value)
 {
@@ -118,7 +113,6 @@ inline std::uint64_t convertToNet(std::uint64_t value)
     return htonll(value);
 }
 
-    }
 }
 
 #endif

@@ -6,10 +6,8 @@
 #include <ostream>
 #include <vector>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RequPackagePrepareExecute: public RequPackage
 {
@@ -49,7 +47,6 @@ inline void testPrintRequPackagePrepareExecute(std::ostream& str)
     str << RequPackagePrepareExecute(1, bindBuffer);
 }
 
-    }
 }
 
 #endif

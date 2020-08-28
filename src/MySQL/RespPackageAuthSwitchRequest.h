@@ -8,10 +8,8 @@
 #include <iomanip>
 #include <cassert>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -53,7 +51,6 @@ class RespPackageAuthSwitchRequest: public RespPackage
         std::string const& getPluginData() const {return pluginData;}
 };
 
-    }
 }
 
 #endif

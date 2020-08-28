@@ -9,7 +9,7 @@
 #include "RespPackagePrepareExecute.h"
 #include "PrepareStatement.h"
 
-using namespace ThorsAnvil::MySQL;
+using namespace ThorsAnvil::DB::MySQL;
 
 PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
     : SQL::StreamSimple(-1)

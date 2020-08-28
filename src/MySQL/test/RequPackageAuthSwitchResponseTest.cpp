@@ -8,11 +8,11 @@
 #include "RequPackageAuthSwitchResp.h"
 #include "test/MockStream.h"
 
-using ThorsAnvil::SQL::Options;
-using ThorsAnvil::MySQL::ConectReader;
-using ThorsAnvil::MySQL::ConectWriter;
-using ThorsAnvil::MySQL::RespPackageAuthSwitchRequest;
-using ThorsAnvil::MySQL::RequPackageAuthSwitchResponse;
+using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::MySQL::ConectReader;
+using ThorsAnvil::DB::MySQL::ConectWriter;
+using ThorsAnvil::DB::MySQL::RespPackageAuthSwitchRequest;
+using ThorsAnvil::DB::MySQL::RequPackageAuthSwitchResponse;
 
 extern std::map<std::string, std::string>      options;
 

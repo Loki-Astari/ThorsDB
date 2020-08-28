@@ -6,10 +6,8 @@
 #include <vector>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class Statement: public SQL::Lib::StatementProxy
 {
@@ -72,7 +70,6 @@ class Statement: public SQL::Lib::StatementProxy
     private:
 };
 
-    }
 }
 
 #endif

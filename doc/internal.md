@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsDB.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsDB)
 
 ![ThorStream](../img/stream.jpg)
 
@@ -38,8 +38,8 @@ The `Connection` internally has a factory that creates DB specific object that i
 You can registor creators with the Connection factory like this:
 
 ````C++
-    namespace ThorsSQL = ThorsAnvil::SQL;
-    ThorsSQL::Connection::registerConnectionType("<schema>",
+    namespace ThorsDB = ThorsAnvil::SQL;
+    ThorsDB::Connection::registerConnectionType("<schema>",
                                                  [](std::string const& host, int port,
                                                     std::string const& username,
                                                     std::string const& password,
@@ -60,7 +60,7 @@ This basic pattern is so common that we provide a wrapper object that does the a
 
 ````C++
     // The constructor of this object does the above.
-    ThorsSQL::Lib::ConnectionCreatorRegister<MyFunkyDB>     registerMyLibType;
+    ThorsDB::Lib::ConnectionCreatorRegister<MyFunkyDB>     registerMyLibType;
 ````
 
 ## ThorsAnvil::SQL::Connection

@@ -7,10 +7,8 @@
 #include <ostream>
 #include <iomanip>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -65,7 +63,6 @@ inline std::ostream& RespPackageHandShake::print(std::ostream& s) const
              << std::dec;
 }
 
-    }
 }
 
 #endif

@@ -55,7 +55,7 @@ documentation and/or software.
 #define S43 15
 #define S44 21
 
-using namespace ThorsAnvil::Util;
+using namespace ThorsAnvil::DB::Util;
 
 ///////////////////////////////////////////////
 
@@ -373,10 +373,8 @@ std::string MD5::hexdigest() const
 
 //////////////////////////////
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Util
 {
-    namespace Util
-    {
 
 std::string md5(std::string const& str)
 {
@@ -385,5 +383,4 @@ std::string md5(std::string const& str)
     return md5.hexdigest();
 }
 
-    }
 }

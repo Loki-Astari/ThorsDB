@@ -1,10 +1,8 @@
 #include "ThorSQL/Endian.h"
 #include <type_traits>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 template<typename T>
 void ConectWriter::writeInt(T value)
@@ -25,5 +23,4 @@ void ConectWriter::writeIntVector(std::vector<T>const& data)
     stream.write(reinterpret_cast<char*>(&output[0]), sizeof(T) * output.size());
 }
 
-    }
 }

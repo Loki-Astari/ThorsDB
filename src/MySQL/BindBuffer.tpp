@@ -1,7 +1,5 @@
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 template<typename Src>
 void BindBuffer::bindValue(Src const& value)
@@ -14,5 +12,4 @@ void BindBuffer::bindValue(Src const& value)
     ++currentCol;
 }
 
-    }
 }

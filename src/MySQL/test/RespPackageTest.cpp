@@ -9,11 +9,11 @@
 #include "RespPackageHandShake.h"
 #include "test/MockStream.h"
 
-using ThorsAnvil::SQL::Options;
-using ThorsAnvil::MySQL::ConectReader;
-using ThorsAnvil::MySQL::RespPackage;
-using ThorsAnvil::MySQL::RespPackageEOF;
-using ThorsAnvil::MySQL::RespPackageHandShake;
+using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::MySQL::ConectReader;
+using ThorsAnvil::DB::MySQL::RespPackage;
+using ThorsAnvil::DB::MySQL::RespPackageEOF;
+using ThorsAnvil::DB::MySQL::RespPackageHandShake;
 
 TEST(RespPackageTest, DowncastUniquePtrOK)
 {
@@ -29,7 +29,7 @@ TEST(RespPackageTest, DowncastUniquePtrOK)
     std::unique_ptr<RespPackage>        pack(eof);
     auto test = [&pack]()
     {
-        std::unique_ptr<RespPackageEOF>     eof = ThorsAnvil::MySQL::downcastUniquePtr<RespPackageEOF>(std::move(pack));
+        std::unique_ptr<RespPackageEOF>     eof = ThorsAnvil::DB::MySQL::downcastUniquePtr<RespPackageEOF>(std::move(pack));
     };
     EXPECT_NO_THROW(
         test()
@@ -49,7 +49,7 @@ TEST(RespPackageTest, DowncastUniquePtrFAIL)
     std::unique_ptr<RespPackage>        pack(eof);
     auto test = [&pack]()
     {
-        std::unique_ptr<RespPackageHandShake>     resp = ThorsAnvil::MySQL::downcastUniquePtr<RespPackageHandShake>(std::move(pack));
+        std::unique_ptr<RespPackageHandShake>     resp = ThorsAnvil::DB::MySQL::downcastUniquePtr<RespPackageHandShake>(std::move(pack));
     };
     EXPECT_THROW(
         test(),

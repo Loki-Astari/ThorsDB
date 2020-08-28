@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Loki-Astari/ThorsSQL.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsSQL)
+[![Build Status](https://travis-ci.org/Loki-Astari/ThorsDB.svg?branch=master)](https://travis-ci.org/Loki-Astari/ThorsDB)
 
 ![ThorStream](../img/stream.jpg)
 
@@ -18,13 +18,13 @@ This library is Beta.
 This is what I am trying to achieve.
 
 ````c++
-    using ThorsSQL = ThorsAnvil::SQL;
+    using ThorsDB = ThorsAnvil::SQL;
 
-    ThorsSQL::Connection    mysql("mysql:://host", "username", "password");
-    ThorsSQL::Statement     bigEarnerStat(mysql, "SELECT ID, Name, Salary FROM Employee WHERE Salary > ?");
+    ThorsDB::Connection    mysql("mysql:://host", "username", "password");
+    ThorsDB::Statement     bigEarnerStat(mysql, "SELECT ID, Name, Salary FROM Employee WHERE Salary > ?");
 
     // Bind variables.
-    bigEarnerStat.execute(ThorsSQL::Bind(1000000),          // parameter bound to ? in statement.
+    bigEarnerStat.execute(ThorsDB::Bind(1000000),          // parameter bound to ? in statement.
 
         // Function executed for each row returned.
         [](u64 id, std::string const& name, int salary){

@@ -3,10 +3,8 @@
 
 #include "Connection.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConnectionDefault: public Connection
 {
@@ -23,7 +21,6 @@ class ConnectionDefault: public Connection
         }
 };
 
-    }
 }
 
 #endif

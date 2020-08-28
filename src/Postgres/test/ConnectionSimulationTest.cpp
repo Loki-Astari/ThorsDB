@@ -9,11 +9,11 @@
 #include "test/MockStream.h"
 #include "gtest/gtest.h"
 
-using ThorsAnvil::Postgres::Connection;
-using ThorsAnvil::Postgres::ConectReader;
-using ThorsAnvil::Postgres::ConectWriter;
-using ThorsAnvil::Postgres::PackageBuffer;
-using ThorsAnvil::Postgres::PostgresStream;
+using ThorsAnvil::DB::Postgres::Connection;
+using ThorsAnvil::DB::Postgres::ConectReader;
+using ThorsAnvil::DB::Postgres::ConectWriter;
+using ThorsAnvil::DB::Postgres::PackageBuffer;
+using ThorsAnvil::DB::Postgres::PostgresStream;
 
 TEST(ConnectionSimulationTest, AuthenticationKerberosV5)
 {
@@ -239,7 +239,7 @@ TEST(ConnectionSimulationTest, InvalidMessageType)
 }
 TEST(ConnectionSimulationTest, PrintStartupMessage)
 {
-    ThorsAnvil::Postgres::StartupMessage message("TheUser", "ADBWithData", {{"Map", "Key"}});
+    ThorsAnvil::DB::Postgres::StartupMessage message("TheUser", "ADBWithData", {{"Map", "Key"}});
     std::stringstream output;
     output << message;
 

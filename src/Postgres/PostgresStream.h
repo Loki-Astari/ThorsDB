@@ -3,10 +3,8 @@
 
 #include "ThorSQL/StreamSimple.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::Postgres
 {
-    namespace Postgres
-    {
 
 class PostgresStream: public SQL::StreamSimple
 {
@@ -19,7 +17,6 @@ class PostgresStream: public SQL::StreamSimple
         {}
 };
 
-    }
 }
 
 #endif

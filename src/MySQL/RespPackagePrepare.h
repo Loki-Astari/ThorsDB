@@ -6,10 +6,8 @@
 #include <vector>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectReader;
 
@@ -36,7 +34,6 @@ inline void testPrintRespPackagePrepare(std::ostream& str, int firstByte, Conect
     str << RespPackagePrepare(firstByte, reader);
 }
 
-    }
 }
 
 #endif

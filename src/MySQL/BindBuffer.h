@@ -6,10 +6,8 @@
 #include "RespPackageColumnDefinition.h"
 #include <vector>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class BindBuffer
 {
@@ -44,7 +42,6 @@ class BindBuffer
         void bindValue(Src const& value);
 };
 
-    }
 }
 
 #ifndef COVERAGE_MySQL

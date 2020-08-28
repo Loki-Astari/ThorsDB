@@ -5,10 +5,8 @@
 #include <string>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class ConectWriter;
 
@@ -23,7 +21,6 @@ class RequPackageString: public RequPackage
         virtual  void build(ConectWriter& writer)       const override;
 };
 
-    }
 }
 
 #endif

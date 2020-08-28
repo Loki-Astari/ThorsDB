@@ -7,10 +7,8 @@
 #include <string>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 using Options=SQL::Options;
 class RespPackageHandShake;
@@ -31,7 +29,6 @@ class RequPackageAuthSwitchResponse: public RequPackage
         virtual  void build(ConectWriter& writer)       const override;
 };
 
-    }
 }
 
 #endif

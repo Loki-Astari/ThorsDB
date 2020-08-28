@@ -1,5 +1,5 @@
 
-AC_INIT([ThorsSQL], [0.1], [Loki.Astari+ThorsAnvil@gmail.com])
+AC_INIT([ThorsDB], [0.1], [Loki.Astari+ThorsAnvil@gmail.com])
 AC_PREREQ([2.65])
 
 # Set up the build system

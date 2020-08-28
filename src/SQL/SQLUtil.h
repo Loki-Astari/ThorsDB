@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB
 {
     namespace SQL
     {

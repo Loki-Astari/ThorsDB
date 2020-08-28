@@ -1,9 +1,7 @@
 #include "ThorSQL/StreamInterface.h"
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 template<int len>
 inline unsigned long long ConectReader::fixedLengthInteger()
@@ -15,5 +13,4 @@ inline unsigned long long ConectReader::fixedLengthInteger()
 }
 
 
-    }
 }

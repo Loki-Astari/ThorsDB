@@ -8,10 +8,8 @@
 #include <iomanip>
 #include <cassert>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 class RespPackageOK: public RespPackage
 {
@@ -74,7 +72,6 @@ class RespPackageOK: public RespPackage
         }
 };
 
-    }
 }
 
 #endif

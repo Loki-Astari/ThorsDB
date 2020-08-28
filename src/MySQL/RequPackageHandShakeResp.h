@@ -6,10 +6,8 @@
 #include <string>
 #include <ostream>
 
-namespace ThorsAnvil
+namespace ThorsAnvil::DB::MySQL
 {
-    namespace MySQL
-    {
 
 using Options=SQL::Options;
 class RespPackageHandShake;
@@ -38,7 +36,6 @@ class RequPackageHandShakeResponse: public RequPackage
         long getCapabilities()                          const {return capabilities;}
 };
 
-    }
 }
 
 #endif
