@@ -17847,7 +17847,15 @@ _ACEOF
 
 export cwd=`pwd`
 pushd third/ThorsIOUtil
+save="./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}"
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
+popd
+pushd third/ThorsCrypto
+addCrypoRoot=""
+if test "$with_cryptoroot" != ""; then :
+  addCrypoRoot="--with-cryptoroot=$with_cryptoroot"
+fi
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
 
 am__api_version='1.16'

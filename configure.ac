@@ -139,7 +139,14 @@ AC_DEFINE_UNQUOTED([MYSQL_MAJOR_VERSION], [${version}], ["Get mysql version into
 
 export cwd=`pwd`
 pushd third/ThorsIOUtil
+save="./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}"
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
+popd
+pushd third/ThorsCrypto
+addCrypoRoot=""
+AS_IF([test "$with_cryptoroot" != ""],
+      [addCrypoRoot="--with-cryptoroot=$with_cryptoroot"])
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
 
 AM_INIT_AUTOMAKE([foreign])
