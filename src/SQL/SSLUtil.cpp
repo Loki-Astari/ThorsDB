@@ -4,6 +4,7 @@
 
 using namespace ThorsAnvil::DB::SQL;
 using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::systemErrorMessage;
 
 SSLUtil::SSLUtil()
 {
@@ -96,7 +97,7 @@ std::string SSLUtil::sslError(SSL* ssl, int ret)
         // Some non-recoverable I/O error occurred.
         // The OpenSSL error queue may contain more information on the error.
         // For socket I/O on Unix systems, consult errno for details.
-        case SSL_ERROR_SYSCALL:         return std::string("SSL_ERROR_SYSCALL: ") + strerror(errno);
+        case SSL_ERROR_SYSCALL:         return std::string("SSL_ERROR_SYSCALL: ") + systemErrorMessage();
 
         // This value can also be returned for other errors, check the error queue for details.
         case SSL_ERROR_SSL:             return "SSL_ERROR_SSL";

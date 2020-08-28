@@ -14,12 +14,12 @@
 // C
 #include <errno.h>
 #include <string.h> // needed for memset() / bcopy()
-#include <stdio.h>  // needed for strerror()
 #include <fcntl.h>
 #include <iostream>
 
 using namespace ThorsAnvil::DB::SQL;
 using ThorsAnvil::Utility::buildErrorMessage;
+using ThorsAnvil::Utility::systemErrorMessage;
 
 StreamSimple::StreamSimple(int socket)
     : socket(socket)
@@ -42,7 +42,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     {
         throw std::runtime_error(
                 buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "StreamSimple",
-                         "::gethostbyname() Failed: ", strerror(errno)
+                         "::gethostbyname() Failed: ", systemErrorMessage()
               ));
     }
     bcopy((char *)serv->h_addr, (char *)&serv_addr.sin_addr.s_addr, serv->h_length);
@@ -51,7 +51,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     {
         throw std::runtime_error(
                 buildErrorMessage("ThrosAnvil::SQL::StreamSimple", "StreamSimple",
-                         "::socket() Failed: ", strerror(errno)
+                         "::socket() Failed: ", systemErrorMessage()
               ));
     }
     if (nonBlocking)
@@ -59,7 +59,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
         if (::fcntlMYSQLWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
         {
             throw std::domain_error(buildErrorMessage("ThorsAnvil::DB::MySQL::StreamSimple", "StreamSimple",
-                                                      ": fcntl: ", strerror(errno)
+                                                      ": fcntl: ", systemErrorMessage()
               ));
         }
     }
@@ -72,7 +72,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
             ::close(socket);
             throw std::runtime_error(
                     buildErrorMessage("ThorsAnvil::DB::MySQL::StreamSimple", "StreamSimple",
-                             "::connect() Failed: ", strerror(errno)
+                             "::connect() Failed: ", systemErrorMessage()
                   ));
         }
     }
@@ -143,8 +143,7 @@ void StreamSimple::readFD(char* buffer, std::size_t len)
         {
             throw std::runtime_error(
                     buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readFD",
-                             "::read() Failed: ",
-                             "errno=", errno, " Message=", strerror(errno)
+                             "::read() Failed: ", " Message=", systemErrorMessage()
                   ));
         }
 
@@ -179,8 +178,7 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
         {
             throw std::runtime_error(
                     buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeFD",
-                             "::write() Failed: ",
-                             "errno=", errno, " Message=", strerror(errno)
+                             "::write() Failed: ", " Message=", systemErrorMessage()
                   ));
         }
 
