@@ -2,7 +2,7 @@
 #define THORS_ANVIL_DB_MYSQL_PACKAGE_REQU_SSL_REQUEST_H
 
 #include "RequPackage.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsDB/SQLUtil.h"
 #include <string>
 #include <ostream>
 

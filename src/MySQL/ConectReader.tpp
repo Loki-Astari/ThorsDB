@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_CONECT_READER_H
 #define THORS_ANVIL_DB_MYSQL_CONECT_READER_H
 
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDB/StreamInterface.h"
 
 namespace ThorsAnvil::DB::MySQL
 {

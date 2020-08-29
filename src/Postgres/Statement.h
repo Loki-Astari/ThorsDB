@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_STATEMENT_H
 #define THORS_ANVIL_DB_POSTGRESS_STATEMENT_H
 
-#include "ThorSQL/Statement.h"
+#include "ThorsDB/Statement.h"
 #include <string>
 #include <vector>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis

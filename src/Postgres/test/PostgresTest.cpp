@@ -1,6 +1,6 @@
 
-#include "ThorSQL/Connection.h"
-#include "ThorSQL/Statement.h"
+#include "ThorsDB/Connection.h"
+#include "ThorsDB/Statement.h"
 #include "DefaultPostGConnection.h"
 #include <gtest/gtest.h>
 

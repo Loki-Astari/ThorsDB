@@ -1,8 +1,8 @@
 #ifndef THORS_ANVIL_MYSQL_TEST_TABLETEST_H
 #define THORS_ANVIL_MYSQL_TEST_TABLETEST_H
 
-#include "ThorSQL/Connection.h"
-#include "ThorSQL/Statement.h"
+#include "ThorsDB/Connection.h"
+#include "ThorsDB/Statement.h"
 #include "MySQLConfig.h"
 #include "ThorsIOUtil/Utility.h"
 

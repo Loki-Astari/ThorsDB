@@ -1,9 +1,9 @@
 
 #include "PrepareStatement.h"
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDB/StreamInterface.h"
 #include "ConectReader.h"
-#include "ThorSQL/Connection.h"
-#include "ThorSQL/Statement.h"
+#include "ThorsDB/Connection.h"
+#include "ThorsDB/Statement.h"
 #include "MockStream.h"
 #include <algorithm>
 #include <gtest/gtest.h>

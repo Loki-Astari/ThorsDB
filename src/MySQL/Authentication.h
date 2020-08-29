@@ -3,7 +3,7 @@
 
 #include "ConectReader.h"
 #include "RespPackage.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsDB/SQLUtil.h"
 #include <string>
 #include <utility>
 

@@ -4,7 +4,7 @@
 #include "ThorMySQL.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
-#include "ThorSQL/Statement.h"
+#include "ThorsDB/Statement.h"
 #include "ThorsIOUtil/Utility.h"
 #include <map>
 #include <vector>

@@ -1,7 +1,7 @@
 
 #include "Connection.h"
 #include "Statement.h"
-#include "SQLConfig.h"
+#include "ThorsDBConfig.h"
 
 #include "gtest/gtest.h"
 #include "test/MockSQL.h"

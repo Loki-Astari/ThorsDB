@@ -1,7 +1,7 @@
 
 #include <gtest/gtest.h>
 #include "ThorMySQL.h"
-#include "../SQL/Connection.h"
+#include "../ThorsDB/Connection.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
 #include "RespPackageAuthSwitchRequest.h"

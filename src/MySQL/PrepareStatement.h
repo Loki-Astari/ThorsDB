@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_PREPARE_STATEMENT_H
 #define THORS_ANVIL_DB_MYSQL_PREPARE_STATEMENT_H
 
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDB/StreamSimple.h"
 #include "ConectReader.h"
 #include "RespPackageResultSet.h"
 #include "BindBuffer.h"

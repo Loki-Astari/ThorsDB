@@ -1,12 +1,12 @@
 #ifndef THORS_ANVIL_DB_MYSQL_DEFAULT_MY_SQL_CONNECTION_H
 #define THORS_ANVIL_DB_MYSQL_DEFAULT_MY_SQL_CONNECTION_H
 
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDB/StreamSimple.h"
 #include "PackageBuffer.h"
 #include "ConnectionDefault.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
-#include "ThorSQL/Connection.h"
+#include "ThorsDB/Connection.h"
 #include <string>
 #include <memory>
 

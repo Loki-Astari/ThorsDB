@@ -1,11 +1,11 @@
 
 #include "Connection.h"
 #include "DefaultMySQLConnection.h"
-#include "ThorSQL/Connection.h"
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDB/Connection.h"
+#include "ThorsDB/StreamSimple.h"
 #include "ConectReader.h"
 #include "PackageBuffer.h"
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDB/StreamInterface.h"
 
 #include "gtest/gtest.h"
 #include "MySQLConfig.h"

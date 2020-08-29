@@ -1,7 +1,7 @@
 
 #include "Statement.h"
 #include "Connection.h"
-#include "SQLConfig.h"
+#include "ThorsDBConfig.h"
 #include "test/SetGoodToTrue.h"
 #include <iostream>
 #include <gtest/gtest.h>

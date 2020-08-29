@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_MYSQL_STREAM_H
 #define THORS_ANVIL_DB_MYSQL_MYSQL_STREAM_H
 
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDB/StreamSimple.h"
 
 namespace ThorsAnvil::DB::MySQL
 {

@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 #define THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 
-#include "ThorSQL/MD5.h"
+#include "ThorsDB/MD5.h"
 #include "ThorsIOUtil/Utility.h"
 #include <iostream>
 

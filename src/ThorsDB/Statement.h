@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_SQL_STATEMENT_H
-#define THORS_ANVIL_DB_SQL_STATEMENT_H
+#ifndef THORS_ANVIL_DB_THORSDB_STATEMENT_H
+#define THORS_ANVIL_DB_THORSDB_STATEMENT_H
 
 /*
  *      ThorsAnvil::DB::SQL::Statement      Represent an SQL statement.

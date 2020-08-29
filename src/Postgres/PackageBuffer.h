@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_BUFFER_H
 #define THORS_ANVIL_DB_POSTGRESS_PACKAGE_BUFFER_H
 
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDB/StreamInterface.h"
 #include <vector>
 #include <string>
 #include <algorithm>

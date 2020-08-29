@@ -1,7 +1,7 @@
 
 #include <sstream>
 #include <stdexcept>
-#include "../SQL/StreamInterface.h"
+#include "../ThorsDB/StreamInterface.h"
 
 class MockStream: public ThorsAnvil::DB::SQL::StreamInterface
 {

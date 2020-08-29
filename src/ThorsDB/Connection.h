@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_SQL_CONNECTION_H
-#define THORS_ANVIL_DB_SQL_CONNECTION_H
+#ifndef THORS_ANVIL_DB_THORSDB_CONNECTION_H
+#define THORS_ANVIL_DB_THORSDB_CONNECTION_H
 
 /*
  * ThorsAnvil::DB::SQL::Connection  Represents a connection to a DB.

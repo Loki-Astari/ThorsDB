@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
 #define THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
 
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsDB/SQLUtil.h"
 #include <string>
 #include <memory>
 

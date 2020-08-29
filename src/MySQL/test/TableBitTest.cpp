@@ -1,7 +1,7 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
-#include "ThorSQL/Endian.h"
+#include "ThorsDB/Endian.h"
 #include <arpa/inet.h>
 #include <cstdint>
 

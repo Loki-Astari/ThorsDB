@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_DEFAULT_MY_SQL_CONNECTION_H
 #define THORS_ANVIL_DB_POSTGRESS_DEFAULT_MY_SQL_CONNECTION_H
 
-#include "ThorSQL/Connection.h"
+#include "ThorsDB/Connection.h"
 #include <string>
 #include <memory>
 

@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_BIND_BUFFER_H
 #define THORS_ANVIL_DB_MYSQL_BIND_BUFFER_H
 
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDB/StreamSimple.h"
 #include "ConectWriter.h"
 #include "RespPackageColumnDefinition.h"
 #include <vector>

@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_SQL_SSL_UTIL_H
-#define THORS_ANVIL_DB_SQL_SSL_UTIL_H
+#ifndef THORS_ANVIL_DB_THORSDB_SSL_UTIL_H
+#define THORS_ANVIL_DB_THORSDB_SSL_UTIL_H
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>

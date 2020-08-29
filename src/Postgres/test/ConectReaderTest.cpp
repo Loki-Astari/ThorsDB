@@ -2,7 +2,7 @@
 #include "PackageBuffer.h"
 #include "ConectReader.h"
 #include "test/MockStream.h"
-#include "ThorSQL/Endian.h"
+#include "ThorsDB/Endian.h"
 #include "gtest/gtest.h"
 
 using ThorsAnvil::DB::Postgres::PackageBuffer;

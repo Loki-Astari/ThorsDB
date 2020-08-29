@@ -6,8 +6,8 @@ TARGET						= ThorMySQL.lib
 LDLIBS						= -lcrypto
 CXXFLAGS					= $(crypto_ROOT_INCDIR)
 LDFLAGS						= $(crypto_ROOT_LIBDIR)
-LINK_LIBS					= ThorSQL
-UNITTEST_LINK_LIBS			= ThorSQL
+LINK_LIBS					= ThorsDB
+UNITTEST_LINK_LIBS			= ThorsDB
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 
