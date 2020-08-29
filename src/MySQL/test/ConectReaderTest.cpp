@@ -1,6 +1,6 @@
 
 #include "ConectReader.h"
-#include "ThorsDB/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 #include "RespPackageOK.h"
 #include "test/MockStream.h"
 

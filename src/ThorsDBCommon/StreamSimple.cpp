@@ -17,7 +17,7 @@
 #include <fcntl.h>
 #include <iostream>
 
-using namespace ThorsAnvil::DB::SQL;
+using namespace ThorsAnvil::DB::Common;
 using ThorsAnvil::Utility::buildErrorMessage;
 using ThorsAnvil::Utility::systemErrorMessage;
 

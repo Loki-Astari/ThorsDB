@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRES_CONECT_READER_TPP
 #define THORS_ANVIL_DB_POSTGRES_CONECT_READER_TPP
 
-#include "ThorsDB/Endian.h"
+#include <boost/endian/conversion.hpp>
 #include <type_traits>
 
 namespace ThorsAnvil::DB::Postgres
@@ -14,7 +14,7 @@ T ConectReader::readInt()
 
     T   result;
     stream.read(reinterpret_cast<char*>(&result), sizeof(T));
-    return Util::convertToHost(static_cast<UT>(result));
+    return boost::endian::big_to_native(static_cast<UT>(result));
 }
 
 template<typename T>
@@ -24,7 +24,7 @@ std::vector<T> ConectReader::readIntVector(int len)
 
     std::vector<T>  result(len);
     stream.read(reinterpret_cast<char*>(&result[0]), sizeof(T) * len);
-    std::transform(std::begin(result), std::end(result), std::begin(result), [](T const& value){return Util::convertToHost(static_cast<UT>(value));});
+    std::transform(std::begin(result), std::end(result), std::begin(result), [](T const& value){return boost::endian::big_to_native(static_cast<UT>(value));});
 
     return result;
 }

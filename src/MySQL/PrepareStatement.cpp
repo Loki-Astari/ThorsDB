@@ -15,7 +15,7 @@ using ThorsAnvil::Utility::buildErrorMessage;
 using ThorsAnvil::Utility::buildBugReport;
 
 PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
-    : SQL::StreamSimple(-1)
+    : Common::StreamSimple(-1)
     , columns(colu)
     , position(0)
     , errorReading(false)

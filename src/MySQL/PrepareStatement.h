@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_PREPARE_STATEMENT_H
 #define THORS_ANVIL_DB_MYSQL_PREPARE_STATEMENT_H
 
-#include "ThorsDB/StreamSimple.h"
+#include "ThorsDBCommon/StreamSimple.h"
 #include "ConectReader.h"
 #include "RespPackageResultSet.h"
 #include "BindBuffer.h"
@@ -44,7 +44,7 @@ class PrepareStatement: public Statement
      * as a runtime failure to convert. Thus we can most likely fail fast and thus
      * not require a call to the MySQL DB if the resulting data can not be converted.
      */
-    class ValidatorStream: public SQL::StreamSimple
+    class ValidatorStream: public Common::StreamSimple
     {
         std::vector<RespPackageColumnDefinition> const& columns;
         std::string                                     validateInfo;

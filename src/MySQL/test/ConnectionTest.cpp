@@ -2,10 +2,10 @@
 #include "Connection.h"
 #include "DefaultMySQLConnection.h"
 #include "ThorsDB/Connection.h"
-#include "ThorsDB/StreamSimple.h"
+#include "ThorsDBCommon/StreamSimple.h"
 #include "ConectReader.h"
 #include "PackageBuffer.h"
-#include "ThorsDB/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 
 #include "gtest/gtest.h"
 #include "MySQLConfig.h"
@@ -59,8 +59,8 @@ TEST(ConnectionTest, Create)
     using Buffer=DB::MySQL::PackageBuffer;
     std::map<std::string, std::string>      options;
 
-    DB::SQL::StreamSimple       stream("127.0.0.1", 0);
-    Buffer                  buffer(stream, true);
+    DB::Common::StreamSimple    stream("127.0.0.1", 0);
+    Buffer                      buffer(stream, true);
     DB::MySQL::ConectReader     reader(buffer);
     DB::MySQL::ConectWriter     writer(buffer);
     DB::MySQL::Connection       connection(THOR_TESTING_MYSQL_USER,

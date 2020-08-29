@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <iostream>
 
-class MockStream: public ThorsAnvil::DB::SQL::StreamInterface
+class MockStream: public ThorsAnvil::DB::Common::StreamInterface
 {
     char const*   input;
     unsigned char*output;

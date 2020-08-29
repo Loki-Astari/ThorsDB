@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_THORSDB_STREAM_SIMPLE_H
-#define THORS_ANVIL_DB_THORSDB_STREAM_SIMPLE_H
+#ifndef THORS_ANVIL_DB_COMMON_STREAM_SIMPLE_H
+#define THORS_ANVIL_DB_COMMON_STREAM_SIMPLE_H
 
 #include "StreamInterface.h"
 #include "SSLUtil.h"
@@ -21,7 +21,7 @@ inline int fcntlMYSQLWrapper(int fd, int cmd, int value)         {return fcntl(f
 inline ssize_t readMYSQLWrapper(int fd, void* buf, size_t count) {return ::read(fd, buf, count);}
 inline ssize_t writeMYSQLWrapper(int fd, void const* buf, size_t count){return ::write(fd, buf, count);}
 
-namespace ThorsAnvil::DB::SQL
+namespace ThorsAnvil::DB::Common
 {
 
 class StreamSimple: public StreamInterface

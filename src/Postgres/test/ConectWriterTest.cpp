@@ -2,12 +2,10 @@
 #include "PackageBuffer.h"
 #include "ConectWriter.h"
 #include "test/MockStream.h"
-#include "ThorsDB/Endian.h"
 #include "gtest/gtest.h"
 
 using ThorsAnvil::DB::Postgres::PackageBuffer;
 using ThorsAnvil::DB::Postgres::ConectWriter;
-using ThorsAnvil::DB::Util::convertToHost;
 
 TEST(ConectWriterTest, OpenMessageGetType)
 {

@@ -9,7 +9,7 @@ using namespace ThorsAnvil::DB::Postgres;
 using ThorsAnvil::Utility::buildErrorMessage;
 using ThorsAnvil::Utility::buildBugReport;
 
-PackageBuffer::PackageBuffer(SQL::StreamInterface& stream)
+PackageBuffer::PackageBuffer(Common::StreamInterface& stream)
     : stream(stream)
     , messageOpen(false)
     , messageSize(0)

@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_BUFFER_H
 #define THORS_ANVIL_DB_POSTGRESS_PACKAGE_BUFFER_H
 
-#include "ThorsDB/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -10,16 +10,16 @@
 namespace ThorsAnvil::DB::Postgres
 {
 
-class PackageBuffer: public SQL::StreamInterface
+class PackageBuffer: public Common::StreamInterface
 {
-    SQL::StreamInterface&      stream;
-    bool                messageOpen;
-    std::size_t         messageSize;
-    std::size_t         messageRead;
-    std::vector<char>   sendBuffer;
+    Common::StreamInterface&    stream;
+    bool                        messageOpen;
+    std::size_t                 messageSize;
+    std::size_t                 messageRead;
+    std::vector<char>           sendBuffer;
 
     public:
-        PackageBuffer(SQL::StreamInterface& stream);
+        PackageBuffer(Common::StreamInterface& stream);
         virtual void        read(char* buffer, std::size_t len)         override;
         virtual void        write(char const* buffer, std::size_t len)  override;
         virtual bool        isEmpty()                                   override;

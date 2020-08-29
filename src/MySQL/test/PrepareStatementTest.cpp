@@ -1,6 +1,6 @@
 
 #include "PrepareStatement.h"
-#include "ThorsDB/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 #include "ConectReader.h"
 #include "ThorsDB/Connection.h"
 #include "ThorsDB/Statement.h"

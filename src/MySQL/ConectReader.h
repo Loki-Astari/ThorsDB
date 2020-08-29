@@ -2,6 +2,7 @@
 #define THORS_ANVIL_DB_MYSQL_PACKAGE_READER_H
 
 #include "MySQLTimeBag.h"
+#include "ThorsDBCommon/StreamInterface.h"
 #include <memory>
 #include <functional>
 #include <vector>
@@ -31,15 +32,15 @@ class RespPackageEOF;
 
 class ConectReader
 {
-    SQL::StreamInterface&   stream;
-    unsigned long           capbil;
-    unsigned long           charset;
+    Common::StreamInterface&    stream;
+    unsigned long               capbil;
+    unsigned long               charset;
 
     unsigned long long lengthEncodedIntegerUsingSize(unsigned char size);
     public:
         using OKAction = std::function<RespPackage*(int byte, ConectReader&)>;
         using OKMap    = std::map<int, OKAction>;
-        ConectReader(SQL::StreamInterface& stream)
+        ConectReader(Common::StreamInterface& stream)
             : stream(stream)
             , capbil(0)
             , charset(0)

@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_DEFAULT_MY_SQL_CONNECTION_H
 #define THORS_ANVIL_DB_MYSQL_DEFAULT_MY_SQL_CONNECTION_H
 
-#include "ThorsDB/StreamSimple.h"
+#include "ThorsDBCommon/StreamSimple.h"
 #include "PackageBuffer.h"
 #include "ConnectionDefault.h"
 #include "ConectReader.h"
@@ -16,7 +16,7 @@ namespace ThorsAnvil::DB::MySQL
 class DefaultMySQLConnection: public ThorsAnvil::DB::SQL::Lib::ConnectionProxy
 {
     private:
-        DB::SQL::StreamSimple               stream;
+        DB::Common::StreamSimple            stream;
         PackageBuffer                       buffer;
         ConectReader                        reader;
         ConectWriter                        writer;
