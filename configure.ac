@@ -8,8 +8,8 @@ if [[ ! -e build/Notes ]]; then
     git submodule update
 fi
 ln -s .build build | echo "Build Already Setup"
-AC_CONFIG_MACRO_DIR([build/autotools/m4])
-AC_CONFIG_AUX_DIR([build/autotools/build])
+AC_CONFIG_MACRO_DIR([.build/autotools/m4])
+AC_CONFIG_AUX_DIR([.build/autotools/build])
 AX_THOR_FUNC_BUILD
 
 
@@ -139,7 +139,6 @@ AC_DEFINE_UNQUOTED([MYSQL_MAJOR_VERSION], [${version}], ["Get mysql version into
 
 export cwd=`pwd`
 pushd third/ThorsIOUtil
-save="./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}"
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
 popd
 pushd third/ThorsCrypto
