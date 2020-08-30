@@ -6,7 +6,7 @@
 #include "ConectReader.h"
 #include "ConectWriter.h"
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 
 TEST(AuthenticationTest, MySQLOldPassword)
 {

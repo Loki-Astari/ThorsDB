@@ -13,26 +13,26 @@
 TEST(PrepareStatementTest, Create)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People");
+    DB::Access::Statement      statement(connection, "SELECT * FROM People");
 }
 TEST(PrepareStatementTest, Execute)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
+    DB::Access::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
     long                count = 0;
     statement.execute([&count](int id, std::string name, short age, std::string sex, double height)
                         {
@@ -43,16 +43,16 @@ TEST(PrepareStatementTest, Execute)
 TEST(PrepareStatementTest, ExecuteWithBind)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People where sex=?"); //select * from People;
+    DB::Access::Statement      statement(connection, "SELECT * FROM People where sex=?"); //select * from People;
     long                count = 0;
-    statement.execute(DB::SQL::Bind("M"), [&count](int id, std::string name, short age, std::string sex, double height)
+    statement.execute(DB::Access::Bind("M"), [&count](int id, std::string name, short age, std::string sex, double height)
                         {
                             ++count;
                         });
@@ -61,16 +61,16 @@ TEST(PrepareStatementTest, ExecuteWithBind)
 TEST(PrepareStatementTest, ExecuteWithBindTwo)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
+    DB::Access::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
     long                count = 0;
-    statement.execute(DB::SQL::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
+    statement.execute(DB::Access::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
                         {
                             ++count;
                         });
@@ -79,15 +79,15 @@ TEST(PrepareStatementTest, ExecuteWithBindTwo)
 TEST(PrepareStatementTest, DestructorTest)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
     int count = 0;
     {
-        DB::SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
-        statement.execute(DB::SQL::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
+        DB::Access::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
+        statement.execute(DB::Access::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
                             {
                                 std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                                 ++count;
@@ -95,8 +95,8 @@ TEST(PrepareStatementTest, DestructorTest)
         ASSERT_EQ(count, 2);
     }
     {
-        DB::SQL::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
-        statement.execute(DB::SQL::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
+        DB::Access::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
+        statement.execute(DB::Access::Bind("M",29), [&count](int id, std::string name, short age, std::string sex, double height)
                             {
                                 std::cout << "Got: " << id << " : " << name << " : " << age << " : " << sex << " : " << height << "\n";
                                 ++count;

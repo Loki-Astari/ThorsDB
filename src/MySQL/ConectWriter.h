@@ -15,7 +15,7 @@
 #error  Unknow Endianess
 #endif
 
-namespace ThorsAnvil::DB::SQL
+namespace ThorsAnvil::DB::Access
 {
     class StreamInterface;
 }

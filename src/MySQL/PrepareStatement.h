@@ -101,7 +101,7 @@ class PrepareStatement: public Statement
         virtual void   bind(std::string const& value)       override    {bindBuffer.bindValue(value);}
         virtual void   bind(std::vector<char> const& value) override    {bindBuffer.bindValue(value);}
 
-        virtual void   bind(SQL::UnixTimeStamp const& value)override    {bindBuffer.bindValue(value);}
+        virtual void   bind(Access::UnixTimeStamp const& value)override    {bindBuffer.bindValue(value);}
 
         virtual void   retrieve(char& value)                override    {nextLine->retrieve(value);}
         virtual void   retrieve(signed char& value)         override    {nextLine->retrieve(value);}
@@ -122,7 +122,7 @@ class PrepareStatement: public Statement
         virtual void   retrieve(std::string& value)         override    {nextLine->retrieve(value);}
         virtual void   retrieve(std::vector<char>& value)   override    {nextLine->retrieve(value);}
 
-        virtual void   retrieve(SQL::UnixTimeStamp& value)  override    {nextLine->retrieve(value);}
+        virtual void   retrieve(Access::UnixTimeStamp& value)  override    {nextLine->retrieve(value);}
 };
 
 }

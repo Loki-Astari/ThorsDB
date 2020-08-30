@@ -1,7 +1,7 @@
 #include "Statement.h"
 #include "Connection.h"
 
-using namespace ThorsAnvil::DB::SQL;
+using namespace ThorsAnvil::DB::Access;
 
 std::unique_ptr<Lib::StatementProxy>    statementProxy;
 
@@ -32,7 +32,7 @@ long Statement::rowsAffected() const
 {
     if (!modifyDone)
     {
-        throw std::logic_error("ThrosAnvil::SQL::Statement::rowsAffected: Modification not attempted");
+        throw std::logic_error("ThrosAnvil::Access::Statement::rowsAffected: Modification not attempted");
     }
     return statementProxy->rowsAffected();
 }
@@ -41,7 +41,7 @@ long Statement::lastInsertID() const
 {
     if (!modifyDone)
     {
-        throw std::logic_error("ThrosAnvil::SQL::Statement::rowsAffected: Modification not attempted");
+        throw std::logic_error("ThrosAnvil::Access::Statement::rowsAffected: Modification not attempted");
     }
     return statementProxy->lastInsertID();
 }
@@ -52,28 +52,28 @@ void Statement::execute()
 }
 
 
-#ifdef COVERAGE_SQL
+#ifdef COVERAGE_ACCESS
 #include "Statement.tpp"
 #include "MD5.h"
 #include "test/SetGoodToTrue.h"
 
 template
-void ThorsAnvil::DB::SQL::Detail::Cursor::activate<false, std::function<void (int, std::string const&, short, char, double)>>
+void ThorsAnvil::DB::Access::Detail::Cursor::activate<false, std::function<void (int, std::string const&, short, char, double)>>
 (std::function<void (int, std::string const&, short, char, double)>);
 
-template void ThorsAnvil::DB::SQL::Detail::Cursor::activate<true,  std::function<void (int, std::string const&, short, char, double)>>
+template void ThorsAnvil::DB::Access::Detail::Cursor::activate<true,  std::function<void (int, std::string const&, short, char, double)>>
 (std::function<void (int, std::string const&, short, char, double)>);
 
-template void ThorsAnvil::DB::SQL::BindArgs<int>::bindTo(ThorsAnvil::DB::SQL::Lib::StatementProxy&) const;
+template void ThorsAnvil::DB::Access::BindArgs<int>::bindTo(ThorsAnvil::DB::Access::Lib::StatementProxy&) const;
 
-template void ThorsAnvil::DB::SQL::BindArgs<>::bindTo(ThorsAnvil::DB::SQL::Lib::StatementProxy&) const;
+template void ThorsAnvil::DB::Access::BindArgs<>::bindTo(ThorsAnvil::DB::Access::Lib::StatementProxy&) const;
 
-template void ThorsAnvil::DB::SQL::Detail::Cursor::activate<false, std::function<void (int)> >(std::function<void (int)>);
-template void ThorsAnvil::DB::SQL::Detail::Cursor::activate<true, std::function<void (int)> >(std::function<void (int)>);
+template void ThorsAnvil::DB::Access::Detail::Cursor::activate<false, std::function<void (int)> >(std::function<void (int)>);
+template void ThorsAnvil::DB::Access::Detail::Cursor::activate<true, std::function<void (int)> >(std::function<void (int)>);
 
-template void ThorsAnvil::DB::SQL::Statement::execute<SetGoodToTrue>(SetGoodToTrue);
-template void ThorsAnvil::DB::SQL::Statement::execute<SetGoodToTrue, int>(ThorsAnvil::DB::SQL::BindArgs<int> const&, SetGoodToTrue);
-template void ThorsAnvil::DB::SQL::Statement::execute<CountLines, int>(ThorsAnvil::DB::SQL::BindArgs<int> const&, CountLines);
-template void ThorsAnvil::DB::SQL::Statement::execute<int>(ThorsAnvil::DB::SQL::BindArgs<int> const&);
+template void ThorsAnvil::DB::Access::Statement::execute<SetGoodToTrue>(SetGoodToTrue);
+template void ThorsAnvil::DB::Access::Statement::execute<SetGoodToTrue, int>(ThorsAnvil::DB::Access::BindArgs<int> const&, SetGoodToTrue);
+template void ThorsAnvil::DB::Access::Statement::execute<CountLines, int>(ThorsAnvil::DB::Access::BindArgs<int> const&, CountLines);
+template void ThorsAnvil::DB::Access::Statement::execute<int>(ThorsAnvil::DB::Access::BindArgs<int> const&);
 
 #endif

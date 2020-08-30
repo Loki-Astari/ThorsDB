@@ -42,13 +42,13 @@ TEST_F(TablePeopleExtraLastInsertIDTest, ModTomHanks)
 {
     using namespace ThorsAnvil;
 
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    DB::SQL::Statement      statement(connection, "INSERT INTO PeopleExtra(Name, Age, Sex, Height) VALUES('Tom Hanks', 89, 'M', 34.567)");
+    DB::Access::Statement      statement(connection, "INSERT INTO PeopleExtra(Name, Age, Sex, Height) VALUES('Tom Hanks', 89, 'M', 34.567)");
     statement.execute();
     long lastInsertID1 = statement.lastInsertID();
     ASSERT_NE(

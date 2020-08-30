@@ -9,7 +9,7 @@
 namespace ThorsAnvil::DB::MySQL
 {
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 class RespPackage;
 class RequPackage;
 class ConectWriter;

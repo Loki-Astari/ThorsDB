@@ -8,7 +8,7 @@
 namespace ThorsAnvil::DB::Postgres
 {
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 class ConectReader;
 class ConectWriter;
 class Message;

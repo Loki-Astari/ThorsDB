@@ -45,7 +45,7 @@ std::size_t BindBuffer::countBoundParameters() const
  */
 #include "BindBuffer.tpp"
 
-template void ThorsAnvil::DB::MySQL::BindBuffer::bindValue<ThorsAnvil::DB::SQL::UnixTimeStamp>(ThorsAnvil::DB::SQL::UnixTimeStamp const&);
+template void ThorsAnvil::DB::MySQL::BindBuffer::bindValue<ThorsAnvil::DB::Access::UnixTimeStamp>(ThorsAnvil::DB::Access::UnixTimeStamp const&);
 template void ThorsAnvil::DB::MySQL::BindBuffer::bindValue<std::string>(std::string const&);
 template void ThorsAnvil::DB::MySQL::BindBuffer::bindValue<std::vector<char>>(std::vector<char> const&);
 template void ThorsAnvil::DB::MySQL::BindBuffer::bindValue<signed char>(signed char const&);

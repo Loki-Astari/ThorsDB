@@ -9,15 +9,15 @@ DefaultPostGConnection::DefaultPostGConnection(
                             std::string const& /*username*/,
                             std::string const& /*password*/,
                             std::string const& /*database*/,
-                            ThorsAnvil::DB::SQL::Options const& /*options*/)
+                            ThorsAnvil::DB::Access::Options const& /*options*/)
 {}
 
-std::unique_ptr<ThorsAnvil::DB::SQL::Lib::StatementProxy>
+std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy>
 DefaultPostGConnection::createStatementProxy(std::string const& statement)
 {
-    std::unique_ptr<ThorsAnvil::DB::SQL::Lib::StatementProxy>  result;
+    std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy>  result;
     result.reset(new Statement(/*connection,*/ statement));
     return result;
 }
 
-ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<DefaultPostGConnection>    postGConnection("postgres");
+ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<DefaultPostGConnection>    postGConnection("postgres");

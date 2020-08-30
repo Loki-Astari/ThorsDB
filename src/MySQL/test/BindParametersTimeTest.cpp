@@ -18,78 +18,78 @@ CREATE TABLE TimeStampTypes(
 TEST(BindParametersTimeTest, BindTimeTestAgainstDate)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
-    DB::SQL::UnixTimeStamp  timeStamp(924998400); 
+    DB::Access::UnixTimeStamp  timeStamp(924998400); 
 
-    DB::SQL::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST1=?");
+    DB::Access::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST1=?");
     long count = 0;
-    statement.execute(DB::SQL::Bind(timeStamp),[&count](long id){++count;});
+    statement.execute(DB::Access::Bind(timeStamp),[&count](long id){++count;});
     ASSERT_EQ(1, count);
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstTime)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
-    DB::SQL::UnixTimeStamp  timeStamp(31558543);    // 01/Jan/1971  
+    DB::Access::UnixTimeStamp  timeStamp(31558543);    // 01/Jan/1971  
 
-    DB::SQL::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST2=?");
+    DB::Access::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST2=?");
     long count = 0;
-    statement.execute(DB::SQL::Bind(timeStamp),[&count](long id){++count;});
+    statement.execute(DB::Access::Bind(timeStamp),[&count](long id){++count;});
     ASSERT_EQ(1, count);
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstTimeStamp)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
-    DB::SQL::UnixTimeStamp  timeStamp(925020943); 
+    DB::Access::UnixTimeStamp  timeStamp(925020943); 
 
 
-    DB::SQL::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST3=?");
+    DB::Access::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST3=?");
     long count = 0;
-    statement.execute(DB::SQL::Bind(timeStamp),[&count](long id){++count;});
+    statement.execute(DB::Access::Bind(timeStamp),[&count](long id){++count;});
     ASSERT_EQ(1, count);
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstDateTime)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
-    DB::SQL::UnixTimeStamp  timeStamp(925020943); 
+    DB::Access::UnixTimeStamp  timeStamp(925020943); 
 
 
-    DB::SQL::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST4=?");
+    DB::Access::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST4=?");
     long count = 0;
-    statement.execute(DB::SQL::Bind(timeStamp),[&count](long id){++count;});
+    statement.execute(DB::Access::Bind(timeStamp),[&count](long id){++count;});
     ASSERT_EQ(1, count);
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstYear)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
-    DB::SQL::UnixTimeStamp  timeStamp(915148800); // 01/Jan/1999 00:00:00
+    DB::Access::UnixTimeStamp  timeStamp(915148800); // 01/Jan/1999 00:00:00
 
 
-    DB::SQL::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST5=?");
+    DB::Access::Statement      statement(connection, "SELECT ID FROM TimeStampTypes WHERE ST5=?");
     long count = 0;
-    statement.execute(DB::SQL::Bind(timeStamp),[&count](long id){++count;});
+    statement.execute(DB::Access::Bind(timeStamp),[&count](long id){++count;});
     ASSERT_EQ(1, count);
 }

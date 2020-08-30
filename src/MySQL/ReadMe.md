@@ -5,7 +5,7 @@
 
 To add MySQL functionality you need this object:
 
-    ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
+    ThorsAnvil::Access::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
 
 This is normally automatically added when you link with -lThorMySQL
 
@@ -133,7 +133,7 @@ To send a message use:
 
 The ThorsMySQL library provides an implementation of the interfaces needed by ThorsDB library.
 
-The class `DefaultMySQLConnection` implements the interface `ThorsAnvil::SQL::Lib::ConnectionProxy`. Its main job is creating object of type `PrepareStatement` that implement the interface `ThorsAnvil::SQL::Lib::StatementProxy`.
+The class `DefaultMySQLConnection` implements the interface `ThorsAnvil::Access::Lib::ConnectionProxy`. Its main job is creating object of type `PrepareStatement` that implement the interface `ThorsAnvil::Access::Lib::StatementProxy`.
 
 ### Utility classes
 

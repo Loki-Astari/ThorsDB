@@ -13,7 +13,7 @@
 
 using namespace ThorsAnvil::DB::MySQL;
 
-ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
+ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
 
 /*
  * Tests assume mysql is already up and running.
@@ -23,7 +23,7 @@ ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    m
 TEST(ConnectionTest, CreateMySQLOnGeneric)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -33,7 +33,7 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -44,7 +44,7 @@ TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
 TEST(ConnectionTest, CreateMySQLOnGenericSetYield)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -75,7 +75,7 @@ TEST(ConnectionTest, MySQLNativePassword)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -87,7 +87,7 @@ TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluserEmpty",
                                     "",
                                     THOR_TESTING_MYSQL_DB,
@@ -97,7 +97,7 @@ TEST(ConnectionTest, CachingSHA2Password)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluser",
                                     "sslPassword",
                                     THOR_TESTING_MYSQL_DB,

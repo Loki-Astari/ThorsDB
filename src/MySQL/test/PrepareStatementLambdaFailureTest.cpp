@@ -13,14 +13,14 @@
 TEST(PrepareStatementLambdaFailureTest, ExecuteToFewArguments)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
+    DB::Access::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
     long                count = 0;
     ASSERT_THROW(
         statement.execute([&count](int id, std::string name, short age, std::string sex/*, double height*/) // Not using the height
@@ -30,14 +30,14 @@ TEST(PrepareStatementLambdaFailureTest, ExecuteToFewArguments)
 TEST(PrepareStatementLambdaFailureTest, ExecuteToManyArguments)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
+    DB::Access::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
     long                count = 0;
     ASSERT_THROW(
         statement.execute([&count](int id, std::string name, short age, std::string sex, double height, long extra) // ask for more than are available
@@ -47,14 +47,14 @@ TEST(PrepareStatementLambdaFailureTest, ExecuteToManyArguments)
 TEST(PrepareStatementLambdaFailureTest, ExecuteThrowWhenCalledBack)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
 
-    DB::SQL::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
+    DB::Access::Statement      statement(connection, "SELECT * FROM People"); //select * from People;
     long                count = 0;
     ASSERT_THROW(
         statement.execute([&count](int id, std::string name, short age, std::string sex, double height)

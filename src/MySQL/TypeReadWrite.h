@@ -19,7 +19,7 @@ namespace ThorsAnvil::DB::MySQL
 {
 
 using Buffer = std::vector<char>;
-using SQL::UnixTimeStamp;
+using Access::UnixTimeStamp;
 using ThorsAnvil::Utility::buildErrorMessage;
 
 template<typename T>
@@ -489,7 +489,7 @@ inline unsigned int writeParameterValue<double>(ConectWriter& p, double const& v
 }
 
 template<>
-inline unsigned int writeParameterValue<ThorsAnvil::DB::SQL::UnixTimeStamp>(ConectWriter& p, ThorsAnvil::DB::SQL::UnixTimeStamp const& v)
+inline unsigned int writeParameterValue<ThorsAnvil::DB::Access::UnixTimeStamp>(ConectWriter& p, ThorsAnvil::DB::Access::UnixTimeStamp const& v)
 {
     p.writeDate(v.time);
     return MYSQL_TYPE_TIMESTAMP;

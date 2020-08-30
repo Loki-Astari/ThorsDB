@@ -5,7 +5,7 @@
 
 To add Postgres functionality you need this object:
 
-    ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultPostGConnection>    postgresTestConnection("postgres");
+    ThorsAnvil::Access::Lib::ConnectionCreatorRegister<DefaultPostGConnection>    postgresTestConnection("postgres");
 
 This is normally automatically added when you link with -lThorPostgres
 

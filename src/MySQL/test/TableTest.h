@@ -14,13 +14,13 @@ inline void typeGoodTest(T expected, std::string const& expr)
 {
     using namespace ThorsAnvil;
 
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    DB::SQL::Statement      statement(connection, expr);
+    DB::Access::Statement      statement(connection, expr);
     statement.execute([&expected](T const& select){
         ASSERT_EQ(expected, select);
     });
@@ -30,13 +30,13 @@ inline void typeGoodTest(std::vector<char> expected, std::string const& expr)
 {
     using namespace ThorsAnvil;
 
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    DB::SQL::Statement      statement(connection, expr);
+    DB::Access::Statement      statement(connection, expr);
     statement.execute([&expected](std::vector<char> const& select){
         for(int loop = 0; loop < select.size(); ++loop)
         {
@@ -50,13 +50,13 @@ inline void typeBadTest(std::string const& expr)
 {
     using namespace ThorsAnvil;
 
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    DB::SQL::Statement      statement(connection, expr);
+    DB::Access::Statement      statement(connection, expr);
     ASSERT_THROW(
         statement.execute([](T const& select){
             ASSERT_TRUE(false); // Should not reach here.

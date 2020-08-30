@@ -6,7 +6,7 @@
 #include "RespPackageAuthSwitchRequest.h"
 #include "test/MockStream.h"
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 using ThorsAnvil::DB::MySQL::ConectReader;
 using ThorsAnvil::DB::MySQL::RespPackageAuthSwitchRequest;
 

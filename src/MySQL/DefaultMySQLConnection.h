@@ -13,7 +13,7 @@
 namespace ThorsAnvil::DB::MySQL
 {
 
-class DefaultMySQLConnection: public ThorsAnvil::DB::SQL::Lib::ConnectionProxy
+class DefaultMySQLConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
 {
     private:
         DB::Common::StreamSimple            stream;
@@ -26,8 +26,8 @@ class DefaultMySQLConnection: public ThorsAnvil::DB::SQL::Lib::ConnectionProxy
                                std::string const& username,
                                std::string const& password,
                                std::string const& database,
-                               ThorsAnvil::DB::SQL::Options const& options);
-        virtual std::unique_ptr<ThorsAnvil::DB::SQL::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
+                               ThorsAnvil::DB::Access::Options const& options);
+        virtual std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
 
         virtual int getSocketId() const override;
         virtual void setYield(std::function<void()>&&, std::function<void()>&&) override;
