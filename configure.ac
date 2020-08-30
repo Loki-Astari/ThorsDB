@@ -150,6 +150,6 @@ AS_IF([test "$with_cryptoroot" != ""],
 popd
 
 AM_INIT_AUTOMAKE([foreign])
-AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in])
+AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBCommonConfig.h:config.h src/Postgres/PostgresConfig.h:config.h src/ThorsDBBuild/ThorsDBBuildConfig.h:config.h src/ThorsDBBuildTest/ThorsDBBuildTestConfig.h:config.h])
 AC_CONFIG_FILES([Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in])
 AC_OUTPUT

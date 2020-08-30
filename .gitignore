@@ -21,3 +21,4 @@ confdefs.h
 config.h
 
 build
+*Config.h
