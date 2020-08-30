@@ -1,4 +1,4 @@
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 #include "ConectWriter.h"
 
 using namespace ThorsAnvil::DB::MySQL;

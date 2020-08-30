@@ -8,7 +8,7 @@ DefaultMySQLConnection::DefaultMySQLConnection(
                             std::string const& username,
                             std::string const& password,
                             std::string const& database,
-                            ThorsAnvil::DB::SQL::Options const& options)
+                            ThorsAnvil::DB::Access::Options const& options)
     : stream(host, port)
     , buffer(stream, true)
     , reader(buffer)
@@ -16,10 +16,10 @@ DefaultMySQLConnection::DefaultMySQLConnection(
     , connection(username, password, database, options, reader, writer)
 {}
 
-std::unique_ptr<ThorsAnvil::DB::SQL::Lib::StatementProxy>
+std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy>
 DefaultMySQLConnection::createStatementProxy(std::string const& statement)
 {
-    std::unique_ptr<ThorsAnvil::DB::SQL::Lib::StatementProxy>  result;
+    std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy>  result;
     result.reset(new PrepareStatement(connection, statement));
     return result;
 }
@@ -34,4 +34,4 @@ void DefaultMySQLConnection::setYield(std::function<void()>&& yr, std::function<
     stream.setYield(std::move(yr), std::move(yw));
 }
 
-ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");
+ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlConnection("mysql");

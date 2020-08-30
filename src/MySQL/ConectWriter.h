@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_PACKAGE_WRITER_H
 #define THORS_ANVIL_DB_MYSQL_PACKAGE_WRITER_H
 
+#include "ThorsDBCommon/StreamInterface.h"
 #include <string>
 #include <vector>
 #include <ctime>
@@ -14,7 +15,7 @@
 #error  Unknow Endianess
 #endif
 
-namespace ThorsAnvil::DB::SQL
+namespace ThorsAnvil::DB::Access
 {
     class StreamInterface;
 }
@@ -24,14 +25,14 @@ namespace ThorsAnvil::DB::MySQL
 class ConectWriter
 {
     protected:
-    SQL::StreamInterface&   stream;
-    unsigned long           capabilities;
-    unsigned long           charset;
-    bool                    fullReset;
+    Common::StreamInterface&    stream;
+    unsigned long               capabilities;
+    unsigned long               charset;
+    bool                        fullReset;
 
     public:
 
-        ConectWriter(SQL::StreamInterface& stream)
+        ConectWriter(Common::StreamInterface& stream)
             : stream(stream)
             , capabilities(0)
             , charset(0)

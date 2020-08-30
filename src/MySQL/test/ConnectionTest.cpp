@@ -1,11 +1,11 @@
 
 #include "Connection.h"
 #include "DefaultMySQLConnection.h"
-#include "ThorSQL/Connection.h"
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDB/Connection.h"
+#include "ThorsDBCommon/StreamSimple.h"
 #include "ConectReader.h"
 #include "PackageBuffer.h"
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 
 #include "gtest/gtest.h"
 #include "MySQLConfig.h"
@@ -13,7 +13,7 @@
 
 using namespace ThorsAnvil::DB::MySQL;
 
-ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
+ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
 
 /*
  * Tests assume mysql is already up and running.
@@ -23,7 +23,7 @@ ThorsAnvil::DB::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    m
 TEST(ConnectionTest, CreateMySQLOnGeneric)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -33,7 +33,7 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -44,7 +44,7 @@ TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
 TEST(ConnectionTest, CreateMySQLOnGenericSetYield)
 {
     using namespace ThorsAnvil;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -59,8 +59,8 @@ TEST(ConnectionTest, Create)
     using Buffer=DB::MySQL::PackageBuffer;
     std::map<std::string, std::string>      options;
 
-    DB::SQL::StreamSimple       stream("127.0.0.1", 0);
-    Buffer                  buffer(stream, true);
+    DB::Common::StreamSimple    stream("127.0.0.1", 0);
+    Buffer                      buffer(stream, true);
     DB::MySQL::ConectReader     reader(buffer);
     DB::MySQL::ConectWriter     writer(buffer);
     DB::MySQL::Connection       connection(THOR_TESTING_MYSQL_USER,
@@ -75,7 +75,7 @@ TEST(ConnectionTest, MySQLNativePassword)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
@@ -87,7 +87,7 @@ TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluserEmpty",
                                     "",
                                     THOR_TESTING_MYSQL_DB,
@@ -97,7 +97,7 @@ TEST(ConnectionTest, CachingSHA2Password)
 {
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     "ssluser",
                                     "sslPassword",
                                     THOR_TESTING_MYSQL_DB,

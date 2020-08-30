@@ -1,7 +1,7 @@
 #ifndef THORS_ANVIL_DB_MYSQL_STATEMENT_H
 #define THORS_ANVIL_DB_MYSQL_STATEMENT_H
 
-#include "ThorSQL/Statement.h"
+#include "ThorsDB/Statement.h"
 #include <string>
 #include <vector>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
@@ -9,7 +9,7 @@
 namespace ThorsAnvil::DB::MySQL
 {
 
-class Statement: public SQL::Lib::StatementProxy
+class Statement: public Access::Lib::StatementProxy
 {
     public:
         Statement(std::string const& statement);
@@ -36,7 +36,7 @@ class Statement: public SQL::Lib::StatementProxy
         virtual void   bind(std::string const&)             override    {}
         virtual void   bind(std::vector<char> const&)       override    {}
 
-        virtual void   bind(SQL::UnixTimeStamp const&)      override    {}
+        virtual void   bind(Access::UnixTimeStamp const&)      override    {}
 
             // -----
 
@@ -66,7 +66,7 @@ class Statement: public SQL::Lib::StatementProxy
         virtual void   retrieve(std::string& value)         override    {value="";}
         virtual void   retrieve(std::vector<char>& value)   override    {value=std::vector<char>();}
 
-        virtual void   retrieve(SQL::UnixTimeStamp& value)  override    {value=SQL::UnixTimeStamp(static_cast<std::time_t>(0));}
+        virtual void   retrieve(Access::UnixTimeStamp& value)  override    {value=Access::UnixTimeStamp(static_cast<std::time_t>(0));}
     private:
 };
 

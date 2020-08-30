@@ -1,12 +1,12 @@
-#ifndef THORS_ANVIL_DB_SQL_SSL_UTIL_H
-#define THORS_ANVIL_DB_SQL_SSL_UTIL_H
+#ifndef THORS_ANVIL_DB_COMMON_SSL_UTIL_H
+#define THORS_ANVIL_DB_COMMON_SSL_UTIL_H
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <string>
 
 
-namespace ThorsAnvil::DB::SQL
+namespace ThorsAnvil::DB::Common
 {
 
 class SSLUtil

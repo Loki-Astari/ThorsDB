@@ -1,9 +1,9 @@
 
 #include <sstream>
 #include <stdexcept>
-#include "../SQL/StreamInterface.h"
+#include "../ThorsDBCommon/StreamInterface.h"
 
-class MockStream: public ThorsAnvil::DB::SQL::StreamInterface
+class MockStream: public ThorsAnvil::DB::Common::StreamInterface
 {
     char const*   input;
     unsigned char*output;

@@ -1,12 +1,12 @@
 
 #include <gtest/gtest.h>
 #include "ThorMySQL.h"
-#include "../SQL/Connection.h"
+#include "../ThorsDB/Connection.h"
 #include "ConectReader.h"
 #include "RespPackageOK.h"
 #include "test/MockStream.h"
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 using ThorsAnvil::DB::MySQL::ConectReader;
 using ThorsAnvil::DB::MySQL::RespPackageOK;
 

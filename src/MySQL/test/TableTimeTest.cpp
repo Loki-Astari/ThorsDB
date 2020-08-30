@@ -19,7 +19,7 @@
  * MYSQL_TYPE_NEWDATE
  */
 
-using TTS = ThorsAnvil::DB::SQL::UnixTimeStamp;
+using TTS = ThorsAnvil::DB::Access::UnixTimeStamp;
 using namespace std::string_literals;
 
 TTS getEpochFromTimeStamp(std::string const& timeStamp)

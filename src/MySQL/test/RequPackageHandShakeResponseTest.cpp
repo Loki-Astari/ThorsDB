@@ -5,7 +5,7 @@
 #include "ConectReader.h"
 #include "ConectWriter.h"
 #include "Authentication.h"
-#include "ThorSQL/StreamInterface.h"
+#include "ThorsDBCommon/StreamInterface.h"
 #include "MySQLConfig.h"
 #include "test/MockStream.h"
 #include <algorithm>

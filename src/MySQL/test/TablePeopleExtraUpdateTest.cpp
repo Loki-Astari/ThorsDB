@@ -50,13 +50,13 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanks)
 {
     using namespace ThorsAnvil;
 
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    DB::SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = 21");
+    DB::Access::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = 21");
     statement.execute();
 }
 
@@ -64,14 +64,14 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanksWithBind)
 {
     using namespace ThorsAnvil;
 
-    DB::SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+    DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
                                     THOR_TESTING_MYSQL_PASS,
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 
-    DB::SQL::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
-    statement.execute(DB::SQL::Bind(21));
+    DB::Access::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
+    statement.execute(DB::Access::Bind(21));
 }
 
 #endif

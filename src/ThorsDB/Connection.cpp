@@ -4,7 +4,7 @@
 #include <cerrno>
 #include <cstdlib>
 
-using namespace ThorsAnvil::DB::SQL;
+using namespace ThorsAnvil::DB::Access;
 using ThorsAnvil::Utility::buildErrorMessage;
 
 Connection::Connection(std::string const& connection,
@@ -18,7 +18,7 @@ Connection::Connection(std::string const& connection,
     if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/')
     {
         throw std::logic_error(
-                buildErrorMessage("ThorsAnvil::DB::SQL::Connection", "Connection",
+                buildErrorMessage("ThorsAnvil::DB::Access::Connection", "Connection",
                          "Failed to find schema: ",
                          connection,
                          "\n Expected: <schema>:://<host>[:<port>]"
@@ -46,7 +46,7 @@ Connection::Connection(std::string const& connection,
     if (host == "" || errno != 0 || *endPtr != '\0')
     {
         throw std::logic_error(
-                buildErrorMessage("ThorsAnvil::DB::SQL::Connection", "Connection",
+                buildErrorMessage("ThorsAnvil::DB::Access::Connection", "Connection",
                          "Failed to parse connection: ",
                          connection,
                          "\n Expected: <schema>:://<host>[:<port>]"
@@ -57,7 +57,7 @@ Connection::Connection(std::string const& connection,
     if (creator == getCreators().end())
     {
         throw std::runtime_error(
-                buildErrorMessage("ThorsAnvil::DB::SQL::Connection", "Conection",
+                buildErrorMessage("ThorsAnvil::DB::Access::Connection", "Conection",
                          "Schema for unregister DB type: ",
                          schema, " From: ", connection
               ));

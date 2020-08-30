@@ -1,9 +1,9 @@
-#ifndef THORS_ANVIL_DB_SQL_STATEMENT_TPP
-#define THORS_ANVIL_DB_SQL_STATEMENT_TPP
+#ifndef THORS_ANVIL_DB_THORSDB_STATEMENT_TPP
+#define THORS_ANVIL_DB_THORSDB_STATEMENT_TPP
 
 #include <iostream>
 
-namespace ThorsAnvil::DB::SQL
+namespace ThorsAnvil::DB::Access
 {
     namespace Detail
     {
@@ -77,7 +77,7 @@ inline void Detail::Cursor::retrieve(V& value)
 }
 
 // -- Bindings
-//    Used to group arguments together to bind to the SQL bind points
+//    Used to group arguments together to bind to the Access bind points
 template<typename... R>
 inline void BindArgs<R...>::bindTo(Lib::StatementProxy& statementProxy) const
 {
@@ -106,7 +106,7 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
 {
     if (!statementProxy->isSelect())
     {
-        throw std::logic_error("ThrosAnvil::SQL::Statement::execute: Passing callback function to non select");
+        throw std::logic_error("ThrosAnvil::Access::Statement::execute: Passing callback function to non select");
     }
 
     typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
@@ -144,7 +144,7 @@ inline void Statement::execute(BindArgs<R...> const& binds)
 {
     if (statementProxy->isSelect())
     {
-        throw std::logic_error("ThrosAnvil::SQL::Statement::execute: Not passing callback to SELECT statement");
+        throw std::logic_error("ThrosAnvil::Access::Statement::execute: Not passing callback to SELECT statement");
     }
 
     modifyDone = true;

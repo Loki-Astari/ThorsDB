@@ -2,14 +2,14 @@
 #define THORS_ANVIL_DB_MYSQL_CONNECTION_H
 
 #include "ConectReader.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsDB/SQLUtil.h"
 #include <string>
 #include <memory>
 
 namespace ThorsAnvil::DB::MySQL
 {
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 class RespPackage;
 class RequPackage;
 class ConectWriter;

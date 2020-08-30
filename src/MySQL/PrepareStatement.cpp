@@ -15,7 +15,7 @@ using ThorsAnvil::Utility::buildErrorMessage;
 using ThorsAnvil::Utility::buildBugReport;
 
 PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
-    : SQL::StreamSimple(-1)
+    : Common::StreamSimple(-1)
     , columns(colu)
     , position(0)
     , errorReading(false)
@@ -99,7 +99,7 @@ void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
         // This causes this to unwind back to the SQL where it is caught.
         // The doExecute() will then be called where all the errors generated
         // during validation are checked and handeled in a single place.
-        throw SQL::Lib::ValidationTmpError("Too many parameters in callback function.");
+        throw Access::Lib::ValidationTmpError("Too many parameters in callback function.");
     }
     std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
     position += len;

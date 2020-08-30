@@ -13,7 +13,7 @@ AC_CONFIG_AUX_DIR([build/autotools/build])
 AX_THOR_FUNC_BUILD
 
 
-AC_CONFIG_SRCDIR([src/SQL/Connection.cpp])
+AC_CONFIG_SRCDIR([src/ThorsDB/Connection.cpp])
 AC_PROG_CXX
 AX_THOR_PROG_COV
 AC_C_BIGENDIAN([AC_DEFINE([THOR_ENDIAN_BIG], [1], [Set for Big Endian Systems])],
@@ -150,6 +150,6 @@ AS_IF([test "$with_cryptoroot" != ""],
 popd
 
 AM_INIT_AUTOMAKE([foreign])
-AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/SQL/SQLConfig.h:config.h.in])
+AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h src/Postgres/PostgresConfig.h:config.h src/ThorsDBBuild/ThorsDBConfig.h:config.h src/ThorsDBBuildTest/ThorsDBConfig.h:config.h])
 AC_CONFIG_FILES([Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in])
 AC_OUTPUT

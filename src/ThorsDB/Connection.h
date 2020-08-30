@@ -1,9 +1,9 @@
-#ifndef THORS_ANVIL_DB_SQL_CONNECTION_H
-#define THORS_ANVIL_DB_SQL_CONNECTION_H
+#ifndef THORS_ANVIL_DB_ACCESS_CONNECTION_H
+#define THORS_ANVIL_DB_ACCESS_CONNECTION_H
 
 /*
- * ThorsAnvil::DB::SQL::Connection  Represents a connection to a DB.
- *                                  It is used to initialize `Statement Objects`.
+ * ThorsAnvil::DB::Access::Connection  Represents a connection to a DB.
+ *                                     It is used to initialize `Statement Objects`.
  *
  *                                  See: doc/usage.md for usage details
  *                                  See: doc/internal.md for implementation details
@@ -22,7 +22,7 @@
 #include <iostream>
 #include <functional>
 
-namespace ThorsAnvil::DB::SQL
+namespace ThorsAnvil::DB::Access
 {
     namespace Lib
     {

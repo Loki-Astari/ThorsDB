@@ -5,7 +5,7 @@
 
 To add MySQL functionality you need this object:
 
-    ThorsAnvil::SQL::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
+    ThorsAnvil::Access::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>    mysqlTestConnection("mysql");
 
 This is normally automatically added when you link with -lThorMySQL
 
@@ -22,37 +22,37 @@ This protocol is several layers.
 
 ### Layer 1: Simple Stream
 
-The lowest layer is the stream. This is simply an open bidirectional unix socket to the server. This is implemented by the `MySQLStream` class which implements the Interface `SQL::StreamInterface`. By providing this layer of abstraction I can mock out the stream object for testing; thus allowing the testing framework to replay with a specific stream of bytes without actually needing to use a socket.
+The lowest layer is the stream. This is simply an open bidirectional unix socket to the server. This is implemented by the `MySQLStream` class which implements the Interface `Common::StreamInterface`. By providing this layer of abstraction I can mock out the stream object for testing; thus allowing the testing framework to replay with a specific stream of bytes without actually needing to use a socket.
 
 ````C++
     Class:
     ==========
-    MySQLStream:    SQL::StreamInterface
+    MySQLStream:    Common::StreamInterface
 
     Interface:
     ==========
-    SQL::StreamInterface
+    Common::StreamInterface
 ````
 
 ### Layer 2: Package Stream
 
-MySQL uses a package based protocol. Each request/response message is wrapped in a set of packages. These packages are numbered and sized to allow validation and some basic error checking of communication between the client and server. The class `PackageBuffer` implements the `SQL::StreamInterface` interface; but it is used to wrap a Layer 1 stream thus hiding the packages from the next layer and still exposing a simple stream like interface.
+MySQL uses a package based protocol. Each request/response message is wrapped in a set of packages. These packages are numbered and sized to allow validation and some basic error checking of communication between the client and server. The class `PackageBuffer` implements the `Common::StreamInterface` interface; but it is used to wrap a Layer 1 stream thus hiding the packages from the next layer and still exposing a simple stream like interface.
 
 ````C++
     Class:
     ==========
-    PackageBuffer:    SQL::StreamInterface
+    PackageBuffer:    Common::StreamInterface
 
     Interface:
     ==========
-    SQL::StreamInterface
+    Common::StreamInterface
 ````
 
 It should be noted that the implementation of this layer is currently very basic. One of the improvement points is implementing a more efficient version of this package stream.
 
 ### Layer 3: Object Layer
 
-This layer knows how to encode/de-code specific objects onto a stream. At this layer we have two classes `ConnectWriter`/`ConectReader`. These classes have methods to encode/de-code each specific type understood by the MySQL server onto a `SQL::StreamInterface`. Objects of these type are constructed using a `SQL::StreamInterface` and write/read data from this stream.
+This layer knows how to encode/de-code specific objects onto a stream. At this layer we have two classes `ConnectWriter`/`ConectReader`. These classes have methods to encode/de-code each specific type understood by the MySQL server onto a `Common::StreamInterface`. Objects of these type are constructed using a `Common::StreamInterface` and write/read data from this stream.
 
 ````C++
     Class:
@@ -133,7 +133,7 @@ To send a message use:
 
 The ThorsMySQL library provides an implementation of the interfaces needed by ThorsDB library.
 
-The class `DefaultMySQLConnection` implements the interface `ThorsAnvil::SQL::Lib::ConnectionProxy`. Its main job is creating object of type `PrepareStatement` that implement the interface `ThorsAnvil::SQL::Lib::StatementProxy`.
+The class `DefaultMySQLConnection` implements the interface `ThorsAnvil::Access::Lib::ConnectionProxy`. Its main job is creating object of type `PrepareStatement` that implement the interface `ThorsAnvil::Access::Lib::StatementProxy`.
 
 ### Utility classes
 

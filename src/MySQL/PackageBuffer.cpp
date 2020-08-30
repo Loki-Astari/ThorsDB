@@ -7,7 +7,7 @@ using namespace ThorsAnvil::DB::MySQL;
 using ThorsAnvil::Utility::buildErrorMessage;
 using ThorsAnvil::Utility::buildBugReport;
 
-PackageBuffer::PackageBuffer(SQL::StreamInterface& stream, bool flushed)
+PackageBuffer::PackageBuffer(Common::StreamInterface& stream, bool flushed)
     : stream(stream)
     , readCurrentPacketSize(0)
     , readCurrentPacketPosition(0)

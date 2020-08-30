@@ -3,14 +3,14 @@
 
 #include "ConectReader.h"
 #include "RespPackage.h"
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsDB/SQLUtil.h"
 #include <string>
 #include <utility>
 
 namespace ThorsAnvil::DB::MySQL
 {
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 
 class Connection;
 class RespPackage;

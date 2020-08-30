@@ -1,14 +1,14 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
 #define THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
 
-#include "ThorSQL/SQLUtil.h"
+#include "ThorsDB/SQLUtil.h"
 #include <string>
 #include <memory>
 
 namespace ThorsAnvil::DB::Postgres
 {
 
-using ThorsAnvil::DB::SQL::Options;
+using ThorsAnvil::DB::Access::Options;
 class ConectReader;
 class ConectWriter;
 class Message;

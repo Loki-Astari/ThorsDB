@@ -1,19 +1,19 @@
 #ifndef THORS_ANVIL_DB_MYSQL_MYSQL_STREAM_H
 #define THORS_ANVIL_DB_MYSQL_MYSQL_STREAM_H
 
-#include "ThorSQL/StreamSimple.h"
+#include "ThorsDBCommon/StreamSimple.h"
 
 namespace ThorsAnvil::DB::MySQL
 {
 
-class MySQLStream: public SQL::StreamSimple
+class MySQLStream: public Common::StreamSimple
 {
     public:
         MySQLStream(int fd)
-            : SQL::StreamSimple(fd)
+            : Common::StreamSimple(fd)
         {}
         MySQLStream(std::string const& host, int port = 3306)
-            : SQL::StreamSimple(host, port ? port : 3306)
+            : Common::StreamSimple(host, port ? port : 3306)
         {}
 };
 

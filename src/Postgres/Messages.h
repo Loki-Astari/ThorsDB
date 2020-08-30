@@ -1,7 +1,8 @@
 #ifndef THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 #define THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 
-#include "ThorSQL/MD5.h"
+//#include "ThorsDB/MD5.h"
+#include "ThorsCrypto/hash.h"
 #include "ThorsIOUtil/Utility.h"
 #include <iostream>
 
@@ -223,11 +224,13 @@ class AuthenticationMD5Password: public Authentication
         {}
         virtual std::unique_ptr<Message> authenticateWithServer(std::string const& username, std::string const& password) override
         {
+            using ThorsAnvil::Crypto::hexdigest;
+            using ThorsAnvil::Crypto::Md5;
             // concat('md5', md5(concat(md5(concat(password, username)), random-salt)))
             std::string message = password + username;
-            message = Util::md5(message);
+            message = hexdigest<Md5>(message); // Util::md5(message);
             message += std::string(salt.begin(), salt.end());
-            message = "md5" + Util::md5(message);
+            message = "md5" + hexdigest<Md5>(message); // Util::md5(message);
             return std::make_unique<PasswordMessage>(message);
         }
         virtual void print(std::ostream& stream) const override
