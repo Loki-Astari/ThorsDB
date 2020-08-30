@@ -7,3 +7,6 @@
 [submodule "third/ThorsCrypto"]
 	path = third/ThorsCrypto
 	url = https://github.com/Loki-Astari/ThorsCrypto.git
+[submodule "third/ThorsIOUtil"]
+	path = third/ThorsIOUtil
+	url = https://github.com/Loki-Astari/ThorsIOUtil.git
