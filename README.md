@@ -12,4 +12,3 @@ A C++ SQL library (not a wrapper for C)
 * [Documentation Usage](doc/usage.md)
 * [Documentation Internal](doc/internal.md)
 
-
