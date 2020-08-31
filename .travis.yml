@@ -17,6 +17,11 @@ install:
     - echo "ALTER USER postgres WITH PASSWORD 'testPassword';" | sudo -u postgres psql postgres
 script:
     - ./configure --with-boost=/tmp/extra
+    - echo "-------"
+    - ls -la third/ThorsIOUtil/
+    - echo "-------"
+    - ls -la third/ThorsCrypto/
+    - echo "-------"
     - make
 after_success:
     - bash <(curl -s https://codecov.io/bash)
