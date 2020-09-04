@@ -1,6 +1,6 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
-COVERAGE_REQUIRED			= 50
+COVERAGE_REQUIRED			= 60
 
 TARGET						= ThorsDBCommon.defer
 DEFER_NAME					= ThorsDB

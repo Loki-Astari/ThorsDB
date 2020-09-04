@@ -6,6 +6,9 @@ coverage/
 debug/
 release/
 profile/
+report/
+dobj/
+dlib/
 vera/
 makefile_tmp
 Makefile.extra
