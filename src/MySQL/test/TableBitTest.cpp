@@ -50,10 +50,10 @@ TEST(TableBitTest, ReadBitIntoDouble)     { typeBadTest<double,          std::lo
 
 // Can't read a 12 bit value into all int types
 TEST(TableBitTest, ReadBit12IntoUChar)    { typeBadTest<unsigned char,   std::logic_error>("SELECT B1 FROM IntTypes where Id=1"); }
-TEST(TableBitTest, ReadBit12IntoUShort)   { typeGoodTest<unsigned short> (static_cast<unsigned short>(native_to_big(0xB3D)), "SELECT B1 FROM IntTypes where Id=1"); }
-TEST(TableBitTest, ReadBit12IntoUInt)     { typeGoodTest<unsigned int>   (static_cast<unsigned int>(native_to_big(0x0B3D)), "SELECT B1 FROM IntTypes where Id=1"); }
-TEST(TableBitTest, ReadBit12IntoULong)    { typeGoodTest<unsigned long>  (static_cast<unsigned long>(native_to_big(0x0B3D)), "SELECT B1 FROM IntTypes where Id=1"); }
-TEST(TableBitTest, ReadBit12IntoULongLong){ typeGoodTest<unsigned long long>(static_cast<unsigned long long>(native_to_big(0x0B3D)), "SELECT B1 FROM IntTypes where Id=1"); }
+TEST(TableBitTest, ReadBit12IntoUShort)   { typeGoodTest<unsigned short> (static_cast<unsigned short>(native_to_big(0xB3D) >> 16), "SELECT B1 FROM IntTypes where Id=1"); }
+TEST(TableBitTest, ReadBit12IntoUInt)     { typeGoodTest<unsigned int>   (static_cast<unsigned int>(native_to_big(0x0B3D) >> 16), "SELECT B1 FROM IntTypes where Id=1"); }
+TEST(TableBitTest, ReadBit12IntoULong)    { typeGoodTest<unsigned long>  (static_cast<unsigned long>(native_to_big(0x0B3D) >> 16), "SELECT B1 FROM IntTypes where Id=1"); }
+TEST(TableBitTest, ReadBit12IntoULongLong){ typeGoodTest<unsigned long long>(static_cast<unsigned long long>(native_to_big(0x0B3D) >> 16), "SELECT B1 FROM IntTypes where Id=1"); }
 
 // Can't read a 24 bit value into all int types
 TEST(TableBitTest, ReadBit24IntoUChar)    { typeBadTest<unsigned char,   std::logic_error>("SELECT B2 FROM IntTypes where Id=1"); }
