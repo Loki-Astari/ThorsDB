@@ -713,8 +713,11 @@ LIBTOOL
 awk
 wc
 echo
-crypto_ROOT_INCDIR
-crypto_ROOT_LIBDIR
+HAVE_ThorsSerialize
+ThorsSerialize_ROOT_LIB
+ThorsSerialize_ROOT_DIR
+crypto_ROOT_LIB
+crypto_ROOT_DIR
 EGREP
 GREP
 CPP
@@ -800,6 +803,8 @@ with_boost_python
 enable_vera
 with_hostbuild
 with_cryptoroot
+with_ThorsSerializeroot
+enable_ThorsSerialize
 with_timegm
 with_modtests
 enable_shared
@@ -1452,6 +1457,10 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-vera          Disable vera. Disable Static analysis of source.
 
+  --disable-ThorsSerialize
+                          Don't use ThorsSerialize. This means features that
+                          use ThorsSerialize will be disabled.
+
   --enable-shared[=PKGS]  build shared libraries [default=yes]
   --enable-static[=PKGS]  build static libraries [default=yes]
   --enable-fast-install[=PKGS]
@@ -1482,6 +1491,9 @@ Optional Packages:
 
   --with-cryptoroot=<location>
                           Directory of CRYPTO_ROOT
+
+  --with-ThorsSerializeroot=<location>
+                          Directory of ThorsSerialize_ROOT
 
   --without-timegm        Disables tests that use the timegm functions
 
@@ -5935,9 +5947,9 @@ if test "x$ac_cv_lib_crypto_SHA1_Init" = xyes; then :
 
             if test "$with_cryptoroot" != ""; then :
 
-                    crypto_ROOT_LIBDIR="-L $with_cryptoroot/lib"
+                    crypto_ROOT_DIR=$with_cryptoroot
 
-                    crypto_ROOT_INCDIR="-I $with_cryptoroot/include"
+                    crypto_ROOT_LIB=crypto
 
 
 fi
@@ -5964,6 +5976,115 @@ fi
 
 
     LDFLAGS="${ORIG_LDFLAGS}"
+
+
+
+
+
+
+
+# Check whether --with-ThorsSerializeroot was given.
+if test "${with_ThorsSerializeroot+set}" = set; then :
+  withval=$with_ThorsSerializeroot;
+fi
+
+    # Check whether --enable-ThorsSerialize was given.
+if test "${enable_ThorsSerialize+set}" = set; then :
+  enableval=$enable_ThorsSerialize;
+fi
+
+    if flag=enable_ThorsSerialize
+        test "x${!flag}" != "xno"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Got HERE" >&5
+$as_echo "$as_me: Got HERE" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Name: Serialize" >&5
+$as_echo "$as_me: Name: Serialize" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: With: ${with_ThorsSerializeroot}" >&5
+$as_echo "$as_me: With: ${with_ThorsSerializeroot}" >&6;}
+
+        if test "${with_ThorsSerializeroot}" == ""; then
+            declare with_ThorsSerializeroot="/usr/local"
+        fi
+        ORIG_LDFLAGS="${LDFLAGS}"
+        LDFLAGS="$LDFLAGS -L${with_ThorsSerializeroot}/lib"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: LDFLAGS: ${LDFLAGS}" >&5
+$as_echo "$as_me: LDFLAGS: ${LDFLAGS}" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: LIB: ThorSerialize17" >&5
+$as_echo "$as_me: LIB: ThorSerialize17" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Meth: _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&5
+$as_echo "$as_me: Meth: _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&6;}
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17" >&5
+$as_echo_n "checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17... " >&6; }
+if ${ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lThorSerialize17  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv ();
+int
+main ()
+{
+return _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv=yes
+else
+  ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&5
+$as_echo "$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&6; }
+if test "x$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" = xyes; then :
+
+
+$as_echo "#define HAVE_ThorsSerialize 1" >>confdefs.h
+
+                ThorsSerialize_ROOT_DIR=${with_ThorsSerializeroot}
+
+                ThorsSerialize_ROOT_LIB=ThorSerialize
+
+                HAVE_ThorsSerialize=yes
+
+else
+  as_fn_error 1 "
+
+Error: Could not find libThorSerialize17
+
+You can solve this by installing libThorSerialize
+    https://github.com/Loki-Astari/ThorsSerializer
+
+Alternately specify install location with:
+    --with-ThorsSerializeroot=<location of ThorsSerialize installation>
+
+If you do not want to use features that need ThorSerialize then it
+can be disabled with:
+    --disable-ThorsSerialize
+
+                " "$LINENO" 5
+
+fi
+
+
+        LDFLAGS="${ORIG_LDFLAGS}"
+
+fi
+
 
 
 
@@ -17856,6 +17977,7 @@ if test "$with_cryptoroot" != ""; then :
 fi
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
+
 
 am__api_version='1.16'
 

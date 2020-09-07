@@ -88,6 +88,7 @@ Error: Could not find one or more of: echo wc awk
 
 
 AX_THOR_FUNC_USE_CRYPTO
+AX_THOR_FUNC_USE_THORS_LIB_SERIALIZE(17)
 AX_THOR_USE_TIMEGM
 AX_THOR_USE_MODTEST
 
@@ -147,6 +148,7 @@ AS_IF([test "$with_cryptoroot" != ""],
       [addCrypoRoot="--with-cryptoroot=$with_cryptoroot"])
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
+
 
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h src/Postgres/PostgresConfig.h:config.h src/ThorsDBBuild/ThorsDBConfig.h:config.h src/ThorsDBBuildTest/ThorsDBConfig.h:config.h])
