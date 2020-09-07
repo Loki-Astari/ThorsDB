@@ -27,29 +27,26 @@ bool MsgHeader::operator!=(MsgHeader const& rhs) const
     return !((*this) == rhs);
 }
 
-namespace ThorsAnvil::DB::Mongo
+std::ostream& MsgHeader::print(std::ostream& stream)
 {
-    std::ostream& operator<<(std::ostream& stream, MsgHeader& header)
-    {
-        return stream << make_LE(header.messageLength)
-                      << make_LE(header.requestID)
-                      << make_LE(header.responseTo)
-                      << make_LE(header.opCode);
-    }
+    return stream << make_LE(messageLength)
+                  << make_LE(requestID)
+                  << make_LE(responseTo)
+                  << make_LE(opCode);
+}
 
-    std::istream& operator>>(std::istream& stream, MsgHeader& header)
-    {
-        return stream >> make_LE(header.messageLength)
-                      >> make_LE(header.requestID)
-                      >> make_LE(header.responseTo)
-                      >> make_LE(header.opCode);
-    }
+std::istream& MsgHeader::parse(std::istream& stream)
+{
+    return stream >> make_LE(messageLength)
+                  >> make_LE(requestID)
+                  >> make_LE(responseTo)
+                  >> make_LE(opCode);
+}
 
-    std::ostream& operator<<(std::ostream& stream, HumanReadable<MsgHeader> const& header)
-    {
-        return stream << "messageLength: " << header.object.messageLength << "\n"
-                      << "requestID:     " << header.object.requestID     << "\n"
-                      << "responseTo:    " << header.object.responseTo    << "\n"
-                      << "opCode:        " << static_cast<std::int32_t>(header.object.opCode) << "\n";
-    }
+std::ostream& MsgHeader::printHR(std::ostream& stream) const
+{
+    return stream << "messageLength: " << messageLength << "\n"
+                  << "requestID:     " << requestID     << "\n"
+                  << "responseTo:    " << responseTo    << "\n"
+                  << "opCode:        " << static_cast<std::int32_t>(opCode) << "\n";
 }

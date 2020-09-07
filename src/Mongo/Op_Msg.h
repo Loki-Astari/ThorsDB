@@ -23,6 +23,10 @@ enum class OP_MsgFlag: std::int32_t
     exhaustAllowed   = 0x10000              // The client is prepared for multiple replies to this request using the moreToCome bit.
                                             // The server will never produce replies with the moreToCome bit set unless the request has this bit set.
 };
+inline std::int32_t operator&(OP_MsgFlag const& lhs, OP_MsgFlag const& rhs)
+{
+    return static_cast<std::int32_t>(lhs) & static_cast<std::int32_t>(rhs);
+}
 
 template<typename Data>
 struct Kind0
@@ -32,23 +36,39 @@ struct Kind0
         template<typename... Args>
         Kind0(Args&&... arg);
         std::size_t getSize(std::ostream& stream);
-        friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg);
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
+
+        std::ostream& print(std::ostream& stream)       const;
+        std::ostream& printHR(std::ostream& stream)     const;
+
+        friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg)                 {return msg.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg)  {return msg.object.printHR(stream);}
 };
 
+// TODO Kind1
+
+
+// Op_Msg: https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
 template<typename... Kind>
 class OP_Msg
 {
     MsgHeader           header;             // standard message header
     OP_MsgFlag          flagBits;           // message flags
-    std::tuple<Kind...> sections;           // The data of the message (See abive Kind0 and Kind1
+    std::tuple<Kind...> sections;           // The data of the message (See above Kind0 and Kind1)
     std::int32_t        checksum;           // checksum of message;
 
     public:
         template<typename... Args>
         OP_Msg(Args&&... arg);
-        friend std::ostream& operator<<(std::ostream& stream, OP_Msg& msg);
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<OP_Msg>& msg);
+
+        std::ostream& print(std::ostream& stream);
+        std::ostream& printHR(std::ostream& stream);
+    private:
+        template<std::size_t... I> std::size_t getSectionSize(std::ostream& stream, std::index_sequence<I...>&&);
+        template<std::size_t... I> void printSection(std::ostream& stream, std::index_sequence<I...>&&);
+        template<std::size_t... I> void printSectionHR(std::ostream& stream, std::index_sequence<I...>&&);
+
+        friend std::ostream& operator<<(std::ostream& stream, OP_Msg& msg)                  {return msg.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<OP_Msg>& msg)   {return msg.object.printHR(stream);}
 };
 
 }

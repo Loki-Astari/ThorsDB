@@ -23,10 +23,10 @@ inline std::size_t Kind0<Data>::getSize(std::ostream& stream)
 }
 
 template<typename Data>
-inline std::ostream& operator<<(std::ostream& stream, Kind0<Data> const& msg)
+inline std::ostream& Kind0<Data>::print(std::ostream& stream) const
 {
     stream.write("\x00", 1);
-    stream << ThorsAnvil::Serialize::bsonExporter(msg.data);
+    stream << ThorsAnvil::Serialize::bsonExporter(data);
     return stream;
 }
 
@@ -44,19 +44,42 @@ inline OP_Msg<Kind...>::OP_Msg(Args&&... arg)
 {}
 
 template<typename... Kind>
-inline std::ostream& operator<<(std::ostream& stream, OP_Msg<Kind...>& msg)
+inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
 {
-    std::size_t dataSize = sizeof(msg.flagBits) + sizeof(msg.checksum);
-    // Add Size of all sections;
+    bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
 
-    msg.header.prepareToSend(dataSize);
+    std::size_t sectionSize = getSectionSize(stream, std::make_index_sequence<sizeof...(Kind)>());
+    std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
+    header.prepareToSend(dataSize);
 
-    stream << msg.header
-           << make_LE(msg.flagBits);
+    stream << header
+           << make_LE(flagBits);
+
     // Stream the sections;
-           //<< msg.sections;
-    stream << make_LE(msg.checksum);
+    printSection(stream, std::make_index_sequence<sizeof...(Kind)>());
+
+    // Output the checksum only if we said it would be there.
+    if (showCheckSum)
+    {
+        stream << make_LE(checksum);
+    }
     return stream;
+}
+
+template<typename... Kind>
+template<std::size_t... I>
+std::size_t OP_Msg<Kind...>::getSectionSize(std::ostream& stream, std::index_sequence<I...>&&)
+{
+    std::size_t size = 0;
+    ((size += std::get<I>(sections).getSize(stream)), ...);
+    return size;
+}
+
+template<typename... Kind>
+template<std::size_t... I>
+void OP_Msg<Kind...>::printSection(std::ostream& stream, std::index_sequence<I...>&&)
+{
+    ((stream << std::get<I>(sections)), ...);
 }
 
 }

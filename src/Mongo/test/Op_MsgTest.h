@@ -1,5 +1,6 @@
 
 #include "ThorSerialize/Traits.h"
+#include "ThorSerialize/Serialize.tpp"
 
 struct Kind0SimpleStringNoConstructor
 {
