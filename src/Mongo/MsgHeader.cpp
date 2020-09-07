@@ -27,7 +27,7 @@ bool MsgHeader::operator!=(MsgHeader const& rhs) const
     return !((*this) == rhs);
 }
 
-std::ostream& MsgHeader::print(std::ostream& stream)
+std::ostream& MsgHeader::print(std::ostream& stream) const
 {
     return stream << make_LE(messageLength)
                   << make_LE(requestID)

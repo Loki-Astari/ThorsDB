@@ -3,8 +3,7 @@
 
 #include "Op.h"
 #include "MsgHeader.h"
-#include "/Users/martinyork/Repo/ThorsSerializer/src/Serialize/Traits.h"
-#include "/Users/martinyork/Repo/ThorsSerializer/src/Serialize/BsonThor.h"
+#include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <istream>
 #include <cstdlib>
@@ -23,6 +22,7 @@ enum class OP_MsgFlag: std::int32_t
     exhaustAllowed   = 0x10000              // The client is prepared for multiple replies to this request using the moreToCome bit.
                                             // The server will never produce replies with the moreToCome bit set unless the request has this bit set.
 };
+
 inline std::int32_t operator&(OP_MsgFlag const& lhs, OP_MsgFlag const& rhs)
 {
     return static_cast<std::int32_t>(lhs) & static_cast<std::int32_t>(rhs);
@@ -35,13 +35,13 @@ struct Kind0
     public:
         template<typename... Args>
         Kind0(Args&&... arg);
-        std::size_t getSize(std::ostream& stream);
+        std::size_t getSize(std::ostream& stream)       const;
 
         std::ostream& print(std::ostream& stream)       const;
         std::ostream& printHR(std::ostream& stream)     const;
 
         friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg)                 {return msg.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg)  {return msg.object.printHR(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
 };
 
 // TODO Kind1
@@ -63,15 +63,14 @@ class OP_Msg
         std::ostream& print(std::ostream& stream);
         std::ostream& printHR(std::ostream& stream);
     private:
-        template<std::size_t... I> std::size_t getSectionSize(std::ostream& stream, std::index_sequence<I...>&&);
-        template<std::size_t... I> void printSection(std::ostream& stream, std::index_sequence<I...>&&);
-        template<std::size_t... I> void printSectionHR(std::ostream& stream, std::index_sequence<I...>&&);
-
         friend std::ostream& operator<<(std::ostream& stream, OP_Msg& msg)                  {return msg.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<OP_Msg>& msg)   {return msg.object.printHR(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<OP_Msg> const& msg);
 };
 
 }
+
+ThorsAnvil_MakeEnum(ThorsAnvil::DB::Mongo::OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
+
 
 #if defined(HEADER_ONLY) && HEADER_ONLY == 1
 #include "Op_Msg.source"

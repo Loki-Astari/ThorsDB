@@ -86,14 +86,20 @@ TEST(OpTest, StreamInUIntAsLittelIndian)
     testStreamInput(data, "\xF3\xA3\xA1\x00"s);
 }
 
-std::ostream& operator<<(std::ostream& str, HumanReadable<std::string> const& value)
+struct HumanPrintableString: public std::string
 {
-    return str << "HR: " << value.object << ":";
-}
+    using std::string::string;
+
+    std::ostream& printHR(std::ostream& str)
+    {
+        return str << "HR: " << (*this) << ":";
+    }
+};
+
 TEST(OpTest, HumanReadableStreamer)
 {
     std::stringstream output;
-    std::string       test = "Hi There";
+    HumanPrintableString       test = "Hi There";
     output << make_hr(test);
 
     EXPECT_EQ("HR: Hi There:", output.str());

@@ -1,6 +1,10 @@
 #ifndef THORSANVIL_DB_MONGO_OP_MSG_TPP
 #define THORSANVIL_DB_MONGO_OP_MSG_TPP
 
+#include "ThorSerialize/Traits.h"
+#include "ThorSerialize/BsonThor.h"
+#include "ThorSerialize/JsonThor.h"
+
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -14,7 +18,7 @@ inline Kind0<Data>::Kind0(Args&&... arg)
 
 
 template<typename Data>
-inline std::size_t Kind0<Data>::getSize(std::ostream& stream)
+inline std::size_t Kind0<Data>::getSize(std::ostream& stream) const
 {
     using DataTraits = ThorsAnvil::Serialize::Traits<Data>;
     ThorsAnvil::Serialize::BsonPrinter printer(stream);
@@ -28,6 +32,13 @@ inline std::ostream& Kind0<Data>::print(std::ostream& stream) const
     stream.write("\x00", 1);
     stream << ThorsAnvil::Serialize::bsonExporter(data);
     return stream;
+}
+
+template<typename Data>
+inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
+{
+    return stream << "Kind: 0\n"
+                  << ThorsAnvil::Serialize::jsonExporter(data) << "\n";
 }
 
 // ---- Kind1
@@ -48,7 +59,9 @@ inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
 {
     bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
 
-    std::size_t sectionSize = getSectionSize(stream, std::make_index_sequence<sizeof...(Kind)>());
+    std::size_t sectionSize = 0;
+    std::apply([&stream, &sectionSize](auto const& section){sectionSize += section.getSize(stream);}, sections);
+
     std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
     header.prepareToSend(dataSize);
 
@@ -56,7 +69,7 @@ inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
            << make_LE(flagBits);
 
     // Stream the sections;
-    printSection(stream, std::make_index_sequence<sizeof...(Kind)>());
+    std::apply([&stream](auto& section){stream << section;}, sections);
 
     // Output the checksum only if we said it would be there.
     if (showCheckSum)
@@ -67,19 +80,32 @@ inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
 }
 
 template<typename... Kind>
-template<std::size_t... I>
-std::size_t OP_Msg<Kind...>::getSectionSize(std::ostream& stream, std::index_sequence<I...>&&)
+inline std::ostream& OP_Msg<Kind...>::printHR(std::ostream& stream)
 {
-    std::size_t size = 0;
-    ((size += std::get<I>(sections).getSize(stream)), ...);
-    return size;
-}
+    bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
 
-template<typename... Kind>
-template<std::size_t... I>
-void OP_Msg<Kind...>::printSection(std::ostream& stream, std::index_sequence<I...>&&)
-{
-    ((stream << std::get<I>(sections)), ...);
+    std::size_t sectionSize = 0;
+    std::apply([&stream, &sectionSize](auto const& section){sectionSize += section.getSize(stream);}, sections);
+
+    std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
+    header.prepareToSend(dataSize);
+
+    stream << make_hr(header)
+           << "flagBits:    " << ThorsAnvil::Serialize::jsonExporter(flagBits) << "\n";
+
+    // Stream the sections;
+    std::apply([&stream](auto& section){stream << make_hr(section);}, sections);
+
+    // Output the checksum only if we said it would be there.
+    if (showCheckSum)
+    {
+        stream << "Checksum: " << checksum << "\n";
+    }
+    else
+    {
+        stream << "Checksum: Not calculated\n";
+    }
+    return stream;
 }
 
 }

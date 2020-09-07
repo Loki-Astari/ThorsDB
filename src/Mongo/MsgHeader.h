@@ -21,14 +21,13 @@ class MsgHeader
         bool operator==(MsgHeader const& rhs) const;
         bool operator!=(MsgHeader const& rhs) const;
 
-        std::ostream& print(std::ostream& stream);
+        std::ostream& print(std::ostream& stream) const;
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream) const;
 
         friend std::ostream& operator<<(std::ostream& stream, MsgHeader& header)                        {return header.print(stream);}
         friend std::istream& operator>>(std::istream& stream, MsgHeader& header)                        {return header.parse(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<MsgHeader> const& header)   {return header.object.printHR(stream);}
-
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<MsgHeader> const& header);
 
         [[deprecated("This function is for unit testing only. Do not use it. I will make it do silly things in the future to mess with people that use this function")]]
         static void messageIdSetForTest(int value)                {uniqueMessageId = value;}  // Used for testing
