@@ -18,12 +18,9 @@ inline Kind0<Data>::Kind0(Args&&... arg)
 
 
 template<typename Data>
-inline std::size_t Kind0<Data>::getSize(std::ostream& stream) const
+inline std::size_t Kind0<Data>::getSize() const
 {
-    using DataTraits = ThorsAnvil::Serialize::Traits<Data>;
-    ThorsAnvil::Serialize::BsonPrinter printer(stream);
-
-    return 1 + DataTraits::getPrintSize(printer, data, false);
+    return 1 + ThorsAnvil::Serialize::bsonGetPrintSize(data);
 }
 
 template<typename Data>
@@ -60,7 +57,7 @@ inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
     bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
 
     std::size_t sectionSize = 0;
-    std::apply([&stream, &sectionSize](auto const& section){sectionSize += section.getSize(stream);}, sections);
+    std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
 
     std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
     header.prepareToSend(dataSize);
@@ -85,7 +82,7 @@ inline std::ostream& OP_Msg<Kind...>::printHR(std::ostream& stream)
     bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
 
     std::size_t sectionSize = 0;
-    std::apply([&stream, &sectionSize](auto const& section){sectionSize += section.getSize(stream);}, sections);
+    std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
 
     std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
     header.prepareToSend(dataSize);

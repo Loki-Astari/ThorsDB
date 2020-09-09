@@ -35,7 +35,7 @@ struct Kind0
     public:
         template<typename... Args>
         Kind0(Args&&... arg);
-        std::size_t getSize(std::ostream& stream)       const;
+        std::size_t getSize()                           const;
 
         std::ostream& print(std::ostream& stream)       const;
         std::ostream& printHR(std::ostream& stream)     const;
