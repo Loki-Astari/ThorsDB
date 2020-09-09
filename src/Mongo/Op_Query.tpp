@@ -58,7 +58,7 @@ std::ostream& Op_Query<Document>::printHR(std::ostream& stream)
 {
     header.prepareToSend(getSize());
     stream << make_hr(header)
-           << ThorsAnvil::Serialize::jsonExporter(flags) << "\n"
+           << flags << "\n"
            << "fullCollectionName: " << fullCollectionName << "\n"
            << "numberToSkip: " << numberToSkip << "\n"
            << "numberToReturn: " << numberToReturn << "\n"

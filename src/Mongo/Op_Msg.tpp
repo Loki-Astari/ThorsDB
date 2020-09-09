@@ -54,7 +54,7 @@ inline OP_Msg<Kind...>::OP_Msg(Args&&... arg)
 template<typename... Kind>
 inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
 {
-    bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
+    bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
 
     std::size_t sectionSize = 0;
     std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
@@ -79,7 +79,7 @@ inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
 template<typename... Kind>
 inline std::ostream& OP_Msg<Kind...>::printHR(std::ostream& stream)
 {
-    bool showCheckSum = flagBits & OP_MsgFlag::checksumPresent;
+    bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
 
     std::size_t sectionSize = 0;
     std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
@@ -88,7 +88,7 @@ inline std::ostream& OP_Msg<Kind...>::printHR(std::ostream& stream)
     header.prepareToSend(dataSize);
 
     stream << make_hr(header)
-           << "flagBits:    " << ThorsAnvil::Serialize::jsonExporter(flagBits) << "\n";
+           << "flagBits:    " << flagBits << "\n";
 
     // Stream the sections;
     std::apply([&stream](auto& section){stream << make_hr(section);}, sections);

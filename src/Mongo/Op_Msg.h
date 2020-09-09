@@ -23,11 +23,6 @@ enum class OP_MsgFlag: std::int32_t
                                             // The server will never produce replies with the moreToCome bit set unless the request has this bit set.
 };
 
-inline std::int32_t operator&(OP_MsgFlag const& lhs, OP_MsgFlag const& rhs)
-{
-    return static_cast<std::int32_t>(lhs) & static_cast<std::int32_t>(rhs);
-}
-
 template<typename Data>
 struct Kind0
 {
@@ -69,7 +64,7 @@ class OP_Msg
 
 }
 
-ThorsAnvil_MakeEnum(ThorsAnvil::DB::Mongo::OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
+ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
 
 
 #if defined(HEADER_ONLY) && HEADER_ONLY == 1
