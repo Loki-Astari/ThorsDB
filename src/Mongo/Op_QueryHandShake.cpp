@@ -26,7 +26,8 @@ OS::OS()
         throw std::runtime_error("Bad");
     }
     char pBuffer[100];
-    while (fgets(pBuffer, sizeof(pBuffer), fp) != NULL) {
+    while (fgets(pBuffer, sizeof(pBuffer), fp) != NULL)
+    {
         name += pBuffer;
     }
     if (name[name.size() -1] == '\n')
@@ -49,5 +50,3 @@ HandShake::HandShake(std::string const& application)
     , hostInfo("BatCave.local:27017")
     , client(application)
 {}
-
-

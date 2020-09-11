@@ -89,6 +89,7 @@ TEST(Op_QueryHandShakeTest, CreateHandShake)
 }
 TEST(Op_QueryHandShakeTest, CreateOpQueryHandShake)
 {
+    MsgHeader::messageIdSetForTest(11495306);
     Op_QueryHandShake   handshake("Application");
 
     std::stringstream   stream;
@@ -106,5 +107,6 @@ TEST(Op_QueryHandShakeTest, CreateOpQueryHandShake)
         output.erase(findOS, (findEndOS - findOS));
     }
 
-    EXPECT_EQ(output, R"(messageLength:349requestID:0responseTo:0opCode:2004emptyfullCollectionName:admin.$cmdnumberToSkip:0numberToReturn:1query:{"isMaster":true,"saslSupportedMechs":"thor.loki","hostInfo":"BatCave.local:27017","client":{"application":"Application","driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{},"platform":"ThorDB-Build"}}returnFieldsSelector:{})");
+    EXPECT_EQ(output, R"(messageLength:349requestID:11495306responseTo:0opCode:2004emptyfullCollectionName:admin.$cmdnumberToSkip:0numberToReturn:1query:{"isMaster":true,"saslSupportedMechs":"thor.loki","hostInfo":"BatCave.local:27017","client":{"application":"Application","driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{},"platform":"ThorDB-Build"}}returnFieldsSelector:{})");
 }
+

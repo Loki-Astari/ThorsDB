@@ -2,9 +2,6 @@
 
 using namespace ThorsAnvil::DB::Mongo::Socket;
 
-std::map<std::istream*, std::size_t> StreamMinimum::minData;
-
-
 SocketStreamBuffer::SocketStreamBuffer(DataSocket& stream,
                                        Notifier noAvailableData, Notifier flushing,
                                        std::vector<char>&& bufData, char const* currentStart, char const* currentEnd)

@@ -49,7 +49,7 @@ TEST(Op_QuertTest, Op_QueryStreamObject)
                             "\x00\x00\x00\x00"          // Flags
                             "thor.collection\x00"      // Collection -> See constructo
                             "\x00\x00\x00\x00"          // numberToSkip
-                            "\x00\x00\x00\x00"          // numberToReturn
+                            "\x01\x00\x00\x00"          // numberToReturn
                                                     // BSON document (the query) of StringAndIntNoConstructor
                             "\x28\x00\x00\x00"          // Size
                             "\x02"  "message\x00"   "\x0B\x00\x00\x00" "DataString\x00"
@@ -74,3 +74,4 @@ TEST(Op_QuertTest, Op_QueryStreamObjectHumanReadable)
 
     EXPECT_EQ(lineCount, 16);
 }
+
