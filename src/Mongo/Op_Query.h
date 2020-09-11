@@ -53,6 +53,7 @@ class Op_Query
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
     private:
         std::size_t   getSize()                     const;
+    protected:
         std::ostream& print(std::ostream& stream);
         std::ostream& printHR(std::ostream& stream);
 };

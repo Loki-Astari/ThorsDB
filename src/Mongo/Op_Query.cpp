@@ -4,6 +4,7 @@
 #ifdef COVERAGE_Mongo
 
 #include "Op_Query.tpp"
+#include "Op_QueryHandShake.h"
 #include "test/OpTest.h"
 #include <ostream>
 
@@ -17,5 +18,10 @@ template ThorsAnvil::DB::Mongo::Op_Query<StringAndIntWithConstructor>::Op_Query(
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Query<StringAndIntNoConstructor>::print(std::ostream&);
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Query<StringAndIntNoConstructor>::printHR(std::ostream&);
 
+// Connection Test
+template ThorsAnvil::DB::Mongo::Op_Query<HandShake>::Op_Query(std::string const&, std::string&&);
+template ThorsAnvil::DB::Mongo::Op_Query<HandShake>::Op_Query(std::string const&, std::string const&);
+template std::ostream& ThorsAnvil::DB::Mongo::Op_Query<HandShake>::print(std::ostream&);
+template std::ostream& ThorsAnvil::DB::Mongo::Op_Query<HandShake>::printHR(std::ostream&);
 #endif
 #endif

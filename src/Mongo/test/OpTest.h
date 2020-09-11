@@ -1,3 +1,5 @@
+#ifndef THORS_ANVIL_DB_MONGO_TEST_OP_TEST_H
+#define THORS_ANVIL_DB_MONGO_TEST_OP_TEST_H
 
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/Serialize.tpp"
@@ -33,3 +35,4 @@ ThorsAnvil_MakeTrait(SimpleStringWithConstructor, message);
 ThorsAnvil_MakeTrait(StringAndIntNoConstructor, message, value);
 ThorsAnvil_MakeTrait(StringAndIntWithConstructor, message, value);
 
+#endif

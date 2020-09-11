@@ -5,6 +5,8 @@
 
 #include "Op_Msg.tpp"
 #include "test/OpTest.h"
+#include "Op_MsgHandShake.h"
+#include "test/OpTest.h"
 using namespace ThorsAnvil::DB::Mongo;
 
 // Constructor
@@ -21,5 +23,10 @@ template void ThorsAnvil::Serialize::Serializer::print<SimpleStringNoConstructor
 // Stream HR
 template std::ostream& ThorsAnvil::DB::Mongo::OP_Msg<Kind0<SimpleStringNoConstructor>>::printHR(std::ostream&);
 
+// Op_MsgHandShake
+template void ThorsAnvil::Serialize::Serializer::print<Driver>(Driver const&);
+template void ThorsAnvil::Serialize::Serializer::print<OS>(OS const&);
+template void ThorsAnvil::Serialize::Serializer::print<Client>(Client const&);
+template void ThorsAnvil::Serialize::Serializer::print<HandShake>(HandShake const&);
 #endif
 #endif
