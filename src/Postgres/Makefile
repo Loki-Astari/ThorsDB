@@ -4,9 +4,9 @@ COVERAGE_REQUIRED			= 75
 
 TARGET						= ThorsPostgres.defer
 DEFER_NAME					= ThorsDB
-CXXFLAGS					= $(crypto_ROOT_INCDIR)
+LDLIBS_EXTERN_BUILD			= crypto
 UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
-UNITTEST_LDLIBS				= $(crypto_ROOT_LIBDIR) -lssl -lcrypto
+UNITTEST_LDLIBS				= -lssl
 NO_HEADER					= 1
 
 %/ConectReader.o:			FILE_WARNING_FLAGS += -Wno-unknown-pragmas

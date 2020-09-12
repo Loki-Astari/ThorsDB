@@ -21,11 +21,32 @@ TEST(MongoConnectTest, CreateReply)
 
     stream << handShake;
     stream.flush();
-
+#if 1
     Op_ReplyHandShake           reply;
     stream >> reply;
 
     std::cerr << make_hr(reply);
+#else
+    stream >> std::noskipws;
 
+    unsigned char c;
+    std::string   text;
+    int  loop = 0;
+    std::cerr << "Reading Data\n";
+    while(stream >> c)
+    {
+        finished = true;
+        std::cerr << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(c) << " ";
+        text += ((c >= 20 && c < 127) ? c : '~');;
+
+        ++loop;
+        if (loop == 16)
+        {
+            std::cerr << "      " << text << "\n";
+            text = "";
+            loop = 0;
+        }
+    }
+#endif
 }
 

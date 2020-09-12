@@ -29,9 +29,16 @@ class OS
     public:
         OS();
 };
+class Application
+{
+    std::string     name;
+    friend ThorsAnvil::Serialize::Traits<Application>;
+    public:
+        Application(std::string const& application);
+};
 class Client
 {
-    std::string     application;
+    Application     application;
     Driver          driver;
     OS              os;
     std::string     platform;       // Optional
@@ -65,6 +72,7 @@ class Op_QueryHandShake: public Op_Query<HandShake>
 }
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,         name, version);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,             type, name, architecture, version);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Application,    name);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Client,         application, driver, os, platform);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,      isMaster, saslSupportedMechs, hostInfo, client);
 

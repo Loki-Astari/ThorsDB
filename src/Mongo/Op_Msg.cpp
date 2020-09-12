@@ -26,6 +26,7 @@ template std::ostream& ThorsAnvil::DB::Mongo::OP_Msg<Kind0<SimpleStringNoConstru
 // Op_MsgHandShake
 template void ThorsAnvil::Serialize::Serializer::print<Driver>(Driver const&);
 template void ThorsAnvil::Serialize::Serializer::print<OS>(OS const&);
+template void ThorsAnvil::Serialize::Serializer::print<Application>(Application const&);
 template void ThorsAnvil::Serialize::Serializer::print<Client>(Client const&);
 template void ThorsAnvil::Serialize::Serializer::print<HandShake>(HandShake const&);
 #endif

@@ -4,8 +4,8 @@ COVERAGE_REQUIRED			= 60
 
 TARGET						= ThorsDBCommon.defer
 DEFER_NAME					= ThorsDB
-CXXFLAGS					= $(crypto_ROOT_INCDIR)
-UNITTEST_LDLIBS				= $(crypto_ROOT_LIBDIR) -lssl -lcrypto
+LDLIBS_EXTERN_BUILD			= crypto
+UNITTEST_LDLIBS				= -lssl
 NO_HEADER					= 1
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile

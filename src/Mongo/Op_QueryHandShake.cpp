@@ -39,6 +39,10 @@ OS::OS()
     version      = buffer.release;
 }
 
+Application::Application(std::string const& application)
+    : name(application)
+{}
+
 Client::Client(std::string const& application)
     : application(application)
     , platform("ThorDB-Build")
