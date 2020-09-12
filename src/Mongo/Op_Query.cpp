@@ -4,8 +4,7 @@
 #ifdef COVERAGE_Mongo
 
 #include "Op_Query.tpp"
-#include "Op_QueryHandShake.h"
-#include "Op_ReplyHandShake.h"
+#include "HandShake.h"
 #include "ThorSerialize/CustomSerialization.h"
 #include "ThorSerialize/CustomSerialization.tpp"
 #include "test/OpTest.h"

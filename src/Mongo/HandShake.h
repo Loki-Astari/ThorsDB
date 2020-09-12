@@ -4,9 +4,12 @@
 // https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst
 
 #include "Op_Query.h"
+#include "Op_Reply.h"
 #include "ThorSerialize/Traits.h"
+#include "ThorSerialize/MongoUtility.h"
 #include <string>
 #include <sys/utsname.h>
+
 
 namespace ThorsAnvil::DB::Mongo
 {
@@ -58,6 +61,37 @@ class HandShake
         HandShake(std::string const& application);
 };
 
+using ObjectID      = ThorsAnvil::Serialize::MongoUtility::ObjectID;
+using UTCDateTime   = ThorsAnvil::Serialize::MongoUtility::UTCDateTime;
+
+struct Version
+{
+    ObjectID            processId;
+    std::int64_t        counter;
+};
+
+struct HandShakeReplyDoc
+{
+    double          ok;
+    // If ok is zero
+    int             code;
+    std::string     errmsg;
+    std::string     codeName;
+    // If ok is 00 00 00 00 00 00 f0 3f
+    Version         topologyVersion;
+    UTCDateTime     localTime;
+    std::int32_t    maxBsonObjectSize;
+    std::int32_t    maxMessageSizeBytes;
+    std::int32_t    maxWriteBatchSize;
+    std::int32_t    logicalSessionTimeoutMinutes;
+    std::int32_t    connectionId;
+    std::int32_t    minWireVersion;
+    std::int32_t    maxWireVersion;
+    bool            ismaster;
+    bool            readOnly;
+    std::vector<std::string>    saslSupportedMechs;
+};
+
 class Op_QueryHandShake: public Op_Query<HandShake>
 {
     public:
@@ -69,11 +103,16 @@ class Op_QueryHandShake: public Op_Query<HandShake>
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
 };
 
+using Op_ReplyHandShake = Op_Reply<HandShakeReplyDoc>;
+
 }
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,         name, version);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,             type, name, architecture, version);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Application,    name);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Client,         application, driver, os, platform);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,      isMaster, saslSupportedMechs, hostInfo, client);
+
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,             name, version);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,                 type, name, architecture, version);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Application,        name);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Client,             application, driver, os, platform);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,          isMaster, saslSupportedMechs, hostInfo, client);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, counter);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReplyDoc,  ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 
 #endif

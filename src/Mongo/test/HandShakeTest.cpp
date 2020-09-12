@@ -1,12 +1,131 @@
 
 #include <gtest/gtest.h>
-#include "Op_ReplyHandShake.h"
+#include "HandShake.h"
+#include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
+#include <sstream>
 
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-TEST(Op_ReplyHandshakeTest, HandShakeError)
+TEST(HandShakeTest, CreateDriver)
+{
+    Driver      driver;
+
+    std::stringstream stream;
+    stream << ThorsAnvil::Serialize::jsonExporter(driver);
+
+    std::string output = stream.str();
+    output.erase(std::remove_if(std::begin(output), std::end(output), [](auto x){return std::isspace(x);}), std::end(output));
+
+    EXPECT_EQ(output, R"({"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"})");
+}
+
+TEST(HandShakeTest, CreateOS)
+{
+    OS      os;
+
+    std::stringstream stream;
+    stream << ThorsAnvil::Serialize::jsonExporter(os);
+
+    std::string output = stream.str();
+    output.erase(std::remove_if(std::begin(output), std::end(output), [](auto x){return std::isspace(x);}), std::end(output));
+    auto findVersion = output.find("version");
+    if (findVersion != std::string::npos)
+    {
+        findVersion += 10;
+        auto findeEndVersion = output.find('"', findVersion);
+        std::string versionInfo = output.substr(findVersion, (findeEndVersion - findVersion));
+        output.erase(findVersion, (findeEndVersion - findVersion));
+    }
+
+#ifdef   __APPLE__
+    EXPECT_EQ(output, R"({"type":"Darwin","name":"MacOSX","architecture":"x86_64","version":""})");
+#else
+    std::cerr << output << "\n";
+    EXPECT_EQ(output, "Please Add a test here");
+#endif
+}
+
+TEST(HandShakeTest, CreateApplication)
+{
+    Application application("TheLongWayDown");
+
+    std::stringstream   stream;
+    stream <<  ThorsAnvil::Serialize::jsonExporter(application);
+
+    std::string output = stream.str();
+    output.erase(std::remove_if(std::begin(output), std::end(output), [](auto x){return std::isspace(x);}), std::end(output));
+
+    EXPECT_EQ(output, R"({"name":"TheLongWayDown"})");
+}
+
+TEST(HandShakeTest, CreateClient)
+{
+    Client      client("UnitTest");
+
+    std::stringstream stream;
+    stream << ThorsAnvil::Serialize::jsonExporter(client);
+
+    std::string output = stream.str();
+    output.erase(std::remove_if(std::begin(output), std::end(output), [](auto x){return std::isspace(x);}), std::end(output));
+
+    auto findOS = output.find("os");
+    if (findOS != std::string::npos)
+    {
+        findOS += 5;
+        auto findEndOS = output.find('}', findOS);
+        output.erase(findOS, (findEndOS - findOS));
+    }
+    EXPECT_EQ(output, R"({"application":{"name":"UnitTest"},"driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{},"platform":"ThorDB-Build"})");
+}
+
+TEST(HandShakeTest, CreateHandShake)
+{
+    HandShake   handShake("TheHandShakeTest");
+
+    std::stringstream stream;
+    stream << ThorsAnvil::Serialize::jsonExporter(handShake);
+
+    std::string output = stream.str();
+    output.erase(std::remove_if(std::begin(output), std::end(output), [](auto x){return std::isspace(x);}), std::end(output));
+
+    auto findOS = output.find("\"os\"");
+    if (findOS != std::string::npos)
+    {
+        findOS += 6;
+        auto findEndOS = output.find('}', findOS);
+        output.erase(findOS, (findEndOS - findOS));
+    }
+    // TODO: saslSupportedMechs Needs to be fixed.
+    // TODO: hostInfo           Needs to be fixed.
+    EXPECT_EQ(output, R"({"isMaster":true,"saslSupportedMechs":"thor.loki","hostInfo":"BatCave.local:27017","client":{"application":{"name":"TheHandShakeTest"},"driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{},"platform":"ThorDB-Build"}})");
+}
+
+TEST(HandShakeTest, CreateOpQueryHandShake)
+{
+    MsgHeader::messageIdSetForTest(11495306);
+    Op_QueryHandShake   handshake("Application");
+
+    std::stringstream   stream;
+    stream << make_hr(handshake);
+
+    std::string output = stream.str();
+    output.erase(std::remove_if(std::begin(output), std::end(output), [](auto x){return std::isspace(x);}), std::end(output));
+
+
+    auto findOS = output.find("\"os\"");
+    if (findOS != std::string::npos)
+    {
+        findOS += 6;
+        auto findEndOS = output.find('}', findOS);
+        output.erase(findOS, (findEndOS - findOS));
+    }
+
+    EXPECT_EQ(output, R"(messageLength:360requestID:11495306responseTo:0opCode:2004emptyfullCollectionName:admin.$cmdnumberToSkip:0numberToReturn:1query:{"isMaster":true,"saslSupportedMechs":"thor.loki","hostInfo":"BatCave.local:27017","client":{"application":{"name":"Application"},"driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{},"platform":"ThorDB-Build"}}returnFieldsSelector:{})");
+}
+
+TEST(HandShakeTest, HandShakeError)
 {
     std::string input = "\xc0\x00\x00\x00\x47\x13\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00"
                         "\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -32,7 +151,7 @@ TEST(Op_ReplyHandshakeTest, HandShakeError)
     EXPECT_EQ(handShake.getDocument(0).codeName,"TypeMismatch");
 }
 
-TEST(Op_ReplyHandshakeTest, HandShakeErrorHumanReadable)
+TEST(HandShakeTest, HandShakeErrorHumanReadable)
 {
     std::string input = "\xc0\x00\x00\x00\x47\x13\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00"
                         "\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
@@ -56,7 +175,7 @@ TEST(Op_ReplyHandshakeTest, HandShakeErrorHumanReadable)
     outputStream << make_hr(handShake);
 }
 
-TEST(Op_ReplyHandshakeTest, HandShakeOK)
+TEST(HandShakeTest, HandShakeOK)
 {
     std::string input=
             "\x80\x01\x00\x00"   // Len 384
@@ -117,4 +236,6 @@ TEST(Op_ReplyHandshakeTest, HandShakeOK)
     EXPECT_EQ(handShake.getDocument(0).saslSupportedMechs[1],       "SCRAM-SHA-256");
     EXPECT_EQ(handShake.getDocument(0).ok, 1.0);
 }
+
+
 

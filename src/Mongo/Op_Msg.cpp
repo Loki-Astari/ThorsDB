@@ -4,7 +4,7 @@
 #ifdef COVERAGE_Mongo
 
 #include "Op_Msg.tpp"
-#include "Op_QueryHandShake.h"
+#include "HandShake.h"
 #include "test/OpTest.h"
 #include "test/OpTest.h"
 using namespace ThorsAnvil::DB::Mongo;

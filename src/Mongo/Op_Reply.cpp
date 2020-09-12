@@ -4,7 +4,7 @@
 #ifdef COVERAGE_Mongo
 
 #include "Op_Reply.tpp"
-#include "Op_ReplyHandShake.h"
+#include "HandShake.h"
 #include "ThorSerialize/Serialize.tpp"
 
 using namespace ThorsAnvil::DB::Mongo;
