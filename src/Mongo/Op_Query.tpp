@@ -9,14 +9,13 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Args&&... args)
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Document& query)
     : header(OpCode::OP_QUERY)
     , flags(OP_QueryFlag::empty)
     , fullCollectionName(fullCollectionName)
     , numberToSkip(0)
     , numberToReturn(1)
-    , query{std::forward<Args>(args)...}
+    , query(query)
     , returnFieldsSelector{}
 {}
 

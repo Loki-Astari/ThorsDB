@@ -194,11 +194,8 @@ struct AuthContinueReply
 class Op_QueryHandShake: public Op_Query<HandShake>
 {
     public:
-        Op_QueryHandShake(std::string const& applicationName)
-            : Op_Query("admin.$cmd", applicationName)
-        {}
-        Op_QueryHandShake(std::string const& applicationName, std::string const& dname, std::string const& dversion)
-            : Op_Query("admin.$cmd", applicationName, dname, dversion)
+        Op_QueryHandShake(HandShake& handShake)
+            : Op_Query("admin.$cmd", handShake)
         {}
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
