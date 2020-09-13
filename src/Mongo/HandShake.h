@@ -202,40 +202,44 @@ class Op_QueryHandShake: public Op_Query<HandShake>
 };
 
 using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
+#if 0
 class Op_MsgAuthInit: public Op_Msg<Kind0<AuthInit>>
 {
     public:
-        Op_MsgAuthInit(std::string&& db, std::string&& mechanism, std::string&& payload)
-            : Op_Msg<Kind0<AuthInit>>{AuthInit{std::move(db), std::move(mechanism), std::move(payload)}}
+        Op_MsgAuthInit(AuthInit& kind)
+            : Op_Msg(Kind0<AuthInit>(kind))
         {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthInit& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthInit&& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthInit> const& data);
 };
 class Op_MsgAuthContinue: public Op_Msg<Kind0<AuthContinue>>
 {
     public:
-        Op_MsgAuthContinue(std::int32_t convId, std::string&& payload, std::string&& db)
-            : Op_Msg<Kind0<AuthContinue>>(AuthContinue{convId, std::move(payload), std::move(db)})
+        Op_MsgAuthContinue(AuthContinue& kind)
+            : Op_Msg(Kind0<AuthContinue>(kind))
         {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthContinue& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthContinue&& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthContinue> const& data);
 };
 class Op_MsgAuthInitReply: public Op_Msg<Kind0<AuthInitReply>>
 {
     public:
-        Op_MsgAuthInitReply()
+        Op_MsgAuthInitReply(AuthInitReply& kind)
+            : Op_Msg(Kind0<AuthInitReply>(kind))
         {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthInitReply& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthInitReply&& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthInitReply> const& data);
 };
 class Op_MsgAuthContinueReply: public Op_Msg<Kind0<AuthContinueReply>>
 {
     public:
-        Op_MsgAuthContinueReply()
+        Op_MsgAuthContinueReply(AuthContinueReply& kind)
+            : Op_Msg(Kind0<AuthContinueReply>(kind))
         {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthContinueReply& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthContinueReply&& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthContinueReply> const& data);
 };
+#endif
 
 }
 

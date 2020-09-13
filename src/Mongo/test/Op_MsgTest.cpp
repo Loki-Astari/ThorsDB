@@ -6,27 +6,11 @@
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-TEST(Op_MsgTest, Op_MsgCreateSimpleNoConstructor)
-{
-    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("Data"s);
-}
-TEST(Op_MsgTest, Op_MsgCreateSimpleConstructor)
-{
-    Op_Msg<Kind0<SimpleStringWithConstructor>>         message1("Data"s);
-}
-TEST(Op_MsgTest, Op_MsgCreateStringAndIntNoConstructor)
-{
-    Op_Msg<Kind0<StringAndIntNoConstructor>>           message1(StringAndIntNoConstructor{"Data"s, 12});
-}
-TEST(Op_MsgTest, Op_MsgCreateStringAndIntConstructor)
-{
-    Op_Msg<Kind0<StringAndIntWithConstructor>>         message1(StringAndIntWithConstructor{"Data"s, 13});
-}
-
 TEST(Op_MsgTest, Op_MsgSerializeMessage)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
-    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
+    SimpleStringNoConstructor                       object{"The String data"s};
+    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{Kind0<SimpleStringNoConstructor>(object)};
 
     std::stringstream   stream;
     stream << message1;
@@ -78,7 +62,8 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
-    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
+    SimpleStringNoConstructor                       object{"The String data"s};
+    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{Kind0<SimpleStringNoConstructor>(object)};
 
     std::stringstream   stream;
     stream << make_hr(message1);

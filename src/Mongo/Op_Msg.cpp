@@ -11,10 +11,8 @@
 using namespace ThorsAnvil::DB::Mongo;
 
 // Constructor
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringNoConstructor>>::Op_Msg(std::string&&);
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringWithConstructor>>::Op_Msg(std::string&&);
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<StringAndIntNoConstructor>>::Op_Msg(StringAndIntNoConstructor&&);
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<StringAndIntWithConstructor>>::Op_Msg(StringAndIntWithConstructor&&);
+template ThorsAnvil::DB::Mongo::Kind0<SimpleStringNoConstructor>::Kind0(SimpleStringNoConstructor&);
+template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringNoConstructor>>::Op_Msg(Kind0<SimpleStringNoConstructor>&&);
 
 // Stream Binary
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringNoConstructor>>::print(std::ostream&);
@@ -37,7 +35,6 @@ using namespace ThorsAnvil::Serialize;
 #pragma vera-pop
 
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInit>>::print(std::ostream&);
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInit>>::Op_Msg(AuthInit&&);
 
 template std::size_t DefaultCustomSerializer<Binary>::getPrintSizeBson(BsonPrinter&, Binary const&) const;
 template void DefaultCustomSerializer<Binary>::writeCustom(PrinterInterface&, Binary const&) const;
@@ -48,11 +45,9 @@ template void DefaultCustomSerializer<Binary>::writeBson(BsonPrinter&, Binary co
 template void DefaultCustomSerializer<Binary>::writeJson(JsonPrinter&, Binary const&) const;
 template void DefaultCustomSerializer<Binary>::writeYaml(YamlPrinter&, Binary const&) const;
 
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::Op_Msg();
 template std::istream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::parse(std::istream&);
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::printHR(std::ostream&);
 
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthContinue>>::Op_Msg(AuthContinue&&);
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthContinue>>::print(std::ostream&);
 
 #endif
