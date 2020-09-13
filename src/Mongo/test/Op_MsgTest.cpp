@@ -8,25 +8,25 @@ using std::string_literals::operator""s;
 
 TEST(Op_MsgTest, Op_MsgCreateSimpleNoConstructor)
 {
-    OP_Msg<Kind0<SimpleStringNoConstructor>>           message1("Data"s);
+    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("Data"s);
 }
 TEST(Op_MsgTest, Op_MsgCreateSimpleConstructor)
 {
-    OP_Msg<Kind0<SimpleStringWithConstructor>>         message1("Data"s);
+    Op_Msg<Kind0<SimpleStringWithConstructor>>         message1("Data"s);
 }
 TEST(Op_MsgTest, Op_MsgCreateStringAndIntNoConstructor)
 {
-    OP_Msg<Kind0<StringAndIntNoConstructor>>           message1(StringAndIntNoConstructor{"Data"s, 12});
+    Op_Msg<Kind0<StringAndIntNoConstructor>>           message1(StringAndIntNoConstructor{"Data"s, 12});
 }
 TEST(Op_MsgTest, Op_MsgCreateStringAndIntConstructor)
 {
-    OP_Msg<Kind0<StringAndIntWithConstructor>>         message1(StringAndIntWithConstructor{"Data"s, 13});
+    Op_Msg<Kind0<StringAndIntWithConstructor>>         message1(StringAndIntWithConstructor{"Data"s, 13});
 }
 
 TEST(Op_MsgTest, Op_MsgSerializeMessage)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
-    OP_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
+    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
 
     std::stringstream   stream;
     stream << message1;
@@ -51,7 +51,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessage)
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
-    OP_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
+    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
 
     std::stringstream   stream;
     stream << message1;
@@ -78,7 +78,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
-    OP_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
+    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
 
     std::stringstream   stream;
     stream << make_hr(message1);
@@ -97,7 +97,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
-    OP_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
+    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
 
     std::stringstream   make_hr(stream);
     stream << message1;

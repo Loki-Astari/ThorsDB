@@ -50,5 +50,8 @@ template void DefaultCustomSerializer<MongoUtility::ObjectID>::readYaml(YamlPars
 template void DefaultCustomSerializer<MongoUtility::ObjectID>::writeBson(BsonPrinter&, MongoUtility::ObjectID const&) const;
 template void DefaultCustomSerializer<MongoUtility::ObjectID>::writeJson(JsonPrinter&, MongoUtility::ObjectID const&) const;
 template void DefaultCustomSerializer<MongoUtility::ObjectID>::writeYaml(YamlPrinter&, MongoUtility::ObjectID const&) const;
+
+template ThorsAnvil::DB::Mongo::Op_Query<HandShake>::Op_Query(std::string const&, std::string const&, std::string const&, std::string const&);
+
 #endif
 #endif

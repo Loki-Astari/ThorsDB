@@ -34,7 +34,10 @@ class SocketStreamBuffer: public std::streambuf
         DataSocket&             stream;
         Notifier                noAvailableData;
         Notifier                flushing;
-        std::vector<char>       buffer;
+        std::vector<char>       inBuffer;
+        std::vector<char>       outBuffer;
+        std::size_t             inCount;
+        std::size_t             outCount;
 
     public:
         virtual ~SocketStreamBuffer() override;

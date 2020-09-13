@@ -1,4 +1,5 @@
 #include "SocketStream.h"
+#include <iostream>
 
 using namespace ThorsAnvil::DB::Mongo::Socket;
 
@@ -8,25 +9,31 @@ SocketStreamBuffer::SocketStreamBuffer(DataSocket& stream,
     : stream(stream)
     , noAvailableData(noAvailableData)
     , flushing(flushing)
-    , buffer(std::move(bufData))
+    , inBuffer(std::move(bufData))
+    , outBuffer(4000)
+    , inCount(0)
+    , outCount(0)
 {
     char* newStart = const_cast<char*>(currentStart);
     char* newEnd   = const_cast<char*>(currentEnd);
     if (newStart == nullptr || newEnd == nullptr)
     {
-        newStart = &buffer[0];
-        newEnd   = &buffer[0];
+        newStart = &inBuffer[0];
+        newEnd   = &inBuffer[0];
     }
 
-    setg(&buffer[0], newStart, newEnd);
-    setp(&buffer[0], &buffer[buffer.size() - 1]);
+    setg(&inBuffer[0], newStart, newEnd);
+    setp(&outBuffer[0], &outBuffer[outBuffer.size() - 1]);
 }
 
 SocketStreamBuffer::SocketStreamBuffer(SocketStreamBuffer&& move) noexcept
     : stream(move.stream)
     , noAvailableData(std::move(move.noAvailableData))
     , flushing(std::move(move.flushing))
-    , buffer(std::move(move.buffer))
+    , inBuffer(std::move(move.inBuffer))
+    , outBuffer(std::move(move.outBuffer))
+    , inCount(move.inCount)
+    , outCount(move.outCount)
 {
     move.setg(nullptr, nullptr, nullptr);
     move.setp(nullptr, nullptr);
@@ -62,9 +69,8 @@ SocketStreamBuffer::int_type SocketStreamBuffer::underflow()
      * The base class version of the function does nothing. The derived classes may override this function
      * to allow updates to the get area in the case of exhaustion.
      */
-
-    std::streamsize retrievedData = readFromStream(&buffer[0], buffer.size(), false);
-    setg(&buffer[0], &buffer[0], &buffer[retrievedData]);
+    std::streamsize retrievedData = readFromStream(&inBuffer[0], inBuffer.size(), false);
+    std::cerr << "Underflow: " << std::dec << retrievedData << "\n";
     return (retrievedData == 0) ? traits::eof() : traits::to_int_type(*gptr());
 }
 
@@ -86,7 +92,7 @@ std::streamsize SocketStreamBuffer::xsgetn(char_type* dest, std::streamsize coun
     gbump(nextChunkSize);
 
     std::streamsize       retrieved  = nextChunkSize;
-    std::streamsize const bufferSize = static_cast<std::streamsize>(buffer.size());
+    std::streamsize const bufferSize = static_cast<std::streamsize>(inBuffer.size());
 
     while (retrieved != count)
     {
@@ -96,6 +102,10 @@ std::streamsize SocketStreamBuffer::xsgetn(char_type* dest, std::streamsize coun
         if (nextChunkSize > (bufferSize / 2))
         {
             std::streamsize read = readFromStream(dest + retrieved, count - retrieved);
+            if (read == 0)
+            {
+                break;
+            }
             retrieved += read;
         }
         else
@@ -144,7 +154,7 @@ SocketStreamBuffer::int_type SocketStreamBuffer::overflow(int_type ch)
     {
         // Failed to write data out.
         // Indicate error by setting buffer appropriately
-        setp(&buffer[0], &buffer[0]);
+        setp(&outBuffer[0], &outBuffer[0]);
     }
     return int_type(ch);
 }
@@ -175,7 +185,7 @@ std::streamsize SocketStreamBuffer::xsputn(char_type const* source, std::streams
     overflow();
 
     std::streamsize       exported   = 0;
-    std::streamsize const bufferSize = static_cast<std::streamsize>(buffer.size());
+    std::streamsize const bufferSize = static_cast<std::streamsize>(outBuffer.size());
     while (exported != count)
     {
         std::streamsize nextChunk = count - exported;
@@ -201,7 +211,7 @@ int SocketStreamBuffer::sync()
     int result = (written == (pptr() - pbase()))
                         ? 0     // Success. Amount written equals buffer.
                         : -1;   // Failure
-    setp(&buffer[0], &buffer[buffer.size() - 1]);
+    setp(&outBuffer[0], &outBuffer[outBuffer.size() - 1]);
     return result;
 }
 
@@ -226,11 +236,15 @@ std::streamsize SocketStreamBuffer::writeToStream(char_type const* source, std::
             break;
         }
     }
+    outCount += written;
     return written;
 }
 
 std::streamsize SocketStreamBuffer::readFromStream(char_type* dest, std::streamsize count, bool fill)
 {
+    std::size_t used = (egptr() - &inBuffer[0]);
+    inCount += used;
+
     std::streamsize read = 0;
     while (read != count)
     {
@@ -254,16 +268,22 @@ std::streamsize SocketStreamBuffer::readFromStream(char_type* dest, std::streams
             break;
         }
     }
+    setg(&inBuffer[0], &inBuffer[0], &inBuffer[read]);
     return read;
 }
 std::streampos SocketStreamBuffer::seekoff(std::streamoff off, std::ios_base::seekdir way, std::ios_base::openmode which)
 {
-    if (which == std::ios_base::out && way == std::ios_base::cur)
+    if (way != std::ios_base::cur)
     {
-        pbump(off);
-        return pptr() - pbase();
+        return -1;
     }
-    return -1;
+    if (off != 0)
+    {
+        return -1;
+    }
+    return (which == std::ios_base::out)
+                ? outCount + (pptr() - pbase())
+                : inCount  + (gptr() - eback());
 }
 // ------------------------
 

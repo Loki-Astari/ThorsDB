@@ -8,6 +8,7 @@ NO_HEADER					= 1
 LDLIBS_EXTERN_BUILD			= ThorsSerialize crypto
 UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
 UNITTEST_LDLIBS				+= -lssl
+CXXFLAGS					+= -Wno-dollar-in-identifier-extension
 
 %/Op_Msg.o:					CXXFLAGS += -Wno-unknown-pragmas
 %/Op_Query.o:				CXXFLAGS += -Wno-unknown-pragmas
@@ -17,6 +18,7 @@ UNITTEST_LDLIBS				+= -lssl
 %/Op_MsgTest.o:				CXXFLAGS += -Wno-deprecated-declarations -Wno-unknown-pragmas
 %/Op_QueryTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/HandShakeTest.o:			CXXFLAGS += -Wno-deprecated-declarations
+%/MongoConnectTest.o:		CXXFLAGS += -Wno-deprecated-declarations
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 

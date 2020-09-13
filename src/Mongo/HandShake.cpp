@@ -45,7 +45,7 @@ Application::Application(std::string const& application)
 
 Client::Client(std::string const& application)
     : application(application)
-    , platform("ThorDB-Build")
+    // , platform("ThorDB-Build")
 {}
 
 HandShake::HandShake(std::string const& application)
