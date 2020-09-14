@@ -14,8 +14,8 @@ using namespace ThorsAnvil::DB::Mongo;
 template ThorsAnvil::DB::Mongo::Kind0<SimpleStringNoConstructor>::Kind0(SimpleStringNoConstructor&);
 template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringNoConstructor>>::Op_Msg(Kind0<SimpleStringNoConstructor>&&);
 template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInit>>::Op_Msg(Kind0<AuthInit>&&);
-template ThorsAnvil::DB::Mongo::Kind0<AuthInitReply>::Kind0(AuthInitReply&);
-template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::Op_Msg(Kind0<AuthInitReply>&&);
+template ThorsAnvil::DB::Mongo::Kind0<AuthReply>::Kind0(AuthReply&);
+template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthReply>>::Op_Msg(Kind0<AuthReply>&&);
 template ThorsAnvil::DB::Mongo::Kind0<AuthCont>::Kind0(AuthCont&);
 template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthCont>>::Op_Msg(Kind0<AuthCont>&&);
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthCont>>::print(std::ostream&);
@@ -55,8 +55,8 @@ template void DefaultCustomSerializer<Binary>::writeBson(BsonPrinter&, Binary co
 template void DefaultCustomSerializer<Binary>::writeJson(JsonPrinter&, Binary const&) const;
 template void DefaultCustomSerializer<Binary>::writeYaml(YamlPrinter&, Binary const&) const;
 
-template std::istream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::parse(std::istream&);
-template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::printHR(std::ostream&);
+template std::istream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthReply>>::parse(std::istream&);
+template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthReply>>::printHR(std::ostream&);
 
 
 #endif

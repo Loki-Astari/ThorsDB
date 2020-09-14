@@ -158,9 +158,9 @@ struct AuthCont
     Binary              payload;
 };
 
-struct AuthInitReply
+struct AuthReply
 {
-    AuthInitReply()
+    AuthReply()
         : ok(1.0)
         , payload(0)
     {}
@@ -176,20 +176,6 @@ struct AuthInitReply
     bool                done;
     Binary              payload;
 };
-struct AuthContinueReply
-{
-    AuthContinueReply()
-        : ok(1.0)
-    {}
-    // When there is an error message
-    // The next four fields are used.
-    // ok is set to zero
-    double              ok;
-    std::int32_t        code;
-    std::string         errmsg;
-    std::string         codeName;
-    // When there is a good message the following are set
-};
 
 class Op_QueryHandShake: public Op_Query<HandShake>
 {
@@ -203,37 +189,8 @@ class Op_QueryHandShake: public Op_Query<HandShake>
 
 using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
 using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
-using Op_MsgAuthInitReply   = Op_Msg<Kind0<AuthInitReply>>;
 using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
-#if 0
-class Op_MsgAuthContinue: public Op_Msg<Kind0<AuthContinue>>
-{
-    public:
-        Op_MsgAuthContinue(AuthContinue& kind)
-            : Op_Msg(Kind0<AuthContinue>(kind))
-        {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthContinue&& data) {return data.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthContinue> const& data);
-};
-class Op_MsgAuthInitReply: public Op_Msg<Kind0<AuthInitReply>>
-{
-    public:
-        Op_MsgAuthInitReply(AuthInitReply& kind)
-            : Op_Msg(Kind0<AuthInitReply>(kind))
-        {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthInitReply&& data) {return data.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthInitReply> const& data);
-};
-class Op_MsgAuthContinueReply: public Op_Msg<Kind0<AuthContinueReply>>
-{
-    public:
-        Op_MsgAuthContinueReply(AuthContinueReply& kind)
-            : Op_Msg(Kind0<AuthContinueReply>(kind))
-        {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthContinueReply&& data) {return data.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthContinueReply> const& data);
-};
-#endif
+using Op_MsgAuthReply       = Op_Msg<Kind0<AuthReply>>;
 
 }
 
@@ -249,8 +206,7 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,          isMaster, saslSu
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, counter);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReplyDoc,  ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInitReply,      ok, code, errmsg, codeName, conversationId, done, payload);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthContinueReply,  ok, code, errmsg, codeName);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,      ok, code, errmsg, codeName, conversationId, done, payload);
 
 #endif

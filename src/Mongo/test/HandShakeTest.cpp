@@ -406,14 +406,14 @@ af 00 00 00     // Size
                             "\x6f\x6b\x00\x00\x00\x00\x00\x00\x00\xf0\x3f\x00\x28\x99\x0a\x72"s;
     std::stringstream stream(input);
 
-    AuthInitReply           message;
-    Op_MsgAuthInitReply     replyMessage(message);
-    stream >> replyMessage;
+    AuthReply               authReply;
+    Op_MsgAuthReply         authReplyMessage(authReply);
+    stream >> authReplyMessage;
 
-    EXPECT_EQ(message.conversationId,   1);
-    EXPECT_EQ(message.done,             false);
-    EXPECT_EQ(message.payload.data,     "r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000"s);
-    EXPECT_EQ(message.ok,               1.0);
+    EXPECT_EQ(authReply.conversationId,   1);
+    EXPECT_EQ(authReply.done,             false);
+    EXPECT_EQ(authReply.payload.data,     "r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000"s);
+    EXPECT_EQ(authReply.ok,               1.0);
 }
 
 TEST(HandShakeTest, CreateSASLSecondMessage)
@@ -480,10 +480,10 @@ bd 34 27 d8 // Checksum
     EXPECT_EQ(expected, stream.str());
 }
 
-
-
+TEST(HandShakeTest, ReadSASLSecondMessageResponse)
+{
 #if 0
-
+RAW
 81 00 00 00 9e 11 00 00   ?...?...........
 02 00 00 00 dd 07 00 00 01 00 00 00 00 68 00 00   .............h..
 00 10 63 6f 6e 76 65 72 73 61 74 69 6f 6e 49 64   ..conversationId
@@ -494,6 +494,7 @@ bd 34 27 d8 // Checksum
 58 78 34 49 66 67 49 3d 01 6f 6b 00 00 00 00 00   Xx4IfgI=.ok.....
 00 00 f0 3f 00 71 02 ad 2f                        ...?.q../
 
+Hand split raw data
 81 00 00 00         // Size
 9e 11 00 00         // Message Id
 02 00 00 00         // Response To
@@ -509,9 +510,30 @@ BSON
     01      ok                          00 00 00 00 00 00 f0 3f
 00
 71 02 ad 2f         // Checksum
+#endif
+    std::string input = "\x81\x00\x00\x00\x9e\x11\x00\x00"
+                        "\x02\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\x68\x00\x00"
+                        "\x00\x10\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e\x49\x64"
+                        "\x00\x01\x00\x00\x00\x08\x64\x6f\x6e\x65\x00\x00\x05\x70\x61\x79"
+                        "\x6c\x6f\x61\x64\x00\x2e\x00\x00\x00\x00\x76\x3d\x46\x7a\x45\x2f"
+                        "\x76\x34\x66\x35\x44\x63\x65\x39\x38\x47\x6f\x57\x35\x77\x66\x4b"
+                        "\x52\x72\x51\x61\x42\x51\x73\x6a\x6a\x33\x48\x39\x37\x36\x6f\x70"
+                        "\x58\x78\x34\x49\x66\x67\x49\x3d\x01\x6f\x6b\x00\x00\x00\x00\x00"
+                        "\x00\x00\xf0\x3f\x00\x71\x02\xad\x2f"s;
 
-----
+    AuthReply           authReply;
+    Op_MsgAuthReply     authReplyMessage(authReply);
 
+    std::stringstream stream(input);
+    stream >> authReplyMessage;
+
+    EXPECT_EQ(authReply.conversationId,   1);
+    EXPECT_EQ(authReply.done,             false);
+    EXPECT_EQ(authReply.payload.data,     "v=FzE/v4f5Dce98GoW5wfKRrQaBQsjj3H976opXx4IfgI="s);
+    EXPECT_EQ(authReply.ok,               1.0);
+}
+
+#if 0
 60 00 00 00 03 00 00 00   ?...?...`.......
 00 00 00 00 dd 07 00 00 01 00 00 00 00 47 00 00   .............G..
 00 10 73 61 73 6c 43 6f 6e 74 69 6e 75 65 00 01   ..saslContinue..
