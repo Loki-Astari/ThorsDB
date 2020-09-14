@@ -117,7 +117,7 @@ struct Binary
         : type(type)
     {}
     int                 type;
-    std::vector<char>   data;
+    std::string         data;
 
     // DataInterface needed by BinarySerializer (see below)
         std::size_t getSize() const             {return data.size();}
@@ -144,9 +144,9 @@ struct AuthInit
     //std::size_t getSize()   const {return ThorsAnvil::Serialize::bsonGetPrintSize(*this);}
 };
 
-struct AuthContinue
+struct AuthCont
 {
-    AuthContinue(std::int32_t convId, std::string&& payload, std::string&& db)
+    AuthCont(std::int32_t convId, std::string&& db, std::string&& payload)
         : saslContinue(1)
         , conversationId(convId)
         , $db(std::move(db))
@@ -202,16 +202,10 @@ class Op_QueryHandShake: public Op_Query<HandShake>
 };
 
 using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
+using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
+using Op_MsgAuthInitReply   = Op_Msg<Kind0<AuthInitReply>>;
+using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
 #if 0
-class Op_MsgAuthInit: public Op_Msg<Kind0<AuthInit>>
-{
-    public:
-        Op_MsgAuthInit(AuthInit& kind)
-            : Op_Msg(Kind0<AuthInit>(kind))
-        {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_MsgAuthInit&& data) {return data.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgAuthInit> const& data);
-};
 class Op_MsgAuthContinue: public Op_Msg<Kind0<AuthContinue>>
 {
     public:
@@ -256,7 +250,7 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, count
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReplyDoc,  ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInitReply,      ok, code, errmsg, codeName, conversationId, done, payload);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthContinue,       saslContinue, conversationId, $db, payload);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthContinueReply,  ok, code, errmsg, codeName);
 
 #endif

@@ -13,6 +13,13 @@ using namespace ThorsAnvil::DB::Mongo;
 // Constructor
 template ThorsAnvil::DB::Mongo::Kind0<SimpleStringNoConstructor>::Kind0(SimpleStringNoConstructor&);
 template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringNoConstructor>>::Op_Msg(Kind0<SimpleStringNoConstructor>&&);
+template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInit>>::Op_Msg(Kind0<AuthInit>&&);
+template ThorsAnvil::DB::Mongo::Kind0<AuthInitReply>::Kind0(AuthInitReply&);
+template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::Op_Msg(Kind0<AuthInitReply>&&);
+template ThorsAnvil::DB::Mongo::Kind0<AuthCont>::Kind0(AuthCont&);
+template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthCont>>::Op_Msg(Kind0<AuthCont>&&);
+template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthCont>>::print(std::ostream&);
+
 
 // Stream Binary
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<SimpleStringNoConstructor>>::print(std::ostream&);
@@ -34,6 +41,9 @@ template void ThorsAnvil::Serialize::Serializer::print<HandShake>(HandShake cons
 using namespace ThorsAnvil::Serialize;
 #pragma vera-pop
 
+template ThorsAnvil::DB::Mongo::Kind0<AuthInit>::Kind0(AuthInit&);
+template ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInit>>::Op_Msg(OP_MsgFlag, Kind0<AuthInit>&&);
+
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInit>>::print(std::ostream&);
 
 template std::size_t DefaultCustomSerializer<Binary>::getPrintSizeBson(BsonPrinter&, Binary const&) const;
@@ -48,7 +58,6 @@ template void DefaultCustomSerializer<Binary>::writeYaml(YamlPrinter&, Binary co
 template std::istream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::parse(std::istream&);
 template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthInitReply>>::printHR(std::ostream&);
 
-template std::ostream& ThorsAnvil::DB::Mongo::Op_Msg<Kind0<AuthContinue>>::print(std::ostream&);
 
 #endif
 #endif

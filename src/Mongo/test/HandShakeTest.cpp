@@ -333,9 +333,11 @@ BSON
 10 44 12 5c     // Checksum
 #endif
 
-#if 0
-    std::string expected =  "\x92\x00\x00\x00\x01\x00\x00\x00"
-                            "\x00\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\x79\x00\x00"
+    // Removing the checksum (I have not implemented the calculation of this.
+    // Please add back when it is done.
+    std::string expected =  /*"\x92"*/"\x8e" // remove 4 because reduced by four.
+                            "\x00\x00\x00\x01\x00\x00\x00"
+                            "\x00\x00\x00\x00\xdd\x07\x00\x00" /*"\x01" Flag to Turn on Checksum: Replace by \x00 -> */ "\x00" "\x00\x00\x00\x00\x79\x00\x00"
                             "\x00\x10\x73\x61\x73\x6c\x53\x74\x61\x72\x74\x00\x01\x00\x00\x00"
                             "\x02\x6d\x65\x63\x68\x61\x6e\x69\x73\x6d\x00\x0e\x00\x00\x00\x53"
                             "\x43\x52\x41\x4d\x2d\x53\x48\x41\x2d\x32\x35\x36\x00\x05\x70\x61"
@@ -343,19 +345,20 @@ BSON
                             "\x6c\x6f\x6b\x69\x2c\x72\x3d\x4a\x53\x79\x52\x48\x44\x37\x73\x63"
                             "\x39\x52\x67\x44\x43\x44\x7a\x4a\x4a\x4e\x56\x64\x6b\x41\x32\x47"
                             "\x6c\x53\x65\x4d\x4a\x50\x56\x02\x24\x64\x62\x00\x05\x00\x00\x00"
-                            "\x74\x68\x6f\x72\x00\x00\x10\x44\x12\x5c"s;
+                            "\x74\x68\x6f\x72\x00\x00"s; // \x10\x44\x12\x5c"s;
 
     MsgHeader::messageIdSetForTest(0x1);
-    Op_MsgAuthInit      authInit(OP_MsgFlag::checksumPresent, "thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
+    AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
+    Op_MsgAuthInit      authInitMessage(/*OP_MsgFlag::checksumPresent,*/authInit);
 
     std::stringstream   stream;
-    stream << authInit;
+    stream << authInitMessage;
 
     EXPECT_EQ(expected, stream.str());
-#endif
 }
 
-
+TEST(HandShakeTest, ReadSASLFirstMessageResponse)
+{
 #if 0
 c8 00 00 00 9d 11 00 00   ?...?...........
 01 00 00 00 dd 07 00 00 01 00 00 00 00 af 00 00   ................
@@ -386,9 +389,37 @@ af 00 00 00     // Size
     01      ok          00 00 00 00 00 00 f0 3f
 00
 28 99 0a 72     // Checksum
+#endif
 
-----
+    std::string input =     "\xc8\x00\x00\x00\x9d\x11\x00\x00"
+                            "\x01\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\xaf\x00\x00"
+                            "\x00\x10\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e\x49\x64"
+                            "\x00\x01\x00\x00\x00\x08\x64\x6f\x6e\x65\x00\x00\x05\x70\x61\x79"
+                            "\x6c\x6f\x61\x64\x00\x75\x00\x00\x00\x00\x72\x3d\x4a\x53\x79\x52"
+                            "\x48\x44\x37\x73\x63\x39\x52\x67\x44\x43\x44\x7a\x4a\x4a\x4e\x56"
+                            "\x64\x6b\x41\x32\x47\x6c\x53\x65\x4d\x4a\x50\x56\x35\x6e\x39\x35"
+                            "\x70\x30\x77\x64\x5a\x7a\x78\x6a\x50\x74\x37\x7a\x79\x4c\x45\x4e"
+                            "\x66\x31\x54\x6f\x38\x68\x59\x54\x62\x4b\x45\x51\x2c\x73\x3d\x34"
+                            "\x4c\x30\x78\x41\x7a\x6e\x46\x67\x75\x53\x31\x72\x63\x5a\x6e\x6a"
+                            "\x34\x57\x51\x6e\x78\x4c\x65\x31\x46\x35\x37\x30\x53\x2b\x46\x51"
+                            "\x64\x4b\x7a\x4f\x77\x3d\x3d\x2c\x69\x3d\x31\x35\x30\x30\x30\x01"
+                            "\x6f\x6b\x00\x00\x00\x00\x00\x00\x00\xf0\x3f\x00\x28\x99\x0a\x72"s;
+    std::stringstream stream(input);
 
+    AuthInitReply           message;
+    Op_MsgAuthInitReply     replyMessage(message);
+    stream >> replyMessage;
+
+    EXPECT_EQ(message.conversationId,   1);
+    EXPECT_EQ(message.done,             false);
+    EXPECT_EQ(message.payload.data,     "r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000"s);
+    EXPECT_EQ(message.ok,               1.0);
+}
+
+TEST(HandShakeTest, CreateSASLSecondMessage)
+{
+#if 0
+RAW
 d8 00 00 00 02 00 00 00   ?...?...........
 00 00 00 00 dd 07 00 00 01 00 00 00 00 bf 00 00   ................
 00 10 73 61 73 6c 43 6f 6e 74 69 6e 75 65 00 01   ..saslContinue..
@@ -404,6 +435,7 @@ d8 00 00 00 02 00 00 00   ?...?...........
 73 61 74 69 6f 6e 49 64 00 01 00 00 00 02 24 64   sationId......$d
 62 00 05 00 00 00 74 68 6f 72 00 00 bd 34 27 d8   b.....thor...4'.
 
+Hand split data
 d8 00 00 00         // Size
 02 00 00 00         // Message Id
 00 00 00 00         // Response To
@@ -419,8 +451,38 @@ bf 00 00 00         // Size
     02      $db             05 00 00 00     thor
 00
 bd 34 27 d8 // Checksum
+#endif
 
-----
+                            // don't compute checksum
+                            // Removing it from here
+    std::string expected =  /*"\xd8 Subtracted 4 to het d4*/ "\xd4" "\x00\x00\x00\x02\x00\x00\x00"
+                            "\x00\x00\x00\x00\xdd\x07\x00\x00" /* Disable Flag for check sum "\x01" ->*/ "\x00" "\x00\x00\x00\x00\xbf\x00\x00"
+                            "\x00\x10\x73\x61\x73\x6c\x43\x6f\x6e\x74\x69\x6e\x75\x65\x00\x01"
+                            "\x00\x00\x00\x05\x70\x61\x79\x6c\x6f\x61\x64\x00\x78\x00\x00\x00"
+                            "\x00\x63\x3d\x62\x69\x77\x73\x2c\x72\x3d\x4a\x53\x79\x52\x48\x44"
+                            "\x37\x73\x63\x39\x52\x67\x44\x43\x44\x7a\x4a\x4a\x4e\x56\x64\x6b"
+                            "\x41\x32\x47\x6c\x53\x65\x4d\x4a\x50\x56\x35\x6e\x39\x35\x70\x30"
+                            "\x77\x64\x5a\x7a\x78\x6a\x50\x74\x37\x7a\x79\x4c\x45\x4e\x66\x31"
+                            "\x54\x6f\x38\x68\x59\x54\x62\x4b\x45\x51\x2c\x70\x3d\x68\x38\x2b"
+                            "\x4b\x52\x48\x78\x46\x48\x6b\x72\x76\x43\x33\x74\x36\x43\x71\x36"
+                            "\x4b\x56\x4c\x41\x74\x34\x6d\x6c\x42\x50\x2f\x56\x36\x4a\x72\x74"
+                            "\x54\x4c\x4d\x4b\x76\x57\x2f\x34\x3d\x10\x63\x6f\x6e\x76\x65\x72"
+                            "\x73\x61\x74\x69\x6f\x6e\x49\x64\x00\x01\x00\x00\x00\x02\x24\x64"
+                            "\x62\x00\x05\x00\x00\x00\x74\x68\x6f\x72\x00\x00"s; //"\xbd\x34\x27\xd8"s;
+
+    MsgHeader::messageIdSetForTest(0x2);
+    AuthCont        authCont(1, "thor", "c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s);
+    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
+
+    std::stringstream stream;
+    stream << authContMessage;
+
+    EXPECT_EQ(expected, stream.str());
+}
+
+
+
+#if 0
 
 81 00 00 00 9e 11 00 00   ?...?...........
 02 00 00 00 dd 07 00 00 01 00 00 00 00 68 00 00   .............h..
