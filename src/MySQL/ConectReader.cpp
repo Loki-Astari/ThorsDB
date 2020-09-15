@@ -240,18 +240,3 @@ void ConectReader::reset()
 {
     stream.reset();
 }
-
-#ifdef COVERAGE_MySQL
-/*
- * This code is only compiled into the unit tests for code coverage purposes
- * It is not part of the live code.
- */
-#include "ConectReader.tpp"
-
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<1>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<2>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<3>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<4>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<8>();
-
-#endif

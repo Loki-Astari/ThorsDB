@@ -44,8 +44,6 @@ class BindBuffer
 
 }
 
-#ifndef COVERAGE_MySQL
 #include "BindBuffer.tpp"
-#endif
 
 #endif

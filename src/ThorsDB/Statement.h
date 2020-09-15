@@ -216,8 +216,6 @@ namespace Lib
 
 }
 
-#ifndef COVERAGE_ACCESS
 #include "Statement.tpp"
-#endif
 
 #endif

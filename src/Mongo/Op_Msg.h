@@ -75,12 +75,6 @@ class Op_Msg
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
 
 
-#if defined(HEADER_ONLY) && HEADER_ONLY == 1
-#include "Op_Msg.source"
-#endif
-
-#ifndef COVERAGE_TEST
 #include "Op_Msg.tpp"
-#endif
 
 #endif

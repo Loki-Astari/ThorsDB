@@ -1,6 +1,6 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
-COVERAGE_REQUIRED			= 65
+COVERAGE_REQUIRED			= 60
 
 TARGET						= ThorsMongo.defer
 DEFER_NAME					= ThorsDB
