@@ -4,7 +4,7 @@ THORSANVIL_ROOT				?= $(realpath ../../)
 TARGET						= ThorsMySQL.defer
 DEFER_NAME					= ThorsDB
 LDLIBS_EXTERN_BUILD			= crypto
-UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket
 UNITTEST_LDLIBS				= -lssl
 NO_HEADER					= 1
 

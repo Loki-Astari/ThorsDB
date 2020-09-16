@@ -2,7 +2,7 @@
 #define THORS_ANVIL_DB_COMMON_STREAM_SIMPLE_H
 
 #include "StreamInterface.h"
-#include "SSLUtil.h"
+#include "ThorsSocket/SSLUtil.h"
 
 // C++
 #include <string>
@@ -27,8 +27,8 @@ namespace ThorsAnvil::DB::Common
 class StreamSimple: public StreamInterface
 {
     int                     socket;
-    std::unique_ptr<SSLctx> ctx;
-    std::unique_ptr<SSLObj> ssl;
+    std::unique_ptr<ThorsIO::SSLctx> ctx;
+    std::unique_ptr<ThorsIO::SSLObj> ssl;
 
     std::function<void()>  readYield;
     std::function<void()>  writeYield;
