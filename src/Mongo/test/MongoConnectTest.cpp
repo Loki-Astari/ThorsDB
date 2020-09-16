@@ -1,7 +1,7 @@
 
 #include <gtest/gtest.h>
-#include "SocketStream.h"
-#include "Socket.h"
+#include "ThorsSocket/SocketStream.h"
+#include "ThorsSocket/Socket.h"
 #include "HandShake.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
@@ -13,8 +13,8 @@ using std::string_literals::operator""s;
 
 TEST(MongoConnectTest, CreateReply)
 {
-    Socket::ConnectSocket       socket("localhost", 27017);
-    Socket::IOSocketStream      stream(socket);
+    ThorsAnvil::ThorsIO::ConnectSocket       socket("localhost", 27017);
+    ThorsAnvil::ThorsIO::IOSocketStream      stream(socket);
 
 #if 0
 

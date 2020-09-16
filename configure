@@ -18057,14 +18057,14 @@ export cwd=`pwd`
 pushd third/ThorsIOUtil
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
 popd
-pushd third/ThorsSocket
-./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
-popd
 pushd third/ThorsCrypto
 addCrypoRoot=""
 if test "$with_cryptoroot" != ""; then :
   addCrypoRoot="--with-cryptoroot=$with_cryptoroot"
 fi
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+popd
+pushd third/ThorsSocket
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
 
