@@ -8,6 +8,7 @@
 #include "Op_Msg.h"
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/MongoUtility.h"
+#include "ThorSerialize/JsonPrinter.h"
 #include <string>
 #include <sys/utsname.h>
 
@@ -125,7 +126,15 @@ struct Binary
         char const* getBuffer() const           {return &data[0];}
         char*       getBuffer()                 {return &data[0];}
 };
-using BinarySerializer = ThorsAnvil::Serialize::MongoUtility::BinarySerializer<ThorsAnvil::DB::Mongo::Binary, '\x00'>;
+class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerializer<Binary, '\x00'>
+{
+    public:
+        virtual void writeJson(Serialize::JsonPrinter& printer, Binary const& object) const override
+        {
+            printer.addValue(object.data);
+        }
+};
+//using BinarySerializer = ThorsAnvil::Serialize::MongoUtility::BinarySerializer<ThorsAnvil::DB::Mongo::Binary, '\x00'>;
 
 struct AuthInit
 {
