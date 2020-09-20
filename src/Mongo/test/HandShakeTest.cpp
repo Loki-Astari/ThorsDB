@@ -171,6 +171,7 @@ BSON
                             "\x34\x00\x02\x76\x65\x72\x73\x69\x6f\x6e\x00\x07\x00\x00\x00\x31"
                             "\x39\x2e\x36\x2e\x30\x00\x00\x00\x00"s;
 
+    MsgHeader::messageIdSetForTest(0);
     HandShake           handShake("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
     Op_QueryHandShake   handShakeMessage(handShake);
 

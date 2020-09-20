@@ -6,7 +6,7 @@ std::int32_t MsgHeader::uniqueMessageId = 0;
 
 MsgHeader::MsgHeader(OpCode opCode)
     : messageLength(0)
-    , requestID(uniqueMessageId++)
+    , requestID(-1)//uniqueMessageId++)
     , responseTo(0)
     , opCode(opCode)
 {}
