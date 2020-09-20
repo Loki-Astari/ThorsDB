@@ -1,11 +1,10 @@
 #include "PackageBuffer.h"
 #include "MySQLStream.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <iomanip>
 
 using namespace ThorsAnvil::DB::MySQL;
-using ThorsAnvil::Utility::buildErrorMessage;
-using ThorsAnvil::Utility::buildBugReport;
 
 PackageBuffer::PackageBuffer(Common::StreamInterface& stream, bool flushed)
     : stream(stream)
@@ -71,10 +70,9 @@ void PackageBuffer::nextPacket()
 {
     if (!hasMore)
     {
-        throw std::domain_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::PackageBuffer", "nextPacket",
-                         "No more data expected from server"
-              ));
+         ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::PackageBuffer",
+                                  "nextPacket",
+                                  "No more data expected from server");
     }
     readCurrentPacketSize       = 0;
     readCurrentPacketPosition   = 0;
@@ -91,11 +89,10 @@ void PackageBuffer::nextPacket()
 
     if (currentPacketSequenceID != actualSequenceID)
     {
-        throw std::domain_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::PackageBuffer", "nextPacket",
-                         "currentPacketSequenceID(", currentPacketSequenceID, ")",
-                         " != actual sequence on input stream(",  actualSequenceID, ")"
-              ));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::PackageBuffer",
+                                 "nextPacket",
+                                 "currentPacketSequenceID(", currentPacketSequenceID, ")",
+                                 " != actual sequence on input stream(",  actualSequenceID, ")");
     }
 
     hasMore = readCurrentPacketSize == 0xFFFFFF;
@@ -114,10 +111,9 @@ void PackageBuffer::write(char const* buffer, std::size_t len)
 {
     if (flushed)
     {
-        throw std::domain_error(
-                buildBugReport("ThorsAnvil::DB::MySQL::PackageBuffer", "write",
-                         "Writting to a flushed buffer"
-              ));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::PackageBuffer",
+                                 "write",
+                                 "Writting to a flushed buffer");
     }
     std::size_t   currentSize = sendBuffer.size();
     if (currentSize + len >= 0xFFFFFF)
@@ -147,10 +143,9 @@ void PackageBuffer::flush()
 {
     if (flushed)
     {
-        throw std::domain_error(
-                buildBugReport("ThorsAnvil::DB::MySQL::PackageBuffer", "flush",
-                          "Already flushed"
-              ));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::PackageBuffer",
+                                 "flush",
+                                 "Already flushed");
     }
     flushed = true;
     std::size_t   currentSize = sendBuffer.size();
@@ -197,11 +192,9 @@ void PackageBuffer::reset()
             read(&x, 1);
             extraData << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(x) << "(" << x << ") ";
         }
-        throw std::domain_error(
-                buildBugReport("ThorsAnvil::DB::MySQL::PackageBuffer", "reset",
-                          "reset() before message was read:",
-                          extraData.str()
-              ));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::PackageBuffer",
+                                 "reset",
+                                 "reset() before message was read:", extraData.str());
     }
 
     hasMore     = true; // Will allow us to start reading the next packet

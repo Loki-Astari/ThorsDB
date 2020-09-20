@@ -4,6 +4,7 @@
 
 #include "Connection.h"
 #include "Statement.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <string>
 
 
@@ -24,7 +25,7 @@ void getField(int& nextRow, int& nextField, T& value)
 {
     if (nextRow > 1) {
         updateRow(nextRow, nextField);
-        throw std::domain_error("Invalid Conversion");
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Access:ThorsDB::Mock", "getField", "Mock throw");
     }
     switch(nextField)
     {

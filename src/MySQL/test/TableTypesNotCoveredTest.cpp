@@ -23,7 +23,7 @@ TEST(TableTypesNotCoveredTest, Expand)
     };
     ASSERT_THROW(
         test(),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 #endif

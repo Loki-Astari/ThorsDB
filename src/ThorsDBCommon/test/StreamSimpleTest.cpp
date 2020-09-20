@@ -2,6 +2,7 @@
 #include "StreamSimple.h"
 #include "ThorsSocket/SSLUtil.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include "coverage/ThorMock.h"
 #include <fstream>
 #include <thread>
@@ -69,7 +70,7 @@ TEST(StreamSimpleTest, NonBlockingFail)
 
     EXPECT_THROW(
         test(),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(StreamSimpleTest, NonBlockingOK)

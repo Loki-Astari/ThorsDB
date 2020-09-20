@@ -9,10 +9,9 @@
 #include "RespPackagePrepareExecute.h"
 #include "PrepareStatement.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 
 using namespace ThorsAnvil::DB::MySQL;
-using ThorsAnvil::Utility::buildErrorMessage;
-using ThorsAnvil::Utility::buildBugReport;
 
 PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumnDefinition> const& colu)
     : Common::StreamSimple(-1)
@@ -78,10 +77,10 @@ PrepareStatement::ValidatorStream::ValidatorStream(std::vector<RespPackageColumn
             case MYSQL_TYPE_SET:
             case MYSQL_TYPE_GEOMETRY:
             default:
-                throw std::domain_error(
-                        buildBugReport("ThrosAnvil::MySQL::PrepareStatement::ValidatorStream", "ValidatorStream",
-                                  "Unknown Type returned by server. Type: ", std::hex, col.type, " " , mapMySQLTypeToString(col.type)
-                      ));
+                ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::PrepareStatement::ValidatorStream",
+                                         "ValidatorStream",
+                                         "Unknown Type returned by server. Type: ", std::hex, col.type,
+                                         " " , mapMySQLTypeToString(col.type));
 
         }
     }
@@ -99,7 +98,11 @@ void PrepareStatement::ValidatorStream::read(char* buffer, std::size_t len)
         // This causes this to unwind back to the SQL where it is caught.
         // The doExecute() will then be called where all the errors generated
         // during validation are checked and handeled in a single place.
-        throw Access::Lib::ValidationTmpError("Too many parameters in callback function.");
+        // throw Access::Lib::ValidationTmpError("Too many parameters in callback function.");
+        ThorsLogAndThrowAction(5, Access::Lib::ValidationTmpError,
+                               "ThorsAnvil::DB::MySQL::PrepareStatement::ValidatorStream",
+                               "read",
+                               "Too many parameters in callback function.");
     }
     std::copy(&validateInfo[position], &validateInfo[position + len], buffer);
     position += len;
@@ -171,8 +174,9 @@ void PrepareStatement::doExecute()
     }
     if (!errorMessage.empty())
     {
-        throw std::logic_error(
-                buildErrorMessage("ThrosAnvil::MySQL::PrepareStatement", "doExecute", errorMessage));
+        ThorsLogAndThrowLogical("ThorsAnvil::DB::MySQL::PrepareStatement",
+                                "doExecute",
+                                errorMessage);
     }
 
     std::unique_ptr<RespPackage> tmp = connection.sendMessageGetResponse(

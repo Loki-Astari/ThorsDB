@@ -17,12 +17,9 @@ Connection::Connection(std::string const& connection,
     std::size_t     schemaEnd   = connection.find(':');
     if (schemaEnd == std::string::npos || connection[schemaEnd + 1] != '/' || connection[schemaEnd + 2] != '/')
     {
-        throw std::logic_error(
-                buildErrorMessage("ThorsAnvil::DB::Access::Connection", "Connection",
-                         "Failed to find schema: ",
-                         connection,
-                         "\n Expected: <schema>:://<host>[:<port>]"
-              ));
+        ThorsLogAndThrowLogical("ThorsAnvil::DB::Access::Connection",
+                                "Connection",
+                                "Failed to find schema: ", connection, "\n Expected: <schema>:://<host>[:<port>]");
     }
 
     bool        hasPort     = true;
@@ -45,22 +42,17 @@ Connection::Connection(std::string const& connection,
 
     if (host == "" || errno != 0 || *endPtr != '\0')
     {
-        throw std::logic_error(
-                buildErrorMessage("ThorsAnvil::DB::Access::Connection", "Connection",
-                         "Failed to parse connection: ",
-                         connection,
-                         "\n Expected: <schema>:://<host>[:<port>]"
-              ));
+        ThorsLogAndThrowLogical("ThorsAnvil::DB::Access::Connection",
+                                "Connection",
+                                "Failed to parse connection: ", connection, "\n Expected: <schema>:://<host>[:<port>]");
     }
 
     // Use the schema is used to pull a registered creator object.
     if (creator == getCreators().end())
     {
-        throw std::runtime_error(
-                buildErrorMessage("ThorsAnvil::DB::Access::Connection", "Conection",
-                         "Schema for unregister DB type: ",
-                         schema, " From: ", connection
-              ));
+        ThorsLogAndThrow("ThorsAnvil::DB::Access::Connection",
+                         "Conection",
+                         "Schema for unregister DB type: ", schema, " From: ", connection);
     }
     // Finally use the creator object to construct a ConnectionProxy.
     proxy   = creator->second(host, portNumber, username, password, database, options);

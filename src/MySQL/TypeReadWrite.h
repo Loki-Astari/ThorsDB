@@ -6,6 +6,7 @@
 #include "ConectWriter.h"
 #include "ThorsDB/Statement.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <map>
 #include <vector>
 #include <string>
@@ -20,7 +21,6 @@ namespace ThorsAnvil::DB::MySQL
 
 using Buffer = std::vector<char>;
 using Access::UnixTimeStamp;
-using ThorsAnvil::Utility::buildErrorMessage;
 
 template<typename T>
 inline T standardConverter(std::string const& t, std::size_t* p)
@@ -47,11 +47,10 @@ inline T stringtointeger(ConectReader& p)
     T            result = standardConverter<T>(t, &pos);
     if (pos != t.size())
     {
-        throw std::runtime_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL", "stringtointeger",
+        ThorsLogAndThrow("ThorsAnvil::DB::MySQL",
+                         "stringtointeger",
                          "Failed to convert whole integer: ", t,
-                         "\nOnly read the first ", pos, "bytes from this string."
-              ));
+                         "\nOnly read the first ", pos, "bytes from this string.");
     }
     return result;
 }
@@ -134,13 +133,10 @@ inline T readParameterValue(ConectReader&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    throw std::logic_error(
-            buildErrorMessage("ThorsAnvil::DB::MySQL", "readParameterValue",
-                     "Unknown conversion\n",
-                     "\n",
-                     "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n",
-                     getErrorMessage<Tv, T>()
-          ));
+    ThorsLogAndThrowLogical("ThorsAnvil::DB::MySQL", "readParameterValue",
+                            "Unknown conversion\n\n",
+                            "This is caused by a `SELECT` clause having different argument types to the C++ lambda parameters\n",
+                            getErrorMessage<Tv, T>());
 }
 
 template<typename Src>
@@ -148,11 +144,9 @@ unsigned int writeParameterValue(ConectWriter&, Src const&)
 {
     // Default action is to throw.
     // The translations we know about are defined below.
-    throw std::logic_error(
-            buildErrorMessage("ThorsAnvil::DB::MySQL", "writeParameterValue",
-                     "Unknown conversion",
-                     getErrorMessage<-1, Src>()
-          ));
+    ThorsLogAndThrowLogical("ThorsAnvil::DB::MySQL",
+                            "writeParameterValue",
+                            "Unknown conversion", getErrorMessage<-1, Src>());
 }
 
 template<typename T>
@@ -161,10 +155,11 @@ T getBitField(ConectReader& p)
     std::string bitField    = p.lengthEncodedString();
     if (bitField.size() > sizeof(T))
     {
-        throw std::logic_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL", "getBitField", "Bitfield to large for destination\n",
-                         "   From DB:     ", bitField.size(), " bytes\n",
-                         "   Output Type: ", typeid(T).name(), "\n"));
+        ThorsLogAndThrowLogical("ThorsAnvil::DB::MySQL",
+                                "getBitField",
+                                "Bitfield to large for destination\n",
+                                "   From DB:     ", bitField.size(), " bytes\n",
+                                "   Output Type: ", typeid(T).name(), "\n");
     }
 
     char const* valuePtr    = bitField.data();

@@ -1,6 +1,8 @@
 #ifndef THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_TPP
 #define THORS_ANVIL_DB_MYSQL_RESP_PACKAGE_TPP
 
+#include "ThorsLogging/ThorsLogging.h"
+
 namespace ThorsAnvil::DB::MySQL
 {
 
@@ -19,9 +21,12 @@ std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item)
     {
         result.reset(&dynamic_cast<To&>(*item));
     }
-    catch (std::bad_cast const&)
+    catch (std::bad_cast const& e)
     {
-        throw std::domain_error("ThorsAnvil::DB::Access::downcastUniquePtr: Casting reponse to expected type failed");
+        ThorsCatchMessage("ThorsAnvil::DB::Access", "downcastUniquePtr", e.what());
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Access",
+                                 "downcastUniquePtr",
+                                 "Casting response to expected type failed");
     }
     // Now that ownership has been transferred.
     // Release the original pointer.

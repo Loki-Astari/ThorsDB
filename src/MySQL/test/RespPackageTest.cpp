@@ -53,7 +53,7 @@ TEST(RespPackageTest, DowncastUniquePtrFAIL)
     };
     EXPECT_THROW(
         test(),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 

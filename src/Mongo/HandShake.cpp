@@ -1,4 +1,5 @@
 #include "HandShake.h"
+#include "ThorsLogging/ThorsLogging.h"
 
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -23,7 +24,7 @@ OS::OS()
     FILE* fp = popen("sw_vers -productName", "r");
     if (fp == nullptr)
     {
-        throw std::runtime_error("Bad");
+        ThorsLogAndThrowFatal("ThorsAnvil::DB::Mongo::OS", "OS", "Can not get OS Information");
     }
     char pBuffer[100];
     while (fgets(pBuffer, sizeof(pBuffer), fp) != NULL)

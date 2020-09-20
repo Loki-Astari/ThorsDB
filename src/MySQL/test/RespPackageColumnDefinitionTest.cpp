@@ -74,7 +74,7 @@ TEST(RespPackageColumnDefinitionTest, Client41BadLenFixedField)
 
     EXPECT_THROW(
         RespPackageColumnDefinition      col(reader),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 
@@ -100,7 +100,7 @@ TEST(RespPackageColumnDefinitionTest, Client41BadFiller)
 
     EXPECT_THROW(
         RespPackageColumnDefinition      col(reader),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 
@@ -201,7 +201,7 @@ TEST(RespPackageColumnDefinitionTest, ClientNot41LONGFLAGBadLen1Not3)
 
     EXPECT_THROW(
         RespPackageColumnDefinition      col(reader),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(RespPackageColumnDefinitionTest, ClientNot41LONGFLAGBadLen2Not1)
@@ -223,7 +223,7 @@ TEST(RespPackageColumnDefinitionTest, ClientNot41LONGFLAGBadLen2Not1)
 
     EXPECT_THROW(
         RespPackageColumnDefinition      col(reader),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(RespPackageColumnDefinitionTest, ClientNot41LONGFLAGBadLen3Not3)
@@ -245,7 +245,7 @@ TEST(RespPackageColumnDefinitionTest, ClientNot41LONGFLAGBadLen3Not3)
 
     EXPECT_THROW(
         RespPackageColumnDefinition      col(reader),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(RespPackageColumnDefinitionTest, ClientNot41BadLen3Not2)
@@ -267,7 +267,7 @@ TEST(RespPackageColumnDefinitionTest, ClientNot41BadLen3Not2)
 
     EXPECT_THROW(
         RespPackageColumnDefinition      col(reader),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(RespPackageColumnDefinitionTest, Client41DefaultValues)
