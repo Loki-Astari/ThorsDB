@@ -3,6 +3,7 @@
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
 #include "HandShake.h"
+#include "ListDatabases.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
@@ -67,5 +68,26 @@ TEST(MongoConnectTest, CreateReply)
 
     ASSERT_EQ(authReply3.ok,        1);
 
+    ListDataBases           listDatabases;
+    Op_QueryListDataBases   listDatabasesMessage(listDatabases);
+
+    stream << listDatabasesMessage;
+    stream.flush();
+
+    Op_ReplListDataBases    listOfDatabases;
+    stream >> listOfDatabases;
+
+    ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
+
+    std::cerr << "ListDB OK: "   << listDBReply.ok << "\n";
+    std::cerr << "ListDB Code: " << listDBReply.code << "\n";
+    std::cerr << "ListDB Err:  " << listDBReply.$err << "\n";
+    std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
+    std::cerr << "ListDB DB: [";
+    for (auto const& db: listDBReply.databases)
+    {
+        std::cerr << "{Name: " << db.name << ", Size: " << db.sizeOnDisk << ", Empty: " << db.empty << "}";
+    }
+    std::cerr << "]\n";
 }
 
