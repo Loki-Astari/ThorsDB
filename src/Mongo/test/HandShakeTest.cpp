@@ -272,8 +272,7 @@ BSON
 
 
     MsgHeader::messageIdSetForTest(0);
-    HandShake           handShake("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
-    Op_QueryHandShake   handShakeMessage(handShake);
+    Op_QueryHandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
 
     std::stringstream   stream;
     stream << handShakeMessage;

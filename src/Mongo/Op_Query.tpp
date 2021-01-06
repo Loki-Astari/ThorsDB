@@ -18,7 +18,10 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Args&&... ar
     , numberToReturn(1)
     , query(std::move(args)...)
     , returnFieldsSelector{}
-{}
+{
+    header.prepareToSend(getSize());
+}
+
 
 template<typename Document>
 std::size_t Op_Query<Document>::getSize() const
@@ -36,10 +39,8 @@ std::size_t Op_Query<Document>::getSize() const
 }
 
 template<typename Document>
-std::ostream& Op_Query<Document>::print(std::ostream& stream)
+std::ostream& Op_Query<Document>::print(std::ostream& stream) const
 {
-    header.prepareToSend(getSize());
-
     stream << header
            << make_LE(flags)
            << fullCollectionName << '\0'
@@ -54,9 +55,8 @@ std::ostream& Op_Query<Document>::print(std::ostream& stream)
 }
 
 template<typename Document>
-std::ostream& Op_Query<Document>::printHR(std::ostream& stream)
+std::ostream& Op_Query<Document>::printHR(std::ostream& stream) const
 {
-    header.prepareToSend(getSize());
     stream << make_hr(header)
            << flags << "\n"
            << "fullCollectionName: " << fullCollectionName << "\n"

@@ -25,7 +25,7 @@ class MsgHeader
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream) const;
 
-        friend std::ostream& operator<<(std::ostream& stream, MsgHeader& header)                        {return header.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, MsgHeader const& header)                  {return header.print(stream);}
         friend std::istream& operator>>(std::istream& stream, MsgHeader& header)                        {return header.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<MsgHeader> const& header);
 

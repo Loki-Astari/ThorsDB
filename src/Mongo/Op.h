@@ -27,9 +27,9 @@ enum class OpCode : std::int32_t
 template<typename Streamable>
 struct HumanReadable
 {
-    Streamable&     object;
+    Streamable const&     object;
     public:
-        HumanReadable(Streamable& object)
+        HumanReadable(Streamable const& object)
             : object(object)
         {}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable const& reply) {return reply.object.printHR(stream);}

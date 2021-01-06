@@ -62,16 +62,16 @@ class Op_Msg
         template<typename... Args>
         Op_Msg(OP_MsgFlag flag, Args&&... kind);
 
-        std::ostream& print(std::ostream& stream);
+        std::ostream& print(std::ostream& stream)       const;
         std::istream& parse(std::istream& stream);
-        std::ostream& printHR(std::ostream& stream);
+        std::ostream& printHR(std::ostream& stream)     const;
 
         template<std::size_t I>
         auto&       getDocument()       {return std::get<I>(sections).getDocument();}
         template<std::size_t I>
         auto const& getDocument() const {return std::get<I>(sections).getDocument();}
     private:
-        friend std::ostream& operator<<(std::ostream& stream, Op_Msg& msg)                 {return msg.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_Msg const& msg)           {return msg.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                 {return msg.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
 };
