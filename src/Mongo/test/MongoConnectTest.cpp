@@ -64,17 +64,24 @@ TEST(MongoConnectTest, CreateReply)
     Op_ReplListDataBases    listOfDatabases;
     stream >> listOfDatabases;
 
-    ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
-
-    std::cerr << "ListDB OK: "   << listDBReply.ok << "\n";
-    std::cerr << "ListDB Code: " << listDBReply.code << "\n";
-    std::cerr << "ListDB Err:  " << listDBReply.$err << "\n";
-    std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
-    std::cerr << "ListDB DB: [";
-    for (auto const& db: listDBReply.databases)
+    if (listOfDatabases)
     {
-        std::cerr << "{Name: " << db.name << ", Size: " << db.sizeOnDisk << ", Empty: " << db.empty << "}";
+        ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
+
+        std::cerr << "ListDB OK: "   << listDBReply.ok << "\n";
+        std::cerr << "ListDB Code: " << listDBReply.code << "\n";
+        std::cerr << "ListDB Err:  " << listDBReply.$err << "\n";
+        std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
+        std::cerr << "ListDB DB: [";
+        for (auto const& db: listDBReply.databases)
+        {
+            std::cerr << "{Name: " << db.name << ", Size: " << db.sizeOnDisk << ", Empty: " << db.empty << "}";
+        }
+        std::cerr << "]\n";
     }
-    std::cerr << "]\n";
+    else
+    {
+        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getFailureMessage() << "\n";
+    }
 }
 

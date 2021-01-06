@@ -44,5 +44,17 @@ std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename Document>
+Op_Reply<Document>::operator bool() const
+{
+    return (responseFlags & OP_ReplyFlag::QueryFailure) == OP_ReplyFlag::empty;
+}
+
+template<typename Document>
+std::string const& Op_Reply<Document>::getFailureMessage()  const
+{
+    return getDocument(0).$err;
+}
+
 }
 #endif

@@ -43,6 +43,9 @@ struct Op_Reply
 
         std::size_t     getDocumentCount()              const {return documents.size();}
         Document const& getDocument(std::size_t size)   const {return documents[size];}
+
+        explicit operator bool()                const;
+        std::string const& getFailureMessage()  const;
     protected:
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream) const;
