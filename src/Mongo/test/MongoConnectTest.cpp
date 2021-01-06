@@ -33,40 +33,33 @@ TEST(MongoConnectTest, CreateReply)
 
     ASSERT_EQ(handShakeReply.ok,        1);
 
-    AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, client.getFirstMessage());
-    Op_MsgAuthInit      authInitMessage(authInit);
+    Op_MsgAuthInit      authInitMessage(AuthInit("thor"s, "SCRAM-SHA-256"s, client.getFirstMessage()));
 
     stream << authInitMessage;
     stream.flush();
 
-    Op_MsgAuthReply         authReplyMessage(authReply);
+    Op_MsgAuthReply         authReplyMessage;
     stream >> authReplyMessage;
 
-    ASSERT_EQ(authReply.ok,        1);
+    ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
 
-    AuthCont        authCont(authReply.conversationId, "thor", client.getProofMessage("underworldSA0", authReply.payload.data));
-    Op_MsgAuthCont  authContMessage(authCont);
+    Op_MsgAuthCont  authContMessage(AuthCont(authReplyMessage.getDocument<0>().conversationId, "thor", client.getProofMessage("underworldSA0", authReplyMessage.getDocument<0>().payload.data)));
 
     stream << authContMessage;
     stream.flush();
 
-    AuthReply               authReply2;
-    Op_MsgAuthReply         authReplyMessage2(authReply2);
-    stream >> authReplyMessage2;
+    stream >> authReplyMessage;
 
-    ASSERT_EQ(authReply2.ok,        1);
+    ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
 
-    AuthCont        authCont2(authReply.conversationId, "thor"s, ""s);
-    Op_MsgAuthCont  authContMessage2(authCont2);
+    Op_MsgAuthCont  authContMessage2(AuthCont(authReplyMessage.getDocument<0>().conversationId, "thor"s, ""s));
 
     stream << authContMessage2;
     stream.flush();
 
-    AuthReply               authReply3;
-    Op_MsgAuthReply         authReplyMessage3(authReply3);
     stream >> authReplyMessage;
 
-    ASSERT_EQ(authReply3.ok,        1);
+    ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
 
     ListDataBases           listDatabases;
     Op_QueryListDataBases   listDatabasesMessage(listDatabases);

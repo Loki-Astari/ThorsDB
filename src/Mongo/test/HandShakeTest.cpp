@@ -513,12 +513,13 @@ af 00 00 00     // Size
                             "\x34\x57\x51\x6e\x78\x4c\x65\x31\x46\x35\x37\x30\x53\x2b\x46\x51"
                             "\x64\x4b\x7a\x4f\x77\x3d\x3d\x2c\x69\x3d\x31\x35\x30\x30\x30\x01"
                             "\x6f\x6b\x00\x00\x00\x00\x00\x00\x00\xf0\x3f\x00\x28\x99\x0a\x72"s;
-    std::stringstream stream(input);
 
-    AuthReply               authReply;
-    Op_MsgAuthReply         authReplyMessage(authReply);
+    Op_MsgAuthReply         authReplyMessage;
+
+    std::stringstream stream(input);
     stream >> authReplyMessage;
 
+    AuthReply const& authReply = authReplyMessage.getDocument<0>();
     EXPECT_EQ(authReply.conversationId,   1);
     EXPECT_EQ(authReply.done,             false);
     EXPECT_EQ(authReply.payload.data,     "r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000"s);
@@ -662,12 +663,12 @@ BSON
                         "\x58\x78\x34\x49\x66\x67\x49\x3d\x01\x6f\x6b\x00\x00\x00\x00\x00"
                         "\x00\x00\xf0\x3f\x00\x71\x02\xad\x2f"s;
 
-    AuthReply           authReply;
-    Op_MsgAuthReply     authReplyMessage(authReply);
+    Op_MsgAuthReply     authReplyMessage;
 
     std::stringstream stream(input);
     stream >> authReplyMessage;
 
+    AuthReply const& authReply = authReplyMessage.getDocument<0>();
     EXPECT_EQ(authReply.conversationId,   1);
     EXPECT_EQ(authReply.done,             false);
     EXPECT_EQ(authReply.payload.data,     "v=FzE/v4f5Dce98GoW5wfKRrQaBQsjj3H976opXx4IfgI="s);
@@ -775,12 +776,12 @@ BSON
                         "\x6c\x6f\x61\x64\x00\x00\x00\x00\x00\x00\x01\x6f\x6b\x00\x00\x00"
                         "\x00\x00\x00\x00\xf0\x3f\x00\x34\x67\xda\x52"s;
 
-    AuthReply           authReply;
-    Op_MsgAuthReply     authReplyMessage(authReply);
+    Op_MsgAuthReply     authReplyMessage;
 
     std::stringstream stream(input);
     stream >> authReplyMessage;
 
+    AuthReply const& authReply = authReplyMessage.getDocument<0>();
     EXPECT_EQ(authReply.conversationId,   1);
     EXPECT_EQ(authReply.done,             true);
     EXPECT_EQ(authReply.payload.data,     "");

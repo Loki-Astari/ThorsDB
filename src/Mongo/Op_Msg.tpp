@@ -11,8 +11,9 @@ namespace ThorsAnvil::DB::Mongo
 // ---- Kind0
 
 template<typename Data>
-inline Kind0<Data>::Kind0(Data& data)
-    : data(data)
+template<typename... Args>
+inline Kind0<Data>::Kind0(Args&&... args)
+    : data(std::move(args)...)
 {}
 
 
@@ -51,18 +52,20 @@ inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 // ---- Op_Msg
 
 template<typename... Kind>
-inline Op_Msg<Kind...>::Op_Msg(Kind&&... kind)
+template<typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(Args&&... args)
     : header(OpCode::OP_MSG)
     , flagBits(OP_MsgFlag::empty)
-    , sections(std::move(kind)...)
+    , sections(std::move(args)...)
     , checksum(0)
 {}
 
 template<typename... Kind>
-inline Op_Msg<Kind...>::Op_Msg(OP_MsgFlag flag, Kind&&... kind)
+template<typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(OP_MsgFlag flag, Args&&... args)
     : header(OpCode::OP_MSG)
     , flagBits(flag)
-    , sections(std::move(kind)...)
+    , sections(std::move(args)...)
     , checksum(0)
 {}
 
