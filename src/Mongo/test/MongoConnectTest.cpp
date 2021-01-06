@@ -14,57 +14,52 @@ using std::string_literals::operator""s;
 
 TEST(MongoConnectTest, CreateReply)
 {
+    // Connect
     ThorsAnvil::Crypto::ScramClientSha256   client("loki"s);
     ThorsAnvil::ThorsIO::ConnectSocket      socket("localhost", 27017);
     ThorsAnvil::ThorsIO::IOSocketStream     stream(socket);
     socket.makeSocketNonBlocking();
 
-    HandShake           handShake("Test App");
-    Op_QueryHandShake   handShakeMessage(handShake);
-    Op_ReplyHandShake   reply;
-    AuthReply           authReply;
+    // Send Handshake
+    stream << Op_QueryHandShake("Test App") << std::flush;
 
-    stream << handShakeMessage;
-    stream.flush();
+    Op_ReplyHandShake   handShakeReplyMessage;
+    stream >> handShakeReplyMessage;
 
-    stream >> reply;
+    HandShakeReplyDoc const&    handShakeReply = handShakeReplyMessage.getDocument(0);
+    ASSERT_EQ(handShakeReply.ok,    1);
 
-    HandShakeReplyDoc const&    handShakeReply = reply.getDocument(0);
+    // Send Auth Init: We can use SHA-256 Send scram package
+    stream << Op_MsgAuthInit(AuthInit("thor"s, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
-    ASSERT_EQ(handShakeReply.ok,        1);
+    Op_MsgAuthReply         authInitReplyMessage;
+    stream >> authInitReplyMessage;
 
-    Op_MsgAuthInit      authInitMessage(AuthInit("thor"s, "SCRAM-SHA-256"s, client.getFirstMessage()));
+    AuthReply const&    authInitReply = authInitReplyMessage.getDocument<0>();
+    ASSERT_EQ(authInitReply.ok,     1);
 
-    stream << authInitMessage;
-    stream.flush();
+    // Send Auth Cont: Send proof we know the password
+    stream << Op_MsgAuthCont(AuthCont(authInitReply.conversationId, "thor", client.getProofMessage("underworldSA0", authInitReply.payload.data))) << std::flush;
 
-    Op_MsgAuthReply         authReplyMessage;
-    stream >> authReplyMessage;
+    Op_MsgAuthReply         authContReplyMessage;
+    stream >> authContReplyMessage;
 
-    ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
+    AuthReply const&    authContReply = authContReplyMessage.getDocument<0>();
+    ASSERT_EQ(authContReply.ok,     1);
 
-    Op_MsgAuthCont  authContMessage(AuthCont(authReplyMessage.getDocument<0>().conversationId, "thor", client.getProofMessage("underworldSA0", authReplyMessage.getDocument<0>().payload.data)));
+    // Send Auth Cont 2: Send the DB Info
+    stream << Op_MsgAuthCont(AuthCont(authContReply.conversationId, "thor"s, ""s)) << std::flush;
 
-    stream << authContMessage;
-    stream.flush();
+    Op_MsgAuthReply         authContReply2Message;
+    stream >> authContReply2Message;
 
-    stream >> authReplyMessage;
+    AuthReply const&    authContReply2 = authContReply2Message.getDocument<0>();
+    ASSERT_EQ(authContReply.ok,     1);
+    // If everything is OK then we should now be connected.
 
-    ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
 
-    Op_MsgAuthCont  authContMessage2(AuthCont(authReplyMessage.getDocument<0>().conversationId, "thor"s, ""s));
-
-    stream << authContMessage2;
-    stream.flush();
-
-    stream >> authReplyMessage;
-
-    ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
-
-    Op_QueryListDataBases   listDatabasesMessage;
-
-    stream << listDatabasesMessage;
-    stream.flush();
+    // Send Command to prove authentication worked and we have an open and working connection:
+    stream << Op_QueryListDataBases{} << std::flush;
 
     Op_ReplListDataBases    listOfDatabases;
     stream >> listOfDatabases;
