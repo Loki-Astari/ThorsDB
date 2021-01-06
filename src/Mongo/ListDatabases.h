@@ -44,8 +44,8 @@ struct ListDataBaseReply
 class Op_QueryListDataBases: public Op_Query<ListDataBases>
 {
     public:
-        Op_QueryListDataBases(ListDataBases& listDatabases)
-            : Op_Query("admin.$cmd", listDatabases)
+        Op_QueryListDataBases()
+            : Op_Query("admin.$cmd")
         {}
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryListDataBases& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryListDataBases> const& data);

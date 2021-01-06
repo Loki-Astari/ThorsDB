@@ -61,8 +61,7 @@ TEST(MongoConnectTest, CreateReply)
 
     ASSERT_EQ(authReplyMessage.getDocument<0>().ok,        1);
 
-    ListDataBases           listDatabases;
-    Op_QueryListDataBases   listDatabasesMessage(listDatabases);
+    Op_QueryListDataBases   listDatabasesMessage;
 
     stream << listDatabasesMessage;
     stream.flush();
