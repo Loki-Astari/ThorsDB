@@ -38,8 +38,8 @@ struct Op_Reply
             // TODO
         {}
 
-        friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)  {return reply.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Reply> const& reply);
+        friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)  {return reply.parse(stream);}
 
         std::size_t     getDocumentCount()              const {return documents.size();}
         Document const& getDocument(std::size_t size)   const {return documents[size];}

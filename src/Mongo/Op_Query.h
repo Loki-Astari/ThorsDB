@@ -49,8 +49,8 @@ class Op_Query
         template<typename... Args>
         Op_Query(std::string const& fullCollectionName, Args&&... args);
 
-        friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
+        friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
     private:
         std::size_t   getSize()                     const;
     protected:

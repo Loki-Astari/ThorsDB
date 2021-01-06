@@ -47,8 +47,8 @@ class Op_QueryListDataBases: public Op_Query<ListDataBases>
         Op_QueryListDataBases()
             : Op_Query("admin.$cmd")
         {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_QueryListDataBases const& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryListDataBases> const& data);
+        friend std::ostream& operator<<(std::ostream& stream, Op_QueryListDataBases const& data) {return data.print(stream);}
 };
 using Op_ReplListDataBases = Op_Reply<ListDataBaseReply>;
 

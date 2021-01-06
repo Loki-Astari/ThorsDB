@@ -39,9 +39,9 @@ struct Kind0
         Data&       getDocument()       {return data;}
         Data const& getDocument() const {return data;}
 
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
         friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg)                 {return msg.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Kind0& msg)                       {return msg.parse(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
 };
 
 // TODO Kind1
