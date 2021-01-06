@@ -33,7 +33,9 @@ struct ListDataBaseReply
     double              ok;
     // If ok is zero
     int                 code;
+#pragma vera-pushoff
     std::string         $err;
+#pragma vera-pop
     // Normal response
     std::vector<DBInfo> databases;
     double              totalSize;
