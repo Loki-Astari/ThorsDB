@@ -32,7 +32,7 @@ std::istream& Op_Reply<Document>::parse(std::istream& stream)
 }
 
 template<typename Document>
-std::ostream& Op_Reply<Document>::printHR(std::ostream& stream)
+std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
            << "responseFlags: " << static_cast<std::int32_t>(responseFlags) << "\n"

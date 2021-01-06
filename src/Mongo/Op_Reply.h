@@ -45,7 +45,7 @@ struct Op_Reply
         Document const& getDocument(std::size_t size)   const {return documents[size];}
     protected:
         std::istream& parse(std::istream& stream);
-        std::ostream& printHR(std::ostream& stream);
+        std::ostream& printHR(std::ostream& stream) const;
 };
 
 }
