@@ -6,6 +6,7 @@ TARGET						= ThorsDBCommon.defer
 DEFER_NAME					= ThorsDB
 LDLIBS_EXTERN_BUILD			= crypto
 UNITTEST_LDLIBS				= -lssl
+UNITTEST_LINK_LIBS			= ThorsSocket
 NO_HEADER					= 1
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile

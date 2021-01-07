@@ -50,30 +50,3 @@ void Statement::execute()
 {
     execute(Bind());
 }
-
-
-#ifdef COVERAGE_ACCESS
-#include "Statement.tpp"
-#include "MD5.h"
-#include "test/SetGoodToTrue.h"
-
-template
-void ThorsAnvil::DB::Access::Detail::Cursor::activate<false, std::function<void (int, std::string const&, short, char, double)>>
-(std::function<void (int, std::string const&, short, char, double)>);
-
-template void ThorsAnvil::DB::Access::Detail::Cursor::activate<true,  std::function<void (int, std::string const&, short, char, double)>>
-(std::function<void (int, std::string const&, short, char, double)>);
-
-template void ThorsAnvil::DB::Access::BindArgs<int>::bindTo(ThorsAnvil::DB::Access::Lib::StatementProxy&) const;
-
-template void ThorsAnvil::DB::Access::BindArgs<>::bindTo(ThorsAnvil::DB::Access::Lib::StatementProxy&) const;
-
-template void ThorsAnvil::DB::Access::Detail::Cursor::activate<false, std::function<void (int)> >(std::function<void (int)>);
-template void ThorsAnvil::DB::Access::Detail::Cursor::activate<true, std::function<void (int)> >(std::function<void (int)>);
-
-template void ThorsAnvil::DB::Access::Statement::execute<SetGoodToTrue>(SetGoodToTrue);
-template void ThorsAnvil::DB::Access::Statement::execute<SetGoodToTrue, int>(ThorsAnvil::DB::Access::BindArgs<int> const&, SetGoodToTrue);
-template void ThorsAnvil::DB::Access::Statement::execute<CountLines, int>(ThorsAnvil::DB::Access::BindArgs<int> const&, CountLines);
-template void ThorsAnvil::DB::Access::Statement::execute<int>(ThorsAnvil::DB::Access::BindArgs<int> const&);
-
-#endif

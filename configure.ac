@@ -149,6 +149,9 @@ AS_IF([test "$with_cryptoroot" != ""],
       [addCrypoRoot="--with-cryptoroot=$with_cryptoroot"])
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
+pushd third/ThorsSocket
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+popd
 
 
 AM_INIT_AUTOMAKE([foreign])

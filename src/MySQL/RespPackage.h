@@ -50,8 +50,6 @@ std::unique_ptr<To> downcastUniquePtr(std::unique_ptr<RespPackage>&& item);
 
 }
 
-#ifndef COVERAGE_MySQL
 #include "RespPackage.tpp"
-#endif
 
 #endif

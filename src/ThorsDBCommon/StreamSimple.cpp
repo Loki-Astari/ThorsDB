@@ -190,7 +190,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
     {
-        int read = ssl->read(buffer + readSoFar, len - readSoFar);
+        int read = ssl->read(socket, buffer + readSoFar, len - readSoFar);
         if (read < 0)
         {
             int errorCode = ssl->errorCode(read);
@@ -204,7 +204,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
                 throw std::runtime_error(
                         buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readSSL",
                                  "::SSL_read() Failed: ",
-                                 "errno=", errorCode, " Message=", SSLUtil::errorMessage()
+                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage()
                       ));
             }
         }
@@ -225,7 +225,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
     {
-        int writen = ssl->write(buffer + writenSoFar, len - writenSoFar);
+        int writen = ssl->write(socket, buffer + writenSoFar, len - writenSoFar);
         if (writen < 0)
         {
             int errorCode = ssl->errorCode(writen);
@@ -239,7 +239,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
                 throw std::runtime_error(
                         buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeSSL",
                                  "::SSL_write() Failed: ",
-                                 "errno=", errorCode, " Message=", SSLUtil::errorMessage()
+                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage()
                       ));
             }
         }
@@ -258,8 +258,8 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
 
 void StreamSimple::establishSSLConnection()
 {
-    SSLMethod   method(SSLMethodType::Client);
-    ctx     = std::make_unique<SSLctx>(method);
-    ssl     = std::make_unique<SSLObj>(*ctx, socket);
-    ssl->connect();
+    ThorsIO::SSLMethod   method(ThorsIO::SSLMethodType::Client);
+    ctx     = std::make_unique<ThorsIO::SSLctx>(method);
+    ssl     = std::make_unique<ThorsIO::SSLObj>(*ctx, socket);
+    ssl->doConnect();
 }

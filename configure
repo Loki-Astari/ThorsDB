@@ -18064,6 +18064,9 @@ if test "$with_cryptoroot" != ""; then :
 fi
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
+pushd third/ThorsSocket
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+popd
 
 
 am__api_version='1.16'

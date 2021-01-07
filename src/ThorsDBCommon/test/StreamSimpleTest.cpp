@@ -1,6 +1,6 @@
 
 #include "StreamSimple.h"
-#include "SSLUtil.h"
+#include "ThorsSocket/SSLUtil.h"
 #include "ThorsIOUtil/Utility.h"
 #include "coverage/ThorMock.h"
 #include <fstream>
@@ -378,26 +378,26 @@ TEST(StreamSimpleTest, OpenSSLConnection)
     int port    = 2022;
 
     std::thread sslServer([port]() {
-        ThorsAnvil::DB::Common::SSLMethod  method(ThorsAnvil::DB::Common::SSLMethodType::Server);
-        ThorsAnvil::DB::Common::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
-        ServerSocket                server(port);
-        int                         client  = server.accept();
-        ThorsAnvil::DB::Common::SSLObj     sslConnection(ctx, client);
+        ThorsAnvil::ThorsIO::SSLMethod  method(ThorsAnvil::ThorsIO::SSLMethodType::Server);
+        ThorsAnvil::ThorsIO::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
+        ServerSocket                    server(port);
+        int                             client  = server.accept();
+        ThorsAnvil::ThorsIO::SSLObj     sslConnection(ctx, client);
 
         sslConnection.accept();
-        sslConnection.write("1234", 4);
+        sslConnection.write(client, "1234", 4);
     });
 
     sleep(2);
 
-    ThorsAnvil::DB::Common::SSLMethod  method(ThorsAnvil::DB::Common::SSLMethodType::Client);
-    ThorsAnvil::DB::Common::SSLctx     ctx(method);
-    ConnectSocket               connection("127.0.0.1", port);
-    ThorsAnvil::DB::Common::SSLObj     sslConnection(ctx, connection.getSocketId());
-    sslConnection.connect();
+    ThorsAnvil::ThorsIO::SSLMethod  method(ThorsAnvil::ThorsIO::SSLMethodType::Client);
+    ThorsAnvil::ThorsIO::SSLctx     ctx(method);
+    ConnectSocket                   connection("127.0.0.1", port);
+    ThorsAnvil::ThorsIO::SSLObj     sslConnection(ctx, connection.getSocketId());
+    sslConnection.doConnect();
 
     char buffer[10] = {0};
-    sslConnection.read(buffer, 4);
+    sslConnection.read(connection.getSocketId(), buffer, 4);
 
     ASSERT_EQ(std::string("1234"), buffer);
 

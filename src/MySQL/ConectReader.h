@@ -88,8 +88,6 @@ class ConectReader
 
 }
 
-#ifndef COVERAGE_MySQL
 #include "ConectReader.tpp"
-#endif
 
 #endif

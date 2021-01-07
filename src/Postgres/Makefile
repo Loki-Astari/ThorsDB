@@ -1,11 +1,11 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
-COVERAGE_REQUIRED			= 75
+COVERAGE_REQUIRED			= 70
 
 TARGET						= ThorsPostgres.defer
 DEFER_NAME					= ThorsDB
 LDLIBS_EXTERN_BUILD			= crypto
-UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket
 UNITTEST_LDLIBS				= -lssl
 NO_HEADER					= 1
 

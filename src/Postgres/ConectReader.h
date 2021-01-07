@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_READER_H
-#define THORS_ANVIL_DB_POSTGRESS_PACKAGE_READER_H
+#ifndef THORS_ANVIL_DB_POSTGRES_CONECT_READER_H
+#define THORS_ANVIL_DB_POSTGRES_CONECT_READER_H
 
 #include "PackageBuffer.h"
 #include <vector>
@@ -42,10 +42,8 @@ class ConectReader
         std::vector<T> readIntVector(int len);
 };
 
-
 }
-#ifndef COVERAGE_Postgres
+
 #include "ConectReader.tpp"
-#endif
 
 #endif

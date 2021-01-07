@@ -61,12 +61,6 @@ class Op_Query
 
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_QueryFlag, empty, TailableCursor, SlaveOk, OplogReplay, NoCursorTimeout, AwaitData, Exhaust, Partial);
 
-#if defined(HEADER_ONLY) && HEADER_ONLY == 1
-#include "Op_Query.source"
-#endif
-
-#ifndef COVERAGE_TEST
 #include "Op_Query.tpp"
-#endif
 
 #endif

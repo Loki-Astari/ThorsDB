@@ -51,12 +51,6 @@ struct Op_Reply
 }
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_ReplyFlag, empty, CursorNotFound, QueryFailure, ShardConfigStale, AwaitCapable);
 
-#if defined(HEADER_ONLY) && HEADER_ONLY == 1
-#include "Op_Reply.source"
-#endif
-
-#ifndef COVERAGE_TEST
 #include "Op_Reply.tpp"
-#endif
 
 #endif

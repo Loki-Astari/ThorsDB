@@ -101,18 +101,3 @@ void ConectWriter::simpleReset()
 {
     fullReset = false;
 }
-
-#ifdef COVERAGE_MySQL
-/*
- * This code is only compiled into the unit tests for code coverage purposes
- * It is not part of the live code.
- */
-#include "ConectWriter.tpp"
-
-template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<1>(unsigned long long);
-template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<2>(unsigned long long);
-template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<3>(unsigned long long);
-template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<4>(unsigned long long);
-template void ThorsAnvil::DB::MySQL::ConectWriter::writeFixedLengthInteger<8>(unsigned long long);
-
-#endif

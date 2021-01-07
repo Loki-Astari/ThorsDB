@@ -10,3 +10,6 @@
 [submodule "third/ThorsIOUtil"]
 	path = third/ThorsIOUtil
 	url = https://github.com/Loki-Astari/ThorsIOUtil.git
+[submodule "third/ThorsSocket"]
+	path = third/ThorsSocket
+	url = https://github.com/Loki-Astari/ThorsSocket.git
