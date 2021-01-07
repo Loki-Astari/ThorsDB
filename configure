@@ -17965,6 +17965,8 @@ fi
 
 
 
+
+
 # Check whether --with-TestMySQLHost was given.
 if test "${with_TestMySQLHost+set}" = set; then :
   withval=$with_TestMySQLHost;
@@ -17989,21 +17991,21 @@ if test "${with_TestMySQLDatabase+set}" = set; then :
 fi
 
 
-mysql_test_host="127.0.0.1"
-mysql_test_user="test"
-mysql_test_pw="testPassword"
-mysql_test_db="test"
+    mysql_test_host="127.0.0.1"
+    mysql_test_user="test"
+    mysql_test_pw="testPassword"
+    mysql_test_db="test"
 
-if test "x$have_TestMySQLHost" = "xyes"; then :
+    if test "x$have_TestMySQLHost" = "xyes"; then :
   mysql_test_host=$with_TestMySQLHost
 fi
-if test "x$have_TestMySQLUser" = "xyes"; then :
+    if test "x$have_TestMySQLUser" = "xyes"; then :
   mysql_test_user=$with_TestMySQLUser
 fi
-if test "x$have_TestMySQLPass" = "xyes"; then :
+    if test "x$have_TestMySQLPass" = "xyes"; then :
   mysql_test_pw=$with_TestMySQLPass
 fi
-if test "x$have_TestMySQLDatabase" = "xyes"; then :
+    if test "x$have_TestMySQLDatabase" = "xyes"; then :
   mysql_test_db=$with_TestMySQLDatabase
 fi
 
@@ -18028,29 +18030,30 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-mysq_test_connect=`echo "select 3+4 from dual" |  mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1`
-if test "x$mysq_test_connect" != "x7"; then :
+    mysq_test_connect=`echo "select 3+4 from dual" |  mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1`
+    if test "x$mysq_test_connect" != "x7"; then :
   as_fn_error $? "
 
-Error: Can not connect to mysql server for testing.
+    Error: Can not connect to mysql server for testing.
 
-        This may be because the mysql server is not running or the test data has not been created.
+            This may be because the mysql server is not running or the test data has not been created.
 
-        1) Install MySQL server
-        2) Make sure MySQL is running
-        3) Install the test data and users.
-                cat ./src/MySQL/test/data/init.sql | mysql -u root -p
-                cat ./src/MySQL/test/data/data.sql | mysql -u root -p
+            1) Install MySQL server
+            2) Make sure MySQL is running
+            3) Install the test data and users.
+                    cat ./src/MySQL/test/data/init.sql | mysql -u root -p
+                    cat ./src/MySQL/test/data/data.sql | mysql -u root -p
 
-                  " "$LINENO" 5
+                      " "$LINENO" 5
 
 fi
 
-version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
+    version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print mysql}' | awk -F\. '{print MySQL}'`
 
 cat >>confdefs.h <<_ACEOF
 #define MYSQL_MAJOR_VERSION ${version}
 _ACEOF
+
 
 
 export cwd=`pwd`
