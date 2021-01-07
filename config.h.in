@@ -60,6 +60,9 @@
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
+/* "Get mongo version into #define. That way we can turn off some tests" */
+#undef MONGO_MAJOR_VERSION
+
 /* "Get mysql version into #define. That way we can turn off some tests" */
 #undef MYSQL_MAJOR_VERSION
 
@@ -92,6 +95,18 @@
 
 /* Set for small Endian Systems */
 #undef THOR_ENDIAN_SML
+
+/* mongo DB for testing */
+#undef THOR_TESTING_MONGO_DB
+
+/* mongo DB host for testing */
+#undef THOR_TESTING_MONGO_HOST
+
+/* mongo DB password for testing */
+#undef THOR_TESTING_MONGO_PASS
+
+/* mongo DB user for testing */
+#undef THOR_TESTING_MONGO_USER
 
 /* mysql DB for testing */
 #undef THOR_TESTING_MYSQL_DB

@@ -822,6 +822,10 @@ with_TestMySQLHost
 with_TestMySQLUser
 with_TestMySQLPass
 with_TestMySQLDatabase
+with_TestMongoHost
+with_TestMongoUser
+with_TestMongoPass
+with_TestMongoDatabase
 enable_dependency_tracking
 enable_silent_rules
 '
@@ -1524,6 +1528,18 @@ Optional Packages:
                           (testPassword)
   --with-TestMySQLDatabase=<DB>
                           Use an alternative mysql database for testing with
+                          (test)
+  --with-TestMongoHost=<Host>
+                          Use an alternative mongo host for testing with
+                          Default(127.0.0.1)
+  --with-TestMongoUser=<User>
+                          Use an alternative mongo user for testing with
+                          (test)
+  --with-TestMongoPass=<Pass>
+                          Use an alternative mongo password for testing with
+                          (testPassword)
+  --with-TestMongoDatabase=<DB>
+                          Use an alternative mongo database for testing with
                           (test)
 
 Some influential environment variables:
@@ -17965,6 +17981,11 @@ fi
 
 
 
+
+
+
+
+
 # Check whether --with-TestMySQLHost was given.
 if test "${with_TestMySQLHost+set}" = set; then :
   withval=$with_TestMySQLHost;
@@ -17989,21 +18010,21 @@ if test "${with_TestMySQLDatabase+set}" = set; then :
 fi
 
 
-mysql_test_host="127.0.0.1"
-mysql_test_user="test"
-mysql_test_pw="testPassword"
-mysql_test_db="test"
+    mysql_test_host="127.0.0.1"
+    mysql_test_user="test"
+    mysql_test_pw="testPassword"
+    mysql_test_db="test"
 
-if test "x$have_TestMySQLHost" = "xyes"; then :
+    if test "x$have_TestMySQLHost" = "xyes"; then :
   mysql_test_host=$with_TestMySQLHost
 fi
-if test "x$have_TestMySQLUser" = "xyes"; then :
+    if test "x$have_TestMySQLUser" = "xyes"; then :
   mysql_test_user=$with_TestMySQLUser
 fi
-if test "x$have_TestMySQLPass" = "xyes"; then :
+    if test "x$have_TestMySQLPass" = "xyes"; then :
   mysql_test_pw=$with_TestMySQLPass
 fi
-if test "x$have_TestMySQLDatabase" = "xyes"; then :
+    if test "x$have_TestMySQLDatabase" = "xyes"; then :
   mysql_test_db=$with_TestMySQLDatabase
 fi
 
@@ -18028,29 +18049,122 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-mysq_test_connect=`echo "select 3+4 from dual" |  mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1`
-if test "x$mysq_test_connect" != "x7"; then :
+    mysq_test_connect=`echo "select 3+4 from dual" | mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1 | head -1`
+    echo "A: $mysq_test_connect"
+    if test "x$mysq_test_connect" != "x7"; then :
   as_fn_error $? "
 
-Error: Can not connect to mysql server for testing.
+    Error: Can not connect to mysql server for testing.
 
-        This may be because the mysql server is not running or the test data has not been created.
+            This may be because the mysql server is not running or the test data has not been created.
 
-        1) Install MySQL server
-        2) Make sure MySQL is running
-        3) Install the test data and users.
-                cat ./src/MySQL/test/data/init.sql | mysql -u root -p
-                cat ./src/MySQL/test/data/data.sql | mysql -u root -p
+            1: Install MySQL server
+            2: Make sure MySQL is running
+            3: Install the test data and users.
+                    cat ./src/MySQL/test/data/init.sql | mysql -h $mysql_test_host -u root -p
+                    cat ./src/MySQL/test/data/data.sql | mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db
 
-                  " "$LINENO" 5
+                      " "$LINENO" 5
 
 fi
 
-version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
+    version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print mysql}' | awk -F\. '{print MySQL}'`
 
 cat >>confdefs.h <<_ACEOF
 #define MYSQL_MAJOR_VERSION ${version}
 _ACEOF
+
+
+
+
+# Check whether --with-TestMongoHost was given.
+if test "${with_TestMongoHost+set}" = set; then :
+  withval=$with_TestMongoHost;
+fi
+
+
+# Check whether --with-TestMongoUser was given.
+if test "${with_TestMongoUser+set}" = set; then :
+  withval=$with_TestMongoUser;
+fi
+
+
+# Check whether --with-TestMongoPass was given.
+if test "${with_TestMongoPass+set}" = set; then :
+  withval=$with_TestMongoPass;
+fi
+
+
+# Check whether --with-TestMongoDatabase was given.
+if test "${with_TestMongoDatabase+set}" = set; then :
+  withval=$with_TestMongoDatabase;
+fi
+
+
+    mongo_test_host="127.0.0.1"
+    mongo_test_user="test"
+    mongo_test_pw="testPassword"
+    mongo_test_db="test"
+
+    if test "x$have_TestMongoHost" = "xyes"; then :
+  mongo_test_host=$with_TestMongoHost
+fi
+    if test "x$have_TestMongoUser" = "xyes"; then :
+  mongo_test_user=$with_TestMongoUser
+fi
+    if test "x$have_TestMongoPass" = "xyes"; then :
+  mongo_test_pw=$with_TestMongoPass
+fi
+    if test "x$have_TestMongoDatabase" = "xyes"; then :
+  mongo_test_db=$with_TestMongoDatabase
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_HOST "$mongo_test_host"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_USER "$mongo_test_user"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_PASS "$mongo_test_pw"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_DB "$mongo_test_db"
+_ACEOF
+
+
+    mysq_test_connect=`echo "db.Blob.stats().nindexes" | mongo -host $mongo_test_host -u $mongo_test_user -p$mongo_test_pw $mongo_test_db 2> /dev/null | tail -2 | head -1`
+    echo "A: $mysq_test_connect"
+    if test "x$mysq_test_connect" != "x1"; then :
+  as_fn_error $? "
+
+    Error: Can not connect to mongo server for testing.
+
+            This may be because the mongo server is not running or the test data has not been created.
+
+            1: Install Mongo server
+            2: Make sure Mongo is running
+            3: Install the test data and users.
+                    cat ./src/Mongo/test/data/init.mongo | mongo -host $mongo_test_host -u root -p
+                    cat ./src/Mongo/test/data/data.mongo | mongo -host $mongo_test_host -u $mongo_test_user -p$mongo_test_pw $mongo_test_db
+
+                      " "$LINENO" 5
+
+fi
+
+    version=`mongo -h $mongo_test_host -u $mongo_test_user -p$mongo_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print mongo}' | awk -F\. '{print Mongo}'`
+
+cat >>confdefs.h <<_ACEOF
+#define MONGO_MAJOR_VERSION ${version}
+_ACEOF
+
 
 
 export cwd=`pwd`
@@ -18922,7 +19036,7 @@ END
   fi
 fi
 
-ac_config_headers="$ac_config_headers config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h src/Postgres/PostgresConfig.h:config.h src/ThorsDBBuild/ThorsDBConfig.h:config.h src/ThorsDBBuildTest/ThorsDBConfig.h:config.h"
+ac_config_headers="$ac_config_headers config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h.in src/Postgres/PostgresConfig.h:config.h.in src/ThorsDBBuild/ThorsDBConfig.h:config.h.in src/ThorsDBBuildTest/ThorsDBConfig.h:config.h.in src/Mongo/MongoConfig.h:config.h.in"
 
 ac_config_files="$ac_config_files Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in"
 
@@ -20042,10 +20156,11 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "src/MySQL/MySQLConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/MySQL/MySQLConfig.h:config.h.in" ;;
     "src/ThorsDB/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDB/ThorsDBConfig.h:config.h.in" ;;
-    "src/ThorsDBCommon/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBCommon/ThorsDBConfig.h:config.h" ;;
-    "src/Postgres/PostgresConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Postgres/PostgresConfig.h:config.h" ;;
-    "src/ThorsDBBuild/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuild/ThorsDBConfig.h:config.h" ;;
-    "src/ThorsDBBuildTest/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuildTest/ThorsDBConfig.h:config.h" ;;
+    "src/ThorsDBCommon/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBCommon/ThorsDBConfig.h:config.h.in" ;;
+    "src/Postgres/PostgresConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Postgres/PostgresConfig.h:config.h.in" ;;
+    "src/ThorsDBBuild/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuild/ThorsDBConfig.h:config.h.in" ;;
+    "src/ThorsDBBuildTest/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuildTest/ThorsDBConfig.h:config.h.in" ;;
+    "src/Mongo/MongoConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Mongo/MongoConfig.h:config.h.in" ;;
     "Makefile.extra") CONFIG_FILES="$CONFIG_FILES Makefile.extra" ;;
     "Makefile.config") CONFIG_FILES="$CONFIG_FILES Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in" ;;
 
