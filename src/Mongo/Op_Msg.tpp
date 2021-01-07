@@ -32,6 +32,15 @@ inline std::ostream& Kind0<Data>::print(std::ostream& stream) const
 }
 
 template<typename Data>
+std::istream& Kind0<Data>::parse(std::istream& stream)
+{
+    char val;
+    stream.read(&val, 1);
+    // assert val == 0
+    stream >> ThorsAnvil::Serialize::bsonImporter(data);
+    return stream;
+}
+template<typename Data>
 inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 {
     return stream << "Kind: 0\n"
@@ -40,11 +49,11 @@ inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 
 // ---- Kind1
 
-// ---- OP_Msg
+// ---- Op_Msg
 
 template<typename... Kind>
 template<typename... Args>
-inline OP_Msg<Kind...>::OP_Msg(Args&&... arg)
+inline Op_Msg<Kind...>::Op_Msg(Args&&... arg)
     : header(OpCode::OP_MSG)
     , flagBits(OP_MsgFlag::empty)
     , sections(std::forward<Args>(arg)...)
@@ -52,7 +61,7 @@ inline OP_Msg<Kind...>::OP_Msg(Args&&... arg)
 {}
 
 template<typename... Kind>
-inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
+inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream)
 {
     bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
 
@@ -77,7 +86,7 @@ inline std::ostream& OP_Msg<Kind...>::print(std::ostream& stream)
 }
 
 template<typename... Kind>
-inline std::ostream& OP_Msg<Kind...>::printHR(std::ostream& stream)
+inline std::ostream& Op_Msg<Kind...>::printHR(std::ostream& stream)
 {
     bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
 
@@ -101,6 +110,20 @@ inline std::ostream& OP_Msg<Kind...>::printHR(std::ostream& stream)
     else
     {
         stream << "Checksum: Not calculated\n";
+    }
+    return stream;
+}
+
+template<typename... Kind>
+std::istream& Op_Msg<Kind...>::parse(std::istream& stream)
+{
+    stream >> header >> make_LE(flagBits);
+    std::apply([&stream](auto& section){stream >> section;}, sections);
+
+    bool expectCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
+    if (expectCheckSum)
+    {
+        stream >> checksum;
     }
     return stream;
 }

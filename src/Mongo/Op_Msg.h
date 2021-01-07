@@ -33,9 +33,13 @@ struct Kind0
         std::size_t getSize()                           const;
 
         std::ostream& print(std::ostream& stream)       const;
+        std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream)     const;
 
+        Data& getDocument() {return data;}
+
         friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg)                 {return msg.print(stream);}
+        friend std::istream& operator>>(std::istream& stream, Kind0& msg)                       {return msg.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
 };
 
@@ -44,7 +48,7 @@ struct Kind0
 
 // Op_Msg: https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
 template<typename... Kind>
-class OP_Msg
+class Op_Msg
 {
     MsgHeader           header;             // standard message header
     OP_MsgFlag          flagBits;           // message flags
@@ -53,13 +57,18 @@ class OP_Msg
 
     public:
         template<typename... Args>
-        OP_Msg(Args&&... arg);
+        Op_Msg(Args&&... arg);
 
         std::ostream& print(std::ostream& stream);
+        std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream);
+
+        template<std::size_t I>
+        auto& getDocument() {return std::get<I>(sections).getDocument();}
     private:
-        friend std::ostream& operator<<(std::ostream& stream, OP_Msg& msg)                  {return msg.print(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<OP_Msg> const& msg);
+        friend std::ostream& operator<<(std::ostream& stream, Op_Msg& msg)                  {return msg.print(stream);}
+        friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                  {return msg.parse(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
 };
 
 }

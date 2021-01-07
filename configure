@@ -718,6 +718,8 @@ ThorsSerialize_ROOT_LIB
 ThorsSerialize_ROOT_DIR
 crypto_ROOT_LIB
 crypto_ROOT_DIR
+yaml_ROOT_LIB
+yaml_ROOT_DIR
 EGREP
 GREP
 CPP
@@ -802,6 +804,7 @@ with_boost_libdir
 with_boost_python
 enable_vera
 with_hostbuild
+with_yamlroot
 with_cryptoroot
 with_ThorsSerializeroot
 enable_ThorsSerialize
@@ -1488,6 +1491,9 @@ Optional Packages:
   --with-boost-python     specify yes/no or the boost python library or suffix
                           to use
   --with-hostbuild=<dir>  Use the build tools located at <dir>
+
+  --with-yamlroot=<location>
+                          Directory of YAML_ROOT
 
   --with-cryptoroot=<location>
                           Directory of CRYPTO_ROOT
@@ -5896,6 +5902,87 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
+
+
+
+# Check whether --with-yamlroot was given.
+if test "${with_yamlroot+set}" = set; then :
+  withval=$with_yamlroot;
+fi
+
+        if test "${with_yamlroot}" == ""; then
+            with_yamlroot="/usr/local"
+        fi
+        ORIG_LDFLAGS="${LDFLAGS}"
+        LDFLAGS="$LDFLAGS -L$with_yamlroot/lib"
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
+$as_echo_n "checking for yaml_parser_initialize in -lyaml... " >&6; }
+if ${ac_cv_lib_yaml_yaml_parser_initialize+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lyaml  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char yaml_parser_initialize ();
+int
+main ()
+{
+return yaml_parser_initialize ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_yaml_yaml_parser_initialize=yes
+else
+  ac_cv_lib_yaml_yaml_parser_initialize=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_yaml_yaml_parser_initialize" >&5
+$as_echo "$ac_cv_lib_yaml_yaml_parser_initialize" >&6; }
+if test "x$ac_cv_lib_yaml_yaml_parser_initialize" = xyes; then :
+
+
+$as_echo "#define HAVE_YAML 1" >>confdefs.h
+
+                yaml_ROOT_DIR=$with_yamlroot
+
+                yaml_ROOT_LIB=yaml
+
+
+else
+  as_fn_error 1 "
+
+Error: Could not find libyaml
+
+You can solve this by installing libyaml
+    see http://pyyaml.org/wiki/LibYAML
+
+Alternately specify install location with:
+    --with-yamlroot=<location of yaml installation>
+
+If you do not want to use yaml serialization then it
+can be disabled with:
+    --disable-yaml
+
+                " "$LINENO" 5
+
+fi
+
+
+        LDFLAGS="${ORIG_LDFLAGS}"
 
 
 

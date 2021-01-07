@@ -15,7 +15,7 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Args&&... ar
     , flags(OP_QueryFlag::empty)
     , fullCollectionName(fullCollectionName)
     , numberToSkip(0)
-    , numberToReturn(0)
+    , numberToReturn(1)
     , query{std::forward<Args>(args)...}
     , returnFieldsSelector{}
 {}

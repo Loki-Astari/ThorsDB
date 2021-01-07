@@ -87,6 +87,7 @@ Error: Could not find one or more of: echo wc awk
 ])
 
 
+AX_THOR_FUNC_USE_YAML
 AX_THOR_FUNC_USE_CRYPTO
 AX_THOR_FUNC_USE_THORS_LIB_SERIALIZE(17)
 AX_THOR_USE_TIMEGM
