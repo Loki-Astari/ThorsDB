@@ -3,6 +3,7 @@
 #include "HandShake.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
+#include "ThorsCrypto/scram.h"
 #include <sstream>
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -170,10 +171,11 @@ BSON
                             "\x34\x00\x02\x76\x65\x72\x73\x69\x6f\x6e\x00\x07\x00\x00\x00\x31"
                             "\x39\x2e\x36\x2e\x30\x00\x00\x00\x00"s;
 
-    Op_QueryHandShake   handShake("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
+    HandShake           handShake("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
+    Op_QueryHandShake   handShakeMessage(handShake);
 
     std::stringstream   stream;
-    stream << handShake;
+    stream << handShakeMessage;
 
     EXPECT_EQ(expected, stream.str());
 }
@@ -332,9 +334,11 @@ BSON
 10 44 12 5c     // Checksum
 #endif
 
-#if 0
-    std::string expected =  "\x92\x00\x00\x00\x01\x00\x00\x00"
-                            "\x00\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\x79\x00\x00"
+    // Removing the checksum (I have not implemented the calculation of this.
+    // Please add back when it is done.
+    std::string expected =  /*"\x92"*/"\x8e" // remove 4 because reduced by four.
+                            "\x00\x00\x00\x01\x00\x00\x00"
+                            "\x00\x00\x00\x00\xdd\x07\x00\x00" /*"\x01" Flag to Turn on Checksum: Replace by \x00 -> */ "\x00" "\x00\x00\x00\x00\x79\x00\x00"
                             "\x00\x10\x73\x61\x73\x6c\x53\x74\x61\x72\x74\x00\x01\x00\x00\x00"
                             "\x02\x6d\x65\x63\x68\x61\x6e\x69\x73\x6d\x00\x0e\x00\x00\x00\x53"
                             "\x43\x52\x41\x4d\x2d\x53\x48\x41\x2d\x32\x35\x36\x00\x05\x70\x61"
@@ -342,19 +346,27 @@ BSON
                             "\x6c\x6f\x6b\x69\x2c\x72\x3d\x4a\x53\x79\x52\x48\x44\x37\x73\x63"
                             "\x39\x52\x67\x44\x43\x44\x7a\x4a\x4a\x4e\x56\x64\x6b\x41\x32\x47"
                             "\x6c\x53\x65\x4d\x4a\x50\x56\x02\x24\x64\x62\x00\x05\x00\x00\x00"
-                            "\x74\x68\x6f\x72\x00\x00\x10\x44\x12\x5c"s;
+                            "\x74\x68\x6f\x72\x00\x00"s; // \x10\x44\x12\x5c"s;
 
     MsgHeader::messageIdSetForTest(0x1);
-    Op_MsgAuthInit      authInit(OP_MsgFlag::checksumPresent, "thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
+    AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
+    Op_MsgAuthInit      authInitMessage(/*OP_MsgFlag::checksumPresent,*/authInit);
 
     std::stringstream   stream;
-    stream << authInit;
+    stream << authInitMessage;
 
     EXPECT_EQ(expected, stream.str());
-#endif
 }
 
+TEST(HandShakeTest, CreateSASLFirstMessageReplicateGeneration)
+{
+    ThorsAnvil::Crypto::ScramClientSha256   client("loki"s, [](){return "JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV";});
 
+    EXPECT_EQ("n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV", client.getFirstMessage());
+}
+
+TEST(HandShakeTest, ReadSASLFirstMessageResponse)
+{
 #if 0
 c8 00 00 00 9d 11 00 00   ?...?...........
 01 00 00 00 dd 07 00 00 01 00 00 00 00 af 00 00   ................
@@ -385,9 +397,52 @@ af 00 00 00     // Size
     01      ok          00 00 00 00 00 00 f0 3f
 00
 28 99 0a 72     // Checksum
+#endif
 
-----
+    std::string input =     "\xc8\x00\x00\x00\x9d\x11\x00\x00"
+                            "\x01\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\xaf\x00\x00"
+                            "\x00\x10\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e\x49\x64"
+                            "\x00\x01\x00\x00\x00\x08\x64\x6f\x6e\x65\x00\x00\x05\x70\x61\x79"
+                            "\x6c\x6f\x61\x64\x00\x75\x00\x00\x00\x00\x72\x3d\x4a\x53\x79\x52"
+                            "\x48\x44\x37\x73\x63\x39\x52\x67\x44\x43\x44\x7a\x4a\x4a\x4e\x56"
+                            "\x64\x6b\x41\x32\x47\x6c\x53\x65\x4d\x4a\x50\x56\x35\x6e\x39\x35"
+                            "\x70\x30\x77\x64\x5a\x7a\x78\x6a\x50\x74\x37\x7a\x79\x4c\x45\x4e"
+                            "\x66\x31\x54\x6f\x38\x68\x59\x54\x62\x4b\x45\x51\x2c\x73\x3d\x34"
+                            "\x4c\x30\x78\x41\x7a\x6e\x46\x67\x75\x53\x31\x72\x63\x5a\x6e\x6a"
+                            "\x34\x57\x51\x6e\x78\x4c\x65\x31\x46\x35\x37\x30\x53\x2b\x46\x51"
+                            "\x64\x4b\x7a\x4f\x77\x3d\x3d\x2c\x69\x3d\x31\x35\x30\x30\x30\x01"
+                            "\x6f\x6b\x00\x00\x00\x00\x00\x00\x00\xf0\x3f\x00\x28\x99\x0a\x72"s;
+    std::stringstream stream(input);
 
+    AuthReply               authReply;
+    Op_MsgAuthReply         authReplyMessage(authReply);
+    stream >> authReplyMessage;
+
+    EXPECT_EQ(authReply.conversationId,   1);
+    EXPECT_EQ(authReply.done,             false);
+    EXPECT_EQ(authReply.payload.data,     "r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000"s);
+    EXPECT_EQ(authReply.ok,               1.0);
+}
+
+TEST(HandShakeTest, ReadSASLFirstMessageResponseReplicateGeneration)
+{
+    ThorsAnvil::Crypto::ScramServerSha256   server( "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV",
+                                                    15000,
+                                                    [](){return "5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ";},
+                                                    [](ThorsAnvil::Crypto::DBInfoType type, std::string const&)
+                                                    {
+                                                        return type == ThorsAnvil::Crypto::DBInfoType::Password
+                                                            ? "underworldSA0"
+                                                            : "4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==";
+                                                    });
+
+    EXPECT_EQ("r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000", server.getFirstMessage());
+}
+
+TEST(HandShakeTest, CreateSASLSecondMessage)
+{
+#if 0
+RAW
 d8 00 00 00 02 00 00 00   ?...?...........
 00 00 00 00 dd 07 00 00 01 00 00 00 00 bf 00 00   ................
 00 10 73 61 73 6c 43 6f 6e 74 69 6e 75 65 00 01   ..saslContinue..
@@ -403,6 +458,7 @@ d8 00 00 00 02 00 00 00   ?...?...........
 73 61 74 69 6f 6e 49 64 00 01 00 00 00 02 24 64   sationId......$d
 62 00 05 00 00 00 74 68 6f 72 00 00 bd 34 27 d8   b.....thor...4'.
 
+Hand split data
 d8 00 00 00         // Size
 02 00 00 00         // Message Id
 00 00 00 00         // Response To
@@ -418,9 +474,56 @@ bf 00 00 00         // Size
     02      $db             05 00 00 00     thor
 00
 bd 34 27 d8 // Checksum
+#endif
 
-----
+                            // don't compute checksum
+                            // Removing it from here
+    std::string expected =  /*"\xd8 Subtracted 4 to het d4*/ "\xd4" "\x00\x00\x00\x02\x00\x00\x00"
+                            "\x00\x00\x00\x00\xdd\x07\x00\x00" /* Disable Flag for check sum "\x01" ->*/ "\x00" "\x00\x00\x00\x00\xbf\x00\x00"
+                            "\x00\x10\x73\x61\x73\x6c\x43\x6f\x6e\x74\x69\x6e\x75\x65\x00\x01"
+                            "\x00\x00\x00\x05\x70\x61\x79\x6c\x6f\x61\x64\x00\x78\x00\x00\x00"
+                            "\x00\x63\x3d\x62\x69\x77\x73\x2c\x72\x3d\x4a\x53\x79\x52\x48\x44"
+                            "\x37\x73\x63\x39\x52\x67\x44\x43\x44\x7a\x4a\x4a\x4e\x56\x64\x6b"
+                            "\x41\x32\x47\x6c\x53\x65\x4d\x4a\x50\x56\x35\x6e\x39\x35\x70\x30"
+                            "\x77\x64\x5a\x7a\x78\x6a\x50\x74\x37\x7a\x79\x4c\x45\x4e\x66\x31"
+                            "\x54\x6f\x38\x68\x59\x54\x62\x4b\x45\x51\x2c\x70\x3d\x68\x38\x2b"
+                            "\x4b\x52\x48\x78\x46\x48\x6b\x72\x76\x43\x33\x74\x36\x43\x71\x36"
+                            "\x4b\x56\x4c\x41\x74\x34\x6d\x6c\x42\x50\x2f\x56\x36\x4a\x72\x74"
+                            "\x54\x4c\x4d\x4b\x76\x57\x2f\x34\x3d\x10\x63\x6f\x6e\x76\x65\x72"
+                            "\x73\x61\x74\x69\x6f\x6e\x49\x64\x00\x01\x00\x00\x00\x02\x24\x64"
+                            "\x62\x00\x05\x00\x00\x00\x74\x68\x6f\x72\x00\x00"s; //"\xbd\x34\x27\xd8"s;
 
+    MsgHeader::messageIdSetForTest(0x2);
+    AuthCont        authCont(1, "thor", "c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s);
+    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
+
+    std::stringstream stream;
+    stream << authContMessage;
+
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST(HandShakeTest, CreateSASLSecondMessageReplicateGeneration)
+{
+    ThorsAnvil::Crypto::ScramClientSha256   client("loki"s, [](){return "JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV";});
+    ThorsAnvil::Crypto::ScramServerSha256   server( client.getFirstMessage(),
+                                                    15000,
+                                                    [](){return "5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ";},
+                                                    [](ThorsAnvil::Crypto::DBInfoType type, std::string const&)
+                                                    {
+                                                        return type == ThorsAnvil::Crypto::DBInfoType::Password
+                                                            ? "underworldSA0"
+                                                            : "4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==";
+                                                    });
+    std::string proof = client.getProofMessage("underworldSA0", server.getFirstMessage());
+
+    EXPECT_EQ("c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s, proof);
+}
+
+TEST(HandShakeTest, ReadSASLSecondMessageResponse)
+{
+#if 0
+RAW
 81 00 00 00 9e 11 00 00   ?...?...........
 02 00 00 00 dd 07 00 00 01 00 00 00 00 68 00 00   .............h..
 00 10 63 6f 6e 76 65 72 73 61 74 69 6f 6e 49 64   ..conversationId
@@ -431,6 +534,7 @@ bd 34 27 d8 // Checksum
 58 78 34 49 66 67 49 3d 01 6f 6b 00 00 00 00 00   Xx4IfgI=.ok.....
 00 00 f0 3f 00 71 02 ad 2f                        ...?.q../
 
+Hand split raw data
 81 00 00 00         // Size
 9e 11 00 00         // Message Id
 02 00 00 00         // Response To
@@ -446,9 +550,52 @@ BSON
     01      ok                          00 00 00 00 00 00 f0 3f
 00
 71 02 ad 2f         // Checksum
+#endif
+    std::string input = "\x81\x00\x00\x00\x9e\x11\x00\x00"
+                        "\x02\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\x68\x00\x00"
+                        "\x00\x10\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e\x49\x64"
+                        "\x00\x01\x00\x00\x00\x08\x64\x6f\x6e\x65\x00\x00\x05\x70\x61\x79"
+                        "\x6c\x6f\x61\x64\x00\x2e\x00\x00\x00\x00\x76\x3d\x46\x7a\x45\x2f"
+                        "\x76\x34\x66\x35\x44\x63\x65\x39\x38\x47\x6f\x57\x35\x77\x66\x4b"
+                        "\x52\x72\x51\x61\x42\x51\x73\x6a\x6a\x33\x48\x39\x37\x36\x6f\x70"
+                        "\x58\x78\x34\x49\x66\x67\x49\x3d\x01\x6f\x6b\x00\x00\x00\x00\x00"
+                        "\x00\x00\xf0\x3f\x00\x71\x02\xad\x2f"s;
 
-----
+    AuthReply           authReply;
+    Op_MsgAuthReply     authReplyMessage(authReply);
 
+    std::stringstream stream(input);
+    stream >> authReplyMessage;
+
+    EXPECT_EQ(authReply.conversationId,   1);
+    EXPECT_EQ(authReply.done,             false);
+    EXPECT_EQ(authReply.payload.data,     "v=FzE/v4f5Dce98GoW5wfKRrQaBQsjj3H976opXx4IfgI="s);
+    EXPECT_EQ(authReply.ok,               1.0);
+}
+
+TEST(HandShakeTest, ReadSASLSecondMessageResponseReplicateGeneration)
+{
+    ThorsAnvil::Crypto::ScramClientSha256   client("loki"s, [](){return "JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV";});
+    ThorsAnvil::Crypto::ScramServerSha256   server( client.getFirstMessage(),
+                                                    15000,
+                                                    [](){return "5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ";},
+                                                    [](ThorsAnvil::Crypto::DBInfoType type, std::string const&)
+                                                    {
+                                                        return type == ThorsAnvil::Crypto::DBInfoType::Password
+                                                            ? "underworldSA0"
+                                                            : "4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==";
+                                                    });
+    std::string proof = client.getProofMessage("underworldSA0", server.getFirstMessage());
+
+    std::string valid = server.getProofMessage(proof);
+
+    EXPECT_EQ("v=FzE/v4f5Dce98GoW5wfKRrQaBQsjj3H976opXx4IfgI="s, valid);
+}
+
+TEST(HandShakeTest, CreateSASLThirdMessage)
+{
+#if 0
+RAW
 60 00 00 00 03 00 00 00   ?...?...`.......
 00 00 00 00 dd 07 00 00 01 00 00 00 00 47 00 00   .............G..
 00 10 73 61 73 6c 43 6f 6e 74 69 6e 75 65 00 01   ..saslContinue..
@@ -457,6 +604,7 @@ BSON
 00 01 00 00 00 02 24 64 62 00 05 00 00 00 74 68   ......$db.....th
 6f 72 00 00 3d 9c 10 02                           or..=...
 
+Hand Split Raw Message
 60 00 00 00         // Size
 03 00 00 00         // Message Id
 00 00 00 00         // Reply To
@@ -472,9 +620,29 @@ BSON
     02      $db             05 00 00 00     thor
 00
 3d 9c 10 02         // Checksum
+#endif
+                            // have not implemented checksum so slightly modified.
+    std::string expected =  /* Change Size "\x60" remove 4*/ "\x5c" "\x00\x00\x00\x03\x00\x00\x00"
+                            "\x00\x00\x00\x00\xdd\x07\x00\x00" /* Remove Flag for checksum "\x01"*/ "\x00" "\x00\x00\x00\x00\x47\x00\x00"
+                            "\x00\x10\x73\x61\x73\x6c\x43\x6f\x6e\x74\x69\x6e\x75\x65\x00\x01"
+                            "\x00\x00\x00\x05\x70\x61\x79\x6c\x6f\x61\x64\x00\x00\x00\x00\x00"
+                            "\x00\x10\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e\x49\x64"
+                            "\x00\x01\x00\x00\x00\x02\x24\x64\x62\x00\x05\x00\x00\x00\x74\x68"
+                            "\x6f\x72\x00\x00"s;//\x3d\x9c\x10\x02"s;
 
-----
+    MsgHeader::messageIdSetForTest(0x3);
+    AuthCont        authCont(1, "thor"s, ""s);
+    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
 
+    std::stringstream stream;
+    stream << authContMessage;
+
+    EXPECT_EQ(expected, stream.str());
+}
+
+TEST(HandShakeTest, ReadSASLThirdMessageResponse)
+{
+#if 0
 53 00 00 00 9f 11 00 00   ?...?...S.......
 03 00 00 00 dd 07 00 00 01 00 00 00 00 3a 00 00   .............:..
 00 10 63 6f 6e 76 65 72 73 61 74 69 6f 6e 49 64   ..conversationId
@@ -497,44 +665,25 @@ BSON
     01      ok                      00 00 00 00 00 00 f0 3f
 00
 34 67 da 52         // Checksum
-
-----
-
-3d 00 00 00 04 00 00 00   ?...?...=.......
-00 00 00 00 dd 07 00 00 01 00 00 00 00 24 00 00   .............$..
-00 10 77 68 61 74 73 6d 79 75 72 69 00 01 00 00   ..whatsmyuri....
-00 02 24 64 62 00 06 00 00 00 61 64 6d 69 6e 00   ..$db.....admin.
-00 6c 09 be a1                                    .l...
-
-3d 00 00 00         // Size
-04 00 00 00         // Message Id
-00 00 00 00         // Response To
-dd 07 00 00         // OP_CODE: 2013: Op_MSG
-MSG
-01 00 00 00         // Flags
-00                  // Kind0
-BSON
-24 00 00 00         // Size
-    10      whatsmyuri              01 00 00 00
-    02      $db                     06 00 00 00     admin.
-00
-6c 09 be a1         // Checksum
-
-----
-
-Summary:
-
-Client                          Server
-0 | 0 Query                                 119c | 0 Reply
-1 | 0 Msg  saslStart 1                      119d | 1 Msg conversationId 1 done 0 ok 1
-2 | 0 Msg  saslContinue 1 conversationId 1  119e | 2 Msg conversationId 1 done 0 ok 1
-3 | 0 Msg  saslContinue 1 conversationId 1  119f | 3 Msg conversationId 1 done 1 ok 1
-
------
-
-4  0 
-
-
-
 #endif
+
+    std::string input = "\x53\x00\x00\x00\x9f\x11\x00\x00"
+                        "\x03\x00\x00\x00\xdd\x07\x00\x00\x01\x00\x00\x00\x00\x3a\x00\x00"
+                        "\x00\x10\x63\x6f\x6e\x76\x65\x72\x73\x61\x74\x69\x6f\x6e\x49\x64"
+                        "\x00\x01\x00\x00\x00\x08\x64\x6f\x6e\x65\x00\x01\x05\x70\x61\x79"
+                        "\x6c\x6f\x61\x64\x00\x00\x00\x00\x00\x00\x01\x6f\x6b\x00\x00\x00"
+                        "\x00\x00\x00\x00\xf0\x3f\x00\x34\x67\xda\x52"s;
+
+    AuthReply           authReply;
+    Op_MsgAuthReply     authReplyMessage(authReply);
+
+    std::stringstream stream(input);
+    stream >> authReplyMessage;
+
+    EXPECT_EQ(authReply.conversationId,   1);
+    EXPECT_EQ(authReply.done,             true);
+    EXPECT_EQ(authReply.payload.data,     "");
+    EXPECT_EQ(authReply.ok,               1.0);
+}
+
 

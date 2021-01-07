@@ -7,38 +7,14 @@
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-TEST(Op_QuertTest, Op_QueryCreateSimpleNoConstructorNoArguments)
-{
-    Op_Query<SimpleStringNoConstructor>     query("thor.collection");
-}
-
-TEST(Op_QuertTest, Op_QueryCreateSimpleNoConstructor)
-{
-    Op_Query<SimpleStringNoConstructor>     query("thor.collection", "a Value in the string"s);
-}
-
-TEST(Op_QuertTest, Op_QueryCreateSimpleConstructor)
-{
-    Op_Query<SimpleStringWithConstructor>   query("thor.collection", "a Value in the string"s);
-}
-
-TEST(Op_QuertTest, Op_QueryCreateStringIntNoConstructor)
-{
-    Op_Query<StringAndIntNoConstructor>     query("thor.collection", "a Value in the string"s, 32);
-}
-
-TEST(Op_QuertTest, Op_QueryCreateStringIntConstructor)
-{
-    Op_Query<StringAndIntWithConstructor>   query("thor.collection", "a Value in the string"s, 45);
-}
-
 TEST(Op_QuertTest, Op_QueryStreamObject)
 {
     MsgHeader::messageIdSetForTest(0x124589);
-    Op_Query<StringAndIntNoConstructor>     query("thor.collection", "DataString"s, 48);
+    StringAndIntNoConstructor               object{"DataString"s, 48};
+   // Op_Query<StringAndIntNoConstructor>     query("thor.collection", object);
 
     std::stringstream stream;
-    stream << query;
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", object);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -60,7 +36,8 @@ TEST(Op_QuertTest, Op_QueryStreamObject)
 TEST(Op_QuertTest, Op_QueryStreamObjectHumanReadable)
 {
     MsgHeader::messageIdSetForTest(0x124589);
-    Op_Query<StringAndIntNoConstructor>     query("thor.collection", "DataString"s, 48);
+    StringAndIntNoConstructor               object{"DataString"s, 48};
+    Op_Query<StringAndIntNoConstructor>     query("thor.collection", object);
 
     std::stringstream stream;
     stream << make_hr(query);

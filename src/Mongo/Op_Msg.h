@@ -26,10 +26,9 @@ enum class OP_MsgFlag: std::int32_t
 template<typename Data>
 struct Kind0
 {
-    Data            data;
+    Data&            data;
     public:
-        template<typename... Args>
-        Kind0(Args&&... arg);
+        Kind0(Data& data);
         std::size_t getSize()                           const;
 
         std::ostream& print(std::ostream& stream)       const;
@@ -50,14 +49,14 @@ struct Kind0
 template<typename... Kind>
 class Op_Msg
 {
-    MsgHeader           header;             // standard message header
-    OP_MsgFlag          flagBits;           // message flags
-    std::tuple<Kind...> sections;           // The data of the message (See above Kind0 and Kind1)
-    std::int32_t        checksum;           // checksum of message;
+    MsgHeader               header;             // standard message header
+    OP_MsgFlag              flagBits;           // message flags
+    std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
+    std::int32_t            checksum;           // checksum of message;
 
     public:
-        template<typename... Args>
-        Op_Msg(Args&&... arg);
+        Op_Msg(Kind&&... kind);
+        Op_Msg(OP_MsgFlag flag, Kind&&... kind);
 
         std::ostream& print(std::ostream& stream);
         std::istream& parse(std::istream& stream);
@@ -66,8 +65,8 @@ class Op_Msg
         template<std::size_t I>
         auto& getDocument() {return std::get<I>(sections).getDocument();}
     private:
-        friend std::ostream& operator<<(std::ostream& stream, Op_Msg& msg)                  {return msg.print(stream);}
-        friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                  {return msg.parse(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_Msg& msg)                 {return msg.print(stream);}
+        friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                 {return msg.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
 };
 
