@@ -1,5 +1,6 @@
 #include "StreamSimple.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <stdexcept>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -40,27 +41,25 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     hostent*    serv  = ::gethostbyname(host.c_str());
     if (serv == NULL)
     {
-        throw std::runtime_error(
-                buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "StreamSimple",
-                         "::gethostbyname() Failed: ", systemErrorMessage()
-              ));
+        ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                         "StreamSimple",
+                         "::gethostbyname() Failed: ", systemErrorMessage());
     }
     bcopy((char *)serv->h_addr, (char *)&serv_addr.sin_addr.s_addr, serv->h_length);
 
     if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        throw std::runtime_error(
-                buildErrorMessage("ThrosAnvil::SQL::StreamSimple", "StreamSimple",
-                         "::socket() Failed: ", systemErrorMessage()
-              ));
+        ThorsLogAndThrow("ThrosAnvil::SQL::StreamSimple",
+                         "StreamSimple",
+                         "::socket() Failed: ", systemErrorMessage());
     }
     if (nonBlocking)
     {
         if (::fcntlMYSQLWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
         {
-            throw std::domain_error(buildErrorMessage("ThorsAnvil::DB::MySQL::StreamSimple", "StreamSimple",
-                                                      ": fcntl: ", systemErrorMessage()
-              ));
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::StreamSimple",
+                                     "StreamSimple",
+                                     "::fcntl() ", systemErrorMessage());
         }
     }
     using SockAddr = struct sockaddr;
@@ -70,10 +69,9 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
         if (errno != EINPROGRESS)
         {
             ::close(socket);
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::MySQL::StreamSimple", "StreamSimple",
-                             "::connect() Failed: ", systemErrorMessage()
-                  ));
+            ThorsLogAndThrow("ThorsAnvil::DB::MySQL::StreamSimple",
+                             "StreamSimple",
+                             "::connect() Failed: ", systemErrorMessage());
         }
     }
 }
@@ -133,18 +131,16 @@ void StreamSimple::readFD(char* buffer, std::size_t len)
         }
         else if (read == 0)
         {
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readFD",
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                             "readFD",
                              "::read() Failed: ",
-                             "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
-                  ));
+                             "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF");
         }
         else if (read == ErrorResult)
         {
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readFD",
-                             "::read() Failed: ", " Message=", systemErrorMessage()
-                  ));
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                             "readFD",
+                             "::read() Failed: ", " Message=", systemErrorMessage());
         }
 
         readSoFar += read;
@@ -168,18 +164,16 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
         }
         else if (writen == 0)
         {
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeFD",
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                             "writeFD",
                              "::write() Failed: ",
-                             "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
-                  ));
+                             "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF");
         }
         else if (writen == ErrorResult)
         {
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeFD",
-                             "::write() Failed: ", " Message=", systemErrorMessage()
-                  ));
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                             "writeFD",
+                             "::write() Failed: ", " Message=", systemErrorMessage());
         }
 
         writenSoFar += writen;
@@ -201,20 +195,18 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
             }
             else
             {
-                throw std::runtime_error(
-                        buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readSSL",
+                ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                                 "readSSL",
                                  "::SSL_read() Failed: ",
-                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage()
-                      ));
+                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage());
             }
         }
         else if (read == 0)
         {
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "readSSL",
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                             "readSSL",
                              "SSL_read() Failed: ",
-                             "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF"
-                  ));
+                             "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF");
         }
 
         readSoFar += read;
@@ -236,20 +228,18 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
             }
             else
             {
-                throw std::runtime_error(
-                        buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeSSL",
+                ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                                 "writeSSL",
                                  "::SSL_write() Failed: ",
-                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage()
-                      ));
+                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage());
             }
         }
         else if (writen == 0)
         {
-            throw std::runtime_error(
-                    buildErrorMessage("ThorsAnvil::DB::SQL::StreamSimple", "writeSSL",
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
+                             "writeSSL",
                              "::SSL_write() Failed: ",
-                             "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF"
-                  ));
+                             "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF");
         }
 
         writenSoFar += writen;

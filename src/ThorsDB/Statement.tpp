@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_DB_THORSDB_STATEMENT_TPP
 #define THORS_ANVIL_DB_THORSDB_STATEMENT_TPP
 
+#include "ThorsLogging/ThorsLogging.h"
 #include <iostream>
 
 namespace ThorsAnvil::DB::Access
@@ -62,8 +63,9 @@ inline void Detail::Cursor::activateWithArgs(F cb, A& arguments, std::index_sequ
         (void)list;
         Detail::CallWithArgs<ValidateOnly, F, A, ids...>(cb, arguments, id);
     }
-    catch (Lib::ValidationTmpError const&)
+    catch (Lib::ValidationTmpError const& e)
     {
+        ThorsCatchMessage("ThorsAnvil::DB::Access::Detail::Cursor", "activateWithArg", e.what());
         // Drop a temporary error.
         // These are only thrown by subsystems if they know they can recover and do
         // better error messaging as a result.
@@ -106,7 +108,7 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
 {
     if (!statementProxy->isSelect())
     {
-        throw std::logic_error("ThrosAnvil::Access::Statement::execute: Passing callback function to non select");
+        ThorsLogAndThrowLogical("ThrosAnvil::Access::Statement", "execute", "Passing callback function to non select");
     }
 
     typedef typename Detail::FunctionTraits<decltype(cb)>::FunctionType   CBTraits;
@@ -126,8 +128,17 @@ inline void Statement::execute(BindArgs<R...> const& binds, F cb)
             cursor.activate<false, CBTraits>(cb);
         }
     }
+    catch (std::exception const& e)
+    {
+        ThorsCatchMessage("ThorsAnvil::DB::Access::Statement", "execute", e.what());
+        ThorsRethrowMessage("ThorsAnvil::DB::Access::Statement", "execute", e.what());
+        statementProxy->abort();
+        throw;
+    }
     catch (...)
     {
+        ThorsCatchMessage("ThorsAnvil::DB::Access::Statement", "execute", "UNKNOWN");
+        ThorsRethrowMessage("ThorsAnvil::DB::Access::Statement", "execute", "UNKNOWN");
         statementProxy->abort();
         throw;
     }
@@ -144,7 +155,7 @@ inline void Statement::execute(BindArgs<R...> const& binds)
 {
     if (statementProxy->isSelect())
     {
-        throw std::logic_error("ThrosAnvil::Access::Statement::execute: Not passing callback to SELECT statement");
+        ThorsLogAndThrowLogical("ThrosAnvil::Access::Statement", ":execute", "Not passing callback to SELECT statement");
     }
 
     modifyDone = true;

@@ -2,6 +2,7 @@
 #define THORS_ANVIL_DB_POSTGRESS_DEFAULT_MY_SQL_CONNECTION_H
 
 #include "ThorsDB/Connection.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <string>
 #include <memory>
 
@@ -17,8 +18,14 @@ class DefaultPostGConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProx
                                std::string const& database,
                                ThorsAnvil::DB::Access::Options const& options);
         virtual std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
-        virtual int getSocketId() const override {throw std::runtime_error("TODO");}
-        virtual void setYield(std::function<void()>&&, std::function<void()>&&) override {throw std::runtime_error("TODO");}
+        virtual int getSocketId() const override
+        {
+            ThorsLogAndThrowFatal("ThorsAnvil::DB::Postgres::DefaultPostGConnection", "getSocketId", "TODO");
+        }
+        virtual void setYield(std::function<void()>&&, std::function<void()>&&) override
+        {
+            ThorsLogAndThrowFatal("ThorsAnvil::DB::Postgres::DefaultPostGConnection", "setYield", "TODO");
+        }
 };
 
 }

@@ -28,7 +28,7 @@ TEST(CornerCaseTest, WriteUnknownTYpe)
     };
     EXPECT_THROW(
         test(),
-        std::logic_error
+        ThorsAnvil::Logging::LogicalException
     );
 }
 

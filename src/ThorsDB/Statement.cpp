@@ -32,7 +32,7 @@ long Statement::rowsAffected() const
 {
     if (!modifyDone)
     {
-        throw std::logic_error("ThrosAnvil::Access::Statement::rowsAffected: Modification not attempted");
+        ThorsLogAndThrowLogical("ThrosAnvil::Access::Statement", "rowsAffected", "Modification not attempted");
     }
     return statementProxy->rowsAffected();
 }
@@ -41,7 +41,7 @@ long Statement::lastInsertID() const
 {
     if (!modifyDone)
     {
-        throw std::logic_error("ThrosAnvil::Access::Statement::rowsAffected: Modification not attempted");
+        ThorsLogAndThrowLogical("ThrosAnvil::Access::Statement", "lastInsertID", "Modification not attempted");
     }
     return statementProxy->lastInsertID();
 }

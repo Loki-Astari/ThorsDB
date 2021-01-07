@@ -9,9 +9,9 @@
 #include "RequPackageAuthSwitchResp.h"
 #include "ThorMySQL.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 
 using namespace ThorsAnvil::DB::MySQL;
-using ThorsAnvil::Utility::buildErrorMessage;
 
 Connection::Connection(
                     std::string const& /*username*/,
@@ -72,7 +72,9 @@ void Connection::conectToServer(std::string const& username,
 
     if (!serverResp)
     {
-        throw std::domain_error("Connection::Connection: Handshake failed: Unexpected Package");
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::Connection",
+                                 "conectToServer",
+                                 "Handshake failed: Unexpected Package");
     }
     if (serverResp->is() == RespType::AuthSwitchRequest)
     {
@@ -91,7 +93,9 @@ void Connection::conectToServer(std::string const& username,
 
         if (!serverResp)
         {
-            throw std::domain_error("Connection::Connection: Auth Switch failed: Unexpected Package");
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::Connection",
+                                     "conectToServer",
+                                     "Auth Switch failed: Unexpected Package");
         }
     }
 
@@ -101,13 +105,17 @@ void Connection::conectToServer(std::string const& username,
 
         if (!serverResp)
         {
-            throw std::domain_error("Connection::Connection: Custom Auth failed: Unexpected Package");
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::Connection",
+                                     "conectToServer",
+                                     "Custom Auth failed: Unexpected Package");
         }
     }
 
     if (serverResp->isOK() == false)
     {
-        throw std::domain_error(buildErrorMessage("Connection::Connection:", "", "Handshake failed: Got: ", (*serverResp)));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::Connection",
+                                 "conectToServer",
+                                 "Handshake failed: Got: ", (*serverResp));
     }
 }
 

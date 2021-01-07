@@ -6,6 +6,7 @@
 #include "PackageBuffer.h"
 #include "PostgresStream.h"
 #include "Messages.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include "test/MockStream.h"
 #include "gtest/gtest.h"
 
@@ -199,7 +200,7 @@ TEST(ConnectionSimulationTest, UnknownResposeCode)
 
     ASSERT_THROW(
         Connection      connection("test", "testPassword", "test", {}, reader, writer),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(ConnectionSimulationTest, UnknownMessageType)
@@ -217,7 +218,7 @@ TEST(ConnectionSimulationTest, UnknownMessageType)
 
     ASSERT_THROW(
         Connection      connection("test", "testPassword", "test", {}, reader, writer),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(ConnectionSimulationTest, InvalidMessageType)
@@ -234,7 +235,7 @@ TEST(ConnectionSimulationTest, InvalidMessageType)
 
     ASSERT_THROW(
         Connection      connection("test", "testPassword", "test", {}, reader, writer),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 TEST(ConnectionSimulationTest, PrintStartupMessage)

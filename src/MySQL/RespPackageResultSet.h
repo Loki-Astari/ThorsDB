@@ -5,6 +5,7 @@
 #include "RespPackageColumnDefinition.h"
 #include "TypeReadWrite.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <ostream>
 #include <vector>
 #include <string>
@@ -16,11 +17,9 @@ namespace ThorsAnvil::DB::MySQL
 
 template<typename T> inline T readNullParameter()
 {
-    using ThorsAnvil::Utility::buildErrorMessage;
-    throw std::logic_error(
-            buildErrorMessage("ThorsAnvil::DB::MySQL", "readNullParameter",
-                     "Undefined for this type ", typeid(T).name()
-          ));
+    ThorsLogAndThrowLogical("ThorsAnvil::DB::MySQL",
+                            "readNullParameter",
+                            "Undefined for this type ", typeid(T).name());
 }
 
 template<> inline std::string readNullParameter<std::string>()                                 {return "";}
@@ -46,10 +45,9 @@ class RespPackageResultSet: public RespPackage
 
                      Because this should never happen it is a domain_error
             */
-            throw std::domain_error(
-                     ThorsAnvil::Utility::buildBugReport("ThorsAnvil::DB::MySQL::RespPackageResultSet", "readNextValue",
-                              "Trying to read more parameters than exist"
-                  ));
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::RespPackageResultSet",
+                                     "readNextValue",
+                                     "Trying to read more parameters than exist");
         }
         int currentColumn   = nextColumn;
         ++nextColumn;
@@ -96,19 +94,15 @@ class RespPackageResultSet: public RespPackage
             case MYSQL_TYPE_ENUM:
             case MYSQL_TYPE_SET:
             case MYSQL_TYPE_GEOMETRY:
-                throw std::logic_error(
-                          ThorsAnvil::Utility::buildErrorMessage(  "ThorsAnvil::DB::MySQL::RespPackageResultSet", "readNextValue",
-                                    "This type is currently NOT unsupported.\n",
-                                    "\n",
-                                    "\tMySQL Type: ",  mapMySQLTypeToString(columns[currentColumn].type), "\n",
-                                    "\n",
-                                    "Send my some SQL and unit tests :-)"
-                                ));
+                ThorsLogAndThrowLogical("ThorsAnvil::DB::MySQL::RespPackageResultSet",
+                                        "readNextValue",
+                                        "This type is currently NOT unsupported.\n\n",
+                                        "\tMySQL Type: ",  mapMySQLTypeToString(columns[currentColumn].type), "\n\n",
+                                        "Send my some SQL and unit tests :-)");
             default:
-                throw std::domain_error(
-                         ThorsAnvil::Utility::buildBugReport("ThorsAnvil::DB::MySQL::RespPackageResultSet", "readNextValue",
-                                  "Unimplemented Column Type"
-                      ));
+                ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::RespPackageResultSet",
+                                         "readNextValue",
+                                         "Unimplemented Column Type");
         }
     }
 

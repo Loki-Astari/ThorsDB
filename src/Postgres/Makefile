@@ -5,7 +5,7 @@ COVERAGE_REQUIRED			= 70
 TARGET						= ThorsPostgres.defer
 DEFER_NAME					= ThorsDB
 LDLIBS_EXTERN_BUILD			= crypto
-UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket ThorsLogging
 UNITTEST_LDLIBS				= -lssl
 NO_HEADER					= 1
 
