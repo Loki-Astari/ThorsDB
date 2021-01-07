@@ -90,7 +90,7 @@ struct HumanPrintableString: public std::string
 {
     using std::string::string;
 
-    std::ostream& printHR(std::ostream& str)
+    std::ostream& printHR(std::ostream& str) const
     {
         return str << "HR: " << (*this) << ":";
     }

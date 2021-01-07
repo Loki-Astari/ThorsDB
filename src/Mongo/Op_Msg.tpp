@@ -11,8 +11,9 @@ namespace ThorsAnvil::DB::Mongo
 // ---- Kind0
 
 template<typename Data>
-inline Kind0<Data>::Kind0(Data& data)
-    : data(data)
+template<typename... Args>
+inline Kind0<Data>::Kind0(Args&&... args)
+    : data(std::move(args)...)
 {}
 
 
@@ -51,32 +52,31 @@ inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 // ---- Op_Msg
 
 template<typename... Kind>
-inline Op_Msg<Kind...>::Op_Msg(Kind&&... kind)
-    : header(OpCode::OP_MSG)
-    , flagBits(OP_MsgFlag::empty)
-    , sections(std::move(kind)...)
-    , checksum(0)
+template<typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(Args&&... args)
+    : Op_Msg(OP_MsgFlag::empty, args...)
 {}
 
 template<typename... Kind>
-inline Op_Msg<Kind...>::Op_Msg(OP_MsgFlag flag, Kind&&... kind)
+template<typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(OP_MsgFlag flag, Args&&... args)
     : header(OpCode::OP_MSG)
     , flagBits(flag)
-    , sections(std::move(kind)...)
+    , sections(std::move(args)...)
     , checksum(0)
-{}
-
-template<typename... Kind>
-inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream)
 {
-    bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
-
     std::size_t sectionSize = 0;
     std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
 
-    std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
+    bool        showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
+    std::size_t dataSize     = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
     header.prepareToSend(dataSize);
+}
 
+
+template<typename... Kind>
+inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream) const
+{
     stream << header
            << make_LE(flagBits);
 
@@ -84,6 +84,7 @@ inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream)
     std::apply([&stream](auto& section){stream << section;}, sections);
 
     // Output the checksum only if we said it would be there.
+    bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (showCheckSum)
     {
         stream << make_LE(checksum);
@@ -92,16 +93,8 @@ inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream)
 }
 
 template<typename... Kind>
-inline std::ostream& Op_Msg<Kind...>::printHR(std::ostream& stream)
+inline std::ostream& Op_Msg<Kind...>::printHR(std::ostream& stream) const
 {
-    bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
-
-    std::size_t sectionSize = 0;
-    std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
-
-    std::size_t dataSize    = sizeof(flagBits) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
-    header.prepareToSend(dataSize);
-
     stream << make_hr(header)
            << "flagBits:    " << flagBits << "\n";
 
@@ -109,6 +102,7 @@ inline std::ostream& Op_Msg<Kind...>::printHR(std::ostream& stream)
     std::apply([&stream](auto& section){stream << make_hr(section);}, sections);
 
     // Output the checksum only if we said it would be there.
+    bool showCheckSum = (flagBits & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (showCheckSum)
     {
         stream << "Checksum: " << checksum << "\n";

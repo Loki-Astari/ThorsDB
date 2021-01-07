@@ -43,18 +43,19 @@ class Op_Query
     std::string     fullCollectionName;
     std::int32_t    numberToSkip;
     std::int32_t    numberToReturn;
-    Document&       query;
+    Document        query;
     FieldSelector   returnFieldsSelector;
     public:
-        Op_Query(std::string const& fullCollectionName, Document& query);
+        template<typename... Args>
+        Op_Query(std::string const& fullCollectionName, Args&&... args);
 
-        friend std::ostream& operator<<(std::ostream& stream, Op_Query&& data) {return data.print(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
+        friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
     private:
         std::size_t   getSize()                     const;
     protected:
-        std::ostream& print(std::ostream& stream);
-        std::ostream& printHR(std::ostream& stream);
+        std::ostream& print(std::ostream& stream) const;
+        std::ostream& printHR(std::ostream& stream) const;
 };
 
 }

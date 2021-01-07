@@ -26,20 +26,22 @@ enum class OP_MsgFlag: std::int32_t
 template<typename Data>
 struct Kind0
 {
-    Data&            data;
+    Data        data;
     public:
-        Kind0(Data& data);
+        template<typename... Args>
+        Kind0(Args&&... args);
         std::size_t getSize()                           const;
 
         std::ostream& print(std::ostream& stream)       const;
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream)     const;
 
-        Data& getDocument() {return data;}
+        Data&       getDocument()       {return data;}
+        Data const& getDocument() const {return data;}
 
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
         friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg)                 {return msg.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Kind0& msg)                       {return msg.parse(stream);}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
 };
 
 // TODO Kind1
@@ -55,17 +57,21 @@ class Op_Msg
     std::int32_t            checksum;           // checksum of message;
 
     public:
-        Op_Msg(Kind&&... kind);
-        Op_Msg(OP_MsgFlag flag, Kind&&... kind);
+        template<typename... Args>
+        Op_Msg(Args&&... args);
+        template<typename... Args>
+        Op_Msg(OP_MsgFlag flag, Args&&... kind);
 
-        std::ostream& print(std::ostream& stream);
+        std::ostream& print(std::ostream& stream)       const;
         std::istream& parse(std::istream& stream);
-        std::ostream& printHR(std::ostream& stream);
+        std::ostream& printHR(std::ostream& stream)     const;
 
         template<std::size_t I>
-        auto& getDocument() {return std::get<I>(sections).getDocument();}
+        auto&       getDocument()       {return std::get<I>(sections).getDocument();}
+        template<std::size_t I>
+        auto const& getDocument() const {return std::get<I>(sections).getDocument();}
     private:
-        friend std::ostream& operator<<(std::ostream& stream, Op_Msg& msg)                 {return msg.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_Msg const& msg)           {return msg.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                 {return msg.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
 };

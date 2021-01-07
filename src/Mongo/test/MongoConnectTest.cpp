@@ -3,6 +3,7 @@
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
 #include "HandShake.h"
+#include "ListDatabases.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
@@ -13,59 +14,74 @@ using std::string_literals::operator""s;
 
 TEST(MongoConnectTest, CreateReply)
 {
+    // Connect
     ThorsAnvil::Crypto::ScramClientSha256   client("loki"s);
     ThorsAnvil::ThorsIO::ConnectSocket      socket("localhost", 27017);
     ThorsAnvil::ThorsIO::IOSocketStream     stream(socket);
     socket.makeSocketNonBlocking();
 
-    HandShake           handShake("Test App");
-    Op_QueryHandShake   handShakeMessage(handShake);
-    Op_ReplyHandShake   reply;
-    AuthReply           authReply;
+    // Send Handshake
+    stream << Op_QueryHandShake("Test App") << std::flush;
 
-    stream << handShakeMessage;
-    stream.flush();
+    Op_ReplyHandShake   handShakeReplyMessage;
+    stream >> handShakeReplyMessage;
 
-    stream >> reply;
+    HandShakeReplyDoc const&    handShakeReply = handShakeReplyMessage.getDocument(0);
+    ASSERT_EQ(handShakeReply.ok,    1);
 
-    HandShakeReplyDoc const&    handShakeReply = reply.getDocument(0);
+    // Send Auth Init: We can use SHA-256 Send scram package
+    stream << Op_MsgAuthInit(AuthInit("thor"s, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
-    ASSERT_EQ(handShakeReply.ok,        1);
+    Op_MsgAuthReply         authInitReplyMessage;
+    stream >> authInitReplyMessage;
 
-    AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, client.getFirstMessage());
-    Op_MsgAuthInit      authInitMessage(authInit);
+    AuthReply const&    authInitReply = authInitReplyMessage.getDocument<0>();
+    ASSERT_EQ(authInitReply.ok,     1);
 
-    stream << authInitMessage;
-    stream.flush();
+    // Send Auth Cont: Send proof we know the password
+    stream << Op_MsgAuthCont(AuthCont(authInitReply.conversationId, "thor", client.getProofMessage("underworldSA0", authInitReply.payload.data))) << std::flush;
 
-    Op_MsgAuthReply         authReplyMessage(authReply);
-    stream >> authReplyMessage;
+    Op_MsgAuthReply         authContReplyMessage;
+    stream >> authContReplyMessage;
 
-    ASSERT_EQ(authReply.ok,        1);
+    AuthReply const&    authContReply = authContReplyMessage.getDocument<0>();
+    ASSERT_EQ(authContReply.ok,     1);
 
-    AuthCont        authCont(authReply.conversationId, "thor", client.getProofMessage("underworldSA0", authReply.payload.data));
-    Op_MsgAuthCont  authContMessage(authCont);
+    // Send Auth Cont 2: Send the DB Info
+    stream << Op_MsgAuthCont(AuthCont(authContReply.conversationId, "thor"s, ""s)) << std::flush;
 
-    stream << authContMessage;
-    stream.flush();
+    Op_MsgAuthReply         authContReply2Message;
+    stream >> authContReply2Message;
 
-    AuthReply               authReply2;
-    Op_MsgAuthReply         authReplyMessage2(authReply2);
-    stream >> authReplyMessage2;
+    AuthReply const&    authContReply2 = authContReply2Message.getDocument<0>();
+    ASSERT_EQ(authContReply.ok,     1);
+    // If everything is OK then we should now be connected.
 
-    ASSERT_EQ(authReply2.ok,        1);
 
-    AuthCont        authCont2(authReply.conversationId, "thor"s, ""s);
-    Op_MsgAuthCont  authContMessage2(authCont2);
+    // Send Command to prove authentication worked and we have an open and working connection:
+    stream << Op_QueryListDataBases{} << std::flush;
 
-    stream << authContMessage2;
-    stream.flush();
+    Op_ReplListDataBases    listOfDatabases;
+    stream >> listOfDatabases;
 
-    AuthReply               authReply3;
-    Op_MsgAuthReply         authReplyMessage3(authReply3);
-    stream >> authReplyMessage;
+    if (listOfDatabases)
+    {
+        ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
 
-    ASSERT_EQ(authReply3.ok,        1);
-
+        std::cerr << "ListDB OK: "   << listDBReply.ok << "\n";
+        std::cerr << "ListDB Code: " << listDBReply.code << "\n";
+        std::cerr << "ListDB Err:  " << listDBReply.$err << "\n";
+        std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
+        std::cerr << "ListDB DB: [";
+        for (auto const& db: listDBReply.databases)
+        {
+            std::cerr << "{Name: " << db.name << ", Size: " << db.sizeOnDisk << ", Empty: " << db.empty << "}";
+        }
+        std::cerr << "]\n";
+    }
+    else
+    {
+        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getFailureMessage() << "\n";
+    }
 }
 
