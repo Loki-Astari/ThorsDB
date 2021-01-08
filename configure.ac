@@ -122,7 +122,6 @@ AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE],
     AC_DEFINE_UNQUOTED([THOR_TESTING_$1_DB],   ["$$3_test_db"],   [$3 DB for testing])
 
     mysq_test_connect=`echo "$6" | $3 -$5 $$3_test_host -u $$3_test_user -p$$3_test_pw $$3_test_db 2> /dev/null | tail -$8 | head -1`
-    echo "A: $mysq_test_connect"
     AS_IF([test "x$mysq_test_connect" != "$7"],
          [AC_MSG_ERROR([
 
@@ -139,11 +138,27 @@ AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE],
                       ])
          ])
 
-    version=`$3 -h $$3_test_host -u $$3_test_user -p$$3_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $3}' | awk -F\. '{print $2}'`
+    version=`$3 -$5 $$3_test_host -u $$3_test_user -p$$3_test_pw $9 $$3_test_db | tail -$10 | awk '{print $$11}' | awk -F\. '{print $$12}'`
     AC_DEFINE_UNQUOTED([$1_MAJOR_VERSION], [${version}], ["Get $3 version into #define. That way we can turn off some tests"])
 ])
-AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MYSQL], [AX_THOR_CHECKDB_AVAILABLE([MYSQL], [MySQL], [mysql], [sql],   [h],    [select 3+4 from dual],     [x7], [1])])
-AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MONGO], [AX_THOR_CHECKDB_AVAILABLE([MONGO], [Mongo], [mongo], [mongo], [host], [db.Blob.stats().nindexes], [x1], [2])])
+AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MYSQL],
+        [AX_THOR_CHECKDB_AVAILABLE([MYSQL], [MySQL], [mysql], [sql],
+                                    [B -h],
+                                    [select 3+4 from dual], [x7],
+                                    [1],
+                                    [-e 'SHOW VARIABLES LIKE "innodb_version"'],
+                                    [1], [2], [1])
+        ]
+)
+AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MONGO],
+        [AX_THOR_CHECKDB_AVAILABLE([MONGO], [Mongo], [mongo], [mongo],
+                                    [-host],
+                                    [db.Blob.stats().nindexes], [x1],
+                                    [2],
+                                    [--eval 'db.version()'],
+                                    [1], [1], [1])
+        ]
+)
 
 AX_THOR_CHECKDB_AVAILABLE_MYSQL
 AX_THOR_CHECKDB_AVAILABLE_MONGO
