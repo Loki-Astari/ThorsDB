@@ -1,7 +1,6 @@
 #ifndef THORS_ANVIL_DB_MONGO_DEFAULT_MY_SQL_CONNECTION_H
 #define THORS_ANVIL_DB_MONGO_DEFAULT_MY_SQL_CONNECTION_H
 
-//#include "ThorsDBCommon/StreamSimple.h"
 #include "ThorsSocket/Socket.h"
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsDB/Connection.h"
