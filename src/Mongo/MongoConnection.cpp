@@ -1,4 +1,4 @@
-#include "DefaultMongoConnection.h"
+#include "MongoConnection.h"
 
 #include "HandShake.h"
 #include "ThorsCrypto/scram.h"
@@ -6,7 +6,7 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-// This registers the name "mongo" to create a "DefaultMongoConnection" object.
+// This registers the name "mongo" to create a "MongoConnection" object.
 // Thus when you use:
 //
 //  ThorsAnvil::DB::Access::Connection  connection("mongo://<host>[:<port>]", <username>, <password>, <database>);
@@ -16,9 +16,9 @@ using namespace ThorsAnvil::DB::Mongo;
 //
 //  Pass an "AppName" in the options parameter (to be nice).
 //  If none supplied then we will use "ThorsAnvil::Mongo Lib v1.0"
-ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<DefaultMongoConnection>    mongoConnection("mongo");
+ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<MongoConnection>    mongoConnection("mongo");
 
-DefaultMongoConnection::DefaultMongoConnection(
+MongoConnection::MongoConnection(
                             std::string const& host, int port,
                             std::string const& username,
                             std::string const& password,
@@ -45,8 +45,8 @@ DefaultMongoConnection::DefaultMongoConnection(
 
     if (handShakeReply.getDocument(0).ok != 1)
     {
-        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::DefaultConnection",
-                                 "DefaultConnection",
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
+                                 "MongoConnection",
                                  "Handshake Request Failed: ",
                                  "Code: ", handShakeReply.getDocument(0).codeName,
                                  "Msg:  ", handShakeReply.getDocument(0).errmsg);
@@ -60,8 +60,8 @@ DefaultMongoConnection::DefaultMongoConnection(
 
     if (authInitReply.getDocument<0>().ok != 1)
     {
-        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::DefaultConnection",
-                                 "DefaultConnection",
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
+                                 "MongoConnection",
                                  "Handshake FirstMessage: ",
                                  "Code: ", authInitReply.getDocument<0>().code,
                                  "Name: ", authInitReply.getDocument<0>().codeName,
@@ -80,8 +80,8 @@ DefaultMongoConnection::DefaultMongoConnection(
 
     if (authContReply.getDocument<0>().ok != 1)
     {
-        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::DefaultConnection",
-                                 "DefaultConnection",
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
+                                 "MongoConnection",
                                  "Handshake Proof: ",
                                  "Code: ", authContReply.getDocument<0>().code,
                                  "Name: ", authContReply.getDocument<0>().codeName,
@@ -100,8 +100,8 @@ DefaultMongoConnection::DefaultMongoConnection(
 
     if (authContReply2.getDocument<0>().ok != 1)
     {
-        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::DefaultConnection",
-                                 "DefaultConnection",
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
+                                 "MongoConnection",
                                  "Handshake DB Connect: ",
                                  "Code: ", authContReply2.getDocument<0>().code,
                                  "Name: ", authContReply2.getDocument<0>().codeName,
@@ -109,17 +109,17 @@ DefaultMongoConnection::DefaultMongoConnection(
     }
 }
 
-std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> DefaultMongoConnection::createStatementProxy(std::string const& /*statement*/)
+std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> MongoConnection::createStatementProxy(std::string const& /*statement*/)
 {
     return nullptr;
 }
 
-int DefaultMongoConnection::getSocketId() const
+int MongoConnection::getSocketId() const
 {
     return socket.getSocketId();
 }
 
-void DefaultMongoConnection::setYield(std::function<void()>&& readYield, std::function<void()>&& writeYield)
+void MongoConnection::setYield(std::function<void()>&& readYield, std::function<void()>&& writeYield)
 {
     socket.setYield(std::move(readYield), std::move(writeYield));
 }

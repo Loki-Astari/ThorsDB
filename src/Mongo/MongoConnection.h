@@ -10,17 +10,17 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-class DefaultMongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
+class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
 {
     private:
         ThorsAnvil::ThorsIO::ConnectSocket      socket;
         ThorsAnvil::ThorsIO::IOSocketStream     stream;
     public:
-        DefaultMongoConnection(std::string const& host, int port,
-                               std::string const& username,
-                               std::string const& password,
-                               std::string const& database,
-                               ThorsAnvil::DB::Access::Options const& options);
+        MongoConnection(std::string const& host, int port,
+                        std::string const& username,
+                        std::string const& password,
+                        std::string const& database,
+                        ThorsAnvil::DB::Access::Options const& options);
         virtual std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
 
         virtual int getSocketId() const override;

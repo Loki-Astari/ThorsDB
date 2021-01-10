@@ -18,7 +18,7 @@ CXXFLAGS					+= -Wno-dollar-in-identifier-extension
 %/Op_QueryTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/HandShakeTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/MongoConnectTest.o:		CXXFLAGS += -Wno-deprecated-declarations
-%/DefaultMongoConnection.o:	CXXFLAGS += -Wno-deprecated-declarations -Wno-unknown-pragmas
+%/MongoConnection.o:		CXXFLAGS += -Wno-deprecated-declarations -Wno-unknown-pragmas
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 

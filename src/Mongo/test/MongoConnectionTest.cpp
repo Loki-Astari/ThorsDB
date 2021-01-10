@@ -1,10 +1,10 @@
 
 #include <gtest/gtest.h>
-#include "DefaultMongoConnection.h"
+#include "MongoConnection.h"
 #include "MongoConfig.h"
 #include "ThorsLogging/ThorsLogging.h"
 
-TEST(DefaultMongoConnectionTest, CreateThorConnection)
+TEST(MongoConnectionTest, CreateThorConnection)
 {
     auto action = [](){
         using std::string_literals::operator""s;
@@ -14,46 +14,46 @@ TEST(DefaultMongoConnectionTest, CreateThorConnection)
     };
 }
 
-TEST(DefaultMongoConnectionTest, CreateConnection)
+TEST(MongoConnectionTest, CreateConnection)
 {
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
-        DefaultMongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
+        MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
     };
     EXPECT_NO_THROW(action());
 }
-TEST(DefaultMongoConnectionTest, CreateConnectionAppNameSet)
+TEST(MongoConnectionTest, CreateConnectionAppNameSet)
 {
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
-        DefaultMongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {{"AppName", "UnitTest"}});
+        MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {{"AppName", "UnitTest"}});
     };
     EXPECT_NO_THROW(action());
 }
 
-TEST(DefaultMongoConnectionTest, CreateConnectionBadUser)
+TEST(MongoConnectionTest, CreateConnectionBadUser)
 {
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
-        DefaultMongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, "Bad", THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
+        MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, "Bad", THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
     };
     EXPECT_THROW(action(), ThorsAnvil::Logging::CriticalException);
 }
 
-TEST(DefaultMongoConnectionTest, CreateConnectionBadPass)
+TEST(MongoConnectionTest, CreateConnectionBadPass)
 {
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
-        DefaultMongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, "Bad", THOR_TESTING_MONGO_DB, {});
+        MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, "Bad", THOR_TESTING_MONGO_DB, {});
     };
     EXPECT_THROW(action(), ThorsAnvil::Logging::CriticalException);
 }
 
-TEST(DefaultMongoConnectionTest, CreateConnectionBadDB)
+TEST(MongoConnectionTest, CreateConnectionBadDB)
 {
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
-        DefaultMongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, "Bad", {});
+        MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, "Bad", {});
     };
     EXPECT_THROW(action(), ThorsAnvil::Logging::CriticalException);
 }
