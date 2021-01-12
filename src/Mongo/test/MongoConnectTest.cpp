@@ -4,7 +4,7 @@
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
 #include "HandShake.h"
-#include "ListDatabases.h"
+#include "AdmCmdListDatabases.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
@@ -60,9 +60,9 @@ TEST(MongoConnectTest, CreateReply)
 
 
     // Send Command to prove authentication worked and we have an open and working connection:
-    stream << Op_QueryListDataBases{} << std::flush;
+    stream << Op_QueryAdmCmdListDataBases{} << std::flush;
 
-    Op_ReplListDataBases    listOfDatabases;
+    Op_ReplAdmCmdListDataBases    listOfDatabases;
     stream >> listOfDatabases;
 
     if (listOfDatabases)

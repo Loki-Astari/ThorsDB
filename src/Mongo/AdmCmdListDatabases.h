@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_LIST_DATABASES_H
-#define THORSANVIL_DB_MONGO_LIST_DATABASES_H
+#ifndef THORSANVIL_DB_MONGO_ADMCMD_LIST_DATABASES_H
+#define THORSANVIL_DB_MONGO_ADMCMD_LIST_DATABASES_H
 
 // https://github.com/mongodb/specifications/blob/master/source/enumerate-databases.rst
 
@@ -13,7 +13,7 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-struct ListDataBases
+struct AdmCmdListDataBases
 {
     bool    listDatabases = 1;
 };
@@ -41,20 +41,20 @@ struct ListDataBaseReply
     double              totalSize;
 };
 
-class Op_QueryListDataBases: public Op_Query<ListDataBases>
+class Op_QueryAdmCmdListDataBases: public Op_Query<AdmCmdListDataBases>
 {
     public:
-        Op_QueryListDataBases()
+        Op_QueryAdmCmdListDataBases()
             : Op_Query("admin.$cmd")
         {}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryListDataBases> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_QueryListDataBases const& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryAdmCmdListDataBases> const& data);
+        friend std::ostream& operator<<(std::ostream& stream, Op_QueryAdmCmdListDataBases const& data) {return data.print(stream);}
 };
-using Op_ReplListDataBases = Op_Reply<ListDataBaseReply>;
+using Op_ReplAdmCmdListDataBases = Op_Reply<ListDataBaseReply>;
 
 }
 
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ListDataBases,      listDatabases);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AdmCmdListDataBases,listDatabases);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DBInfo,             name, sizeOnDisk, empty);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ListDataBaseReply,  ok, code, $err, databases, totalSize);
 
