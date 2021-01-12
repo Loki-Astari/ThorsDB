@@ -60,7 +60,25 @@ struct LittleEndian
     }
 };
 template<typename T>
-LittleEndian<T> make_LE(T& value)   {return LittleEndian<T>(value);}
+struct LittleEndianConst
+{
+    using UT = typename std::make_unsigned<T>::type;
+    T const&   value;
+    LittleEndianConst(T const& value)
+        : value(value)
+    {}
+    friend std::ostream& operator<<(std::ostream& stream, LittleEndianConst const& data)
+    {
+        std::int32_t    output = boost::endian::native_to_little(static_cast<std::int32_t>(static_cast<UT>(data.value)));
+        stream.write(reinterpret_cast<char const*>(&output), sizeof(output));
+        return stream;
+    }
+};
+
+template<typename T>
+LittleEndian<T> make_LE(T& value)               {return LittleEndian<T>(value);}
+template<typename T>
+LittleEndianConst<T> make_LE(T const& value)    {return LittleEndianConst<T>(value);}
 
 }
 
