@@ -27,7 +27,7 @@ struct Op_Reply
     using Documents = std::vector<Document>;
 
     MsgHeader               header;                 // standard message header
-    OP_ReplyFlag            responseFlags;          // bit vector - see details below
+    OP_ReplyFlag            responseFlags;          // bit vector - see details above
     std::int64_t            cursorID;               // cursor id if client needs to do get more's
     std::int32_t            startingFrom;           // where in the cursor this reply is starting
     std::int32_t            numberReturned;         // number of documents in the reply

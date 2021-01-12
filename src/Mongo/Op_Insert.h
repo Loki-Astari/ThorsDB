@@ -25,7 +25,7 @@ template<typename Document>
 struct Op_Insert
 {
     MsgHeader               header;             // standard message header
-    OP_InsertFlag           flags;              // bit vector - see below
+    OP_InsertFlag           flags;              // bit vector - see above
     std::string             fullCollectionName; // "dbname.collectionname"
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:
