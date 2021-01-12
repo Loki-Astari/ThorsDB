@@ -25,6 +25,13 @@ class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
 
         virtual int getSocketId() const override;
         virtual void setYield(std::function<void()>&&, std::function<void()>&&) override;
+
+        template<typename T>
+        MongoConnection& operator<<(T const& value)
+        {
+            stream << value;
+            return *this;
+        }
 };
 
 }
