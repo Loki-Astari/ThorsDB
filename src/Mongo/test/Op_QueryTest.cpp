@@ -10,11 +10,9 @@ using std::string_literals::operator""s;
 TEST(Op_QuertTest, Op_QueryStreamObject)
 {
     MsgHeader::messageIdSetForTest(0x124589);
-    StringAndIntNoConstructor               object{"DataString"s, 48};
-   // Op_Query<StringAndIntNoConstructor>     query("thor.collection", object);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", object);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size

@@ -16,7 +16,7 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Args&&... ar
     , fullCollectionName(fullCollectionName)
     , numberToSkip(0)
     , numberToReturn(1)
-    , query(std::move(args)...)
+    , query{std::move(args)...}
     , returnFieldsSelector{}
 {
     header.prepareToSend(getSize());

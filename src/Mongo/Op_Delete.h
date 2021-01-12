@@ -20,6 +20,8 @@ enum class OP_DeleteFlag : std::int32_t
                                     // 1-31 are reserved. Must be set to 0.
 };
 
+enum class Remove { Single, Multiple };
+
 template<typename Document>
 struct Op_Delete
 {
@@ -29,7 +31,10 @@ struct Op_Delete
     OP_DeleteFlag           flags;              // bit vector - see below
     Document                selector;           // query object.
     public:
-        Op_Delete(std::string const& fullCollectionName, Document&& doc);
+        template<typename... Args>
+        Op_Delete(std::string const& fullCollectionName, Remove remove, Args&&... args);
+        template<typename... Args>
+        Op_Delete(std::string const& fullCollectionName, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Delete> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Delete const& data) {return data.print(stream);}
@@ -42,7 +47,7 @@ struct Op_Delete
 
 }
 
-ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_DeleteFlag, SingleRemove);
+ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_DeleteFlag, empty, SingleRemove);
 
 #include "Op_Delete.tpp"
 

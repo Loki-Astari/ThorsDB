@@ -11,11 +11,26 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Document&& doc)
+template<typename... Args>
+Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Remove remove, Args&&... args)
     : header(OpCode::OP_DELETE)
     , fullCollectionName(fullCollectionName)
     , flags(OP_DeleteFlag::empty)
-    , selector(std::move(doc))
+    , selector{std::move(args)...}
+{
+    if (remove == Remove::Single)
+    {
+        flags |= OP_DeleteFlag::SingleRemove;
+    }
+    header.prepareToSend(getSize());
+}
+template<typename Document>
+template<typename... Args>
+Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Args&&... args)
+    : header(OpCode::OP_DELETE)
+    , fullCollectionName(fullCollectionName)
+    , flags(OP_DeleteFlag::empty)
+    , selector{std::move(args)...}
 {
     header.prepareToSend(getSize());
 }

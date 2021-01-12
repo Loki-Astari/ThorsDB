@@ -14,7 +14,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObject)
     MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {"DataString"s, 48});
+    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -36,7 +36,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObject)
 TEST(Op_DeleteTest, Op_DeleteStreamObjectHumanReadable)
 {
     MsgHeader::messageIdSetForTest(0x124589);
-    Op_Delete<StringAndIntNoConstructor>    query("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
+    Op_Delete<StringAndIntNoConstructor>    query("thor.collection", "DataString"s, 48);
 
     std::stringstream stream;
     stream << make_hr(query);

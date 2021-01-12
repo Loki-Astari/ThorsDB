@@ -21,6 +21,8 @@ enum class OP_InsertFlag : std::int32_t
                                 // reported by getLastError.
 };
 
+enum class InsertError { Stop, Cont };
+
 template<typename Document>
 struct Op_Insert
 {
@@ -29,6 +31,8 @@ struct Op_Insert
     std::string             fullCollectionName; // "dbname.collectionname"
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:
+        template<typename... Args>
+        Op_Insert(std::string const& fullCollectionName, InsertError insertError, Args&&... args);
         template<typename... Args>
         Op_Insert(std::string const& fullCollectionName, Args&&... args);
 
@@ -43,7 +47,7 @@ struct Op_Insert
 
 }
 
-ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_InsertFlag, ContinueOnError);
+ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_InsertFlag, empty, ContinueOnError);
 
 #include "Op_Insert.tpp"
 
