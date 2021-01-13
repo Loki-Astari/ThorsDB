@@ -22,6 +22,48 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Args&&... ar
     header.prepareToSend(getSize());
 }
 
+template<typename Document>
+template<typename... Args>
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions options, Args&&... args)
+    : header(OpCode::OP_QUERY)
+    , flags(OP_QueryFlag::empty)
+    , fullCollectionName(fullCollectionName)
+    , numberToSkip(0)
+    , numberToReturn(1)
+    , query{std::move(args)...}
+    , returnFieldsSelector{}
+{
+    if (options.tailableCursor == TailableCursor::LeaveOpen)
+    {
+        flags |= OP_QueryFlag::TailableCursor;
+    }
+    if (options.slave == Slave::OK)
+    {
+        flags |= OP_QueryFlag::SlaveOk;;
+    }
+    if (options.oplog == Oplog::NoReplay)
+    {
+        flags |= OP_QueryFlag::OplogReplay;
+    }
+    if (options.curser == Curser::NoTimeout)
+    {
+        flags |= OP_QueryFlag::NoCursorTimeout;
+    }
+    if (options.data == Data::Timeout)
+    {
+        flags |= OP_QueryFlag::AwaitData;
+    }
+    if (options.drain == Drain::All)
+    {
+        flags |= OP_QueryFlag::Exhaust;
+    }
+    if (options.partial == Partial::Available)
+    {
+        flags |= OP_QueryFlag::Partial;
+    }
+
+    header.prepareToSend(getSize());
+}
 
 template<typename Document>
 std::size_t Op_Query<Document>::getSize() const
