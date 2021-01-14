@@ -8,8 +8,8 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-template<typename Document>
-Op_GetMore<Document>::Op_GetMore(std::string const& fullCollectionName, std::int32_t count, std::int64_t cursor)
+inline
+Op_GetMore::Op_GetMore(std::string const& fullCollectionName, std::int32_t count, std::int64_t cursor)
     : header(OpCode::OP_GET_MORE)
     , fullCollectionName(fullCollectionName)
     , numberToReturn(count)
@@ -18,8 +18,8 @@ Op_GetMore<Document>::Op_GetMore(std::string const& fullCollectionName, std::int
     header.prepareToSend(getSize());
 }
 
-template<typename Document>
-std::size_t Op_GetMore<Document>::getSize() const
+inline
+std::size_t Op_GetMore::getSize() const
 {
     std::size_t objectSize = sizeof(std::int32_t)               // ZERO
                            + fullCollectionName.size() + 1
@@ -28,8 +28,8 @@ std::size_t Op_GetMore<Document>::getSize() const
     return objectSize;
 }
 
-template<typename Document>
-std::ostream& Op_GetMore<Document>::print(std::ostream& stream) const
+inline
+std::ostream& Op_GetMore::print(std::ostream& stream) const
 {
     stream << header
            << make_LE(0)
@@ -39,8 +39,8 @@ std::ostream& Op_GetMore<Document>::print(std::ostream& stream) const
     return stream;
 }
 
-template<typename Document>
-std::ostream& Op_GetMore<Document>::printHR(std::ostream& stream) const
+inline
+std::ostream& Op_GetMore::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
            << "ZERO:                " << 0 << " (reserved)\n"

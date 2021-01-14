@@ -11,7 +11,6 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-template<typename Document>
 class Op_GetMore
 {
     MsgHeader       header;
