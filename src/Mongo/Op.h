@@ -35,7 +35,7 @@ struct HumanReadable
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable const& reply) {return reply.object.printHR(stream);}
 };
 template<typename Stremable>
-HumanReadable<Stremable> make_hr(Stremable& object) {return HumanReadable<Stremable>(object);}
+HumanReadable<Stremable> make_hr(Stremable const& object) {return HumanReadable<Stremable>(object);}
 
 template<typename T>
 struct LittleEndian
