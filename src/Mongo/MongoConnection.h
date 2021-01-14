@@ -29,8 +29,18 @@ class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
         template<typename T>
         MongoConnection& operator<<(T const& value)
         {
-            stream << value;
+            stream << value << std::flush;
             return *this;
+        }
+        template<typename T>
+        MongoConnection& operator>>(T& value)
+        {
+            stream >> value;
+            return *this;
+        }
+        explicit operator bool()
+        {
+            return static_cast<bool>(stream);
         }
 };
 
