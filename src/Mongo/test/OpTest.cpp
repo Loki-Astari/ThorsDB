@@ -27,12 +27,12 @@ void testStreamInput(Input expected, std::string const& input)
 TEST(OpTest, StreamOutCharAsLittelIndian)
 {
     char data='a';
-    testStreamOutput(data, "a\x00\x00\x00"s);
+    testStreamOutput(data, "a"s);
 }
 TEST(OpTest, StreamOutShortAsLittelIndian)
 {
     short data=0xB723;
-    testStreamOutput(data, "\x23\xB7\x00\x00"s);
+    testStreamOutput(data, "\x23\xB7"s);
 }
 TEST(OpTest, StreamOutIntAsLittelIndian)
 {
@@ -42,12 +42,12 @@ TEST(OpTest, StreamOutIntAsLittelIndian)
 TEST(OpTest, StreamOutUCharAsLittelIndian)
 {
     unsigned char data='a';
-    testStreamOutput(data, "a\x00\x00\x00"s);
+    testStreamOutput(data, "a"s);
 }
 TEST(OpTest, StreamOutUShortAsLittelIndian)
 {
     unsigned short data=0xA501;
-    testStreamOutput(data, "\x01\xA5\x00\x00"s);
+    testStreamOutput(data, "\x01\xA5"s);
 }
 TEST(OpTest, StreamOutUIntAsLittelIndian)
 {
@@ -58,12 +58,12 @@ TEST(OpTest, StreamOutUIntAsLittelIndian)
 TEST(OpTest, StreamInCharAsLittelIndian)
 {
     char data='a';
-    testStreamInput(data, "a\x00\x00\x00"s);
+    testStreamInput(data, "a"s);
 }
 TEST(OpTest, StreamInShortAsLittelIndian)
 {
     short data=0xB723;
-    testStreamInput(data, "\x23\xB7\x00\x00"s);
+    testStreamInput(data, "\x23\xB7"s);
 }
 TEST(OpTest, StreamInIntAsLittelIndian)
 {
@@ -73,12 +73,12 @@ TEST(OpTest, StreamInIntAsLittelIndian)
 TEST(OpTest, StreamInUCharAsLittelIndian)
 {
     unsigned char data='a';
-    testStreamInput(data, "a\x00\x00\x00"s);
+    testStreamInput(data, "a"s);
 }
 TEST(OpTest, StreamInUShortAsLittelIndian)
 {
     unsigned short data=0xA501;
-    testStreamInput(data, "\x01\xA5\x00\x00"s);
+    testStreamInput(data, "\x01\xA5"s);
 }
 TEST(OpTest, StreamInUIntAsLittelIndian)
 {

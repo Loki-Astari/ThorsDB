@@ -41,19 +41,20 @@ template<typename T>
 struct LittleEndian
 {
     using UT = typename std::make_unsigned<T>::type;
+    using ST = typename std::make_signed<UT>::type;
     T&   value;
     LittleEndian(T& value)
         : value(value)
     {}
     friend std::ostream& operator<<(std::ostream& stream, LittleEndian const& data)
     {
-        std::int32_t    output = boost::endian::native_to_little(static_cast<std::int32_t>(static_cast<UT>(data.value)));
+        ST   output = boost::endian::native_to_little(static_cast<ST>(static_cast<UT>(data.value)));
         stream.write(reinterpret_cast<char const*>(&output), sizeof(output));
         return stream;
     }
     friend std::istream& operator>>(std::istream& stream, LittleEndian const& data)
     {
-        std::int32_t    input;
+        ST   input;
         stream.read(reinterpret_cast<char*>(&input), sizeof(input));
         data.value = static_cast<T>(boost::endian::little_to_native(input));
         return stream;
@@ -63,13 +64,14 @@ template<typename T>
 struct LittleEndianConst
 {
     using UT = typename std::make_unsigned<T>::type;
+    using ST = typename std::make_signed<UT>::type;
     T const&   value;
     LittleEndianConst(T const& value)
         : value(value)
     {}
     friend std::ostream& operator<<(std::ostream& stream, LittleEndianConst const& data)
     {
-        std::int32_t    output = boost::endian::native_to_little(static_cast<std::int32_t>(static_cast<UT>(data.value)));
+        ST   output = boost::endian::native_to_little(static_cast<ST>(static_cast<UT>(data.value)));
         stream.write(reinterpret_cast<char const*>(&output), sizeof(output));
         return stream;
     }
