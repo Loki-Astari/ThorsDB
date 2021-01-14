@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_QUERY_TPP
-#define THORSANVIL_DB_MONGO_OP_QUERY_TPP
+#ifndef THORSANVIL_DB_MONGO_OP_INSERT_TPP
+#define THORSANVIL_DB_MONGO_OP_INSERT_TPP
 
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
