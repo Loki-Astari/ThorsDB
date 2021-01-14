@@ -114,7 +114,7 @@ TEST(OpTest, convertToLittleE1)
     std::int64_t    dst;
     stream >> make_LE(dst);
 
-    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+    ASSERT_EQ(src, dst);
 }
 TEST(OpTest, convertToLittleE2)
 {
@@ -126,7 +126,7 @@ TEST(OpTest, convertToLittleE2)
     std::int64_t    dst;
     stream >> make_LE(dst);
 
-    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+    ASSERT_EQ(src, dst);
 }
 TEST(OpTest, convertToLittleE3)
 {
@@ -137,7 +137,7 @@ TEST(OpTest, convertToLittleE3)
     std::int64_t    dst;
     stream >> make_LE(dst);
 
-    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+    ASSERT_EQ(src, dst);
 }
 TEST(OpTest, convertToLittleE4)
 {
@@ -149,6 +149,6 @@ TEST(OpTest, convertToLittleE4)
     std::int64_t    dst;
     stream >> make_LE(dst);
 
-    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+    ASSERT_EQ(src, dst);
 }
 

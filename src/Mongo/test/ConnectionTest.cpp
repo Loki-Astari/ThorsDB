@@ -4,6 +4,7 @@
 #include "Op_Delete.h"
 #include "Op_Query.h"
 #include "Op_Reply.h"
+#include "Op_GetMore.h"
 #include "MongoConnection.h"
 #include "MongoConfig.h"
 #include "test/OpTest.h"
@@ -20,7 +21,7 @@ struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
 {
     std::string         $err;
     std::int32_t        code;
-    double              ok;
+    double              ok      = 1.0;
 };
 
 ThorsAnvil_ExpandTrait(StringAndIntNoConstructor, StringAndIntNoConstructorReply, $err, code, ok);
@@ -86,6 +87,38 @@ TEST(ConnectionTest, SendToMongo)
                           << "\n\n";
             }
         }
+    }
+
+    // Get the three objects one at time using GET_MORE
+    {
+        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 2, 0);
+
+        Op_Reply<StringAndIntNoConstructorReply>     reply1;
+        connection >> reply1;
+        std::cerr << make_hr(reply1);
+
+        EXPECT_EQ(reply1.startingFrom, 0);
+        EXPECT_EQ(reply1.numberReturned, 2);
+        ASSERT_EQ(reply1.documents.size(), 2);
+        EXPECT_EQ(reply1.documents[0].ok, 1.0);
+        EXPECT_EQ(reply1.documents[1].ok, 1.0);
+
+        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+
+        Op_Reply<StringAndIntNoConstructorReply>     reply2;
+        connection >> reply2;
+        EXPECT_EQ(reply2.startingFrom, 2);
+        EXPECT_EQ(reply2.numberReturned, 1);
+        ASSERT_EQ(reply2.documents.size(), 1);
+        EXPECT_EQ(reply2.documents[0].ok, 1.0);
+
+        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+
+        Op_Reply<StringAndIntNoConstructorReply>     reply3;
+        connection >> reply3;
+        EXPECT_EQ(reply3.startingFrom, 3);
+        EXPECT_EQ(reply3.numberReturned, 0);
+        ASSERT_GE(reply3.documents.size(), 0);
     }
 
     // Check the query can actual filter.
