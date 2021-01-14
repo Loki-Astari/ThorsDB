@@ -5,6 +5,7 @@
 #include "Op_Query.h"
 #include "Op_Reply.h"
 #include "Op_GetMore.h"
+#include "Op_KillCursors.h"
 #include "MongoConnection.h"
 #include "MongoConfig.h"
 #include "test/OpTest.h"
@@ -119,6 +120,22 @@ TEST(ConnectionTest, SendToMongo)
         EXPECT_EQ(reply3.startingFrom, 3);
         EXPECT_EQ(reply3.numberReturned, 0);
         ASSERT_GE(reply3.documents.size(), 0);
+    }
+    // Get the two of three objects then kill cursor
+    {
+        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 2, 0);
+
+        Op_Reply<StringAndIntNoConstructorReply>     reply1;
+        connection >> reply1;
+        std::cerr << make_hr(reply1);
+
+        EXPECT_EQ(reply1.startingFrom, 0);
+        EXPECT_EQ(reply1.numberReturned, 2);
+        ASSERT_EQ(reply1.documents.size(), 2);
+        EXPECT_EQ(reply1.documents[0].ok, 1.0);
+        EXPECT_EQ(reply1.documents[1].ok, 1.0);
+
+        connection << Op_KillCursors({reply1.cursorID});
     }
 
     // Check the query can actual filter.

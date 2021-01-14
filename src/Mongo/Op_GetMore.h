@@ -14,6 +14,7 @@ namespace ThorsAnvil::DB::Mongo
 class Op_GetMore
 {
     MsgHeader       header;
+    // std::int32_t    zero;               // 0 reserved for future use
     std::string     fullCollectionName;
     std::int32_t    numberToReturn;
     std::int64_t    cursorID;
