@@ -12,16 +12,11 @@ template<typename Document>
 std::istream& Op_Reply<Document>::parse(std::istream& stream)
 #pragma vera-pop
 {
-    std::int32_t    cursorIDLow;
-    std::int32_t    cursorIDHig;
     stream >> header
            >> make_LE(responseFlags)
-           >> make_LE(cursorIDLow) >> make_LE(cursorIDHig)
+           >> make_LE(cursorID)
            >> make_LE(startingFrom)
            >> make_LE(numberReturned);
-    cursorID = (static_cast<std::int64_t>(cursorIDHig) << 32) | (static_cast<std::int64_t>(cursorIDLow) << 0);
-    std::size_t size = header.getMessageLength();
-    size -= (sizeof(header) + sizeof(responseFlags) + sizeof(cursorID) + sizeof(startingFrom) + sizeof(numberReturned));
     for (int loop = 0; loop < numberReturned; ++loop)
     {
         documents.emplace_back();

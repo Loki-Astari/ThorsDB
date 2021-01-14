@@ -105,3 +105,50 @@ TEST(OpTest, HumanReadableStreamer)
     EXPECT_EQ("HR: Hi There:", output.str());
 }
 
+TEST(OpTest, convertToLittleE1)
+{
+    std::int64_t    src = 0xBEB20144;
+    std::stringstream   stream;
+    stream.write(reinterpret_cast<char*>(&src), sizeof(src));
+
+    std::int64_t    dst;
+    stream >> make_LE(dst);
+
+    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+}
+TEST(OpTest, convertToLittleE2)
+{
+    std::stringstream   stream;
+
+    std::int64_t    src = 0xBEB20144;
+    stream << make_LE(src);
+
+    std::int64_t    dst;
+    stream >> make_LE(dst);
+
+    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+}
+TEST(OpTest, convertToLittleE3)
+{
+    std::int64_t    src = 0x83D6C9ED3E4826B8L;
+    std::stringstream   stream;
+    stream.write(reinterpret_cast<char*>(&src), sizeof(src));
+
+    std::int64_t    dst;
+    stream >> make_LE(dst);
+
+    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+}
+TEST(OpTest, convertToLittleE4)
+{
+    std::stringstream   stream;
+
+    std::int64_t    src = 0x83D6C9ED3E4826B8L;
+    stream << make_LE(src);
+
+    std::int64_t    dst;
+    stream >> make_LE(dst);
+
+    std::cout << std::hex << src << " <=> " << std::hex << dst << "\n";
+}
+
