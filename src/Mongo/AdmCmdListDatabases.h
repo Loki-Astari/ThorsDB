@@ -45,7 +45,7 @@ class Op_QueryAdmCmdListDataBases: public Op_Query<AdmCmdListDataBases>
 {
     public:
         Op_QueryAdmCmdListDataBases()
-            : Op_Query("admin.$cmd")
+            : Op_Query("admin.$cmd", QueryOptions{}, 1, 0)
         {}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryAdmCmdListDataBases> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryAdmCmdListDataBases const& data) {return data.print(stream);}

@@ -84,14 +84,13 @@ class Op_Query
     FieldSelector   returnFieldsSelector;
     public:
         template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, Args&&... args);
-        template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, QueryOptions options, Args&&... args);
+        Op_Query(std::string const& fullCollectionName, QueryOptions options, std::int32_t count, std::int32_t skip, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
     private:
         std::size_t   getSize()                     const;
+        void          handleOptions(QueryOptions const& options);
     protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;

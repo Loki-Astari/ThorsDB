@@ -10,28 +10,21 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Args&&... args)
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions options, std::int32_t count, std::int32_t skip, Args&&... args)
     : header(OpCode::OP_QUERY)
     , flags(OP_QueryFlag::empty)
     , fullCollectionName(fullCollectionName)
-    , numberToSkip(0)
-    , numberToReturn(1)
+    , numberToSkip(skip)
+    , numberToReturn(count)
     , query{std::move(args)...}
     , returnFieldsSelector{}
 {
+    handleOptions(options);
     header.prepareToSend(getSize());
 }
 
 template<typename Document>
-template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions options, Args&&... args)
-    : header(OpCode::OP_QUERY)
-    , flags(OP_QueryFlag::empty)
-    , fullCollectionName(fullCollectionName)
-    , numberToSkip(0)
-    , numberToReturn(1)
-    , query{std::move(args)...}
-    , returnFieldsSelector{}
+void Op_Query<Document>::handleOptions(QueryOptions const& options)
 {
     if (options.tailableCursor == TailableCursor::LeaveOpen)
     {
@@ -61,8 +54,6 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions
     {
         flags |= OP_QueryFlag::Partial;
     }
-
-    header.prepareToSend(getSize());
 }
 
 template<typename Document>
@@ -100,12 +91,15 @@ template<typename Document>
 std::ostream& Op_Query<Document>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
-           << flags << "\n"
-           << "fullCollectionName: " << fullCollectionName << "\n"
-           << "numberToSkip: " << numberToSkip << "\n"
-           << "numberToReturn: " << numberToReturn << "\n"
-           << "query: " << ThorsAnvil::Serialize::jsonExporter(query) << "\n"
-           << "returnFieldsSelector: " << ThorsAnvil::Serialize::jsonExporter(returnFieldsSelector) << "\n";
+           << "flags:               " << flags << "\n"
+           << "fullCollectionName:  " << fullCollectionName << "\n"
+           << "numberToSkip:        " << numberToSkip << "\n"
+           << "numberToReturn:      " << numberToReturn << "\n"
+           << "query:               " << ThorsAnvil::Serialize::jsonExporter(query) << "\n";
+    if (!returnFieldsSelector.empty())
+    {
+        stream << "returnFieldsSelector:" << ThorsAnvil::Serialize::jsonExporter(returnFieldsSelector) << "\n";
+    }
     return stream;
 }
 
