@@ -86,7 +86,6 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectHumanReadable)
 
     std::stringstream stream;
     stream << make_hr(query);
-    std::cout << stream.str();
 
     std::size_t lineCount = 0;
     std::string line;

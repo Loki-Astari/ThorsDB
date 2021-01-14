@@ -119,7 +119,6 @@ TEST(Op_InsertTest, Op_InsertStreamObjectHumanReadable)
 
     std::stringstream stream;
     stream << make_hr(query);
-    std::cout << stream.str();
 
     std::size_t lineCount = 0;
     std::string line;
