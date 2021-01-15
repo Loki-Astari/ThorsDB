@@ -27,6 +27,7 @@ MongoConnection::MongoConnection(
     : ConnectionProxy()
     , socket(host, port == 0 ? 27017 : port)
     , stream(socket)
+    , dbName(database)
 {
     using std::string_literals::operator""s;
 
@@ -53,7 +54,7 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
-    stream << Op_MsgAuthInit(AuthInit(std::string(database), "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
+    stream << Op_MsgAuthInit(AuthInit(database, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
     Op_MsgAuthReply         authInitReply;
     stream >> authInitReply;
@@ -70,7 +71,7 @@ MongoConnection::MongoConnection(
 
     // Send Auth Cont: Send proof we know the password
     stream << Op_MsgAuthCont(AuthCont(authInitReply.getDocument<0>().conversationId,
-                                      std::string(database),
+                                      database,
                                       client.getProofMessage(password, authInitReply.getDocument<0>().payload.data)
                                      )
                             ) << std::flush;
@@ -90,7 +91,7 @@ MongoConnection::MongoConnection(
 
     // Send Auth Cont 2: Send the DB Info
     stream << Op_MsgAuthCont(AuthCont(authContReply.getDocument<0>().conversationId,
-                                      std::string(database),
+                                      database,
                                       ""s
                                      )
                             ) << std::flush;

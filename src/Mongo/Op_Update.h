@@ -28,6 +28,9 @@ class Op_Update
     Selector        selector;
     Update          update;
     public:
+        Op_Update(std::string const& fullCollectionName, Selector const& selector, Update const& update);
+        Op_Update(std::string const& fullCollectionName, Selector const& selector, Update&& update);
+        Op_Update(std::string const& fullCollectionName, Selector&& selector, Update const& update);
         Op_Update(std::string const& fullCollectionName, Selector&& selector, Update&& update);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Update> const& data);

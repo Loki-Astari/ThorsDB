@@ -16,7 +16,7 @@ Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Remove rem
     : header(OpCode::OP_DELETE)
     , fullCollectionName(fullCollectionName)
     , flags(OP_DeleteFlag::empty)
-    , selector{std::move(args)...}
+    , selector{std::forward<Args>(args)...}
 {
     if (remove == Remove::Single)
     {
@@ -30,7 +30,7 @@ Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Args&&... 
     : header(OpCode::OP_DELETE)
     , fullCollectionName(fullCollectionName)
     , flags(OP_DeleteFlag::empty)
-    , selector{std::move(args)...}
+    , selector{std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }

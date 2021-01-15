@@ -16,7 +16,7 @@ Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, InsertErro
     : header(OpCode::OP_INSERT)
     , flags(OP_InsertFlag::empty)
     , fullCollectionName(fullCollectionName)
-    , documents({Document{std::move(args)}...})
+    , documents({Document{std::forward<Args>(args)}...})
 {
     if (insertError == InsertError::Cont)
     {
@@ -31,7 +31,7 @@ Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Args&&... 
     : header(OpCode::OP_INSERT)
     , flags(OP_InsertFlag::ContinueOnError)
     , fullCollectionName(fullCollectionName)
-    , documents({Document{std::move(args)}...})
+    , documents({Document{std::forward<Args>(args)}...})
 {
     header.prepareToSend(getSize());
 }

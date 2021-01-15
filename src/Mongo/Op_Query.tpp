@@ -16,7 +16,7 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions
     , fullCollectionName(fullCollectionName)
     , numberToSkip(skip)
     , numberToReturn(count)
-    , query{std::move(args)...}
+    , query{std::forward<Args>(args)...}
     , returnFieldsSelector{}
 {
     handleOptions(options);
