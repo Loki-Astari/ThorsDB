@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_WRITER_H
-#define THORS_ANVIL_DB_POSTGRESS_PACKAGE_WRITER_H
+#ifndef THORS_ANVIL_DB_POSTGRES_CONECT_WRITER_H
+#define THORS_ANVIL_DB_POSTGRES_CONECT_WRITER_H
 
 #include "PackageBuffer.h"
 
@@ -46,8 +46,6 @@ class ConectWriter
 
 }
 
-#ifndef COVERAGE_Postgres
 #include "ConectWriter.tpp"
-#endif
 
 #endif

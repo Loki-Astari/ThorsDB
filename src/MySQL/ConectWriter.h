@@ -66,8 +66,6 @@ class ConectWriter
 
 }
 
-#ifndef COVERAGE_MySQL
 #include "ConectWriter.tpp"
-#endif
 
 #endif

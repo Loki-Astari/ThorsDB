@@ -23,7 +23,7 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsThreeProvided)
     DB::Access::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
     ASSERT_THROW(
         statement.execute(DB::Access::Bind("M",29,56.67), [](int id, std::string name, short age, std::string sex, double height){}),
-        std::logic_error);
+        ThorsAnvil::Logging::LogicalException);
 }
 TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
 {
@@ -38,7 +38,7 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
     DB::Access::Statement      statement(connection, "SELECT * FROM People where sex=? or age=?"); //select * from People;
     ASSERT_THROW(
         statement.execute(DB::Access::Bind("M"), [](int id, std::string name, short age, std::string sex, double height){}),
-        std::logic_error);
+        ThorsAnvil::Logging::LogicalException);
 }
 TEST(PrepareStatementBindFailureTest, ZeroBindBointsTwoProvided)
 {
@@ -53,7 +53,7 @@ TEST(PrepareStatementBindFailureTest, ZeroBindBointsTwoProvided)
     DB::Access::Statement      statement(connection, "SELECT * FROM People where sex='M' or age=29"); //select * from People;
     ASSERT_THROW(
         statement.execute(DB::Access::Bind("M",29), [](int id, std::string name, short age, std::string sex, double height){}),
-        std::logic_error);
+        ThorsAnvil::Logging::LogicalException);
 }
 
 

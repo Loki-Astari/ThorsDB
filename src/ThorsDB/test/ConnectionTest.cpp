@@ -34,7 +34,7 @@ TEST(ConnectionTest, NoSchema)
     using ThorsAnvil::DB::Access::Connection;
     ASSERT_THROW(
     Connection     connection(THOR_TESTING_MYSQL_HOST ":69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB),
-    std::logic_error
+    ThorsAnvil::Logging::LogicalException
     );
 }
 TEST(ConnectionTest, BadHost)
@@ -42,7 +42,7 @@ TEST(ConnectionTest, BadHost)
     using ThorsAnvil::DB::Access::Connection;
     ASSERT_THROW(
     Connection     connection("mock://:69", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB),
-    std::logic_error
+    ThorsAnvil::Logging::LogicalException
     );
 }
 TEST(ConnectionTest, BadPort)
@@ -50,7 +50,7 @@ TEST(ConnectionTest, BadPort)
     using ThorsAnvil::DB::Access::Connection;
     ASSERT_THROW(
     Connection     connection("mock://" THOR_TESTING_MYSQL_HOST ":XY", THOR_TESTING_MYSQL_USER, THOR_TESTING_MYSQL_PASS, THOR_TESTING_MYSQL_DB),
-    std::logic_error
+    ThorsAnvil::Logging::LogicalException
     );
 }
 class MockConnectionProxy: public ThorsAnvil::DB::Access::Lib::ConnectionProxy

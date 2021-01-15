@@ -1,5 +1,6 @@
 #include "PackageBuffer.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <iomanip>
 #include <algorithm>
 #include <arpa/inet.h>
@@ -22,7 +23,9 @@ char PackageBuffer::getMessage()
 {
     if (!isEmpty())
     {
-        throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::PackageBuffer", "getMessage", "Called while processing another message"));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Postgres::PackageBuffer",
+                                 "getMessage",
+                                 "Called while processing another message");
     }
 
     return openMessage();
@@ -32,7 +35,9 @@ void PackageBuffer::read(char* buffer, std::size_t len)
 {
     if (messageRead + len > messageSize)
     {
-        throw std::domain_error(buildBugReport("ThorsAnvil::DB::Postgres::PackageBuffer", "read", "read passed the end of a message"));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::Postgres::PackageBuffer",
+                                 "read",
+                                 "read passed the end of a message");
     }
     stream.read(buffer, len);
     messageRead += len;

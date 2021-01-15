@@ -713,8 +713,13 @@ LIBTOOL
 awk
 wc
 echo
-crypto_ROOT_INCDIR
-crypto_ROOT_LIBDIR
+HAVE_ThorsSerialize
+ThorsSerialize_ROOT_LIB
+ThorsSerialize_ROOT_DIR
+crypto_ROOT_LIB
+crypto_ROOT_DIR
+yaml_ROOT_LIB
+yaml_ROOT_DIR
 EGREP
 GREP
 CPP
@@ -799,7 +804,10 @@ with_boost_libdir
 with_boost_python
 enable_vera
 with_hostbuild
+with_yamlroot
 with_cryptoroot
+with_ThorsSerializeroot
+enable_ThorsSerialize
 with_timegm
 with_modtests
 enable_shared
@@ -814,6 +822,10 @@ with_TestMySQLHost
 with_TestMySQLUser
 with_TestMySQLPass
 with_TestMySQLDatabase
+with_TestMongoHost
+with_TestMongoUser
+with_TestMongoPass
+with_TestMongoDatabase
 enable_dependency_tracking
 enable_silent_rules
 '
@@ -1452,6 +1464,10 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-vera          Disable vera. Disable Static analysis of source.
 
+  --disable-ThorsSerialize
+                          Don't use ThorsSerialize. This means features that
+                          use ThorsSerialize will be disabled.
+
   --enable-shared[=PKGS]  build shared libraries [default=yes]
   --enable-static[=PKGS]  build static libraries [default=yes]
   --enable-fast-install[=PKGS]
@@ -1480,8 +1496,14 @@ Optional Packages:
                           to use
   --with-hostbuild=<dir>  Use the build tools located at <dir>
 
+  --with-yamlroot=<location>
+                          Directory of YAML_ROOT
+
   --with-cryptoroot=<location>
                           Directory of CRYPTO_ROOT
+
+  --with-ThorsSerializeroot=<location>
+                          Directory of ThorsSerialize_ROOT
 
   --without-timegm        Disables tests that use the timegm functions
 
@@ -1506,6 +1528,18 @@ Optional Packages:
                           (testPassword)
   --with-TestMySQLDatabase=<DB>
                           Use an alternative mysql database for testing with
+                          (test)
+  --with-TestMongoHost=<Host>
+                          Use an alternative mongo host for testing with
+                          Default(127.0.0.1)
+  --with-TestMongoUser=<User>
+                          Use an alternative mongo user for testing with
+                          (test)
+  --with-TestMongoPass=<Pass>
+                          Use an alternative mongo password for testing with
+                          (testPassword)
+  --with-TestMongoDatabase=<DB>
+                          Use an alternative mongo database for testing with
                           (test)
 
 Some influential environment variables:
@@ -5887,6 +5921,87 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
+# Check whether --with-yamlroot was given.
+if test "${with_yamlroot+set}" = set; then :
+  withval=$with_yamlroot;
+fi
+
+        if test "${with_yamlroot}" == ""; then
+            with_yamlroot="/usr/local"
+        fi
+        ORIG_LDFLAGS="${LDFLAGS}"
+        LDFLAGS="$LDFLAGS -L$with_yamlroot/lib"
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
+$as_echo_n "checking for yaml_parser_initialize in -lyaml... " >&6; }
+if ${ac_cv_lib_yaml_yaml_parser_initialize+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lyaml  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char yaml_parser_initialize ();
+int
+main ()
+{
+return yaml_parser_initialize ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_yaml_yaml_parser_initialize=yes
+else
+  ac_cv_lib_yaml_yaml_parser_initialize=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_yaml_yaml_parser_initialize" >&5
+$as_echo "$ac_cv_lib_yaml_yaml_parser_initialize" >&6; }
+if test "x$ac_cv_lib_yaml_yaml_parser_initialize" = xyes; then :
+
+
+$as_echo "#define HAVE_YAML 1" >>confdefs.h
+
+                yaml_ROOT_DIR=$with_yamlroot
+
+                yaml_ROOT_LIB=yaml
+
+
+else
+  as_fn_error 1 "
+
+Error: Could not find libyaml
+
+You can solve this by installing libyaml
+    see http://pyyaml.org/wiki/LibYAML
+
+Alternately specify install location with:
+    --with-yamlroot=<location of yaml installation>
+
+If you do not want to use yaml serialization then it
+can be disabled with:
+    --disable-yaml
+
+                " "$LINENO" 5
+
+fi
+
+
+        LDFLAGS="${ORIG_LDFLAGS}"
+
+
+
 # Check whether --with-cryptoroot was given.
 if test "${with_cryptoroot+set}" = set; then :
   withval=$with_cryptoroot;
@@ -5935,9 +6050,7 @@ if test "x$ac_cv_lib_crypto_SHA1_Init" = xyes; then :
 
             if test "$with_cryptoroot" != ""; then :
 
-                    crypto_ROOT_LIBDIR="-L $with_cryptoroot/lib"
-
-                    crypto_ROOT_INCDIR="-I $with_cryptoroot/include"
+                    crypto_ROOT_DIR=$with_cryptoroot
 
 
 fi
@@ -5962,8 +6075,119 @@ Error: Could not find libcrypto
 
 fi
 
+    crypto_ROOT_LIB="ssl crypto"
+
 
     LDFLAGS="${ORIG_LDFLAGS}"
+
+
+
+
+
+
+
+# Check whether --with-ThorsSerializeroot was given.
+if test "${with_ThorsSerializeroot+set}" = set; then :
+  withval=$with_ThorsSerializeroot;
+fi
+
+    # Check whether --enable-ThorsSerialize was given.
+if test "${enable_ThorsSerialize+set}" = set; then :
+  enableval=$enable_ThorsSerialize;
+fi
+
+    if flag=enable_ThorsSerialize
+        test "x${!flag}" != "xno"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: Got HERE" >&5
+$as_echo "$as_me: Got HERE" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Name: Serialize" >&5
+$as_echo "$as_me: Name: Serialize" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: With: ${with_ThorsSerializeroot}" >&5
+$as_echo "$as_me: With: ${with_ThorsSerializeroot}" >&6;}
+
+        if test "${with_ThorsSerializeroot}" == ""; then
+            declare with_ThorsSerializeroot="/usr/local"
+        fi
+        ORIG_LDFLAGS="${LDFLAGS}"
+        LDFLAGS="$LDFLAGS -L${with_ThorsSerializeroot}/lib"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: LDFLAGS: ${LDFLAGS}" >&5
+$as_echo "$as_me: LDFLAGS: ${LDFLAGS}" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: LIB: ThorSerialize17" >&5
+$as_echo "$as_me: LIB: ThorSerialize17" >&6;}
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Meth: _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&5
+$as_echo "$as_me: Meth: _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&6;}
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17" >&5
+$as_echo_n "checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17... " >&6; }
+if ${ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lThorSerialize17  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv ();
+int
+main ()
+{
+return _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv=yes
+else
+  ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&5
+$as_echo "$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" >&6; }
+if test "x$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" = xyes; then :
+
+
+$as_echo "#define HAVE_ThorsSerialize 1" >>confdefs.h
+
+                ThorsSerialize_ROOT_DIR=${with_ThorsSerializeroot}
+
+                ThorsSerialize_ROOT_LIB=ThorSerialize
+
+                HAVE_ThorsSerialize=yes
+
+else
+  as_fn_error 1 "
+
+Error: Could not find libThorSerialize17
+
+You can solve this by installing libThorSerialize
+    https://github.com/Loki-Astari/ThorsSerializer
+
+Alternately specify install location with:
+    --with-ThorsSerializeroot=<location of ThorsSerialize installation>
+
+If you do not want to use features that need ThorSerialize then it
+can be disabled with:
+    --disable-ThorsSerialize
+
+                " "$LINENO" 5
+
+fi
+
+
+        LDFLAGS="${ORIG_LDFLAGS}"
+
+fi
+
 
 
 
@@ -17757,6 +17981,11 @@ fi
 
 
 
+
+
+
+
+
 # Check whether --with-TestMySQLHost was given.
 if test "${with_TestMySQLHost+set}" = set; then :
   withval=$with_TestMySQLHost;
@@ -17781,21 +18010,21 @@ if test "${with_TestMySQLDatabase+set}" = set; then :
 fi
 
 
-mysql_test_host="127.0.0.1"
-mysql_test_user="test"
-mysql_test_pw="testPassword"
-mysql_test_db="test"
+    mysql_test_host="127.0.0.1"
+    mysql_test_user="test"
+    mysql_test_pw="testPassword"
+    mysql_test_db="test"
 
-if test "x$have_TestMySQLHost" = "xyes"; then :
+    if test "x$have_TestMySQLHost" = "xyes"; then :
   mysql_test_host=$with_TestMySQLHost
 fi
-if test "x$have_TestMySQLUser" = "xyes"; then :
+    if test "x$have_TestMySQLUser" = "xyes"; then :
   mysql_test_user=$with_TestMySQLUser
 fi
-if test "x$have_TestMySQLPass" = "xyes"; then :
+    if test "x$have_TestMySQLPass" = "xyes"; then :
   mysql_test_pw=$with_TestMySQLPass
 fi
-if test "x$have_TestMySQLDatabase" = "xyes"; then :
+    if test "x$have_TestMySQLDatabase" = "xyes"; then :
   mysql_test_db=$with_TestMySQLDatabase
 fi
 
@@ -17820,29 +18049,124 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-mysq_test_connect=`echo "select 3+4 from dual" |  mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1`
-if test "x$mysq_test_connect" != "x7"; then :
+    mysq_test_connect=`echo "select 3+4 from dual" | mysql -B -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1 | head -1`
+    if test "x$mysq_test_connect" != "x7"; then :
   as_fn_error $? "
 
-Error: Can not connect to mysql server for testing.
+    Error: Can not connect to mysql server for testing.
 
-        This may be because the mysql server is not running or the test data has not been created.
+            This may be because the mysql server is not running or the test data has not been created.
 
-        1) Install MySQL server
-        2) Make sure MySQL is running
-        3) Install the test data and users.
-                cat ./src/MySQL/test/data/init.sql | mysql -u root -p
-                cat ./src/MySQL/test/data/data.sql | mysql -u root -p
+            1: Install MySQL server
+            2: Make sure MySQL is running
+            3: Install the test data and users.
+                    cat ./src/MySQL/test/data/init.sql | mysql -B -h $mysql_test_host -u root -p
+                    cat ./src/MySQL/test/data/data.sql | mysql -B -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db
 
-                  " "$LINENO" 5
+                      " "$LINENO" 5
 
 fi
 
-version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
+    version=`mysql -B -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' $mysql_test_db | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
 
 cat >>confdefs.h <<_ACEOF
 #define MYSQL_MAJOR_VERSION ${version}
 _ACEOF
+
+
+
+
+
+
+# Check whether --with-TestMongoHost was given.
+if test "${with_TestMongoHost+set}" = set; then :
+  withval=$with_TestMongoHost;
+fi
+
+
+# Check whether --with-TestMongoUser was given.
+if test "${with_TestMongoUser+set}" = set; then :
+  withval=$with_TestMongoUser;
+fi
+
+
+# Check whether --with-TestMongoPass was given.
+if test "${with_TestMongoPass+set}" = set; then :
+  withval=$with_TestMongoPass;
+fi
+
+
+# Check whether --with-TestMongoDatabase was given.
+if test "${with_TestMongoDatabase+set}" = set; then :
+  withval=$with_TestMongoDatabase;
+fi
+
+
+    mongo_test_host="127.0.0.1"
+    mongo_test_user="test"
+    mongo_test_pw="testPassword"
+    mongo_test_db="test"
+
+    if test "x$have_TestMongoHost" = "xyes"; then :
+  mongo_test_host=$with_TestMongoHost
+fi
+    if test "x$have_TestMongoUser" = "xyes"; then :
+  mongo_test_user=$with_TestMongoUser
+fi
+    if test "x$have_TestMongoPass" = "xyes"; then :
+  mongo_test_pw=$with_TestMongoPass
+fi
+    if test "x$have_TestMongoDatabase" = "xyes"; then :
+  mongo_test_db=$with_TestMongoDatabase
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_HOST "$mongo_test_host"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_USER "$mongo_test_user"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_PASS "$mongo_test_pw"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define THOR_TESTING_MONGO_DB "$mongo_test_db"
+_ACEOF
+
+
+    mysq_test_connect=`echo "db.Blob.stats().nindexes" | mongo --host $mongo_test_host -u $mongo_test_user -p$mongo_test_pw $mongo_test_db 2> /dev/null | tail -2 | head -1`
+    if test "x$mysq_test_connect" != "x1"; then :
+  as_fn_error $? "
+
+    Error: Can not connect to mongo server for testing.
+
+            This may be because the mongo server is not running or the test data has not been created.
+
+            1: Install Mongo server
+            2: Make sure Mongo is running
+            3: Install the test data and users.
+                    cat ./src/Mongo/test/data/init.mongo | mongo --host $mongo_test_host -u root -p
+                    cat ./src/Mongo/test/data/data.mongo | mongo --host $mongo_test_host -u $mongo_test_user -p$mongo_test_pw $mongo_test_db
+
+                      " "$LINENO" 5
+
+fi
+
+    version=`mongo --host $mongo_test_host -u $mongo_test_user -p$mongo_test_pw --eval 'db.version()' $mongo_test_db | tail -1 | awk '{print $1}' | awk -F\. '{print $1}'`
+
+cat >>confdefs.h <<_ACEOF
+#define MONGO_MAJOR_VERSION ${version}
+_ACEOF
+
+
+
 
 
 export cwd=`pwd`
@@ -17856,6 +18180,10 @@ if test "$with_cryptoroot" != ""; then :
 fi
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
+pushd third/ThorsSocket
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+popd
+
 
 am__api_version='1.16'
 
@@ -18710,7 +19038,7 @@ END
   fi
 fi
 
-ac_config_headers="$ac_config_headers config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h src/Postgres/PostgresConfig.h:config.h src/ThorsDBBuild/ThorsDBConfig.h:config.h src/ThorsDBBuildTest/ThorsDBConfig.h:config.h"
+ac_config_headers="$ac_config_headers config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h.in src/Postgres/PostgresConfig.h:config.h.in src/ThorsDBBuild/ThorsDBConfig.h:config.h.in src/ThorsDBBuildTest/ThorsDBConfig.h:config.h.in src/Mongo/MongoConfig.h:config.h.in"
 
 ac_config_files="$ac_config_files Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in"
 
@@ -19830,10 +20158,11 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "src/MySQL/MySQLConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/MySQL/MySQLConfig.h:config.h.in" ;;
     "src/ThorsDB/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDB/ThorsDBConfig.h:config.h.in" ;;
-    "src/ThorsDBCommon/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBCommon/ThorsDBConfig.h:config.h" ;;
-    "src/Postgres/PostgresConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Postgres/PostgresConfig.h:config.h" ;;
-    "src/ThorsDBBuild/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuild/ThorsDBConfig.h:config.h" ;;
-    "src/ThorsDBBuildTest/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuildTest/ThorsDBConfig.h:config.h" ;;
+    "src/ThorsDBCommon/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBCommon/ThorsDBConfig.h:config.h.in" ;;
+    "src/Postgres/PostgresConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Postgres/PostgresConfig.h:config.h.in" ;;
+    "src/ThorsDBBuild/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuild/ThorsDBConfig.h:config.h.in" ;;
+    "src/ThorsDBBuildTest/ThorsDBConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/ThorsDBBuildTest/ThorsDBConfig.h:config.h.in" ;;
+    "src/Mongo/MongoConfig.h") CONFIG_HEADERS="$CONFIG_HEADERS src/Mongo/MongoConfig.h:config.h.in" ;;
     "Makefile.extra") CONFIG_FILES="$CONFIG_FILES Makefile.extra" ;;
     "Makefile.config") CONFIG_FILES="$CONFIG_FILES Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in" ;;
 

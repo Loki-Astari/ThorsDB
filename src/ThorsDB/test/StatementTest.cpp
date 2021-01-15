@@ -45,7 +45,7 @@ TEST(StatementTest, SelectWithParamFail)
 
     ASSERT_THROW(
         statement.execute(Bind(15)),
-        std::logic_error
+        ThorsAnvil::Logging::LogicalException
     );
 }
 
@@ -60,7 +60,7 @@ TEST(StatementTest, SelectNoParamFail)
 
     ASSERT_THROW(
         statement.execute(),
-        std::logic_error
+        ThorsAnvil::Logging::LogicalException
     );
 }
 
@@ -76,7 +76,8 @@ TEST(StatementTest, InsertParamFail)
 
     ASSERT_THROW(
         statement.execute(Bind(15), SetGoodToTrue(good)),
-        std::logic_error);
+        ThorsAnvil::Logging::LogicalException
+    );
 }
 
 TEST(StatementTest, InsertNoParamFail)
@@ -91,7 +92,8 @@ TEST(StatementTest, InsertNoParamFail)
 
     ASSERT_THROW(
         statement.execute(SetGoodToTrue(good)),
-        std::logic_error);
+        ThorsAnvil::Logging::LogicalException
+    );
 }
 
 TEST(StatementTest, InsertParamOK)
@@ -135,7 +137,7 @@ TEST(StatementTest, SelectGetRowsAffected)
     statement.execute(Bind(15), SetGoodToTrue(good));
     ASSERT_THROW(
         statement.rowsAffected(),
-        std::logic_error
+        ThorsAnvil::Logging::LogicalException
     );
 }
 
@@ -152,7 +154,7 @@ TEST(StatementTest, SelectGetLastInsertID)
     statement.execute(Bind(15), SetGoodToTrue(good));
     ASSERT_THROW(
         statement.lastInsertID(),
-        std::logic_error
+        ThorsAnvil::Logging::LogicalException
     );
 }
 
@@ -202,7 +204,7 @@ TEST(StatementTest, ProxyAbort)
     };
     EXPECT_THROW(
         test(),
-        std::domain_error
+        ThorsAnvil::Logging::CriticalException
     );
 }
 

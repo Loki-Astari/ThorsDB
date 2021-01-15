@@ -1,6 +1,7 @@
 
 #include "PackageBuffer.h"
 #include "ConectReader.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include "test/MockStream.h"
 #include "gtest/gtest.h"
 
@@ -64,7 +65,7 @@ TEST(ConectReaderTest, CantReadNextmessageUntilCurrentIsFinished)
     ASSERT_EQ('b', reader.getMessage());
 	ASSERT_THROW(
 		reader.getMessage(),
-		std::domain_error
+		ThorsAnvil::Logging::CriticalException
 	);
 }
 

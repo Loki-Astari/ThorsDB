@@ -48,11 +48,20 @@
 /* Define to 1 if you have the `timegm' function. */
 #undef HAVE_TIMEGM
 
+/* When on code that uses ThorsSerialize will be compiled. */
+#undef HAVE_ThorsSerialize
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* When on Yaml Serialization code will be compiled */
+#undef HAVE_YAML
+
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
+
+/* "Get mongo version into #define. That way we can turn off some tests" */
+#undef MONGO_MAJOR_VERSION
 
 /* "Get mysql version into #define. That way we can turn off some tests" */
 #undef MYSQL_MAJOR_VERSION
@@ -86,6 +95,18 @@
 
 /* Set for small Endian Systems */
 #undef THOR_ENDIAN_SML
+
+/* mongo DB for testing */
+#undef THOR_TESTING_MONGO_DB
+
+/* mongo DB host for testing */
+#undef THOR_TESTING_MONGO_HOST
+
+/* mongo DB password for testing */
+#undef THOR_TESTING_MONGO_PASS
+
+/* mongo DB user for testing */
+#undef THOR_TESTING_MONGO_USER
 
 /* mysql DB for testing */
 #undef THOR_TESTING_MYSQL_DB

@@ -1,12 +1,12 @@
 
 THORSANVIL_ROOT				?= $(realpath ../../)
-COVERAGE_REQUIRED			= 75
+COVERAGE_REQUIRED			= 70
 
 TARGET						= ThorsPostgres.defer
 DEFER_NAME					= ThorsDB
-CXXFLAGS					= $(crypto_ROOT_INCDIR)
-UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
-UNITTEST_LDLIBS				= $(crypto_ROOT_LIBDIR) -lssl -lcrypto
+LDLIBS_EXTERN_BUILD			= crypto
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket ThorsLogging
+UNITTEST_LDLIBS				= -lssl
 NO_HEADER					= 1
 
 %/ConectReader.o:			FILE_WARNING_FLAGS += -Wno-unknown-pragmas

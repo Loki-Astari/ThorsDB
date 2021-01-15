@@ -1,4 +1,8 @@
 
-crypto_ROOT_LIBDIR=@crypto_ROOT_LIBDIR@
-crypto_ROOT_INCDIR=@crypto_ROOT_INCDIR@
+ThorsSerialize_ROOT_DIR=@ThorsSerialize_ROOT_DIR@
+ThorsSerialize_ROOT_LIB=@ThorsSerialize_ROOT_LIB@
+ThorsSerialize_ISTHOR=true
+
+crypto_ROOT_DIR=@crypto_ROOT_DIR@
+crypto_ROOT_LIB=@crypto_ROOT_LIB@
 

@@ -87,7 +87,9 @@ Error: Could not find one or more of: echo wc awk
 ])
 
 
+AX_THOR_FUNC_USE_YAML
 AX_THOR_FUNC_USE_CRYPTO
+AX_THOR_FUNC_USE_THORS_LIB_SERIALIZE(17)
 AX_THOR_USE_TIMEGM
 AX_THOR_USE_MODTEST
 
@@ -97,45 +99,69 @@ AX_CHECK_COMPILE_FLAG([-ansi], [AC_SUBST([CXXFLAGS], ["$CXXFLAGS -ansi"])])
 
 AX_THOR_FUNC_LANG_FLAG(17)
 
-AC_ARG_WITH([TestMySQLHost], AS_HELP_STRING([--with-TestMySQLHost=<Host>], [Use an alternative mysql host for testing with Default(127.0.0.1)]))
-AC_ARG_WITH([TestMySQLUser], AS_HELP_STRING([--with-TestMySQLUser=<User>], [Use an alternative mysql user for testing with (test)]))
-AC_ARG_WITH([TestMySQLPass], AS_HELP_STRING([--with-TestMySQLPass=<Pass>], [Use an alternative mysql password for testing with (testPassword)]))
-AC_ARG_WITH([TestMySQLDatabase], AS_HELP_STRING([--with-TestMySQLDatabase=<DB>], [Use an alternative mysql database for testing with (test)]))
+AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE],
+[
+    AC_ARG_WITH([Test$2Host], AS_HELP_STRING([--with-Test$2Host=<Host>], [Use an alternative $3 host for testing with Default(127.0.0.1)]))
+    AC_ARG_WITH([Test$2User], AS_HELP_STRING([--with-Test$2User=<User>], [Use an alternative $3 user for testing with (test)]))
+    AC_ARG_WITH([Test$2Pass], AS_HELP_STRING([--with-Test$2Pass=<Pass>], [Use an alternative $3 password for testing with (testPassword)]))
+    AC_ARG_WITH([Test$2Database], AS_HELP_STRING([--with-Test$2Database=<DB>], [Use an alternative $3 database for testing with (test)]))
 
-mysql_test_host="127.0.0.1"
-mysql_test_user="test"
-mysql_test_pw="testPassword"
-mysql_test_db="test"
+    $3_test_host="127.0.0.1"
+    $3_test_user="test"
+    $3_test_pw="testPassword"
+    $3_test_db="test"
 
-AS_IF([test "x$have_TestMySQLHost" = "xyes"], [mysql_test_host=$with_TestMySQLHost])
-AS_IF([test "x$have_TestMySQLUser" = "xyes"], [mysql_test_user=$with_TestMySQLUser])
-AS_IF([test "x$have_TestMySQLPass" = "xyes"], [mysql_test_pw=$with_TestMySQLPass])
-AS_IF([test "x$have_TestMySQLDatabase" = "xyes"], [mysql_test_db=$with_TestMySQLDatabase])
+    AS_IF([test "x$have_Test$2Host" = "xyes"], [$3_test_host=$with_Test$2Host])
+    AS_IF([test "x$have_Test$2User" = "xyes"], [$3_test_user=$with_Test$2User])
+    AS_IF([test "x$have_Test$2Pass" = "xyes"], [$3_test_pw=$with_Test$2Pass])
+    AS_IF([test "x$have_Test$2Database" = "xyes"], [$3_test_db=$with_Test$2Database])
 
-AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_HOST], ["$mysql_test_host"], [mysql DB host for testing])
-AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_USER], ["$mysql_test_user"], [mysql DB user for testing])
-AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_PASS], ["$mysql_test_pw"],   [mysql DB password for testing])
-AC_DEFINE_UNQUOTED([THOR_TESTING_MYSQL_DB],   ["$mysql_test_db"],   [mysql DB for testing])
+    AC_DEFINE_UNQUOTED([THOR_TESTING_$1_HOST], ["$$3_test_host"], [$3 DB host for testing])
+    AC_DEFINE_UNQUOTED([THOR_TESTING_$1_USER], ["$$3_test_user"], [$3 DB user for testing])
+    AC_DEFINE_UNQUOTED([THOR_TESTING_$1_PASS], ["$$3_test_pw"],   [$3 DB password for testing])
+    AC_DEFINE_UNQUOTED([THOR_TESTING_$1_DB],   ["$$3_test_db"],   [$3 DB for testing])
 
-mysq_test_connect=`echo "select 3+4 from dual" |  mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1`
-AS_IF([test "x$mysq_test_connect" != "x7"],
-     [AC_MSG_ERROR([
+    mysq_test_connect=`echo "$6" | $3 -$5 $$3_test_host -u $$3_test_user -p$$3_test_pw $$3_test_db 2> /dev/null | tail -$8 | head -1`
+    AS_IF([test "x$mysq_test_connect" != "$7"],
+         [AC_MSG_ERROR([
 
-Error: Can not connect to mysql server for testing.
+    Error: Can not connect to $3 server for testing.
 
-        This may be because the mysql server is not running or the test data has not been created.
+            This may be because the $3 server is not running or the test data has not been created.
 
-        1) Install MySQL server
-        2) Make sure MySQL is running
-        3) Install the test data and users.
-                cat ./src/MySQL/test/data/init.sql | mysql -u root -p
-                cat ./src/MySQL/test/data/data.sql | mysql -u root -p
+            1: Install $2 server
+            2: Make sure $2 is running
+            3: Install the test data and users.
+                    cat ./src/$2/test/data/init.$4 | $3 -$5 $$3_test_host -u root -p 
+                    cat ./src/$2/test/data/data.$4 | $3 -$5 $$3_test_host -u $$3_test_user -p$$3_test_pw $$3_test_db
 
-                  ])
-     ])
+                      ])
+         ])
 
-version=`mysql -h $mysql_test_host -u $mysql_test_user -p$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
-AC_DEFINE_UNQUOTED([MYSQL_MAJOR_VERSION], [${version}], ["Get mysql version into #define. That way we can turn off some tests"])
+    version=`$3 -$5 $$3_test_host -u $$3_test_user -p$$3_test_pw $9 $$3_test_db | tail -$10 | awk '{print $$11}' | awk -F\. '{print $$12}'`
+    AC_DEFINE_UNQUOTED([$1_MAJOR_VERSION], [${version}], ["Get $3 version into #define. That way we can turn off some tests"])
+])
+AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MYSQL],
+        [AX_THOR_CHECKDB_AVAILABLE([MYSQL], [MySQL], [mysql], [sql],
+                                    [B -h],
+                                    [select 3+4 from dual], [x7],
+                                    [1],
+                                    [-e 'SHOW VARIABLES LIKE "innodb_version"'],
+                                    [1], [2], [1])
+        ]
+)
+AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MONGO],
+        [AX_THOR_CHECKDB_AVAILABLE([MONGO], [Mongo], [mongo], [mongo],
+                                    [-host],
+                                    [db.Blob.stats().nindexes], [x1],
+                                    [2],
+                                    [--eval 'db.version()'],
+                                    [1], [1], [1])
+        ]
+)
+
+AX_THOR_CHECKDB_AVAILABLE_MYSQL
+AX_THOR_CHECKDB_AVAILABLE_MONGO
 
 export cwd=`pwd`
 pushd third/ThorsIOUtil
@@ -147,8 +173,12 @@ AS_IF([test "$with_cryptoroot" != ""],
       [addCrypoRoot="--with-cryptoroot=$with_cryptoroot"])
 ./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
 popd
+pushd third/ThorsSocket
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+popd
+
 
 AM_INIT_AUTOMAKE([foreign])
-AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h src/Postgres/PostgresConfig.h:config.h src/ThorsDBBuild/ThorsDBConfig.h:config.h src/ThorsDBBuildTest/ThorsDBConfig.h:config.h])
+AC_CONFIG_HEADERS([config.h src/MySQL/MySQLConfig.h:config.h.in src/ThorsDB/ThorsDBConfig.h:config.h.in src/ThorsDBCommon/ThorsDBConfig.h:config.h.in src/Postgres/PostgresConfig.h:config.h.in src/ThorsDBBuild/ThorsDBConfig.h:config.h.in src/ThorsDBBuildTest/ThorsDBConfig.h:config.h.in src/Mongo/MongoConfig.h:config.h.in])
 AC_CONFIG_FILES([Makefile.extra Makefile.config:build/autotools/build/Makefile.config.in:Makefile.config.in])
 AC_OUTPUT

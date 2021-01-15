@@ -5,25 +5,11 @@ before_install:
     - ./.build/travis/presetup ${TRAVIS_OS_NAME}
 install:
     - ./.build/travis/setup ${TRAVIS_OS_NAME}
-    - sudo apt-get install -qq libssl-dev
-    - sudo apt-get install mysql-server
-    - sudo systemctl start mysql
-    - echo "ALTER USER 'root'@'localhost' IDENTIFIED BY 'testPassword';FLUSH PRIVILEGES;" | mysql -u root
-    - cat src/MySQL/test/data/init.travis.sql | mysql --force --user=root --password=testPassword
-    - cat src/MySQL/test/data/data.sql | mysql --force --user=root --password=testPassword
-    - sudo apt install postgresql postgresql-contrib
-    - sudo systemctl start postgresql
-    - cat src/Postgres/test/data/init.sql | sudo -u postgres psql 
-    - echo "ALTER USER postgres WITH PASSWORD 'testPassword';" | sudo -u postgres psql postgres
 script:
-    - ./configure --with-boost=/tmp/extra
-    - echo "-------"
-    - ls -la third/ThorsIOUtil/
-    - echo "-------"
-    - ls -la third/ThorsCrypto/
-    - echo "-------"
-    - make
+    - "./configure --with-boost=/tmp/extra --disable-binary"
+    - export PATH=${PATH}:$(pwd)/build/bin;make
 after_success:
+    - ./CreateHeaderOnly  master
     - bash <(curl -s https://codecov.io/bash)
 branches:
     only:

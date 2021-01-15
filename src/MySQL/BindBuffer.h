@@ -4,6 +4,7 @@
 #include "ThorsDBCommon/StreamSimple.h"
 #include "ConectWriter.h"
 #include "RespPackageColumnDefinition.h"
+#include "ThorsLogging/ThorsLogging.h"
 #include <vector>
 
 namespace ThorsAnvil::DB::MySQL
@@ -19,7 +20,10 @@ class BindBuffer
                 : Common::StreamSimple(-1)
                 , dst(dst)
             {}
-            virtual void read(char*, std::size_t) override {throw std::domain_error("Invalid");}
+            virtual void read(char*, std::size_t) override
+            {
+                ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::BindStream", "read", "Invalid operation");
+            }
             virtual void write(char const* buffer, std::size_t len)  override
             {
                 dst.insert(dst.end(), buffer, buffer + len);
@@ -44,8 +48,6 @@ class BindBuffer
 
 }
 
-#ifndef COVERAGE_MySQL
 #include "BindBuffer.tpp"
-#endif
 
 #endif

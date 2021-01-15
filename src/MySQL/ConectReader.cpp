@@ -4,9 +4,9 @@
 #include "RespPackageEOF.h"
 #include "RespPackageERR.h"
 #include "ThorsIOUtil/Utility.h"
+#include "ThorsLogging/ThorsLogging.h"
 
 using namespace ThorsAnvil::DB::MySQL;
-using ThorsAnvil::Utility::buildErrorMessage;
 
 void ConectReader::initFromHandshake(unsigned long newCapabilities, unsigned long newCharset)
 {
@@ -52,9 +52,9 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
     {
         // Error default action: => read and throw
         RespPackageERR  errorPackage(packageType, *this);
-        throw std::runtime_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::ConectReader", "recvMessage", "Error Message from Server: ", errorPackage.message()
-              ));
+        ThorsLogAndThrow("ThorsAnvil::DB::MySQL::ConectReader",
+                         "recvMessage",
+                         "Error Message from Server: ", errorPackage.message());
     }
     else
     {
@@ -63,8 +63,9 @@ std::unique_ptr<RespPackage> ConectReader::recvMessage(OKMap const& actions /*= 
         {
             return std::unique_ptr<RespPackage>(find->second(packageType, *this));
         }
-        throw std::domain_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::ConectReader", "recvMessage", "Unknown Result Type: ", packageType, ": >", restOfPacketString(), "<"));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::ConectReader",
+                                 "recvMessage",
+                                 "Unknown Result Type: ", packageType, ": >", restOfPacketString(), "<");
     }
 }
 
@@ -83,8 +84,9 @@ unsigned long long ConectReader::lengthEncodedIntegerUsingSize(unsigned char typ
         case 0xFA:
         case 0xFB:
         case 0xFF:
-            throw std::domain_error(
-                    buildErrorMessage("ThorsAnvil::DB::MySQL::ConectReader", "lengthEncodedInteger", "Invalid length encoding: ", type));
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::ConectReader",
+                                     "lengthEncodedIntegerUsingSize",
+                                     "Invalid length encoding: ", type);
         case 0xFC:  result  = fixedLengthInteger<2>(); break;
         case 0xFD:  result  = fixedLengthInteger<3>(); break;
         case 0xFE:  result  = fixedLengthInteger<8>(); break;
@@ -161,8 +163,9 @@ MySQLTimeBag ConectReader::readDateIntoTimeBag()
     long    size    = fixedLengthInteger<1>();
     if (size != 11 && size != 7 && size != 4 && size != 0)
     {
-        throw std::domain_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::ConectReader", "readDate", "Invalid Date Size", size, "\nExpecting: 11/7/4/0"));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::ConectReader",
+                                 "readDateIntoTimeBag",
+                                 "Invalid Date Size", size, "\nExpecting: 11/7/4/0");
     }
     if (size == 11 || size == 7 || size == 4)
     {
@@ -203,8 +206,9 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
     long    size    = fixedLengthInteger<1>();
     if (size != 12 && size != 8 && size != 0)
     {
-        throw std::domain_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::ConectReader", "readTime", "Invalid Time Size: ", size, "\nExpecting 12/8/0"));
+        ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::ConectReader",
+                                 "readTimeIntoTimeBag",
+                                 "Invalid Time Size: ", size, "\nExpecting 12/8/0");
     }
     timeBag.type    = MySQLTimeBag::RelativePositive;
     if (size == 12 || size == 8)
@@ -212,8 +216,9 @@ MySQLTimeBag ConectReader::readTimeIntoTimeBag()
         long    negativeTest    = fixedLengthInteger<1>();
         if (negativeTest < 0 || negativeTest > 1)
         {
-            throw std::domain_error(
-                buildErrorMessage("ThorsAnvil::DB::MySQL::ConectReader", "readTime", "Invalid Negative Test"));
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::ConectReader",
+                                     "readTimeIntoTimeBag",
+                                     "Invalid Negative Test");
         }
         if (negativeTest == 1)
         {
@@ -240,18 +245,3 @@ void ConectReader::reset()
 {
     stream.reset();
 }
-
-#ifdef COVERAGE_MySQL
-/*
- * This code is only compiled into the unit tests for code coverage purposes
- * It is not part of the live code.
- */
-#include "ConectReader.tpp"
-
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<1>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<2>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<3>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<4>();
-template unsigned long long ThorsAnvil::DB::MySQL::ConectReader::fixedLengthInteger<8>();
-
-#endif

@@ -2,6 +2,7 @@
 #include "PackageBuffer.h"
 #include "test/MockStream.h"
 #include "gtest/gtest.h"
+#include "ThorsLogging/ThorsLogging.h"
 
 using ThorsAnvil::DB::MySQL::PackageBuffer;
 using MySqlBuf=PackageBuffer;
@@ -84,7 +85,7 @@ TEST(PackageBuffferTest, read2BlockSecondWithTen)
     ASSERT_FALSE(mysqlBuffer.isEmpty());
     mysqlBuffer.read(dst, 0x0A);
     ASSERT_TRUE(mysqlBuffer.isEmpty());
-    ASSERT_THROW(mysqlBuffer.read(dst, 1), std::domain_error);
+    ASSERT_THROW(mysqlBuffer.read(dst, 1), ThorsAnvil::Logging::CriticalException);
 }
 
 TEST(PackageBuffferTest, writeZero)
@@ -200,7 +201,7 @@ TEST(PackageBuffferTest, flush)
     mysqlBuffer.flush();    // Flush OK after a startNewConversation()
     ASSERT_EQ(8, buffer.writLen());
     // But should fail if done twice without a reset
-    ASSERT_THROW(mysqlBuffer.flush(), std::domain_error);
+    ASSERT_THROW(mysqlBuffer.flush(), ThorsAnvil::Logging::CriticalException);
 }
 TEST(PackageBuffferTest, flushAndWrite)
 {
@@ -213,7 +214,7 @@ TEST(PackageBuffferTest, flushAndWrite)
 
     mysqlBuffer.flush();
     ASSERT_EQ(4, buffer.writLen());
-    ASSERT_THROW(mysqlBuffer.write("10", 2), std::domain_error);
+    ASSERT_THROW(mysqlBuffer.write("10", 2), ThorsAnvil::Logging::CriticalException);
 }
 TEST(PackageBuffferTest, resetWithFlush)
 {
@@ -253,7 +254,7 @@ TEST(PackageBuffferTest, dropDataPreCheck)
 
     char            result[4];
     mysqlBuffer.read(result, 2);
-    ASSERT_THROW(mysqlBuffer.reset(), std::domain_error);
+    ASSERT_THROW(mysqlBuffer.reset(), ThorsAnvil::Logging::CriticalException);
 }
 TEST(PackageBuffferTest, dropData)
 {
