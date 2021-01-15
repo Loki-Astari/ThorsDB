@@ -24,6 +24,7 @@ CXXFLAGS					+= -Wno-dollar-in-identifier-extension
 %/Op_DeleteTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/Op_GetMoreTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/Op_KillCursorsTest.o:		CXXFLAGS += -Wno-deprecated-declarations
+%/Op_UpdateTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 

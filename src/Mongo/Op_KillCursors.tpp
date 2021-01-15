@@ -30,7 +30,7 @@ inline
 std::ostream& Op_KillCursors::print(std::ostream& stream) const
 {
     stream << header
-           << make_LE(0)
+           << make_LE(std::int32_t{0})
            << make_LE(numberOfCursorIDs);
     for (auto const& val: cursorIDs)
     {

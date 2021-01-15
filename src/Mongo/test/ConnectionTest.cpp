@@ -6,6 +6,7 @@
 #include "Op_Reply.h"
 #include "Op_GetMore.h"
 #include "Op_KillCursors.h"
+#include "Op_Update.h"
 #include "MongoConnection.h"
 #include "MongoConfig.h"
 #include "test/OpTest.h"
@@ -96,7 +97,6 @@ TEST(ConnectionTest, SendToMongo)
 
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
-        std::cerr << make_hr(reply1);
 
         EXPECT_EQ(reply1.startingFrom, 0);
         EXPECT_EQ(reply1.numberReturned, 2);
@@ -127,7 +127,6 @@ TEST(ConnectionTest, SendToMongo)
 
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
-        std::cerr << make_hr(reply1);
 
         EXPECT_EQ(reply1.startingFrom, 0);
         EXPECT_EQ(reply1.numberReturned, 2);
@@ -136,6 +135,12 @@ TEST(ConnectionTest, SendToMongo)
         EXPECT_EQ(reply1.documents[1].ok, 1.0);
 
         connection << Op_KillCursors({reply1.cursorID});
+
+        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+
+        Op_Reply<StringAndIntNoConstructorReply>     reply2;
+        connection >> reply2;
+        EXPECT_EQ(reply2.responseFlags & OP_ReplyFlag::CursorNotFound, OP_ReplyFlag::CursorNotFound);
     }
 
     // Check the query can actual filter.
@@ -146,6 +151,26 @@ TEST(ConnectionTest, SendToMongo)
 
         EXPECT_EQ(1, reply.numberReturned);
         if (reply.numberReturned != 1)
+        {
+            std::cerr << "Showing: " << reply.numberReturned << "\n";
+            for (int loop = 0; loop < reply.numberReturned; ++loop)
+            {
+                std::cerr << "Item: " << loop << "\n"
+                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
+                          << "\n\n";
+            }
+        }
+    }
+    // Check the Update works see if the filter finds it.
+    {
+        connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
+
+        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, QueryOptions{}, 100, 0, "Another");
+        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        connection >> reply;
+
+        EXPECT_EQ(2, reply.numberReturned);
+        if (reply.numberReturned != 2)
         {
             std::cerr << "Showing: " << reply.numberReturned << "\n";
             for (int loop = 0; loop < reply.numberReturned; ++loop)

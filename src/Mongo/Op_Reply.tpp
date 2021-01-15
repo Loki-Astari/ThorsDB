@@ -34,7 +34,7 @@ std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
            << "cursorID:      " << cursorID      << "\n"
            << "startingFrom:  " << startingFrom  << "\n"
            << "numberReturned:" << numberReturned<< "\n"
-           << ThorsAnvil::Serialize::jsonExporter(documents);
+           << ThorsAnvil::Serialize::jsonExporter(documents) << "\n";
 
     return stream;
 }

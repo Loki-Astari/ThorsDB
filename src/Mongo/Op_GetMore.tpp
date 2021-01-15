@@ -32,7 +32,7 @@ inline
 std::ostream& Op_GetMore::print(std::ostream& stream) const
 {
     stream << header
-           << make_LE(0)
+           << make_LE(std::int32_t{0})
            << fullCollectionName << '\0'
            << make_LE(numberToReturn)
            << make_LE(cursorID);

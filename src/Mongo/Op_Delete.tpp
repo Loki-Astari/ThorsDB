@@ -64,7 +64,7 @@ std::ostream& Op_Delete<Document>::printHR(std::ostream& stream) const
            << "zero: " << 0 << "\n"
            << "fullCollectionName: " << fullCollectionName << "\n"
            << flags << "\n"
-           << ThorsAnvil::Serialize::jsonExporter(selector);
+           << ThorsAnvil::Serialize::jsonExporter(selector) << "\n";
     return stream;
 }
 
