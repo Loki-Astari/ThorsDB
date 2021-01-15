@@ -21,6 +21,16 @@ enum class OP_ReplyFlag : std::int32_t
                                             // If it doesn’t, a client should sleep a little between getMore’s of a Tailable cursor.
 };
 
+struct ErrorInfo
+{
+#pragma vera-pushoff
+    double              ok;
+    int                 code;
+    std::string         $err;
+    std::string         codeName;
+#pragma vera-pop
+};
+
 template<typename Document>
 struct Op_Reply
 {
@@ -32,10 +42,15 @@ struct Op_Reply
     std::int32_t            startingFrom;           // where in the cursor this reply is starting
     std::int32_t            numberReturned;         // number of documents in the reply
     std::vector<Document>   documents;              // documents
+    ErrorInfo               errorInfo;
     public:
         Op_Reply()
             : header(OpCode::OP_REPLY)
-            // TODO
+            , responseFlags(OP_ReplyFlag::empty)
+            , cursorID(0)
+            , startingFrom(0)
+            , numberReturned(0)
+            , errorInfo{1.0, 0, "", ""}
         {}
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Reply> const& reply);
@@ -44,8 +59,11 @@ struct Op_Reply
         std::size_t     getDocumentCount()              const {return documents.size();}
         Document const& getDocument(std::size_t size)   const {return documents[size];}
 
-        explicit operator bool()                const;
-        std::string const& getFailureMessage()  const;
+        bool                isOk()              const;
+        explicit operator   bool()              const;
+        std::string const&  getFailureMessage() const;
+        std::string const&  getFailureCodeName()const;
+        int                 getFailureCode()    const;
     protected:
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream) const;
@@ -53,6 +71,7 @@ struct Op_Reply
 
 }
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_ReplyFlag, empty, CursorNotFound, QueryFailure, ShardConfigStale, AwaitCapable);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ErrorInfo,  ok, code, codeName, $err);
 
 #include "Op_Reply.tpp"
 

@@ -27,8 +27,8 @@ TEST(MongoConnectTest, CreateReply)
     Op_ReplyHandShake   handShakeReplyMessage;
     stream >> handShakeReplyMessage;
 
+    ASSERT_TRUE(handShakeReplyMessage.isOk());
     HandShakeReplyDoc const&    handShakeReply = handShakeReplyMessage.getDocument(0);
-    ASSERT_EQ(handShakeReply.ok,    1);
 
     // Send Auth Init: We can use SHA-256 Send scram package
     stream << Op_MsgAuthInit(AuthInit(THOR_TESTING_MONGO_DB, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
@@ -69,9 +69,6 @@ TEST(MongoConnectTest, CreateReply)
     {
         ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
 
-        std::cerr << "ListDB OK: "   << listDBReply.ok << "\n";
-        std::cerr << "ListDB Code: " << listDBReply.code << "\n";
-        std::cerr << "ListDB Err:  " << listDBReply.$err << "\n";
         std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
         std::cerr << "ListDB DB: [";
         for (auto const& db: listDBReply.databases)
@@ -82,7 +79,9 @@ TEST(MongoConnectTest, CreateReply)
     }
     else
     {
-        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getFailureMessage() << "\n";
+        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getFailureMessage()
+                  << "  Code: " << listOfDatabases.getFailureCode()
+                  << "\n";
     }
 }
 

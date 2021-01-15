@@ -50,8 +50,9 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
+        EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(0, reply.numberReturned);
-        if (reply.numberReturned != 0)
+        if (!reply.isOk() || reply.numberReturned != 0)
         {
             std::cerr << "Showing: " << reply.numberReturned << "\n";
             for (int loop = 0; loop < reply.numberReturned; ++loop)
@@ -78,8 +79,9 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
+        EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(3, reply.numberReturned);
-        if (reply.numberReturned != 3)
+        if (!reply.isOk() || reply.numberReturned != 3)
         {
             std::cerr << "Showing: " << reply.numberReturned << "\n";
             for (int loop = 0; loop < reply.numberReturned; ++loop)
@@ -98,25 +100,25 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
 
+        EXPECT_TRUE(reply1.isOk());
         EXPECT_EQ(reply1.startingFrom, 0);
         EXPECT_EQ(reply1.numberReturned, 2);
         ASSERT_EQ(reply1.documents.size(), 2);
-        EXPECT_EQ(reply1.documents[0].ok, 1.0);
-        EXPECT_EQ(reply1.documents[1].ok, 1.0);
 
         connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
 
         Op_Reply<StringAndIntNoConstructorReply>     reply2;
         connection >> reply2;
+        EXPECT_TRUE(reply2.isOk());
         EXPECT_EQ(reply2.startingFrom, 2);
         EXPECT_EQ(reply2.numberReturned, 1);
         ASSERT_EQ(reply2.documents.size(), 1);
-        EXPECT_EQ(reply2.documents[0].ok, 1.0);
 
         connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
 
         Op_Reply<StringAndIntNoConstructorReply>     reply3;
         connection >> reply3;
+        EXPECT_TRUE(reply3.isOk());
         EXPECT_EQ(reply3.startingFrom, 3);
         EXPECT_EQ(reply3.numberReturned, 0);
         ASSERT_GE(reply3.documents.size(), 0);
@@ -128,11 +130,10 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
 
+        EXPECT_TRUE(reply1.isOk());
         EXPECT_EQ(reply1.startingFrom, 0);
         EXPECT_EQ(reply1.numberReturned, 2);
         ASSERT_EQ(reply1.documents.size(), 2);
-        EXPECT_EQ(reply1.documents[0].ok, 1.0);
-        EXPECT_EQ(reply1.documents[1].ok, 1.0);
 
         connection << Op_KillCursors({reply1.cursorID});
 
@@ -140,6 +141,7 @@ TEST(ConnectionTest, SendToMongo)
 
         Op_Reply<StringAndIntNoConstructorReply>     reply2;
         connection >> reply2;
+        EXPECT_FALSE(reply2.isOk());
         EXPECT_EQ(reply2.responseFlags & OP_ReplyFlag::CursorNotFound, OP_ReplyFlag::CursorNotFound);
     }
 
@@ -149,8 +151,9 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
+        EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1, reply.numberReturned);
-        if (reply.numberReturned != 1)
+        if (!reply.isOk() || reply.numberReturned != 1)
         {
             std::cerr << "Showing: " << reply.numberReturned << "\n";
             for (int loop = 0; loop < reply.numberReturned; ++loop)
@@ -169,8 +172,9 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
+        EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(2, reply.numberReturned);
-        if (reply.numberReturned != 2)
+        if (!reply.isOk() || reply.numberReturned != 2)
         {
             std::cerr << "Showing: " << reply.numberReturned << "\n";
             for (int loop = 0; loop < reply.numberReturned; ++loop)
@@ -193,8 +197,9 @@ TEST(ConnectionTest, SendToMongo)
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
+        EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(2, reply.numberReturned);
-        if (reply.numberReturned != 2)
+        if (!reply.isOk() || reply.numberReturned != 2)
         {
             std::cerr << "Showing: " << reply.numberReturned << "\n";
             for (int loop = 0; loop < reply.numberReturned; ++loop)

@@ -27,16 +27,6 @@ struct DBInfo
 
 struct ListDataBaseReply
 {
-    ListDataBaseReply()
-        : ok(1.0)
-    {}
-    double              ok;
-    // If ok is zero
-    int                 code;
-#pragma vera-pushoff
-    std::string         $err;
-#pragma vera-pop
-    // Normal response
     std::vector<DBInfo> databases;
     double              totalSize;
 };
@@ -56,6 +46,6 @@ using Op_ReplAdmCmdListDataBases = Op_Reply<ListDataBaseReply>;
 
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AdmCmdListDataBases,listDatabases);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DBInfo,             name, sizeOnDisk, empty);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ListDataBaseReply,  ok, code, $err, databases, totalSize);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ListDataBaseReply,  databases, totalSize);
 
 #endif
