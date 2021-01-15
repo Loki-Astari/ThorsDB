@@ -241,6 +241,6 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, count
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReplyDoc,  ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,      ok, code, errmsg, codeName, conversationId, done, payload);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,          ok, code, errmsg, codeName, conversationId, done, payload);
 
 #endif
