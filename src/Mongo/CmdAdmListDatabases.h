@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_ADMCMD_LIST_DATABASES_H
-#define THORSANVIL_DB_MONGO_ADMCMD_LIST_DATABASES_H
+#ifndef THORSANVIL_DB_MONGO_CMD_ADM_LIST_DATABASES_H
+#define THORSANVIL_DB_MONGO_CMD_ADM_LIST_DATABASES_H
 
 // https://github.com/mongodb/specifications/blob/master/source/enumerate-databases.rst
 
@@ -31,16 +31,16 @@ struct ListDataBaseReply
     double              totalSize;
 };
 
-class Op_QueryAdmCmdListDataBases: public Op_Query<AdmCmdListDataBases>
+class CmdAdmListDataBases: public Op_Query<AdmCmdListDataBases>
 {
     public:
-        Op_QueryAdmCmdListDataBases()
+        CmdAdmListDataBases()
             : Op_Query("admin.$cmd", QueryOptions{}, 1, 0)
         {}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryAdmCmdListDataBases> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_QueryAdmCmdListDataBases const& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdAdmListDataBases> const& data);
+        friend std::ostream& operator<<(std::ostream& stream, CmdAdmListDataBases const& data) {return data.print(stream);}
 };
-using Op_ReplAdmCmdListDataBases = Op_Reply<ListDataBaseReply>;
+using CmdAdmListDataBasesReply = Op_Reply<ListDataBaseReply>;
 
 }
 
