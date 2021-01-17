@@ -50,11 +50,11 @@ std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
            << "cursorID:      " << cursorID      << "\n"
            << "startingFrom:  " << startingFrom  << "\n"
            << "numberReturned:" << numberReturned<< "\n";
-    if (responseFlags & OP_ReplyFlag::CursorNotFound)
+    if ((responseFlags & OP_ReplyFlag::CursorNotFound) == OP_ReplyFlag::CursorNotFound)
     {
         stream << "Error:         Cursor not found\n";
     }
-    else if (responseFlags & OP_ReplyFlag::QueryFailure)
+    else if ((responseFlags & OP_ReplyFlag::QueryFailure) == OP_ReplyFlag::QueryFailure)
     {
         stream << "Error:         " << ThorsAnvil::Serialize::jsonExporter(errorInfo) << "\n";
     }

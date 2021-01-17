@@ -65,9 +65,9 @@ TEST(CmdDB_InsertTest, SendToMongo)
                                                                     };
 
         // connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, object1, object2, object3);
-        std::cerr << make_hr(CmdAdmInsert<StringAndIntNoConstructor>{"ConnectionTest", std::begin(objects), std::end(objects), false, WriteConcern{}, false, "Comment"});
-        connection << CmdAdmInsert<StringAndIntNoConstructor>{"ConnectionTest", std::begin(objects), std::end(objects), false, WriteConcern{}, false, "Comment"};
-        CmdAdmInsertReply   reply;
+        std::cerr << make_hr(CmdDB_Insert<StringAndIntNoConstructor>{"test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects), false, WriteConcern{}, false, "Comment"});
+        connection << CmdDB_Insert<StringAndIntNoConstructor>{"test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects), false, WriteConcern{}, false, "Comment"};
+        CmdDB_Reply   reply;
         connection >> reply;
         std::cerr << make_hr(reply);
     }
