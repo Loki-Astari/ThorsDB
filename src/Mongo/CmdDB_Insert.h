@@ -11,6 +11,16 @@ namespace ThorsAnvil::DB::Mongo
 template<typename Document>
 struct Insert
 {
+    Insert(std::string const& collection, Document const& doc, bool ordered, WriteConcern concern, bool byPass, std::string const& comment = "")
+        : insert(collection)
+        , documents(1, doc)
+        , ordered(ordered)
+        //, writeConcern(concern)
+        , bypassDocumentValidation(byPass)
+        , comment(comment)
+    {
+        std::cerr << "Insert: " << documents.size() << "\n";
+    }
     template<typename I>
     Insert(std::string const& collection, I begin, I end, bool ordered, WriteConcern concern, bool byPass, std::string const& comment = "")
         : insert(collection)

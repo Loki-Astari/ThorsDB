@@ -33,6 +33,9 @@ struct CmdReply
 {
     double                      ok;
     std::size_t                 n;
+    std::string                 errmsg;
+    std::string                 codeName;
+    int                         code;
     std::vector<WriteErrors>    writeErrors;
     WriteConcernError           writeConcernError;
 };
@@ -56,6 +59,6 @@ using CmdDB_Reply = Op_Reply<CmdReply>;
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcern,       w, j, wtimeout);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteErrors,        index, code, errmsg);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcernError,  code, errmsg);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReply,           ok, n, writeErrors, writeConcernError);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReply,           ok, n, writeErrors, writeConcernError, errmsg, codeName, code);
 
 #endif

@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include "MongoConnection.h"
 #include "CmdDB_Insert.h"
+#include "CmdDB_Delete.h"
 #include "MongoConfig.h"
 #include "OpTest.h"
 #include "Op_Delete.h"
@@ -34,7 +35,12 @@ TEST(CmdDB_InsertTest, SendToMongo)
 
     // reset the collection to be empty.
     {
-        connection << Op_Delete<FindAll>(fullConnection);
+        // connection << Op_Delete<FindAll>(fullConnection);
+        CmdDB_Delete<FindAll>   deleter{"test", "ConnectionTest", QueryOptions{}, DeleteQuery<FindAll>{FindAll{},0/*, Collation{}, ""*/}, false, WriteConcern{}, "Delete Comment"};
+
+        connection << CmdDB_Delete<FindAll>{"test", "ConnectionTest", QueryOptions{}, DeleteQuery<FindAll>{FindAll{},0/*, Collation{}, ""*/}, false, WriteConcern{}, "Delete Comment"};
+        CmdDB_Reply   reply;
+        connection >> reply;
     }
 
     // Make sure there are zero objects in the collection.
