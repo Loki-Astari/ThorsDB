@@ -57,6 +57,12 @@ void Op_Query<Document>::handleOptions(QueryOptions const& options)
 }
 
 template<typename Document>
+Document& Op_Query<Document>::getQuery()
+{
+    return query;
+}
+
+template<typename Document>
 std::size_t Op_Query<Document>::getSize() const
 {
     std::size_t objectSize = sizeof(flags)

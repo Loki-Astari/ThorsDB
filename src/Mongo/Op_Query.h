@@ -88,6 +88,8 @@ class Op_Query
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
+
+        Document& getQuery();
     private:
         std::size_t   getSize()                     const;
         void          handleOptions(QueryOptions const& options);

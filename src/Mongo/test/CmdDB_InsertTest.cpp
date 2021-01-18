@@ -35,12 +35,18 @@ TEST(CmdDB_InsertTest, SendToMongo)
 
     // reset the collection to be empty.
     {
-        // connection << Op_Delete<FindAll>(fullConnection);
-        CmdDB_Delete<FindAll>   deleter{"test", "ConnectionTest", QueryOptions{}, DeleteQuery<FindAll>{FindAll{},0/*, Collation{}, ""*/}, false, WriteConcern{}, "Delete Comment"};
-
-        connection << CmdDB_Delete<FindAll>{"test", "ConnectionTest", QueryOptions{}, DeleteQuery<FindAll>{FindAll{},0/*, Collation{}, ""*/}, false, WriteConcern{}, "Delete Comment"};
+        connection << make_CmdDB_Delete("test", "ConnectionTest", QueryOptions{}, FindAll{}).unordered();
         CmdDB_Reply   reply;
         connection >> reply;
+
+        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0)
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.getDocumentCount());
+        EXPECT_EQ(1.0, reply.getDocument(0).ok);
     }
 
     // Make sure there are zero objects in the collection.
@@ -70,12 +76,19 @@ TEST(CmdDB_InsertTest, SendToMongo)
                                                                      StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
                                                                     };
 
-        // connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, object1, object2, object3);
-        std::cerr << make_hr(CmdDB_Insert<StringAndIntNoConstructor>{"test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects), false, WriteConcern{}, false, "Comment"});
-        connection << CmdDB_Insert<StringAndIntNoConstructor>{"test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects), false, WriteConcern{}, false, "Comment"};
+        connection << make_CmdDB_Insert("test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects)).unordered();
         CmdDB_Reply   reply;
         connection >> reply;
-        std::cerr << make_hr(reply);
+
+        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0 || reply.getDocument(0).n != 3)
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.getDocumentCount());
+        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+        EXPECT_EQ(3,   reply.getDocument(0).n);
     }
 
     // Check there are three objects in the collection.
