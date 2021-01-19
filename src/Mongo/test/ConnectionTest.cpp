@@ -1,5 +1,6 @@
 
 #include <gtest/gtest.h>
+// Ye-Old Wire Protocol
 #include "Op_Insert.h"
 #include "Op_Delete.h"
 #include "Op_Query.h"
@@ -7,6 +8,10 @@
 #include "Op_GetMore.h"
 #include "Op_KillCursors.h"
 #include "Op_Update.h"
+// Middle Wire Protocol
+#include "CmdDB_Insert.h"
+#include "CmdDB_Delete.h"
+// Other Stuff
 #include "MongoConnection.h"
 #include "MongoConfig.h"
 #include "test/OpTest.h"
@@ -29,7 +34,7 @@ struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
 ThorsAnvil_ExpandTrait(StringAndIntNoConstructor, StringAndIntNoConstructorReply, $err, code, ok);
 
 
-TEST(ConnectionTest, SendToMongo)
+TEST(ConnectionTest, YeOldWireProtocol)
 {
     using std::string_literals::operator""s;
     using namespace ThorsAnvil::DB::Mongo;
@@ -211,4 +216,95 @@ TEST(ConnectionTest, SendToMongo)
         }
     }
 }
+
+
+TEST(ConnectionTest, MiddleWireProtocol)
+{
+    using std::string_literals::operator""s;
+    using namespace ThorsAnvil::DB::Mongo;
+
+    MongoConnection  connection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
+
+    std::string fullConnection  = THOR_TESTING_MONGO_DB;
+    fullConnection += ".ConnectionTest";
+
+    // reset the collection to be empty.
+    {
+        connection << make_CmdDB_Delete("test", "ConnectionTest", QueryOptions{}, FindAll{});
+        CmdDB_Reply   reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0)
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.getDocumentCount());
+        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+    }
+
+    // Make sure there are zero objects in the collection.
+    {
+        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
+        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        connection >> reply;
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(0, reply.numberReturned);
+        if (!reply.isOk() || reply.numberReturned != 0)
+        {
+            std::cerr << "Showing: " << reply.numberReturned << "\n";
+            for (int loop = 0; loop < reply.numberReturned; ++loop)
+            {
+                std::cerr << "Item: " << loop << "\n"
+                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
+                          << "\n\n";
+            }
+        }
+    }
+
+    // Add three objects to the collection
+    {
+        std::vector<StringAndIntNoConstructor>               objects{StringAndIntNoConstructor{"DataString"s, 48},
+                                                                     StringAndIntNoConstructor{"Another"s, 22},
+                                                                     StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
+                                                                    };
+
+        connection << make_CmdDB_Insert("test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects));
+        CmdDB_Reply   reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.getDocument(0).n != 3)
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.getDocumentCount());
+        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+        EXPECT_EQ(3,   reply.getDocument(0).n);
+    }
+
+    // Check there are three objects in the collection.
+    {
+        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
+        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        connection >> reply;
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(3, reply.numberReturned);
+        if (!reply.isOk() || reply.numberReturned != 3)
+        {
+            std::cerr << "Showing: " << reply.numberReturned << "\n";
+            for (int loop = 0; loop < reply.numberReturned; ++loop)
+            {
+                std::cerr << "Item: " << loop << "\n"
+                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
+                          << "\n\n";
+            }
+        }
+    }
+}
+
 
