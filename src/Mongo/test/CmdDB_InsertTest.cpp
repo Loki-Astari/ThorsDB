@@ -35,7 +35,7 @@ TEST(CmdDB_InsertTest, SendToMongo)
 
     // reset the collection to be empty.
     {
-        connection << make_CmdDB_Delete("test", "ConnectionTest", QueryOptions{}, FindAll{}).unordered();
+        connection << make_CmdDB_Delete("test", "ConnectionTest", QueryOptions{}, FindAll{});
         CmdDB_Reply   reply;
         connection >> reply;
 
@@ -76,11 +76,11 @@ TEST(CmdDB_InsertTest, SendToMongo)
                                                                      StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
                                                                     };
 
-        connection << make_CmdDB_Insert("test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects)).unordered();
+        connection << make_CmdDB_Insert("test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects));
         CmdDB_Reply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0 || reply.getDocument(0).n != 3)
+        if (!reply.isOk() || reply.getDocument(0).n != 3)
         {
             std::cerr << make_hr(reply);
         }

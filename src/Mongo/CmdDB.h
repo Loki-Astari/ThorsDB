@@ -9,16 +9,16 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-struct WriteConcern
+struct Collation
 {
-    WriteConcern(int w = 1, bool j = false, std::time_t wtimeout = 0)
-        : w(w)
-        , j(j)
-        , wtimeout(wtimeout)
-    {}
-    int             w;
-    bool            j;
-    std::time_t     wtimeout;
+    std::string     locale;
+    bool            caseLevel;
+    std::string     caseFirst;
+    int             strength;
+    bool            numericOrdering;
+    std::string     alternate;
+    std::string     maxVariable;
+    bool            backwards;
 };
 
 struct WriteErrors
@@ -45,64 +45,40 @@ struct CmdReply
     WriteConcernError           writeConcernError;
 };
 
-template<typename Document>
-class CmdDB_Query: public Op_Query<Document>
+class CmdDB_Reply: public Op_Reply<CmdReply>
 {
     public:
-        template<typename... Args>
-        CmdDB_Query(std::string const& db, std::string const& collection, QueryOptions&& options, Args&&... args)
-            : Op_Query<Document>(db + ".$cmd", std::forward<QueryOptions>(options), 1, 0, collection, std::forward<Args>(args)...)
-        {}
-        CmdDB_Query& unordered()                        {this->getQuery().unordered();    return *this;}
-        CmdDB_Query& byPass()                           {this->getQuery().byPass();       return *this;}
-        CmdDB_Query& setComment(std::string const& c)   {this->getQuery().setComment(c);  return *this;}
-        CmdDB_Query& setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0)
-        {
-            this->getQuery().setWrieConcern(w, j, wtimeout);
-            return *this;
-        }
+        bool replyCount() const;
+        virtual bool isOk() const override;
+        virtual std::string getHRErrorMessage() const override;
+    protected:
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Reply> const& reply);
+        std::ostream& printHR(std::ostream& stream) const {return Op_Reply::printHR(stream);}
+};
 
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Query> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, CmdDB_Query const& data) {return data.print(stream);}
+
+struct WriteConcern
+{
+    WriteConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+
+    int             w;
+    bool            j;
+    std::time_t     wtimeout;
 };
 
 class CmdDB_Base
 {
     public:
-        CmdDB_Base(bool ordered, WriteConcern concern, bool byPass, std::string const& comment = "")
-            : filter{{"ordered", false}, {"writeConcern", false}, {"bypassDocumentValidation", false}, {"comment", false}}
-            , ordered(ordered)
-            , writeConcern(concern)
-            , bypassDocumentValidation(byPass)
-            , comment(comment)
-        {
-            std::cerr << "CmdDB_Base:\n";
-        }
-        CmdDB_Base()
-        {}
-        void unordered()
-        {
-            ordered = false;
-            filter["ordered"] = true;
-        }
-        void byPass()
-        {
-            bypassDocumentValidation = true;
-            filter["bypassDocumentValidation"] = true;
-        }
-        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0)
-        {
-            writeConcern    = WriteConcern{w, j, wtimeout};
-            filter["writeConcern"]  = true;
-        }
-        void setComment(std::string const& c)
-        {
-            comment = c;
-            filter["comment"] = true;
-        }
+        CmdDB_Base();
+
+        void unordered();
+        void byPass();
+        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+        void setComment(std::string const& c);
+
     private:
         friend class ThorsAnvil::Serialize::Traits<CmdDB_Base>;
-        friend class ThorsAnvil::Serialize::TraitsMemberFilter<CmdDB_Base>;
+        friend class ThorsAnvil::Serialize::Filter<CmdDB_Base>;
         std::map<std::string, bool> filter;
         bool                        ordered                  = true;
         WriteConcern                writeConcern;
@@ -110,16 +86,34 @@ class CmdDB_Base
         std::string                 comment;
 };
 
-using CmdDB_Reply = Op_Reply<CmdReply>;
+template<typename Document>
+class CmdDB_Query: public Op_Query<Document>
+{
+    public:
+        template<typename... Args>
+        CmdDB_Query(std::string const& db, std::string const& collection, QueryOptions&& options, Args&&... args);
+
+        CmdDB_Query& unordered();
+        CmdDB_Query& byPass();
+        CmdDB_Query& setComment(std::string const& c);
+        CmdDB_Query& setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Query> const& data);
+        friend std::ostream& operator<<(std::ostream& stream, CmdDB_Query const& data) {return data.print(stream);}
+};
+
 
 }
 
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Collation,          locale, caseLevel, strength, numericOrdering, alternate, maxVariable, backwards);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcern,       w, j, wtimeout);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteErrors,        index, code, errmsg);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcernError,  code, errmsg);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReply,           ok, n, writeErrors, writeConcernError, errmsg, codeName, code);
 
+ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::CmdDB_Base,        filter);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdDB_Base,         ordered, writeConcern, bypassDocumentValidation, comment);
-ThorsAnvil_MakeTraitName_Filter(ThorsAnvil::DB::Mongo::CmdDB_Base, filter);
+
+#include "CmdDB.tpp"
 
 #endif

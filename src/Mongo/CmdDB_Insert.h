@@ -11,21 +11,15 @@ namespace ThorsAnvil::DB::Mongo
 template<typename Document>
 struct Insert: public CmdDB_Base
 {
-    Insert(std::string const& collection, Document const& doc)//, bool ordered, WriteConcern concern, bool byPass, std::string const& comment = "")
-        //: CmdDB_Base(ordered, concern, byPass, comment)
+    Insert(std::string const& collection, Document const& doc)
         : insert(collection)
         , documents(1, doc)
-    {
-        std::cerr << "Insert: " << documents.size() << "\n";
-    }
+    {}
     template<typename I>
-    Insert(std::string const& collection, I begin, I end)//, bool ordered, WriteConcern concern, bool byPass, std::string const& comment = "")
-        //: CmdDB_Base(ordered, concern, byPass, comment)
+    Insert(std::string const& collection, I begin, I end)
         : insert(collection)
         , documents(begin, end)
-    {
-        std::cerr << "Insert: " << documents.size() << "\n";
-    }
+    {}
     std::string                 insert;
     std::vector<Document>       documents;
 };
@@ -36,10 +30,10 @@ using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
 
 template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string const& db, std::string const& collection, QueryOptions&& options, I begin, I end)//, bool ordered, WriteConcern concern, bool byPass, std::string const& comment = "")
+make_CmdDB_Insert(std::string const& db, std::string const& collection, QueryOptions&& options, I begin, I end)
 {
     using Document = typename std::iterator_traits<I>::value_type;
-    return CmdDB_Insert<Document>(db, collection, std::move(options), begin, end);//, ordered, concern, byPass, comment);
+    return CmdDB_Insert<Document>(db, collection, std::move(options), begin, end);
 }
 
 }

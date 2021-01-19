@@ -67,36 +67,34 @@ std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
 }
 
 template<typename Document>
+Op_Reply<Document>::operator bool() const
+{
+    return this->isOk();
+}
+
+template<typename Document>
 bool Op_Reply<Document>::isOk()  const
 {
     return (responseFlags & (OP_ReplyFlag::QueryFailure | OP_ReplyFlag::CursorNotFound)) == OP_ReplyFlag::empty;
 }
 
 template<typename Document>
-Op_Reply<Document>::operator bool() const
+std::string Op_Reply<Document>::getHRErrorMessage() const
 {
-    return isOk();
-}
-
-template<typename Document>
-std::string const& Op_Reply<Document>::getFailureMessage() const
-{
-    // Only valid to call if isOk() is false;
-    return errorInfo.$err;
-}
-
-template<typename Document>
-std::string const& Op_Reply<Document>::getFailureCodeName() const
-{
-    // Only valid to call if isOk() is false;
-    return errorInfo.codeName;
-}
-
-template<typename Document>
-int Op_Reply<Document>::getFailureCode() const
-{
-    // Only valid to call if isOk() is false;
-    return errorInfo.code;
+    std::string result = "Op_Reply: ";
+    if (errorInfo.codeName.size() != 0 || errorInfo.$err.size() != 0)
+    {
+        result += std::to_string(errorInfo.code);
+        result += ": ";
+        result += errorInfo.codeName;
+        result += ": ";
+        result += errorInfo.$err;
+    }
+    else
+    {
+        result += "OK";
+    }
+    return result;
 }
 
 }

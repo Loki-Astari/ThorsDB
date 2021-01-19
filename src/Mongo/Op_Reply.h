@@ -52,6 +52,7 @@ struct Op_Reply
             , numberReturned(0)
             , errorInfo{1.0, 0, "", ""}
         {}
+        virtual ~Op_Reply() {}
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Reply> const& reply);
         friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)  {return reply.parse(stream);}
@@ -59,11 +60,9 @@ struct Op_Reply
         std::size_t     getDocumentCount()              const {return documents.size();}
         Document const& getDocument(std::size_t size)   const {return documents[size];}
 
-        bool                isOk()              const;
         explicit operator   bool()              const;
-        std::string const&  getFailureMessage() const;
-        std::string const&  getFailureCodeName()const;
-        int                 getFailureCode()    const;
+        virtual bool        isOk()              const;
+        virtual std::string getHRErrorMessage() const;
     protected:
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream) const;

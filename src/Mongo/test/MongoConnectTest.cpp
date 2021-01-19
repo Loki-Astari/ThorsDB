@@ -79,9 +79,7 @@ TEST(MongoConnectTest, CreateReply)
     }
     else
     {
-        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getFailureMessage()
-                  << "  Code: " << listOfDatabases.getFailureCode()
-                  << "\n";
+        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getHRErrorMessage() << "\n";
     }
 }
 
