@@ -12,36 +12,14 @@ template<typename Document>
 struct Insert
 {
     public:
-        Insert(std::string const& collection, Document const& doc)
-            : insert(collection)
-            , documents(1, doc)
-        {}
         template<typename I>
-        Insert(std::string const& collection, I begin, I end)
-            : insert(collection)
-            , documents(begin, end)
-        {}
+        Insert(std::string const& collection, I begin, I end);
+        Insert(std::string const& collection, Document const& doc);
 
-        void unordered()
-        {
-            ordered = false;
-            filter["ordered"] = true;
-        }
-        void byPass()
-        {
-            bypassDocumentValidation = false;
-            filter["bypassDocumentValidation"] = true;
-        }
-        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0)
-        {
-            writeConcern    = WriteConcern{w, j, wtimeout};
-            filter["writeConcern"]  = true;
-        }
-        void setComment(std::string&& c)
-        {
-            comment = c;
-            filter["comment"] = true;
-        }
+        void unordered();
+        void byPass();
+        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+        void setComment(std::string&& c);
     private:
         friend class ThorsAnvil::Serialize::Traits<Insert>;
         friend class ThorsAnvil::Serialize::Filter<Insert>;
@@ -70,5 +48,7 @@ make_CmdDB_Insert(std::string const& db, std::string const& collection, QueryOpt
 
 ThorsAnvil_Template_MakeFilter(1, ThorsAnvil::DB::Mongo::Insert,        filter);
 ThorsAnvil_Template_MakeTrait(1,  ThorsAnvil::DB::Mongo::Insert,        insert, documents, ordered, writeConcern, bypassDocumentValidation, comment);
+
+#include "CmdDB_Insert.tpp"
 
 #endif
