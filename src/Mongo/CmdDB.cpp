@@ -55,31 +55,3 @@ WriteConcern::WriteConcern(int w, bool j, std::time_t wtimeout)
     , j(j)
     , wtimeout(wtimeout)
 {}
-
-CmdDB_Base::CmdDB_Base()
-    : filter{{"ordered", false}, {"writeConcern", false}, {"bypassDocumentValidation", false}, {"comment", false}}
-{}
-
-void CmdDB_Base::unordered()
-{
-    ordered = false;
-    filter["ordered"] = true;
-}
-
-void CmdDB_Base::byPass()
-{
-    bypassDocumentValidation = false;
-    filter["bypassDocumentValidation"] = true;
-}
-
-void CmdDB_Base::setWrieConcern(int w, bool j, std::time_t wtimeout)
-{
-    writeConcern    = WriteConcern{w, j, wtimeout};
-    filter["writeConcern"]  = true;
-}
-
-void CmdDB_Base::setComment(std::string const& c)
-{
-    comment = c;
-    filter["comment"] = true;
-}

@@ -9,19 +9,49 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-struct Insert: public CmdDB_Base
+struct Insert
 {
-    Insert(std::string const& collection, Document const& doc)
-        : insert(collection)
-        , documents(1, doc)
-    {}
-    template<typename I>
-    Insert(std::string const& collection, I begin, I end)
-        : insert(collection)
-        , documents(begin, end)
-    {}
-    std::string                 insert;
-    std::vector<Document>       documents;
+    public:
+        Insert(std::string const& collection, Document const& doc)
+            : insert(collection)
+            , documents(1, doc)
+        {}
+        template<typename I>
+        Insert(std::string const& collection, I begin, I end)
+            : insert(collection)
+            , documents(begin, end)
+        {}
+
+        void unordered()
+        {
+            ordered = false;
+            filter["ordered"] = true;
+        }
+        void byPass()
+        {
+            bypassDocumentValidation = false;
+            filter["bypassDocumentValidation"] = true;
+        }
+        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0)
+        {
+            writeConcern    = WriteConcern{w, j, wtimeout};
+            filter["writeConcern"]  = true;
+        }
+        void setComment(std::string&& c)
+        {
+            comment = c;
+            filter["comment"] = true;
+        }
+    private:
+        friend class ThorsAnvil::Serialize::Traits<Insert>;
+        friend class ThorsAnvil::Serialize::Filter<Insert>;
+        std::map<std::string, bool> filter  = {{"ordered", false}, {"writeConcern", false}, {"bypassDocumentValidation", false}, {"comment", false}};
+        std::string                 insert;
+        std::vector<Document>       documents;
+        bool                        ordered                  = true;
+        WriteConcern                writeConcern;
+        bool                        bypassDocumentValidation = false;
+        std::string                 comment;
 };
 
 
@@ -38,6 +68,7 @@ make_CmdDB_Insert(std::string const& db, std::string const& collection, QueryOpt
 
 }
 
-ThorsAnvil_Template_ExpandTrait(1, ThorsAnvil::DB::Mongo::CmdDB_Base, ThorsAnvil::DB::Mongo::Insert, insert, documents);
+ThorsAnvil_Template_MakeFilter(1, ThorsAnvil::DB::Mongo::Insert,        filter);
+ThorsAnvil_Template_MakeTrait(1,  ThorsAnvil::DB::Mongo::Insert,        insert, documents, ordered, writeConcern, bypassDocumentValidation, comment);
 
 #endif

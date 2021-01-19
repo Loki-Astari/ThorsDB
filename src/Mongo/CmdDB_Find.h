@@ -10,7 +10,6 @@ namespace ThorsAnvil::DB::Mongo
 
 struct FindAll      {};
 struct DefaultSort  {};
-enum class ReadConcernLevel {local, available, majority, linearizable};
 
 struct ReadConcern
 {
@@ -69,113 +68,95 @@ class Find: public CmdDB_Base
             outputFilter["limit"]       = limit == 0 ? false : true;
             outputFilter["batchSize"]   = batchSize == 101 ? false : true;
         }
-        Find& addFileds(std::initializer_list<std::string> const& fieldNames)
+        void addFileds(std::initializer_list<std::string> const& fieldNames)
         {
             for (auto const& name: fieldNames)
             {
                 projection[name] = 1;
             }
             outputFilter["projection"]  = true;
-            return *this;
         }
-        Find& addHint(std::string&& hint)
+        void addHint(std::string&& hint)
         {
             hint = std::forward<std::string>(hint);
             outputFilter["hint"]        = true;
-            return *this;
         }
-        Find& setSkip(std::size_t val)
+        void setSkip(std::size_t val)
         {
             skip = val;
             outputFilter["skip"]        = true;
-            return *this;
         }
-        Find& setLimit(std::size_t val)
+        void setLimit(std::size_t val)
         {
             limit = val;
             outputFilter["limit"]        = true;
-            return *this;
         }
-        Find& setBatchSize(std::size_t val)
+        void setBatchSize(std::size_t val)
         {
             batchSize = s;
             outputFilter["batchSize"]   = true;
-            return *this;
         }
-        Find& singleBatch()
+        void singleBatch()
         {
             // Already set true. Just need to return it.
             outputFilter["singleBatch"] = true;
-            return *this;
         }
-        Find& addComment(std::string&& val)
+        void setComment(std::string&& val)
         {
             comment = std::forward<std::string>(val);
             outputFilter["comment"]     = true;
-            return *this;
         }
-        Find& setMaxTimeout(std::size_t val)
+        void setMaxTimeout(std::size_t val)
         {
             maxTimeMS   = val;
             outputFilter["maxTimeMS"]   = true;
-            reutrn *this;
         }
-        Find& addReadConcern(ReadConcernLevel val)
+        void addReadConcern(ReadConcernLevel val)
         {
             readConcern = ReadConcern{val};
             outputFilter["readConcern"] = true;
-            return *this;
         }
-        Find& addMax(std::string const& field, int val)
+        void addMax(std::string const& field, int val)
         {
             max[field] = val;
             outputFilter["max"]         = true;
-            return *this;
         }
-        Find& addMin(std::string const& field, int val)
+        void addMin(std::string const& field, int val)
         {
             min[field] = val;
             outputFilter["min"]         = true;
-            return *this;
         }
-        Find& justKeys()
+        void justKeys()
         {
             // Already set true. Just need to return it.
             outputFilter["returnKey"]   = true;
-            return *this;
         }
-        Find& showId()
+        void showId()
         {
             // Already set true. Just need to return it.
             outputFilter["showRecordId"]= true;
-            return *this;
         }
-        Find& tailableCursor()
+        void tailableCursor()
         {
             outputFilter["tailable"]    = true;
-            return *this;
         }
-        Find& tailedCursorAwait()
+        void tailedCursorAwait()
         {
             outputFilter["tailable"]    = true;
             outputFilter["awaitData"]   = true;
-            return *this;
         }
-        Find& setNoCursorTimeout()
+        void setNoCursorTimeout()
         {
             outputFilter["noCursorTimeout"] = true;
-            return *this;
         }
-        Find& setAllowPartialResults()
+        void setAllowPartialResults()
         {
             outputFilter["allowPartialResults"] = true;
-            return *this;
         }
         // TODO setCollation
-        Find& useDisk()
+        void useDisk()
         {
             outputFilter["allowDiskUse"]    = true;
-            return *this;
         }
     private:
         friend class ThorsAnvil::Serialize::Traits<Find>;
@@ -248,7 +229,6 @@ make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptio
 
 }
 
-ThorsAnvil_MakeEnum(ThorsAnvil::DB::Mongo::ReadConcernLevel,                                            local, available, majority, linearizable);
 ThorsAnvil_MakeTraits(ThorsAnvil::DB::Mongo::ReadConcern,                                               level);
 ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,                                          outputFilter);
 ThorsAnvil_Template_ExpandTrait(2, ThorsAnvil::DB::Mongo::CmdDB_Base, ThorsAnvil::DB::Mongo::Find,      find, filter, sort, projection, hint, skip, limit, batchSize,
