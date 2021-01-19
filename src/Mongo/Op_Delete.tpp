@@ -1,6 +1,10 @@
 #ifndef THORSANVIL_DB_MONGO_OP_DELETE_TPP
 #define THORSANVIL_DB_MONGO_OP_DELETE_TPP
 
+#ifndef THORSANVIL_DB_MONGO_OP_DELETE_H
+#error  "This should only be included from Op_Delete.h"
+#endif
+
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"

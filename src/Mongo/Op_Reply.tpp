@@ -1,6 +1,10 @@
 #ifndef THORSANVIL_DB_MONGO_OP_REPLY_TPP
 #define THORSANVIL_DB_MONGO_OP_REPLY_TPP
 
+#ifndef THORSANVIL_DB_MONGO_OP_REPLY_H
+#error  "This should only be included from Op_Reply.h"
+#endif
+
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/BsonThor.h"
 

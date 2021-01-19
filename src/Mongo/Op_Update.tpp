@@ -1,6 +1,10 @@
 #ifndef THORSANVIL_DB_MONGO_OP_UPDATE_TPP
 #define THORSANVIL_DB_MONGO_OP_UPDATE_TPP
 
+#ifndef THORSANVIL_DB_MONGO_OP_UPDATE_H
+#error  "This should only be included from Op_Update.h"
+#endif
+
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"

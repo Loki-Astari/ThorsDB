@@ -1,6 +1,10 @@
 #ifndef THORSANVIL_DB_MONGO_OP_QUERY_TPP
 #define THORSANVIL_DB_MONGO_OP_QUERY_TPP
 
+#ifndef THORSANVIL_DB_MONGO_OP_QUERY_H
+#error  "This should only be included from Op_Query.h"
+#endif
+
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
