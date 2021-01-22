@@ -5,6 +5,7 @@
 
 #include "Op_Query.h"
 #include "Op_Reply.h"
+#include "ThorSerialize/SerUtil.h"
 
 namespace ThorsAnvil::DB::Mongo
 {
