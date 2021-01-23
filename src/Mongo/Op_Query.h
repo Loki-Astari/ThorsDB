@@ -45,31 +45,13 @@ enum class Partial        {All,         Available};
 
 struct QueryOptions
 {
-    QueryOptions()
-        : tailableCursor(TailableCursor::Close)
-        , slave(Slave::Fail)
-        , oplog(Oplog::Replay)
-        , curser(Curser::IdleTimeout)
-        , data(Data::Wait)
-        , drain(Drain::SingleBlock)
-        , partial(Partial::All)
-    {}
-
-    QueryOptions& leaveOpen()        {tailableCursor = TailableCursor::LeaveOpen;return *this;}
-    QueryOptions& slaveOK()          {slave          = Slave::OK;                return *this;}
-    QueryOptions& opLogNoReplay()    {oplog          = Oplog::NoReplay;          return *this;}
-    QueryOptions& curserNoTimeout()  {curser         = Curser::NoTimeout;        return *this;}
-    QueryOptions& dataTimeout()      {data           = Data::Timeout;            return *this;}
-    QueryOptions& drainAll()         {drain          = Drain::All;               return *this;}
-    QueryOptions& partialAvailable() {partial        = Partial::Available;       return *this;}
-
-    TailableCursor      tailableCursor;
-    Slave               slave;
-    Oplog               oplog;
-    Curser              curser;
-    Data                data;
-    Drain               drain;
-    Partial             partial;
+    TailableCursor      tailableCursor  = TailableCursor::Close;
+    Slave               slave           = Slave::Fail;
+    Oplog               oplog           = Oplog::Replay;
+    Curser              curser          = Curser::IdleTimeout;
+    Data                data            = Data::Wait;
+    Drain               drain           = Drain::SingleBlock;
+    Partial             partial         = Partial::All;
 };
 
 template<typename Document>
