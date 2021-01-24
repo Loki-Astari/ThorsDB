@@ -37,6 +37,15 @@ struct WriteConcernError
     std::string                 errmsg;
 };
 
+struct WriteConcern
+{
+    WriteConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+
+    int             w;
+    bool            j;
+    std::time_t     wtimeout;
+};
+
 struct CmdReply
 {
     double                      ok;
@@ -57,16 +66,6 @@ class CmdDB_Reply: public Op_Reply<CmdReply>
     protected:
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Reply> const& reply);
         std::ostream& printHR(std::ostream& stream) const {return Op_Reply::printHR(stream);}
-};
-
-
-struct WriteConcern
-{
-    WriteConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
-
-    int             w;
-    bool            j;
-    std::time_t     wtimeout;
 };
 
 template<typename Document>
@@ -111,7 +110,6 @@ class CmdDB_Query: public Op_Query<Document>
         friend std::ostream& operator<<(std::ostream& stream, CmdDB_Query const& data) {return data.print(stream);}
 };
 
-
 }
 
 ThorsAnvil_MakeEnum(ThorsAnvil::DB::Mongo::ReadConcernLevel,    local, available, majority, linearizable);
@@ -120,7 +118,6 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcern,       w, j, wtimeout);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteErrors,        index, code, errmsg);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcernError,  code, errmsg);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReply,           ok, n, writeErrors, writeConcernError, errmsg, codeName, code);
-
 
 #include "CmdDB.tpp"
 

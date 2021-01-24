@@ -8,7 +8,6 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-
 template<typename Document>
 struct DeleteQuery
 {
@@ -52,6 +51,7 @@ make_CmdDB_Delete(std::string const& db, std::string const& collection, Op_Query
 {
     return CmdDB_Delete<Document>(db, collection, options, DeleteQuery{doc});
 }
+
 template<typename Document>
 CmdDB_Delete<Document>
 make_CmdDB_Delete(std::string const& db, std::string const& collection, Op_QueryOptions&& options, Document const& doc)

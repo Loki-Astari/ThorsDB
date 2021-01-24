@@ -2,7 +2,6 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-
 bool CmdDB_Reply::replyCount() const
 {
     // Assumes isCmdOK() is true

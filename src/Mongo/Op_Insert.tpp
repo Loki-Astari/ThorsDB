@@ -36,7 +36,6 @@ Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Op_InsertO
     header.prepareToSend(getSize());
 }
 
-
 template<typename Document>
 std::size_t Op_Insert<Document>::getSize() const
 {

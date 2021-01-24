@@ -36,7 +36,6 @@ Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Op_DeleteO
     header.prepareToSend(getSize());
 }
 
-
 template<typename Document>
 std::size_t Op_Delete<Document>::getSize() const
 {

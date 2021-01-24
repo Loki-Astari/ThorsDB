@@ -202,7 +202,6 @@ class Find
         bool                        allowDiskUse        = true;
 };
 
-
 template<typename Filter, typename Sort>
 using CmdDB_Find      = CmdDB_Query<Find<Filter, Sort>>;
 
@@ -261,6 +260,7 @@ make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, O
 }
 
 }
+
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindAll);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DefaultSort);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ReadConcern,            level);

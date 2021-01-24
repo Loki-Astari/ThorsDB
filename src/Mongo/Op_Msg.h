@@ -51,7 +51,6 @@ struct Op_MsgOptions
     OP_MsgFlag              flags    = OP_MsgFlag::empty;
 };
 
-
 // Op_Msg: https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
 template<typename... Kind>
 class Op_Msg: public Op_MsgOptions
@@ -91,7 +90,6 @@ class Op_MsgReply: public Op_Msg<Kind...>
 }
 
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
-
 
 #include "Op_Msg.tpp"
 

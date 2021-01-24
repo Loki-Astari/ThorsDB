@@ -8,7 +8,6 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-
 template<typename Document>
 Insert<Document>::Insert(std::string const& collection, Document const& doc)
     : insert(collection)

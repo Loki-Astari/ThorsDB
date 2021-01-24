@@ -22,6 +22,7 @@ Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Se
 {
     header.prepareToSend(getSize());
 }
+
 template<typename Selector, typename Update>
 Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector const& select, Update&& update)
     : header(OpCode::OP_UPDATE)
@@ -32,6 +33,7 @@ Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Se
 {
     header.prepareToSend(getSize());
 }
+
 template<typename Selector, typename Update>
 Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector&& select, Update const& update)
     : header(OpCode::OP_UPDATE)
@@ -42,6 +44,7 @@ Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Se
 {
     header.prepareToSend(getSize());
 }
+
 template<typename Selector, typename Update>
 Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector&& select, Update&& update)
     : header(OpCode::OP_UPDATE)

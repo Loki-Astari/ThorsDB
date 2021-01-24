@@ -69,6 +69,7 @@ struct Op_Reply
 };
 
 }
+
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_ReplyFlag, empty, CursorNotFound, QueryFailure, ShardConfigStale, AwaitCapable);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ErrorInfo,  ok, code, codeName, $err);
 

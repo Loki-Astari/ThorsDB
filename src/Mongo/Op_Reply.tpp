@@ -102,4 +102,5 @@ std::string Op_Reply<Document>::getHRErrorMessage() const
 }
 
 }
+
 #endif

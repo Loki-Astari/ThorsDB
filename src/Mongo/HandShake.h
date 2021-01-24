@@ -12,7 +12,6 @@
 #include <string>
 #include <sys/utsname.h>
 
-
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -28,6 +27,7 @@ class Driver
             , version(version)
         {}
 };
+
 class OS
 {
     std::string     type;
@@ -38,6 +38,7 @@ class OS
     public:
         OS();
 };
+
 class Application
 {
     std::string     name;
@@ -45,6 +46,7 @@ class Application
     public:
         Application(std::string const& application);
 };
+
 class Client
 {
     Application     application;
@@ -126,6 +128,7 @@ struct Binary
         char const* getBuffer() const           {return &data[0];}
         char*       getBuffer()                 {return &data[0];}
 };
+
 class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerializer<Binary, '\x00'>
 {
     public:
@@ -228,9 +231,7 @@ using Op_MsgAuthReply       = Op_MsgReply<Kind0<AuthReply>>;
 
 }
 
-
 ThorsAnvil_MakeTraitCustomSerialize(ThorsAnvil::DB::Mongo::Binary, ThorsAnvil::DB::Mongo::BinarySerializer);
-
 
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,             name, version);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,                 type, name, architecture, version);

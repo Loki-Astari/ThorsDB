@@ -3,7 +3,6 @@
 #include "HandShake.h"
 #include "ThorsCrypto/scram.h"
 
-
 using namespace ThorsAnvil::DB::Mongo;
 
 // This registers the name "mongo" to create a "MongoConnection" object.

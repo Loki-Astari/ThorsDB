@@ -20,7 +20,6 @@ inline Kind0<Data>::Kind0(Args&&... args)
     : data(std::forward<Args>(args)...)
 {}
 
-
 template<typename Data>
 inline std::size_t Kind0<Data>::getSize() const
 {
@@ -44,6 +43,7 @@ std::istream& Kind0<Data>::parse(std::istream& stream)
     stream >> ThorsAnvil::Serialize::bsonImporter(data);
     return stream;
 }
+
 template<typename Data>
 inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 {
