@@ -14,50 +14,16 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions options, std::int32_t count, std::int32_t skip, Args&&... args)
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, OP_QueryFlag flags, std::int32_t count, std::int32_t skip, Args&&... args)
     : header(OpCode::OP_QUERY)
-    , flags(OP_QueryFlag::empty)
+    , flags(flags)
     , fullCollectionName(fullCollectionName)
     , numberToSkip(skip)
     , numberToReturn(count)
     , query{std::forward<Args>(args)...}
     , returnFieldsSelector{}
 {
-    handleOptions(options);
     header.prepareToSend(getSize());
-}
-
-template<typename Document>
-void Op_Query<Document>::handleOptions(QueryOptions const& options)
-{
-    if (options.tailableCursor == TailableCursor::LeaveOpen)
-    {
-        flags |= OP_QueryFlag::TailableCursor;
-    }
-    if (options.slave == Slave::OK)
-    {
-        flags |= OP_QueryFlag::SlaveOk;;
-    }
-    if (options.oplog == Oplog::NoReplay)
-    {
-        flags |= OP_QueryFlag::OplogReplay;
-    }
-    if (options.curser == Curser::NoTimeout)
-    {
-        flags |= OP_QueryFlag::NoCursorTimeout;
-    }
-    if (options.data == Data::Timeout)
-    {
-        flags |= OP_QueryFlag::AwaitData;
-    }
-    if (options.drain == Drain::All)
-    {
-        flags |= OP_QueryFlag::Exhaust;
-    }
-    if (options.partial == Partial::Available)
-    {
-        flags |= OP_QueryFlag::Partial;
-    }
 }
 
 template<typename Document>

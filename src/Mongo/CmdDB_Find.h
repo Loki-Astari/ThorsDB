@@ -207,30 +207,30 @@ template<typename Filter, typename Sort>
 using CmdDB_Find      = CmdDB_Query<Find<Filter, Sort>>;
 
 CmdDB_Find<FindAll, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_Find(std::string const& db, std::string const& collection, OP_QueryFlag flags, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<FindAll, DefaultSort>(db, collection, std::forward<QueryOptions>(options), skip, limit, batchSize);
+    return CmdDB_Find<FindAll, DefaultSort>(db, collection, flags, skip, limit, batchSize);
 }
 
 template<typename Filter>
 CmdDB_Find<Filter, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, Filter&& filter, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_Find(std::string const& db, std::string const& collection, OP_QueryFlag flags, Filter&& filter, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<QueryOptions>(options), std::forward<Filter>(filter), skip, limit, batchSize);
+    return CmdDB_Find<Filter, DefaultSort>(db, collection, flags, std::forward<Filter>(filter), skip, limit, batchSize);
 }
 
 template<typename Filter, typename Sort>
 CmdDB_Find<Filter, Sort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, Filter&& filter, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_Find(std::string const& db, std::string const& collection, OP_QueryFlag flags, Filter&& filter, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<Filter, Sort>(db, collection, std::forward<QueryOptions>(options), std::forward<Filter>(filter), std::forward<Sort>(sort), skip, limit, batchSize);
+    return CmdDB_Find<Filter, Sort>(db, collection, flags, std::forward<Filter>(filter), std::forward<Sort>(sort), skip, limit, batchSize);
 }
 
 template<typename Sort>
 CmdDB_Find<FindAll, Sort>
-make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, QueryOptions&& options, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, OP_QueryFlag flags, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<FindAll, Sort>(db, collection, std::forward<QueryOptions>(options), std::forward<Sort>(sort), skip, limit, batchSize);
+    return CmdDB_Find<FindAll, Sort>(db, collection, flags, std::forward<Sort>(sort), skip, limit, batchSize);
 }
 
 }

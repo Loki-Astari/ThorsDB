@@ -48,9 +48,9 @@ using CmdDB_Delete      = CmdDB_Query<Delete<Document>>;
 
 template<typename Document>
 CmdDB_Delete<Document>
-make_CmdDB_Delete(std::string const& db, std::string const& collection, QueryOptions&& options, Document const& doc)
+make_CmdDB_Delete(std::string const& db, std::string const& collection, OP_QueryFlag flags, Document const& doc)
 {
-    return CmdDB_Delete<Document>(db, collection, std::move(options), DeleteQuery{doc});
+    return CmdDB_Delete<Document>(db, collection, flags, DeleteQuery{doc});
 }
 
 }

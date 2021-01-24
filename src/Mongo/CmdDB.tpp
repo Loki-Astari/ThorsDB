@@ -10,8 +10,8 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-CmdDB_Query<Document>::CmdDB_Query(std::string const& db, std::string const& collection, QueryOptions&& options, Args&&... args)
-    : Op_Query<Document>(db + ".$cmd", std::forward<QueryOptions>(options), 1, 0, collection, std::forward<Args>(args)...)
+CmdDB_Query<Document>::CmdDB_Query(std::string const& db, std::string const& collection, OP_QueryFlag flags, Args&&... args)
+    : Op_Query<Document>(db + ".$cmd", flags, 1, 0, collection, std::forward<Args>(args)...)
 {}
 
 template<typename Document>

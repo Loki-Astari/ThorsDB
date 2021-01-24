@@ -14,7 +14,7 @@ ThorsAnvil_MakeTrait(User, user, password, age);
 TEST(CmdDB_DeleteTest, Base)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::QueryOptions{}, user);
+    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, user);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -25,7 +25,7 @@ TEST(CmdDB_DeleteTest, Base)
 TEST(CmdDB_DeleteTest, BaseUnordered)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::QueryOptions{}, user).unordered();
+    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, user).unordered();
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -36,7 +36,7 @@ TEST(CmdDB_DeleteTest, BaseUnordered)
 TEST(CmdDB_DeleteTest, BaseSetWrieConcern)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::QueryOptions{}, user).setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, user).setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -47,7 +47,7 @@ TEST(CmdDB_DeleteTest, BaseSetWrieConcern)
 TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcern)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::QueryOptions{}, user).unordered().setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Delete("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, user).unordered().setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);

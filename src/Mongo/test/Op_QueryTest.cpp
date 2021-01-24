@@ -35,7 +35,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorLeaveOpen2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.tailableCursor = TailableCursor::LeaveOpen}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::TailableCursor, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -58,7 +58,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorSlaveOk2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.slave = Slave::OK}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::SlaveOk, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -81,7 +81,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorOpLogNoReplay2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.oplog = Oplog::NoReplay}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::OplogReplay, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -104,7 +104,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorCurserNoTimeout2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.curser = Curser::NoTimeout}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::NoCursorTimeout, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -127,7 +127,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDataTimeout2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.data = Data::Timeout}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::AwaitData, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -150,7 +150,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDrainAll2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.drain = Drain::All}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::Exhaust, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -173,7 +173,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorPartialAvailable2)
     MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.partial = Partial::Available}, 1, 0, "DataString"s, 48);
+    stream << Op_Query<StringAndIntNoConstructor>("thor.collection", OP_QueryFlag::Partial, 1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x54\x00\x00\x00"          // Size
@@ -197,14 +197,13 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorAll2)
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection",
-                                                  {.tailableCursor  = TailableCursor::LeaveOpen,
-                                                   .slave           = Slave::OK,
-                                                   .oplog           = Oplog::NoReplay,
-                                                   .curser          = Curser::NoTimeout,
-                                                   .data            = Data::Timeout,
-                                                   .drain           = Drain::All,
-                                                   .partial         = Partial::Available,
-                                                  },
+                                                      OP_QueryFlag::TailableCursor
+                                                    | OP_QueryFlag::SlaveOk
+                                                    | OP_QueryFlag::OplogReplay
+                                                    | OP_QueryFlag::NoCursorTimeout
+                                                    | OP_QueryFlag::AwaitData
+                                                    | OP_QueryFlag::Exhaust
+                                                    | OP_QueryFlag::Partial,
                                                   1, 0, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header

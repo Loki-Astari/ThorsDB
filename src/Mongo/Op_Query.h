@@ -35,25 +35,6 @@ enum class OP_QueryFlag : std::int32_t
 
 using FieldSelector = std::map<std::string, int>;
 
-enum class TailableCursor {Close,       LeaveOpen};
-enum class Slave          {Fail,        OK};
-enum class Oplog          {Replay,      NoReplay};
-enum class Curser         {IdleTimeout, NoTimeout};
-enum class Data           {Wait,        Timeout};
-enum class Drain          {SingleBlock, All};
-enum class Partial        {All,         Available};
-
-struct QueryOptions
-{
-    TailableCursor      tailableCursor  = TailableCursor::Close;
-    Slave               slave           = Slave::Fail;
-    Oplog               oplog           = Oplog::Replay;
-    Curser              curser          = Curser::IdleTimeout;
-    Data                data            = Data::Wait;
-    Drain               drain           = Drain::SingleBlock;
-    Partial             partial         = Partial::All;
-};
-
 template<typename Document>
 class Op_Query
 {
@@ -66,7 +47,7 @@ class Op_Query
     FieldSelector   returnFieldsSelector;
     public:
         template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, QueryOptions options, std::int32_t count, std::int32_t skip, Args&&... args);
+        Op_Query(std::string const& fullCollectionName, OP_QueryFlag flags, std::int32_t count, std::int32_t skip, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
@@ -74,7 +55,6 @@ class Op_Query
         Document& getQuery();
     private:
         std::size_t   getSize()                     const;
-        void          handleOptions(QueryOptions const& options);
     protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
