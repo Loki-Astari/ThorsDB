@@ -13,8 +13,8 @@ FILE_WARNING_FLAGS			+= -Wno-dollar-in-identifier-extension -Wno-unknown-pragmas
 %/MongoConnection.o:		CXXFLAGS += -Wno-deprecated-declarations
 
 %/MongoConnectTest.o:		CXXFLAGS += -Wno-deprecated-declarations
-%/MsgHeaderTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/HandShakeTest.o:			CXXFLAGS += -Wno-deprecated-declarations
+%/Op_MsgHeaderTest.o:		CXXFLAGS += -Wno-deprecated-declarations
 %/Op_QueryTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/Op_InsertTest.o:			CXXFLAGS += -Wno-deprecated-declarations
 %/Op_DeleteTest.o:			CXXFLAGS += -Wno-deprecated-declarations

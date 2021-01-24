@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_REPLY_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -36,7 +36,7 @@ struct Op_Reply
 {
     using Documents = std::vector<Document>;
 
-    MsgHeader               header;                 // standard message header
+    Op_MsgHeader            header;                 // standard message header
     OP_ReplyFlag            responseFlags;          // bit vector - see details above
     std::int64_t            cursorID;               // cursor id if client needs to do get more's
     std::int32_t            startingFrom;           // where in the cursor this reply is starting

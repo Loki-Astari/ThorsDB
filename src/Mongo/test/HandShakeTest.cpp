@@ -271,7 +271,7 @@ BSON
         "\x00"s;
 
 
-    MsgHeader::messageIdSetForTest(0);
+    Op_MsgHeader::messageIdSetForTest(0);
     Op_QueryHandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
 
     std::stringstream   stream;
@@ -448,7 +448,7 @@ BSON
                             "\x6c\x53\x65\x4d\x4a\x50\x56\x02\x24\x64\x62\x00\x05\x00\x00\x00"
                             "\x74\x68\x6f\x72\x00\x00"s; // \x10\x44\x12\x5c"s;
 
-    MsgHeader::messageIdSetForTest(0x1);
+    Op_MsgHeader::messageIdSetForTest(0x1);
     AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
     Op_MsgAuthInit      authInitMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authInit);
 
@@ -594,7 +594,7 @@ bd 34 27 d8 // Checksum
                             "\x73\x61\x74\x69\x6f\x6e\x49\x64\x00\x01\x00\x00\x00\x02\x24\x64"
                             "\x62\x00\x05\x00\x00\x00\x74\x68\x6f\x72\x00\x00"s; //"\xbd\x34\x27\xd8"s;
 
-    MsgHeader::messageIdSetForTest(0x2);
+    Op_MsgHeader::messageIdSetForTest(0x2);
     AuthCont        authCont(1, "thor", "c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s);
     Op_MsgAuthCont  authContMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authCont);
 
@@ -731,7 +731,7 @@ BSON
                             "\x00\x01\x00\x00\x00\x02\x24\x64\x62\x00\x05\x00\x00\x00\x74\x68"
                             "\x6f\x72\x00\x00"s;//\x3d\x9c\x10\x02"s;
 
-    MsgHeader::messageIdSetForTest(0x3);
+    Op_MsgHeader::messageIdSetForTest(0x3);
     AuthCont        authCont(1, "thor"s, ""s);
     Op_MsgAuthCont  authContMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authCont);
 

@@ -11,7 +11,7 @@ using std::string_literals::operator""s;
 
 TEST(Op_DeleteTest, Op_DeleteStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0xA2A5F5);
+    Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
     stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {}, "DataString"s, 48);
@@ -34,7 +34,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectNoFlag)
 }
 TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
 {
-    MsgHeader::messageIdSetForTest(0xA2A5F5);
+    Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
     stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {.flags = OP_DeleteFlag::SingleRemove}, "DataString"s, 48);
@@ -57,7 +57,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
 }
 TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
 {
-    MsgHeader::messageIdSetForTest(0xA2A5F5);
+    Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
     stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {}, "DataString"s, 48);
@@ -81,7 +81,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
 
 TEST(Op_DeleteTest, Op_DeleteStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
     Op_Delete<StringAndIntNoConstructor>    query("thor.collection", {}, "DataString"s, 48);
 
     std::stringstream stream;

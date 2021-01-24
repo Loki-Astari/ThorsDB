@@ -9,7 +9,7 @@ using std::string_literals::operator""s;
 
 TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0x184A89);
+    Op_MsgHeader::messageIdSetForTest(0x184A89);
 
     std::stringstream stream;
     stream << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
@@ -37,7 +37,7 @@ TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
 
 TEST(Op_UpdateTest, Op_UpdateStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
     Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>   update("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
 
     std::stringstream stream;

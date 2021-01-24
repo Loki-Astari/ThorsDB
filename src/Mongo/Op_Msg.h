@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_MSG_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <istream>
@@ -55,7 +55,7 @@ struct Op_MsgOptions
 template<typename... Kind>
 class Op_Msg: public Op_MsgOptions
 {
-    MsgHeader               header;             // standard message header
+    Op_MsgHeader            header;             // standard message header
     std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
     std::int32_t            checksum;           // checksum of message;
 

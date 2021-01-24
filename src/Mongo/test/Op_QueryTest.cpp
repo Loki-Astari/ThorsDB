@@ -9,7 +9,7 @@ using std::string_literals::operator""s;
 
 TEST(Op_QueryTest, Op_QueryStreamObjectNoFlag2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {}, "DataString"s, 48);
@@ -32,7 +32,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectNoFlag2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorLeaveOpen2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::TailableCursor}, "DataString"s, 48);
@@ -55,7 +55,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorLeaveOpen2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorSlaveOk2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::SlaveOk}, "DataString"s, 48);
@@ -78,7 +78,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorSlaveOk2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorOpLogNoReplay2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::OplogReplay}, "DataString"s, 48);
@@ -101,7 +101,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorOpLogNoReplay2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorCurserNoTimeout2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::NoCursorTimeout}, "DataString"s, 48);
@@ -124,7 +124,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorCurserNoTimeout2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDataTimeout2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::AwaitData}, "DataString"s, 48);
@@ -147,7 +147,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDataTimeout2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDrainAll2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::Exhaust}, "DataString"s, 48);
@@ -170,7 +170,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDrainAll2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorPartialAvailable2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection", {.flags = OP_QueryFlag::Partial}, "DataString"s, 48);
@@ -193,7 +193,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorPartialAvailable2)
 }
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorAll2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
     stream << Op_Query<StringAndIntNoConstructor>("thor.collection",
@@ -226,7 +226,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorAll2)
 
 TEST(Op_QueryTest, Op_QueryStreamObjectHumanReadable2)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
     StringAndIntNoConstructor               object{"DataString"s, 48};
     Op_Query<StringAndIntNoConstructor>     query("thor.collection", {}, object);
 

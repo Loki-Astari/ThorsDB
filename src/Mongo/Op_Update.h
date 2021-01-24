@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_UPDATE_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -21,7 +21,7 @@ enum class OP_UpdateFlag : std::int32_t
 template<typename Selector, typename Update>
 class Op_Update
 {
-    MsgHeader       header;
+    Op_MsgHeader       header;
     // std::int32_t    zero;               // 0 reserved for future use
     std::string     fullCollectionName;
     OP_UpdateFlag   flags;

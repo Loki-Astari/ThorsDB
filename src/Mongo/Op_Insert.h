@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_INSERT_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 
@@ -29,7 +29,7 @@ struct Op_InsertOptions
 template<typename Document>
 struct Op_Insert: public Op_InsertOptions
 {
-    MsgHeader               header;             // standard message header
+    Op_MsgHeader            header;             // standard message header
     std::string             fullCollectionName;
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:

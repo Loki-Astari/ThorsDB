@@ -8,7 +8,7 @@ using std::string_literals::operator""s;
 
 TEST(Op_MsgTest, Op_MsgSerializeMessage)
 {
-    MsgHeader::messageIdSetForTest(0xAF6789);
+    Op_MsgHeader::messageIdSetForTest(0xAF6789);
     SimpleStringNoConstructor                       object{"The String data"s};
     Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{{}, Kind0<SimpleStringNoConstructor>(object)};
 
@@ -16,7 +16,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessage)
     stream << message1;
 
     // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
-    EXPECT_EQ(stream.str(),                     // MsgHeader
+    EXPECT_EQ(stream.str(),                     // Op_MsgHeader
                             "\x37\x00\x00\x00"      // size       Header(16) + Op_Msg(4 + Kind0 + 4) :  Note: Kind0 => 1 +  BSON(SimpleStringNoConstructor)
                             "\x89\x67\xAF\x00"      // requestId
                             "\x00\x00\x00\x00"      // always zero when we create it.
@@ -34,14 +34,14 @@ TEST(Op_MsgTest, Op_MsgSerializeMessage)
 #if 0
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 {
-    MsgHeader::messageIdSetForTest(0xAF6789);
+    Op_MsgHeader::messageIdSetForTest(0xAF6789);
     Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
 
     std::stringstream   stream;
     stream << message1;
 
     // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
-    EXPECT_EQ(stream.str(),                     // MsgHeader
+    EXPECT_EQ(stream.str(),                     // Op_MsgHeader
                             "\x37\x00\x00\x00"      // size       Header(16) + Op_Msg(4 + Kind0 + 4) :  Note: Kind0 => 1 +  BSON(SimpleStringNoConstructor)
                             "\x89\x67\xAF\x00"      // requestId
                             "\x00\x00\x00\x00"      // always zero when we create it.
@@ -61,7 +61,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0xAF6789);
+    Op_MsgHeader::messageIdSetForTest(0xAF6789);
     SimpleStringNoConstructor                       object{"The String data"s};
     Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{{}, Kind0<SimpleStringNoConstructor>(object)};
 
@@ -81,7 +81,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 #if 0
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 {
-    MsgHeader::messageIdSetForTest(0xAF6789);
+    Op_MsgHeader::messageIdSetForTest(0xAF6789);
     Op_Msg<Kind0<SimpleStringNoConstructor>>           message1("The String data"s);
 
     std::stringstream   make_hr(stream);

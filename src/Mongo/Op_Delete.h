@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_DELETE_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 
@@ -28,7 +28,7 @@ struct Op_DeleteOptions
 template<typename Document>
 struct Op_Delete: public Op_DeleteOptions
 {
-    MsgHeader               header;             // standard message header
+    Op_MsgHeader            header;             // standard message header
     std::string             fullCollectionName;
     Document                selector;           // query object.
     public:

@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_QUERY_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -46,7 +46,7 @@ struct Op_QueryOptions
 template<typename Document>
 class Op_Query: public Op_QueryOptions
 {
-    MsgHeader       header;
+    Op_MsgHeader    header;
     std::string     fullCollectionName;
     Document        query;
     public:

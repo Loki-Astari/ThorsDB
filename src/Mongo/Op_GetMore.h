@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_GETMORE_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -19,7 +19,7 @@ struct Op_GetMoreOptions
 
 class Op_GetMore: public Op_GetMoreOptions
 {
-    MsgHeader       header;
+    Op_MsgHeader     header;
     std::string     fullCollectionName;
     public:
         Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions const& options);
