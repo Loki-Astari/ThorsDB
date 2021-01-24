@@ -215,7 +215,7 @@ class Op_QueryHandShake: public Op_Query<HandShake>
     public:
         template<typename... Args>
         Op_QueryHandShake(Args&&... args)
-            : Op_Query("admin.$cmd", OP_QueryFlag::empty, 1, 0, std::forward<Args>(args)...)
+            : Op_Query("admin.$cmd", {}, std::forward<Args>(args)...)
         {}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return data.print(stream);}

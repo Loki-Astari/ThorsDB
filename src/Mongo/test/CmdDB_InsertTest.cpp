@@ -10,11 +10,12 @@ struct User
 };
 ThorsAnvil_MakeTrait(User, user, password, age);
 
+using ThorsAnvil::DB::Mongo::make_CmdDB_Insert;
 
 TEST(CmdDB_InsertTest, Base)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users));
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users));
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -25,7 +26,7 @@ TEST(CmdDB_InsertTest, Base)
 TEST(CmdDB_InsertTest, BaseUnordered)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered();
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered();
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -36,7 +37,7 @@ TEST(CmdDB_InsertTest, BaseUnordered)
 TEST(CmdDB_InsertTest, BaseBypass)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).byPass();
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).byPass();
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -47,7 +48,7 @@ TEST(CmdDB_InsertTest, BaseBypass)
 TEST(CmdDB_InsertTest, BaseUnordredBypass)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().byPass();
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().byPass();
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -58,7 +59,7 @@ TEST(CmdDB_InsertTest, BaseUnordredBypass)
 TEST(CmdDB_InsertTest, BaseSetWrieConcern)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -69,7 +70,7 @@ TEST(CmdDB_InsertTest, BaseSetWrieConcern)
 TEST(CmdDB_InsertTest, BaseUnorderedWrieConcern)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -80,7 +81,7 @@ TEST(CmdDB_InsertTest, BaseUnorderedWrieConcern)
 TEST(CmdDB_InsertTest, BaseBypassWriteConcenr)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).byPass().setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).byPass().setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -91,7 +92,7 @@ TEST(CmdDB_InsertTest, BaseBypassWriteConcenr)
 TEST(CmdDB_InsertTest, BaseUnorderedBypassWriteConcenr)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().byPass().setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().byPass().setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -103,7 +104,7 @@ TEST(CmdDB_InsertTest, BaseUnorderedBypassWriteConcenr)
 TEST(CmdDB_InsertTest, BaseSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -114,7 +115,7 @@ TEST(CmdDB_InsertTest, BaseSetComment)
 TEST(CmdDB_InsertTest, BaseUnorderedSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -125,7 +126,7 @@ TEST(CmdDB_InsertTest, BaseUnorderedSetComment)
 TEST(CmdDB_InsertTest, BaseBypassSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).byPass().setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).byPass().setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -136,7 +137,7 @@ TEST(CmdDB_InsertTest, BaseBypassSetComment)
 TEST(CmdDB_InsertTest, BaseUnordredBypassSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().byPass().setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().byPass().setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -147,7 +148,7 @@ TEST(CmdDB_InsertTest, BaseUnordredBypassSetComment)
 TEST(CmdDB_InsertTest, BaseSetWrieConcernSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).setWrieConcern(2, false, 400).setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).setWrieConcern(2, false, 400).setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -158,7 +159,7 @@ TEST(CmdDB_InsertTest, BaseSetWrieConcernSetComment)
 TEST(CmdDB_InsertTest, BaseUnorderedWrieConcernSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().setWrieConcern(2, false, 400).setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().setWrieConcern(2, false, 400).setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -169,7 +170,7 @@ TEST(CmdDB_InsertTest, BaseUnorderedWrieConcernSetComment)
 TEST(CmdDB_InsertTest, BaseBypassWriteConcenrSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).byPass().setWrieConcern(2, false, 400).setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).byPass().setWrieConcern(2, false, 400).setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -180,7 +181,7 @@ TEST(CmdDB_InsertTest, BaseBypassWriteConcenrSetComment)
 TEST(CmdDB_InsertTest, BaseUnorderedBypassWriteConcenrSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
-    auto insert = make_CmdDB_Insert("database", "collection", ThorsAnvil::DB::Mongo::OP_QueryFlag::empty, std::begin(users), std::end(users)).unordered().byPass().setWrieConcern(2, false, 400).setComment("Testing comment");
+    auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().byPass().setWrieConcern(2, false, 400).setComment("Testing comment");
 
     std::stringstream stream;
     stream << make_hr(insert);

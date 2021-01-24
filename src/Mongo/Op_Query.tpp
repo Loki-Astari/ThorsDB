@@ -14,14 +14,22 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, OP_QueryFlag flags, std::int32_t count, std::int32_t skip, Args&&... args)
-    : header(OpCode::OP_QUERY)
-    , flags(flags)
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions const& options, Args&&... args)
+    : QueryOptions(options)
+    , header(OpCode::OP_QUERY)
     , fullCollectionName(fullCollectionName)
-    , numberToSkip(skip)
-    , numberToReturn(count)
     , query{std::forward<Args>(args)...}
-    , returnFieldsSelector{}
+{
+    header.prepareToSend(getSize());
+}
+
+template<typename Document>
+template<typename... Args>
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions&& options, Args&&... args)
+    : QueryOptions(std::move(options))
+    , header(OpCode::OP_QUERY)
+    , fullCollectionName(fullCollectionName)
+    , query{std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }
@@ -37,8 +45,8 @@ std::size_t Op_Query<Document>::getSize() const
 {
     std::size_t objectSize = sizeof(flags)
                            + fullCollectionName.size() + 1
-                           + sizeof(numberToSkip)
-                           + sizeof(numberToReturn)
+                           + sizeof(skip)
+                           + sizeof(ret)
                            + ThorsAnvil::Serialize::bsonGetPrintSize(query);
     if (!returnFieldsSelector.empty())
     {
@@ -53,8 +61,8 @@ std::ostream& Op_Query<Document>::print(std::ostream& stream) const
     stream << header
            << make_LE(flags)
            << fullCollectionName << '\0'
-           << make_LE(numberToSkip)
-           << make_LE(numberToReturn)
+           << make_LE(skip)
+           << make_LE(ret)
            << ThorsAnvil::Serialize::bsonExporter(query);
     if (!returnFieldsSelector.empty())
     {
@@ -69,8 +77,8 @@ std::ostream& Op_Query<Document>::printHR(std::ostream& stream) const
     stream << make_hr(header)
            << "flags:               " << flags << "\n"
            << "fullCollectionName:  " << fullCollectionName << "\n"
-           << "numberToSkip:        " << numberToSkip << "\n"
-           << "numberToReturn:      " << numberToReturn << "\n"
+           << "numberToSkip:        " << skip << "\n"
+           << "numberToReturn:      " << ret << "\n"
            << "query:               " << ThorsAnvil::Serialize::jsonExporter(query) << "\n";
     if (!returnFieldsSelector.empty())
     {

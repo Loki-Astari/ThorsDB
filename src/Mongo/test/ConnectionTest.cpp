@@ -51,7 +51,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Make sure there are zero objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 100, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.skip = 100, .ret = 0});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -80,7 +80,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Check there are three objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 100, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.ret = 100});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -100,7 +100,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Get the three objects one at time using GET_MORE
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 2, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.ret = 2});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
@@ -130,7 +130,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
     // Get the two of three objects then kill cursor
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 2, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.ret = 2});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
@@ -152,7 +152,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Check the query can actual filter.
     {
-        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, OP_QueryFlag::empty, 100, 0, "Another");
+        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -173,7 +173,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
     {
         connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
 
-        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, OP_QueryFlag::empty, 100, 0, "Another");
+        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -198,7 +198,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Make sure that the delete worked.
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 100, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.ret = 100});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -230,7 +230,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // reset the collection to be empty.
     {
-        connection << make_CmdDB_Delete("test", "ConnectionTest", OP_QueryFlag::empty, FindAll{});
+        connection << make_CmdDB_Delete("test", "ConnectionTest", {}, FindAll{});
         CmdDB_Reply   reply;
         connection >> reply;
 
@@ -246,7 +246,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // Make sure there are zero objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 100, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.ret = 100});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -271,7 +271,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
                                                                      StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
                                                                     };
 
-        connection << make_CmdDB_Insert("test", "ConnectionTest", OP_QueryFlag::empty, std::begin(objects), std::end(objects));
+        connection << make_CmdDB_Insert("test", "ConnectionTest", {}, std::begin(objects), std::end(objects));
         CmdDB_Reply   reply;
         connection >> reply;
 
@@ -288,7 +288,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // Check there are three objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, OP_QueryFlag::empty, 100, 0);
+        connection << Op_Query<FindAll>(fullConnection, {.ret = 100});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
