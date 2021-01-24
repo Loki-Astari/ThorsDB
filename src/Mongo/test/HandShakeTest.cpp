@@ -450,7 +450,7 @@ BSON
 
     MsgHeader::messageIdSetForTest(0x1);
     AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
-    Op_MsgAuthInit      authInitMessage(/*OP_MsgFlag::checksumPresent,*/authInit);
+    Op_MsgAuthInit      authInitMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authInit);
 
     std::stringstream   stream;
     stream << authInitMessage;
@@ -596,7 +596,7 @@ bd 34 27 d8 // Checksum
 
     MsgHeader::messageIdSetForTest(0x2);
     AuthCont        authCont(1, "thor", "c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s);
-    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
+    Op_MsgAuthCont  authContMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authCont);
 
     std::stringstream stream;
     stream << authContMessage;
@@ -733,7 +733,7 @@ BSON
 
     MsgHeader::messageIdSetForTest(0x3);
     AuthCont        authCont(1, "thor"s, ""s);
-    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
+    Op_MsgAuthCont  authContMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authCont);
 
     std::stringstream stream;
     stream << authContMessage;

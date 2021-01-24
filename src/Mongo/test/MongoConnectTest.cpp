@@ -31,7 +31,7 @@ TEST(MongoConnectTest, CreateReply)
     HandShakeReplyDoc const&    handShakeReply = handShakeReplyMessage.getDocument(0);
 
     // Send Auth Init: We can use SHA-256 Send scram package
-    stream << Op_MsgAuthInit(AuthInit(THOR_TESTING_MONGO_DB, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
+    stream << Op_MsgAuthInit({}, AuthInit(THOR_TESTING_MONGO_DB, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
     Op_MsgAuthReply         authInitReplyMessage;
     stream >> authInitReplyMessage;
@@ -40,7 +40,7 @@ TEST(MongoConnectTest, CreateReply)
     ASSERT_EQ(authInitReply.ok,     1);
 
     // Send Auth Cont: Send proof we know the password
-    stream << Op_MsgAuthCont(AuthCont(authInitReply.conversationId, THOR_TESTING_MONGO_DB, client.getProofMessage(THOR_TESTING_MONGO_PASS, authInitReply.payload.data))) << std::flush;
+    stream << Op_MsgAuthCont({}, AuthCont(authInitReply.conversationId, THOR_TESTING_MONGO_DB, client.getProofMessage(THOR_TESTING_MONGO_PASS, authInitReply.payload.data))) << std::flush;
 
     Op_MsgAuthReply         authContReplyMessage;
     stream >> authContReplyMessage;
@@ -49,7 +49,7 @@ TEST(MongoConnectTest, CreateReply)
     ASSERT_EQ(authContReply.ok,     1);
 
     // Send Auth Cont 2: Send the DB Info
-    stream << Op_MsgAuthCont(AuthCont(authContReply.conversationId, THOR_TESTING_MONGO_DB, ""s)) << std::flush;
+    stream << Op_MsgAuthCont({}, AuthCont(authContReply.conversationId, THOR_TESTING_MONGO_DB, ""s)) << std::flush;
 
     Op_MsgAuthReply         authContReply2Message;
     stream >> authContReply2Message;

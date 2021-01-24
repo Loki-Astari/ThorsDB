@@ -11,15 +11,19 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-class Op_GetMore
+struct Op_GetMoreOptions
+{
+    std::int32_t    ret;
+    std::int64_t    cursorID;
+};
+
+class Op_GetMore: public Op_GetMoreOptions
 {
     MsgHeader       header;
-    // std::int32_t    zero;               // 0 reserved for future use
     std::string     fullCollectionName;
-    std::int32_t    numberToReturn;
-    std::int64_t    cursorID;
     public:
-        Op_GetMore(std::string const& fullCollectionName, std::int32_t count, std::int64_t cursor);
+        Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions const& options);
+        Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions&& options);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_GetMore> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_GetMore const& data) {return data.print(stream);}

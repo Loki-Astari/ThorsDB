@@ -75,7 +75,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
         StringAndIntNoConstructor               object2{"Another"s, 22};
         StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
-        connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, object1, object2, object3);
+        connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, {}, object1, object2, object3);
     }
 
     // Check there are three objects in the collection.
@@ -110,7 +110,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
         EXPECT_EQ(reply1.numberReturned, 2);
         ASSERT_EQ(reply1.documents.size(), 2);
 
-        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply2;
         connection >> reply2;
@@ -119,7 +119,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
         EXPECT_EQ(reply2.numberReturned, 1);
         ASSERT_EQ(reply2.documents.size(), 1);
 
-        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply3;
         connection >> reply3;
@@ -142,7 +142,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
         connection << Op_KillCursors({reply1.cursorID});
 
-        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply2;
         connection >> reply2;

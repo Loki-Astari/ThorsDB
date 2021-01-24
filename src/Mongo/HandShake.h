@@ -224,7 +224,7 @@ class Op_QueryHandShake: public Op_Query<HandShake>
 using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
 using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
 using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
-using Op_MsgAuthReply       = Op_Msg<Kind0<AuthReply>>;
+using Op_MsgAuthReply       = Op_MsgReply<Kind0<AuthReply>>;
 
 }
 

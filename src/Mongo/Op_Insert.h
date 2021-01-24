@@ -21,23 +21,22 @@ enum class OP_InsertFlag : std::int32_t
                                 // reported by getLastError.
 };
 
-struct InsertOptions
+struct Op_InsertOptions
 {
-    OP_InsertFlag           flags;
+    OP_InsertFlag           flags           = OP_InsertFlag::empty;
 };
 
 template<typename Document>
-struct Op_Insert
+struct Op_Insert: public Op_InsertOptions
 {
     MsgHeader               header;             // standard message header
-    OP_InsertFlag           flags;              // bit vector - see above
-    std::string             fullCollectionName; // "dbname.collectionname"
+    std::string             fullCollectionName;
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:
         template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, OP_InsertFlag flags, Args&&... args);
+        Op_Insert(std::string const& fullCollectionName, Op_InsertOptions const& options, Args&&... args);
         template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, Args&&... args);
+        Op_Insert(std::string const& fullCollectionName, Op_InsertOptions&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Insert> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Insert const& data) {return data.print(stream);}

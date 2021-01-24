@@ -46,21 +46,25 @@ struct Kind0
 
 // TODO Kind1
 
+struct Op_MsgOptions
+{
+    OP_MsgFlag              flags    = OP_MsgFlag::empty;
+};
+
 
 // Op_Msg: https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
 template<typename... Kind>
-class Op_Msg
+class Op_Msg: public Op_MsgOptions
 {
     MsgHeader               header;             // standard message header
-    OP_MsgFlag              flagBits;           // message flags
     std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
     std::int32_t            checksum;           // checksum of message;
 
     public:
         template<typename... Args>
-        Op_Msg(Args&&... args);
+        Op_Msg(Op_MsgOptions const& options, Args&&... args);
         template<typename... Args>
-        Op_Msg(OP_MsgFlag flag, Args&&... kind);
+        Op_Msg(Op_MsgOptions&& options, Args&&... args);
 
         std::ostream& print(std::ostream& stream)       const;
         std::istream& parse(std::istream& stream);
@@ -74,6 +78,14 @@ class Op_Msg
         friend std::ostream& operator<<(std::ostream& stream, Op_Msg const& msg)           {return msg.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                 {return msg.parse(stream);}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
+};
+
+template<typename... Kind>
+class Op_MsgReply: public Op_Msg<Kind...>
+{
+    public:
+        template<typename... Args>
+        Op_MsgReply(Args&&... args);
 };
 
 }

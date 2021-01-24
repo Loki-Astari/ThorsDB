@@ -20,23 +20,22 @@ enum class OP_DeleteFlag : std::int32_t
                                     // 1-31 are reserved. Must be set to 0.
 };
 
-struct DeleteOptions
+struct Op_DeleteOptions
 {
-    OP_DeleteFlag       flags = OP_DeleteFlag::empty;
+    OP_DeleteFlag           flags       = OP_DeleteFlag::empty;
 };
 
 template<typename Document>
-struct Op_Delete: public DeleteOptions
+struct Op_Delete: public Op_DeleteOptions
 {
     MsgHeader               header;             // standard message header
-    // std::int32_t            zero;               // 0 reserved for future use
-    std::string             fullCollectionName; // "dbname.collectionname"
+    std::string             fullCollectionName;
     Document                selector;           // query object.
     public:
         template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, DeleteOptions const& flag, Args&&... args);
+        Op_Delete(std::string const& fullCollectionName, Op_DeleteOptions const& flags, Args&&... args);
         template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, DeleteOptions&& flag, Args&&... args);
+        Op_Delete(std::string const& fullCollectionName, Op_DeleteOptions&& flags, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Delete> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Delete const& data) {return data.print(stream);}

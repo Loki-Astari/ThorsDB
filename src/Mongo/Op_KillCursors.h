@@ -14,7 +14,6 @@ namespace ThorsAnvil::DB::Mongo
 class Op_KillCursors
 {
     MsgHeader                   header;
-    // std::int32_t                zero;               // 0 reserved for future use
     std::int32_t                numberOfCursorIDs;
     std::vector<std::int64_t>   cursorIDs;
     public:

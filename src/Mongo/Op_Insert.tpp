@@ -16,9 +16,9 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, OP_InsertFlag flags, Args&&... args)
-    : header(OpCode::OP_INSERT)
-    , flags(flags)
+Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Op_InsertOptions const& options, Args&&... args)
+    : Op_InsertOptions(options)
+    , header(OpCode::OP_INSERT)
     , fullCollectionName(fullCollectionName)
     , documents({Document{std::forward<Args>(args)}...})
 {
@@ -27,9 +27,9 @@ Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, OP_InsertF
 
 template<typename Document>
 template<typename... Args>
-Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Args&&... args)
-    : header(OpCode::OP_INSERT)
-    , flags(OP_InsertFlag::ContinueOnError)
+Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Op_InsertOptions&& options, Args&&... args)
+    : Op_InsertOptions(std::move(options))
+    , header(OpCode::OP_INSERT)
     , fullCollectionName(fullCollectionName)
     , documents({Document{std::forward<Args>(args)}...})
 {

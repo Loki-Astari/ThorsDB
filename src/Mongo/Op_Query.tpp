@@ -14,8 +14,8 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions const& options, Args&&... args)
-    : QueryOptions(options)
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Op_QueryOptions const& options, Args&&... args)
+    : Op_QueryOptions(options)
     , header(OpCode::OP_QUERY)
     , fullCollectionName(fullCollectionName)
     , query{std::forward<Args>(args)...}
@@ -25,8 +25,8 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions
 
 template<typename Document>
 template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, QueryOptions&& options, Args&&... args)
-    : QueryOptions(std::move(options))
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Op_QueryOptions&& options, Args&&... args)
+    : Op_QueryOptions(std::move(options))
     , header(OpCode::OP_QUERY)
     , fullCollectionName(fullCollectionName)
     , query{std::forward<Args>(args)...}

@@ -38,14 +38,14 @@ using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
 
 template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string const& db, std::string const& collection, QueryOptions const& options, I begin, I end)
+make_CmdDB_Insert(std::string const& db, std::string const& collection, Op_QueryOptions const& options, I begin, I end)
 {
     using Document = typename std::iterator_traits<I>::value_type;
     return CmdDB_Insert<Document>(db, collection, options, begin, end);
 }
 template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string const& db, std::string const& collection, QueryOptions&& options, I begin, I end)
+make_CmdDB_Insert(std::string const& db, std::string const& collection, Op_QueryOptions&& options, I begin, I end)
 {
     using Document = typename std::iterator_traits<I>::value_type;
     return CmdDB_Insert<Document>(db, collection, std::move(options), begin, end);

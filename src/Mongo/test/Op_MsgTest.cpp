@@ -10,7 +10,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessage)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
     SimpleStringNoConstructor                       object{"The String data"s};
-    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{Kind0<SimpleStringNoConstructor>(object)};
+    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{{}, Kind0<SimpleStringNoConstructor>(object)};
 
     std::stringstream   stream;
     stream << message1;
@@ -63,7 +63,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 {
     MsgHeader::messageIdSetForTest(0xAF6789);
     SimpleStringNoConstructor                       object{"The String data"s};
-    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{Kind0<SimpleStringNoConstructor>(object)};
+    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{{}, Kind0<SimpleStringNoConstructor>(object)};
 
     std::stringstream   stream;
     stream << make_hr(message1);

@@ -35,7 +35,7 @@ enum class OP_QueryFlag : std::int32_t
 
 using FieldSelector = std::map<std::string, int>;
 
-struct QueryOptions
+struct Op_QueryOptions
 {
     OP_QueryFlag    flags                   = OP_QueryFlag::empty;
     std::int32_t    skip                    = 0;
@@ -44,16 +44,16 @@ struct QueryOptions
 };
 
 template<typename Document>
-class Op_Query: public QueryOptions
+class Op_Query: public Op_QueryOptions
 {
     MsgHeader       header;
     std::string     fullCollectionName;
     Document        query;
     public:
         template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, QueryOptions const& options, Args&&... args);
+        Op_Query(std::string const& fullCollectionName, Op_QueryOptions const& options, Args&&... args);
         template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, QueryOptions&& options, Args&&... args);
+        Op_Query(std::string const& fullCollectionName, Op_QueryOptions&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}

@@ -13,11 +13,19 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 inline
-Op_GetMore::Op_GetMore(std::string const& fullCollectionName, std::int32_t count, std::int64_t cursor)
-    : header(OpCode::OP_GET_MORE)
+Op_GetMore::Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions const& options)
+    : Op_GetMoreOptions(options)
+    , header(OpCode::OP_GET_MORE)
     , fullCollectionName(fullCollectionName)
-    , numberToReturn(count)
-    , cursorID(cursor)
+{
+    header.prepareToSend(getSize());
+}
+
+inline
+Op_GetMore::Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions&& options)
+    : Op_GetMoreOptions(std::move(options))
+    , header(OpCode::OP_GET_MORE)
+    , fullCollectionName(fullCollectionName)
 {
     header.prepareToSend(getSize());
 }
@@ -27,7 +35,7 @@ std::size_t Op_GetMore::getSize() const
 {
     std::size_t objectSize = sizeof(std::int32_t)               // ZERO
                            + fullCollectionName.size() + 1
-                           + sizeof(numberToReturn)
+                           + sizeof(ret)
                            + sizeof(cursorID);
     return objectSize;
 }
@@ -38,7 +46,7 @@ std::ostream& Op_GetMore::print(std::ostream& stream) const
     stream << header
            << make_LE(std::int32_t{0})
            << fullCollectionName << '\0'
-           << make_LE(numberToReturn)
+           << make_LE(ret)
            << make_LE(cursorID);
     return stream;
 }
@@ -49,7 +57,7 @@ std::ostream& Op_GetMore::printHR(std::ostream& stream) const
     stream << make_hr(header)
            << "ZERO:                " << 0 << " (reserved)\n"
            << "fullCollectionName:  " << fullCollectionName << "\n"
-           << "numberToReturn:      " << numberToReturn << "\n"
+           << "numberToReturn:      " << ret << "\n"
            << "cursorID:            " << cursorID << "\n";
     return stream;
 }
