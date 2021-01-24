@@ -46,7 +46,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // reset the collection to be empty.
     {
-        connection << Op_Delete<FindAll>(fullConnection);
+        connection << Op_Delete<FindAll>(fullConnection, {});
     }
 
     // Make sure there are zero objects in the collection.
@@ -193,7 +193,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Delete an item from the collection.
     {
-        connection << Op_Delete<SimpleStringNoConstructor>(fullConnection, "DataString");
+        connection << Op_Delete<SimpleStringNoConstructor>(fullConnection, {}, "DataString");
     }
 
     // Make sure that the delete worked.

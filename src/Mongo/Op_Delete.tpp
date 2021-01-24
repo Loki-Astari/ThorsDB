@@ -16,20 +16,21 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, OP_DeleteFlag flags, Args&&... args)
-    : header(OpCode::OP_DELETE)
+Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, DeleteOptions const& options, Args&&... args)
+    : DeleteOptions(options)
+    , header(OpCode::OP_DELETE)
     , fullCollectionName(fullCollectionName)
-    , flags(flags)
     , selector{std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }
+
 template<typename Document>
 template<typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Args&&... args)
-    : header(OpCode::OP_DELETE)
+Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, DeleteOptions&& options, Args&&... args)
+    : DeleteOptions(std::move(options))
+    , header(OpCode::OP_DELETE)
     , fullCollectionName(fullCollectionName)
-    , flags(OP_DeleteFlag::empty)
     , selector{std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());

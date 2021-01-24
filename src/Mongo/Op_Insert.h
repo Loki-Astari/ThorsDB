@@ -21,6 +21,11 @@ enum class OP_InsertFlag : std::int32_t
                                 // reported by getLastError.
 };
 
+struct InsertOptions
+{
+    OP_InsertFlag           flags;
+};
+
 template<typename Document>
 struct Op_Insert
 {
