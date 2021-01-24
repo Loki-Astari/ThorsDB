@@ -20,8 +20,6 @@ enum class OP_DeleteFlag : std::int32_t
                                     // 1-31 are reserved. Must be set to 0.
 };
 
-enum class Remove { Single, Multiple };
-
 template<typename Document>
 struct Op_Delete
 {
@@ -32,7 +30,7 @@ struct Op_Delete
     Document                selector;           // query object.
     public:
         template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, Remove remove, Args&&... args);
+        Op_Delete(std::string const& fullCollectionName, OP_DeleteFlag flag, Args&&... args);
         template<typename... Args>
         Op_Delete(std::string const& fullCollectionName, Args&&... args);
 

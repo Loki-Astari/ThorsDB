@@ -37,7 +37,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
     MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", Remove::Single, "DataString"s, 48);
+    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", OP_DeleteFlag::SingleRemove, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -60,7 +60,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
     MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", Remove::Multiple, "DataString"s, 48);
+    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", OP_DeleteFlag::empty, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size

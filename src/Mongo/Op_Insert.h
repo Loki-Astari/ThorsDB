@@ -21,8 +21,6 @@ enum class OP_InsertFlag : std::int32_t
                                 // reported by getLastError.
 };
 
-enum class InsertError { Stop, Cont };
-
 template<typename Document>
 struct Op_Insert
 {
@@ -32,7 +30,7 @@ struct Op_Insert
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:
         template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, InsertError insertError, Args&&... args);
+        Op_Insert(std::string const& fullCollectionName, OP_InsertFlag flags, Args&&... args);
         template<typename... Args>
         Op_Insert(std::string const& fullCollectionName, Args&&... args);
 

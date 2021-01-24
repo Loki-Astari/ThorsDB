@@ -16,16 +16,12 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename... Args>
-Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, InsertError insertError, Args&&... args)
+Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, OP_InsertFlag flags, Args&&... args)
     : header(OpCode::OP_INSERT)
-    , flags(OP_InsertFlag::empty)
+    , flags(flags)
     , fullCollectionName(fullCollectionName)
     , documents({Document{std::forward<Args>(args)}...})
 {
-    if (insertError == InsertError::Cont)
-    {
-        flags |= OP_InsertFlag::ContinueOnError;
-    }
     header.prepareToSend(getSize());
 }
 

@@ -50,7 +50,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorStop)
     StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
     std::stringstream stream;
-    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", InsertError::Stop, object1, object2, object3);
+    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", OP_InsertFlag::empty, object1, object2, object3);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -83,7 +83,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorCont)
     StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
     std::stringstream stream;
-    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", InsertError::Cont, object1, object2, object3);
+    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", OP_InsertFlag::ContinueOnError, object1, object2, object3);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
