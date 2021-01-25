@@ -11,8 +11,17 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
+template<typename Actual>
+using Base                  = std::remove_cv_t<std::remove_reference_t<std::remove_cv_t<Actual>>>;
+
 template<typename Actual, typename Expected>
-using ValidOption = std::enable_if_t<std::is_same_v<std::remove_cv_t<std::remove_reference_t<std::remove_cv_t<Actual>>>, Expected>, bool>;
+using ValidOption           = std::enable_if_t<std::is_same_v<Expected, Base<Actual>>, bool>;
+
+template<typename Actual, typename Expected>
+using DerivedOption         = std::enable_if_t<std::is_base_of_v<Expected, Base<Actual>>, bool>;
+
+template<typename Actual, typename Expected>
+using DerivedStrictOption   = std::enable_if_t<(!std::is_same_v<Expected, Base<Actual>>) && std::is_base_of_v<Expected, Base<Actual>>, bool>;
 
 
 enum class OpCode : std::int32_t

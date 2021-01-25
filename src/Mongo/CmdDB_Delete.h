@@ -21,52 +21,73 @@ struct DeleteQuery
     std::map<std::string, bool>     filter;
 };
 
-template<typename Document>
-struct Delete
+struct DeleteOptions
 {
-    public:
-        template<typename I>
-        Delete(std::string const& collection, I begin, I end);
-        Delete(std::string const& collection, DeleteQuery<Document> const& doc);
-
-        void unordered();
-        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
-    private:
-        friend class ThorsAnvil::Serialize::Traits<Delete>;
-        friend class ThorsAnvil::Serialize::Filter<Delete>;
-        friend class ThorsAnvil::Serialize::Override<Delete>;
-        std::map<std::string, bool> filter = {{"ordered", false}, {"writeConcern", false}};
-        std::string                             deleteFrom;
-        std::vector<DeleteQuery<Document>>      deletes;
         bool                                    ordered                  = true;
         WriteConcern                            writeConcern;
+};
+class DeleteOptional
+{
+    public:
+        DeleteOptional(DeleteOptions const& options)
+            : ordered(options.ordered)
+            , writeConcern(options.writeConcern)
+        {}
+        DeleteOptional(DeleteOptions&& options)
+            : ordered(std::move(options.ordered))
+            , writeConcern(std::move(options.writeConcern))
+        {}
+        void unordered(bool val = true);
+        void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+    private:
+        friend class ThorsAnvil::Serialize::Traits<DeleteOptional>;
+        friend class ThorsAnvil::Serialize::Filter<DeleteOptional>;
+        std::map<std::string, bool> filter = {{"ordered", false}, {"writeConcern", false}};
+        bool                                    ordered;
+        WriteConcern                            writeConcern;
+};
+
+struct DeleteQueryOptions: public Op_QueryOptions, public DeleteOptions {};
+
+template<typename Actual>
+using ValidCmdDelOption = ValidOption<Actual, DeleteQueryOptions>;
+
+template<typename Document>
+struct Delete: public DeleteOptional
+{
+    public:
+        template<typename Opt = DeleteQueryOptions, ValidCmdDelOption<Opt> = true, typename I>
+        Delete(Opt&& options, std::string const& collection, I begin, I end);
+        template<typename Opt = DeleteQueryOptions, ValidCmdDelOption<Opt> = true>
+        Delete(Opt&& options, std::string const& collection, DeleteQuery<Document> const& doc);
+
+    private:
+        friend class ThorsAnvil::Serialize::Traits<Delete>;
+        friend class ThorsAnvil::Serialize::Override<Delete>;
+        std::string                             deleteFrom;
+        std::vector<DeleteQuery<Document>>      deletes;
 };
 
 template<typename Document>
 using CmdDB_Delete      = CmdDB_Query<Delete<Document>>;
 
-template<typename Document>
+template<typename Opt = DeleteQueryOptions, ValidCmdDelOption<Opt> = true, typename Document>
 CmdDB_Delete<Document>
-make_CmdDB_Delete(std::string const& db, std::string const& collection, Op_QueryOptions const& options, Document const& doc)
+make_CmdDB_Delete(std::string const& db, std::string const& collection, Opt&& options, Document const& doc)
 {
-    return CmdDB_Delete<Document>(db, collection, options, DeleteQuery{doc});
-}
-
-template<typename Document>
-CmdDB_Delete<Document>
-make_CmdDB_Delete(std::string const& db, std::string const& collection, Op_QueryOptions&& options, Document const& doc)
-{
-    return CmdDB_Delete<Document>(db, collection, std::move(options), DeleteQuery{doc});
+    return CmdDB_Delete<Document>(db, collection, std::forward<Opt>(options), DeleteQuery{doc});
 }
 
 }
 
-ThorsAnvil_Template_MakeFilter(1, ThorsAnvil::DB::Mongo::DeleteQuery,   filter);
-ThorsAnvil_Template_MakeTrait(1,  ThorsAnvil::DB::Mongo::DeleteQuery,   q, limit , collation, hint);
+ThorsAnvil_Template_MakeFilter(1, ThorsAnvil::DB::Mongo::DeleteQuery,       filter);
+ThorsAnvil_Template_MakeTrait(1,  ThorsAnvil::DB::Mongo::DeleteQuery,       q, limit , collation, hint);
 
-ThorsAnvil_Template_MakeFilter(1,   ThorsAnvil::DB::Mongo::Delete,      filter);
-ThorsAnvil_Template_MakeOverride(1, ThorsAnvil::DB::Mongo::Delete,      {"deleteFrom", "delete"});
-ThorsAnvil_Template_MakeTrait(1,    ThorsAnvil::DB::Mongo::Delete,     deleteFrom, deletes, ordered, writeConcern);
+ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::DeleteOptional,                filter);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DeleteOptional,                 ordered, writeConcern);
+
+ThorsAnvil_Template_MakeOverride(1, ThorsAnvil::DB::Mongo::Delete,          {"deleteFrom", "delete"});
+ThorsAnvil_Template_ExpandTrait(1,  ThorsAnvil::DB::Mongo::DeleteOptional, ThorsAnvil::DB::Mongo::Delete,     deleteFrom, deletes);
 
 #include "CmdDB_Delete.tpp"
 

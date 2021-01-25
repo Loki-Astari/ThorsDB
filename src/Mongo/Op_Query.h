@@ -44,7 +44,9 @@ struct Op_QueryOptions
 };
 
 template<typename Actual>
-using ValidQueryOptions = ValidOption<Actual, Op_QueryOptions>;
+using ValidQueryOptions     = ValidOption<Actual, Op_QueryOptions>;
+template<typename Actual>
+using DerivedQueryOptions   = DerivedStrictOption<Actual, Op_QueryOptions>;
 
 template<typename Document>
 class Op_Query: public Op_QueryOptions
@@ -54,6 +56,8 @@ class Op_Query: public Op_QueryOptions
     Document        query;
     public:
         template<typename Opt = Op_QueryOptions, ValidQueryOptions<Opt> = true, typename... Args>
+        Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
+        template<typename Opt = Op_QueryOptions, DerivedQueryOptions<Opt> = true, typename... Args>
         Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);

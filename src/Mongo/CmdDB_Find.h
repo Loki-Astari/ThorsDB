@@ -18,12 +18,31 @@ struct ReadConcern
 
 class Sort {};
 
-template<typename Filter, typename Sort>
-class Find
+struct FindOptions
+{
+};
+struct FindOptional
 {
     public:
-        Find(std::string const& collection, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
+        FindOptional(FindOptions const&)
+        {}
+        FindOptional(FindOptions&&)
+        {}
+};
+
+struct FindQueryOptions: public Op_QueryOptions, public FindOptions {};
+
+template<typename Actual>
+using ValidCmdFindOption = ValidOption<Actual, FindQueryOptions>;
+
+template<typename Filter, typename Sort>
+class Find: public FindOptional
+{
+    public:
+        template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
+        Find(Opt&& options, std::string const& collection, std::size_t skip, std::size_t limit, std::size_t batchSize)
+            : FindOptional(options)
+            , find(collection)
             , skip(skip)
             , limit(limit)
             , batchSize(batchSize)
@@ -32,8 +51,10 @@ class Find
             outputFilter["limit"]       = limit == 0 ? false : true;
             outputFilter["batchSize"]   = batchSize == 101 ? false : true;
         }
-        Find(std::string const& collection, Filter&& filter, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
+        template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
+        Find(Opt&& options, std::string const& collection, Filter&& filter, std::size_t skip, std::size_t limit, std::size_t batchSize)
+            : FindOptions(options)
+            , find(collection)
             , filter(std::forward<Filter>(filter))
             , skip(skip)
             , limit(limit)
@@ -44,8 +65,10 @@ class Find
             outputFilter["limit"]       = limit == 0 ? false : true;
             outputFilter["batchSize"]   = batchSize == 101 ? false : true;
         }
-        Find(std::string const& collection, Filter&& filter, Sort&& sort, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
+        template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
+        Find(Opt&& options, std::string const& collection, Filter&& filter, Sort&& sort, std::size_t skip, std::size_t limit, std::size_t batchSize)
+            : FindOptions(options)
+            , find(collection)
             , filter(std::forward<Filter>(filter))
             , sort(std::forward<Sort>(sort))
             , skip(skip)
@@ -58,8 +81,10 @@ class Find
             outputFilter["limit"]       = limit == 0 ? false : true;
             outputFilter["batchSize"]   = batchSize == 101 ? false : true;
         }
-        Find(std::string const& collection, Sort&& sort, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
+        template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
+        Find(Opt&& options, std::string const& collection, Sort&& sort, std::size_t skip, std::size_t limit, std::size_t batchSize)
+            : FindOptions(options)
+            , find(collection)
             , filter{}
             , sort(std::forward<Sort>(sort))
             , skip(skip)
@@ -205,58 +230,32 @@ class Find
 template<typename Filter, typename Sort>
 using CmdDB_Find      = CmdDB_Query<Find<Filter, Sort>>;
 
+template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
 CmdDB_Find<FindAll, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Op_QueryOptions const& options, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<FindAll, DefaultSort>(db, collection, options, skip, limit, batchSize);
+    return CmdDB_Find<FindAll, DefaultSort>(db, collection, std::forward<Opt>(options), skip, limit, batchSize);
 }
 
-template<typename Filter>
+template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Filter>
 CmdDB_Find<Filter, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Op_QueryOptions const& options, Filter&& filter, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options, Filter&& filter, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<Filter, DefaultSort>(db, collection, options, std::forward<Filter>(filter), skip, limit, batchSize);
+    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<Opt>(options), std::forward<Filter>(filter), skip, limit, batchSize);
 }
 
-template<typename Filter, typename Sort>
+template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Filter, typename Sort>
 CmdDB_Find<Filter, Sort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Op_QueryOptions const& options, Filter&& filter, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options, Filter&& filter, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<Filter, Sort>(db, collection, options, std::forward<Filter>(filter), std::forward<Sort>(sort), skip, limit, batchSize);
+    return CmdDB_Find<Filter, Sort>(db, collection, std::forward<Opt>(options), std::forward<Filter>(filter), std::forward<Sort>(sort), skip, limit, batchSize);
 }
 
-template<typename Sort>
+template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Sort>
 CmdDB_Find<FindAll, Sort>
-make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, Op_QueryOptions const& options, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, Opt&& options, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
 {
-    return CmdDB_Find<FindAll, Sort>(db, collection, options, std::forward<Sort>(sort), skip, limit, batchSize);
-}
-
-CmdDB_Find<FindAll, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Op_QueryOptions&& options, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
-{
-    return CmdDB_Find<FindAll, DefaultSort>(db, collection, std::move(options), skip, limit, batchSize);
-}
-
-template<typename Filter>
-CmdDB_Find<Filter, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Op_QueryOptions&& options, Filter&& filter, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
-{
-    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::move(options), std::forward<Filter>(filter), skip, limit, batchSize);
-}
-
-template<typename Filter, typename Sort>
-CmdDB_Find<Filter, Sort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Op_QueryOptions&& options, Filter&& filter, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
-{
-    return CmdDB_Find<Filter, Sort>(db, collection, std::move(options), std::forward<Filter>(filter), std::forward<Sort>(sort), skip, limit, batchSize);
-}
-
-template<typename Sort>
-CmdDB_Find<FindAll, Sort>
-make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, Op_QueryOptions&& options, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
-{
-    return CmdDB_Find<FindAll, Sort>(db, collection, std::move(options), std::forward<Sort>(sort), skip, limit, batchSize);
+    return CmdDB_Find<FindAll, Sort>(db, collection, std::forward<Opt>(options), std::forward<Sort>(sort), skip, limit, batchSize);
 }
 
 }
@@ -264,8 +263,10 @@ make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, O
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindAll);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DefaultSort);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ReadConcern,            level);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindOptional);
 ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,      outputFilter);
-ThorsAnvil_Template_MakeTrait(2, ThorsAnvil::DB::Mongo::Find,       find, filter, sort , projection, hint, skip, limit, batchSize,
+ThorsAnvil_Template_ExpandTrait(2,ThorsAnvil::DB::Mongo::FindOptional,
+                                  ThorsAnvil::DB::Mongo::Find,      find, filter, sort , projection, hint, skip, limit, batchSize,
                                                                     singleBatch, comment, maxTimeMS, readConcern, max, min, returnKey,
                                                                     showRecordId, tailable, awaitData, noCursorTimeout, allowPartialResults,
                                                                     collation, allowDiskUse);

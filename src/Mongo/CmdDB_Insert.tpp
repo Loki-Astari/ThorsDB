@@ -9,45 +9,20 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-Insert<Document>::Insert(std::string const& collection, Document const& doc)
-    : insert(collection)
+template<typename Opt, ValidCmdInsOption<Opt>>
+Insert<Document>::Insert(Opt&& options, std::string const& collection, Document const& doc)
+    : InsertOptional(std::forward<Opt>(options))
+    , insert(collection)
     , documents(1, doc)
 {}
 
 template<typename Document>
-template<typename I>
-Insert<Document>::Insert(std::string const& collection, I begin, I end)
-    : insert(collection)
+template<typename Opt, ValidCmdInsOption<Opt>, typename I>
+Insert<Document>::Insert(Opt&& options, std::string const& collection, I begin, I end)
+    : InsertOptional(std::forward<Opt>(options))
+    , insert(collection)
     , documents(begin, end)
 {}
-
-template<typename Document>
-void Insert<Document>::unordered()
-{
-    ordered = false;
-    filter["ordered"] = true;
-}
-
-template<typename Document>
-void Insert<Document>::byPass()
-{
-    bypassDocumentValidation = false;
-    filter["bypassDocumentValidation"] = true;
-}
-
-template<typename Document>
-void Insert<Document>::setWrieConcern(int w, bool j, std::time_t wtimeout)
-{
-    writeConcern    = WriteConcern{w, j, wtimeout};
-    filter["writeConcern"]  = true;
-}
-
-template<typename Document>
-void Insert<Document>::setComment(std::string&& c)
-{
-    comment = c;
-    filter["comment"] = true;
-}
 
 }
 

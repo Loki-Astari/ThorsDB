@@ -24,6 +24,17 @@ Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Opt&& option
 }
 
 template<typename Document>
+template<typename Opt, DerivedQueryOptions<Opt>, typename... Args>
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args)
+    : Op_QueryOptions(std::forward<Opt>(options))
+    , header(OpCode::OP_QUERY)
+    , fullCollectionName(fullCollectionName)
+    , query{std::forward<Opt>(options), std::forward<Args>(args)...}
+{
+    header.prepareToSend(getSize());
+}
+
+template<typename Document>
 Document& Op_Query<Document>::getQuery()
 {
     return query;

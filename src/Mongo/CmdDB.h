@@ -40,6 +40,10 @@ struct WriteConcernError
 struct WriteConcern
 {
     WriteConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+    friend bool operator!=(WriteConcern const& lhs, WriteConcern const& rhs)
+    {
+        return std::tie(lhs.w, lhs.j, lhs.wtimeout) != std::tie(rhs.w, rhs.j, rhs.wtimeout);
+    }
 
     int             w;
     bool            j;
@@ -68,14 +72,15 @@ class CmdDB_Reply: public Op_Reply<CmdReply>
         std::ostream& printHR(std::ostream& stream) const {return Op_Reply::printHR(stream);}
 };
 
+template<typename Actual>
+using ValidCmdQryOption = DerivedOption<Actual, Op_QueryOptions>;
+
 template<typename Document>
 class CmdDB_Query: public Op_Query<Document>
 {
     public:
-        template<typename... Args>
-        CmdDB_Query(std::string const& db, std::string const& collection, Op_QueryOptions const& options, Args&&... args);
-        template<typename... Args>
-        CmdDB_Query(std::string const& db, std::string const& collection, Op_QueryOptions&& options, Args&&... args);
+        template<typename Opt = Op_QueryOptions, ValidCmdQryOption<Op_QueryOptions> = true, typename... Args>
+        CmdDB_Query(std::string const& db, std::string const& collection, Opt&& options, Args&&... args);
 
         // Insert
         CmdDB_Query& byPass();
