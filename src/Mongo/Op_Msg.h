@@ -51,6 +51,9 @@ struct Op_MsgOptions
     OP_MsgFlag              flags    = OP_MsgFlag::empty;
 };
 
+template<typename Actual>
+using ValidMsgOptions = ValidOption<Actual, Op_MsgOptions>;
+
 // Op_Msg: https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
 template<typename... Kind>
 class Op_Msg: public Op_MsgOptions
@@ -60,10 +63,8 @@ class Op_Msg: public Op_MsgOptions
     std::int32_t            checksum;           // checksum of message;
 
     public:
-        template<typename... Args>
-        Op_Msg(Op_MsgOptions const& options, Args&&... args);
-        template<typename... Args>
-        Op_Msg(Op_MsgOptions&& options, Args&&... args);
+        template<typename Opt = Op_MsgOptions, ValidMsgOptions<Opt> = true, typename... Args>
+        Op_Msg(Opt&& options, Args&&... args);
 
         std::ostream& print(std::ostream& stream)       const;
         std::istream& parse(std::istream& stream);

@@ -11,6 +11,10 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
+template<typename Actual, typename Expected>
+using ValidOption = std::enable_if_t<std::is_same_v<std::remove_cv_t<std::remove_reference_t<std::remove_cv_t<Actual>>>, Expected>, bool>;
+
+
 enum class OpCode : std::int32_t
 {
     OP_REPLY        = 1,                    // Reply to a client request. responseTo is set.

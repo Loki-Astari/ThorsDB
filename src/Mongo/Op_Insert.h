@@ -26,6 +26,9 @@ struct Op_InsertOptions
     OP_InsertFlag           flags           = OP_InsertFlag::empty;
 };
 
+template<typename Actual>
+using ValidInsOptions = ValidOption<Actual, Op_InsertOptions>;
+
 template<typename Document>
 struct Op_Insert: public Op_InsertOptions
 {
@@ -33,10 +36,8 @@ struct Op_Insert: public Op_InsertOptions
     std::string             fullCollectionName;
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:
-        template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, Op_InsertOptions const& options, Args&&... args);
-        template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, Op_InsertOptions&& options, Args&&... args);
+        template<typename Opt = Op_InsertOptions, ValidInsOptions<Opt> = true, typename... Args>
+        Op_Insert(std::string const& fullCollectionName, Opt&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Insert> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Insert const& data) {return data.print(stream);}

@@ -13,20 +13,9 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Op_QueryOptions const& options, Args&&... args)
-    : Op_QueryOptions(options)
-    , header(OpCode::OP_QUERY)
-    , fullCollectionName(fullCollectionName)
-    , query{std::forward<Args>(args)...}
-{
-    header.prepareToSend(getSize());
-}
-
-template<typename Document>
-template<typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Op_QueryOptions&& options, Args&&... args)
-    : Op_QueryOptions(std::move(options))
+template<typename Opt, ValidQueryOptions<Opt>, typename... Args>
+Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args)
+    : Op_QueryOptions(std::forward<Opt>(options))
     , header(OpCode::OP_QUERY)
     , fullCollectionName(fullCollectionName)
     , query{std::forward<Args>(args)...}

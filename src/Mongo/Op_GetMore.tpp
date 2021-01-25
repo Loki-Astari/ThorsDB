@@ -12,18 +12,9 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-inline
-Op_GetMore::Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions const& options)
-    : Op_GetMoreOptions(options)
-    , header(OpCode::OP_GET_MORE)
-    , fullCollectionName(fullCollectionName)
-{
-    header.prepareToSend(getSize());
-}
-
-inline
-Op_GetMore::Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions&& options)
-    : Op_GetMoreOptions(std::move(options))
+template<typename Opt, ValidGetOptions<Opt>>
+Op_GetMore::Op_GetMore(std::string const& fullCollectionName, Opt&& options)
+    : Op_GetMoreOptions(std::forward<Opt>(options))
     , header(OpCode::OP_GET_MORE)
     , fullCollectionName(fullCollectionName)
 {

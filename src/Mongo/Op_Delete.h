@@ -25,17 +25,19 @@ struct Op_DeleteOptions
     OP_DeleteFlag           flags       = OP_DeleteFlag::empty;
 };
 
+template<typename Actual>
+using ValidDelOptions = ValidOption<Actual, Op_DeleteOptions>;
+
 template<typename Document>
 struct Op_Delete: public Op_DeleteOptions
 {
     Op_MsgHeader            header;             // standard message header
     std::string             fullCollectionName;
     Document                selector;           // query object.
+
     public:
-        template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, Op_DeleteOptions const& flags, Args&&... args);
-        template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, Op_DeleteOptions&& flags, Args&&... args);
+        template<typename Opt = Op_DeleteOptions, ValidDelOptions<Opt> = true, typename... Args>
+        Op_Delete(std::string const& fullCollectionName, Opt&& flags, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Delete> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Delete const& data) {return data.print(stream);}

@@ -43,6 +43,9 @@ struct Op_QueryOptions
     FieldSelector   returnFieldsSelector;
 };
 
+template<typename Actual>
+using ValidQueryOptions = ValidOption<Actual, Op_QueryOptions>;
+
 template<typename Document>
 class Op_Query: public Op_QueryOptions
 {
@@ -50,10 +53,8 @@ class Op_Query: public Op_QueryOptions
     std::string     fullCollectionName;
     Document        query;
     public:
-        template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, Op_QueryOptions const& options, Args&&... args);
-        template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, Op_QueryOptions&& options, Args&&... args);
+        template<typename Opt = Op_QueryOptions, ValidQueryOptions<Opt> = true, typename... Args>
+        Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}

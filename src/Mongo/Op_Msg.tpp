@@ -56,25 +56,9 @@ inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 // ---- Op_Msg
 
 template<typename... Kind>
-template<typename... Args>
-inline Op_Msg<Kind...>::Op_Msg(Op_MsgOptions const& options, Args&&... args)
-    : Op_MsgOptions(options)
-    , header(OpCode::OP_MSG)
-    , sections(std::forward<Args>(args)...)
-    , checksum(0)
-{
-    std::size_t sectionSize = 0;
-    std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
-
-    bool        showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
-    std::size_t dataSize     = sizeof(flags) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
-    header.prepareToSend(dataSize);
-}
-
-template<typename... Kind>
-template<typename... Args>
-inline Op_Msg<Kind...>::Op_Msg(Op_MsgOptions&& options, Args&&... args)
-    : Op_MsgOptions(options)
+template<typename Opt, ValidMsgOptions<Opt>, typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(Opt&& options, Args&&... args)
+    : Op_MsgOptions(std::forward<Opt>(options))
     , header(OpCode::OP_MSG)
     , sections(std::forward<Args>(args)...)
     , checksum(0)

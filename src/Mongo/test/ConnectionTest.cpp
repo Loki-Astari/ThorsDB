@@ -171,7 +171,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
     // Check the Update works see if the filter finds it.
     {
-        connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
+        connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
 
         connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
         Op_Reply<StringAndIntNoConstructorReply>     reply;

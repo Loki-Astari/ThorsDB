@@ -13,17 +13,20 @@ namespace ThorsAnvil::DB::Mongo
 
 struct Op_GetMoreOptions
 {
-    std::int32_t    ret;
-    std::int64_t    cursorID;
+    std::int32_t    ret         = 101;
+    std::int64_t    cursorID    = 0;
 };
+
+template<typename Actual>
+using ValidGetOptions = ValidOption<Actual, Op_GetMoreOptions>;
 
 class Op_GetMore: public Op_GetMoreOptions
 {
     Op_MsgHeader     header;
     std::string     fullCollectionName;
     public:
-        Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions const& options);
-        Op_GetMore(std::string const& fullCollectionName, Op_GetMoreOptions&& options);
+        template<typename Opt = Op_GetMoreOptions, ValidGetOptions<Opt> = true>
+        Op_GetMore(std::string const& fullCollectionName, Opt&& options);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_GetMore> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_GetMore const& data) {return data.print(stream);}
