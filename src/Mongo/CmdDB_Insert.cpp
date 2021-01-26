@@ -22,10 +22,12 @@ InsertOptional::InsertOptional(InsertOptions&& options)
 
 void InsertOptional::updateFilter()
 {
-    filter["ordered"]                  = ordered != true;
-    filter["writeConcern"]             = writeConcern != WriteConcern{};
-    filter["bypassDocumentValidation"] = bypassDocumentValidation != false;
-    filter["comment"]                  = comment != "";
+    static const InsertOptions defaultValue;
+
+    filter["ordered"]                  = ordered                    != defaultValue.ordered;;
+    filter["writeConcern"]             = writeConcern               != defaultValue.writeConcern;
+    filter["bypassDocumentValidation"] = bypassDocumentValidation   != defaultValue.bypassDocumentValidation;
+    filter["comment"]                  = comment                    != defaultValue.comment;
 }
 
 void InsertOptional::unordered(bool val)

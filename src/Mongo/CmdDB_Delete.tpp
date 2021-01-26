@@ -5,7 +5,6 @@
 #error  "This should only be included from CmdDB_Delete.h"
 #endif
 
-
 namespace ThorsAnvil::DB::Mongo
 {
 

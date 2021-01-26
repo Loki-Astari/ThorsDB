@@ -29,17 +29,14 @@ struct DeleteOptions
 class DeleteOptional
 {
     public:
-        DeleteOptional(DeleteOptions const& options)
-            : ordered(options.ordered)
-            , writeConcern(options.writeConcern)
-        {}
-        DeleteOptional(DeleteOptions&& options)
-            : ordered(std::move(options.ordered))
-            , writeConcern(std::move(options.writeConcern))
-        {}
+        DeleteOptional(DeleteOptions const& options);
+        DeleteOptional(DeleteOptions&& options);
+
         void unordered(bool val = true);
         void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
     private:
+        void updateFilter();
+
         friend class ThorsAnvil::Serialize::Traits<DeleteOptional>;
         friend class ThorsAnvil::Serialize::Filter<DeleteOptional>;
         std::map<std::string, bool> filter = {{"ordered", false}, {"writeConcern", false}};

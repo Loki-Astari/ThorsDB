@@ -14,14 +14,19 @@ enum class ReadConcernLevel {local, available, majority, linearizable};
 
 struct Collation
 {
+    friend bool operator!=(Collation const& lhs, Collation const& rhs)
+    {
+        return std::tie(lhs.locale, lhs.caseLevel, lhs.caseFirst, lhs.strength, lhs.numericOrdering, lhs.alternate, lhs.maxVariable, lhs.backwards)
+            != std::tie(rhs.locale, rhs.caseLevel, rhs.caseFirst, rhs.strength, rhs.numericOrdering, rhs.alternate, rhs.maxVariable, rhs.backwards);
+    }
     std::string     locale;
-    bool            caseLevel;
+    bool            caseLevel           = false;
     std::string     caseFirst;
-    int             strength;
-    bool            numericOrdering;
+    int             strength            = 0;
+    bool            numericOrdering     = false;
     std::string     alternate;
     std::string     maxVariable;
-    bool            backwards;
+    bool            backwards           = false;
 };
 
 struct WriteErrors
@@ -45,9 +50,9 @@ struct WriteConcern
         return std::tie(lhs.w, lhs.j, lhs.wtimeout) != std::tie(rhs.w, rhs.j, rhs.wtimeout);
     }
 
-    int             w;
-    bool            j;
-    std::time_t     wtimeout;
+    int             w           = 0;
+    bool            j           = 0;
+    std::time_t     wtimeout    = 0;
 };
 
 struct CmdReply
