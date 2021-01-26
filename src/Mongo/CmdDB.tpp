@@ -73,9 +73,9 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::setBatchSize(std::size_t val)
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::singleBatch()
+CmdDB_Query<Document>& CmdDB_Query<Document>::oneBatch(bool val)
 {
-    this->getQuery().singleBatch();
+    this->getQuery().oneBatch(val);
     return *this;
 }
 template<typename Document>
@@ -103,45 +103,45 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::addMin(std::string const& field, i
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::justKeys()
+CmdDB_Query<Document>& CmdDB_Query<Document>::justKeys(bool val)
 {
-    this->getQuery().justKeys();
+    this->getQuery().justKeys(val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::showId()
+CmdDB_Query<Document>& CmdDB_Query<Document>::showId(bool val)
 {
-    this->getQuery().showId();
+    this->getQuery().showId(val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::tailableCursor()
+CmdDB_Query<Document>& CmdDB_Query<Document>::tailableCursor(bool val)
 {
-    this->getQuery().tailableCursor();
+    this->getQuery().tailableCursor(val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::tailedCursorAwait()
+CmdDB_Query<Document>& CmdDB_Query<Document>::tailedCursorAwait(bool val)
 {
-    this->getQuery().tailedCursorAwait();
+    this->getQuery().tailedCursorAwait(val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::setNoCursorTimeout()
+CmdDB_Query<Document>& CmdDB_Query<Document>::setNoCursorTimeout(bool val)
 {
-    this->getQuery().setNoCursorTimeout();
+    this->getQuery().setNoCursorTimeout(val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::setAllowPartialResults()
+CmdDB_Query<Document>& CmdDB_Query<Document>::setAllowPartialResults(bool val)
 {
-    this->getQuery().setAllowPartialResults();
+    this->getQuery().setAllowPartialResults(val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::useDisk()
+CmdDB_Query<Document>& CmdDB_Query<Document>::useDisk(bool val)
 {
-    this->getQuery().useDisk();
+    this->getQuery().useDisk(val);
     return *this;
 }
 

@@ -11,7 +11,7 @@ namespace ThorsAnvil::DB::Mongo
 template<typename Filter, typename Sort>
 template<typename Opt, ValidCmdFindOption<Opt>>
 Find<Filter, Sort>::Find(Opt&& options, std::string const& collection, Filter&& filter, Sort&& sort)
-    : FindOptions(std::forward<Opt>(options))
+    : FindOptional(std::forward<Opt>(options))
     , find(collection)
     , filter(std::forward<Filter>(filter))
     , sort(std::forward<Sort>(sort))

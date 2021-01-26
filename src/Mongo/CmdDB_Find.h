@@ -35,14 +35,14 @@ struct FindOptions
     ReadConcern                 readConcern;
     std::map<std::string, int>  max;
     std::map<std::string, int>  min;
-    bool                        returnKey           = true;
-    bool                        showRecordId        = true;
-    bool                        tailable            = true;
-    bool                        awaitData           = true;
-    bool                        noCursorTimeout     = true;
-    bool                        allowPartialResults = true;
+    bool                        returnKey           = false;
+    bool                        showRecordId        = false;
+    bool                        tailable            = false;
+    bool                        awaitData           = false;
+    bool                        noCursorTimeout     = false;
+    bool                        allowPartialResults = false;
     Collation                   collation;
-    bool                        allowDiskUse        = true;
+    bool                        allowDiskUse        = false;
 };
 
 struct FindOptional
@@ -52,27 +52,27 @@ struct FindOptional
         FindOptional(FindOptions&& options);
 
         void addFileds(std::initializer_list<std::string> const& fieldNames);
-        void addHint(std::string&& hint);
+        void addHint(std::string const& hint);
         void setSkip(std::size_t val);
         void setLimit(std::size_t val);
         void setBatchSize(std::size_t val);
-        void oneBatch();
-        void setComment(std::string&& val);
+        void oneBatch(bool val = true);
+        void setComment(std::string const& val);
         void setMaxTimeout(std::size_t val);
         void addReadConcern(ReadConcernLevel val);
         void addMax(std::string const& field, int val);
         void addMin(std::string const& field, int val);
-        void justKeys();
-        void showId();
-        void tailableCursor();
-        void tailedCursorAwait();
-        void setNoCursorTimeout();
-        void setAllowPartialResults();
+        void justKeys(bool val = false);
+        void showId(bool val = true);
+        void tailableCursor(bool val = true);
+        void tailedCursorAwait(bool val = true);
+        void setNoCursorTimeout(bool val = true);
+        void setAllowPartialResults(bool val = true);
         // TODO setCollation
-        void useDisk();
+        void useDisk(bool val = true);
     private:
         void updateFilter();
-        std::map<std::string, bool>     optionsFilter = {
+        std::map<std::string, bool>     optionsFilter ={
                                                         {"projection", false},
                                                         {"hint", false},
                                                         {"skip", false}, {"limit", false}, {"batchSize", false}, {"singleBatch", false},

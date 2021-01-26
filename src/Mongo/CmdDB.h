@@ -103,18 +103,18 @@ class CmdDB_Query: public Op_Query<Document>
         CmdDB_Query& setSkip(std::size_t val);
         CmdDB_Query& setLimit(std::size_t val);
         CmdDB_Query& setBatchSize(std::size_t val);
-        CmdDB_Query& singleBatch();
+        CmdDB_Query& oneBatch(bool val = true);
         CmdDB_Query& setMaxTimeout(std::size_t val);
         CmdDB_Query& addReadConcern(ReadConcernLevel val);
         CmdDB_Query& addMax(std::string const& field, int val);
         CmdDB_Query& addMin(std::string const& field, int val);
-        CmdDB_Query& justKeys();
-        CmdDB_Query& showId();
-        CmdDB_Query& tailableCursor();
-        CmdDB_Query& tailedCursorAwait();
-        CmdDB_Query& setNoCursorTimeout();
-        CmdDB_Query& setAllowPartialResults();
-        CmdDB_Query& useDisk();
+        CmdDB_Query& justKeys(bool val = false);
+        CmdDB_Query& showId(bool val = true);
+        CmdDB_Query& tailableCursor(bool val = true);
+        CmdDB_Query& tailedCursorAwait(bool val = true);
+        CmdDB_Query& setNoCursorTimeout(bool val = true);
+        CmdDB_Query& setAllowPartialResults(bool val = true);
+        CmdDB_Query& useDisk(bool val = true);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, CmdDB_Query const& data) {return data.print(stream);}

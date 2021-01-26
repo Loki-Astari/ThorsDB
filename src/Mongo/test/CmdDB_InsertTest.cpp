@@ -10,7 +10,7 @@ struct User
 };
 ThorsAnvil_MakeTrait(User, user, password, age);
 
-using ThorsAnvil::DB::Mongo::make_CmdDB_Insert;
+using namespace ThorsAnvil::DB::Mongo;
 
 TEST(CmdDB_InsertTest, Base)
 {
@@ -182,6 +182,173 @@ TEST(CmdDB_InsertTest, BaseUnorderedBypassWriteConcenrSetComment)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
     auto insert = make_CmdDB_Insert("database", "collection", {}, std::begin(users), std::end(users)).unordered().byPass().setWrieConcern(2, false, 400).setComment("Testing comment");
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(32, std::count(std::begin(result), std::end(result), '\n'));
+}
+
+TEST(CmdDB_InsertTest, BaseUnorderedOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(24, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseBypassOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.bypassDocumentValidation = true}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(24, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnordredBypassOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .bypassDocumentValidation = true}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(25, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseSetWrieConcernOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.writeConcern = {2, false, 400}}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnorderedWrieConcernOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .writeConcern = {2, false, 400}}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseBypassWriteConcenrOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.bypassDocumentValidation = true, .writeConcern = {2, false, 400}}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnorderedBypassWriteConcenrOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .bypassDocumentValidation = true, .writeConcern = {2, false, 400}}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
+}
+
+TEST(CmdDB_InsertTest, BaseSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(24, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnorderedSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(25, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseBypassSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.bypassDocumentValidation = true, .comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(25, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnordredBypassSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .bypassDocumentValidation = true, .comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(26, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseSetWrieConcernSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.writeConcern = {2, false, 400}, .comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnorderedWrieConcernSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .writeConcern = {2, false, 400}, .comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseBypassWriteConcenrSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.bypassDocumentValidation = true, .writeConcern = {2, false, 400}, .comment = "Testing comment"}}, std::begin(users), std::end(users));
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_InsertTest, BaseUnorderedBypassWriteConcenrSetCommentOption)
+{
+    std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
+    auto insert = make_CmdDB_Insert("database", "collection", {{}, {.ordered = false, .bypassDocumentValidation = true, .writeConcern = {2, false, 400}, .comment = "Testing comment"}}, std::begin(users), std::end(users));
 
     std::stringstream stream;
     stream << make_hr(insert);

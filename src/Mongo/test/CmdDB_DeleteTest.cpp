@@ -57,3 +57,37 @@ TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcern)
     EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
 }
 
+TEST(CmdDB_DeleteTest, BaseUnorderedOptions)
+{
+    User   user{"M1", "P1", 25};
+    auto insert = make_CmdDB_Delete("database", "collection", {{}, {.ordered = false}}, user);
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(23, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_DeleteTest, BaseSetWrieConcernOptions)
+{
+    User   user{"M1", "P1", 25};
+    auto insert = make_CmdDB_Delete("database", "collection", {{}, {.writeConcern{2, false, 400}}}, user);
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(28, std::count(std::begin(result), std::end(result), '\n'));
+}
+TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcernOptions)
+{
+    User   user{"M1", "P1", 25};
+    auto insert = make_CmdDB_Delete("database", "collection", {{}, {.ordered = false, .writeConcern{2, false, 400}}}, user);
+
+    std::stringstream stream;
+    stream << make_hr(insert);
+
+    std::string result = stream.str();
+    EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
+}
+
