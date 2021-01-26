@@ -16,11 +16,11 @@ Find<Filter, Sort>::Find(Opt&& options, std::string const& collection, Filter&& 
     , filter(std::forward<Filter>(filter))
     , sort(std::forward<Sort>(sort))
 {
-    setFilter();
+    updateFilter();
 }
 
 template<typename Filter, typename Sort>
-void Find<Filter, Sort>::setFilter()
+void Find<Filter, Sort>::updateFilter()
 {
     if constexpr (!std::is_same_v<Filter, FindAll>)
     {

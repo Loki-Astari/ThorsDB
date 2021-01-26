@@ -120,7 +120,7 @@ class Find: public FindOptional
         template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
         Find(Opt&& options, std::string const& collection, Filter&& filter, Sort&& sort);
     private:
-        void setFilter();
+        void updateFilter();
         friend class ThorsAnvil::Serialize::Traits<Find>;
         friend class ThorsAnvil::Serialize::Filter<Find>;
 
