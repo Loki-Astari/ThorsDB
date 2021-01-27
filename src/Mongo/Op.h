@@ -5,6 +5,8 @@
 
 #include <ostream>
 #include <istream>
+#include <iomanip>
+#include <sstream>
 #include <cstdint>
 #include <type_traits>
 
@@ -50,6 +52,42 @@ struct HumanReadable
 
 template<typename Stremable>
 HumanReadable<Stremable> make_hr(Stremable const& object) {return HumanReadable<Stremable>(object);}
+
+template<typename Streamable>
+struct BinaryDump
+{
+    Streamable const&       object;
+    public:
+        BinaryDump(Streamable const& object)
+            : object(object)
+        {}
+        friend std::ostream& operator<<(std::ostream& stream, BinaryDump const& reply)
+        {
+            std::stringstream tmp;
+            tmp << reply.object;
+            std::string dump = tmp.str();
+            std::string line;
+            int loop = 0;
+            for(unsigned char val: dump)
+            {
+                stream << std::hex << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(val) << std::dec << " ";
+                line += ((val >= 32 && val <= 127) ? val : '-');
+                line += " ";
+                ++loop;
+                if (loop % 4 == 0)
+                {
+                    stream << line << "\n";
+                    line = "";
+                    loop = 0;
+                }
+            }
+            stream << std::string((4 - loop) * 2, ' ') << line << "\n";
+            return stream;
+        }
+};
+
+template<typename Stremable>
+BinaryDump<Stremable> make_bd(Stremable const& object) {return BinaryDump<Stremable>(object);}
 
 template<typename T>
 struct LittleEndian

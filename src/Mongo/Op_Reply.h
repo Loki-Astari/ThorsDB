@@ -55,7 +55,8 @@ struct Op_Reply
         virtual ~Op_Reply() {}
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Reply> const& reply);
-        friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)  {return reply.parse(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_Reply const& reply) {return reply.print(stream);}
+        friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)       {return reply.parse(stream);}
 
         std::size_t     getDocumentCount()              const {return documents.size();}
         Document const& getDocument(std::size_t size)   const {return documents[size];}
@@ -65,6 +66,7 @@ struct Op_Reply
         virtual std::string getHRErrorMessage() const;
     protected:
         std::istream& parse(std::istream& stream);
+        std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 };
 

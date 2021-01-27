@@ -29,7 +29,7 @@ struct FindOptions
     std::size_t                 skip                = 0;
     std::size_t                 limit               = 0;
     std::size_t                 batchSize           = 101;
-    bool                        singleBatch         = true;
+    bool                        singleBatch         = false;
     std::string                 comment;
     std::size_t                 maxTimeMS           = 0;
     ReadConcern                 readConcern;
@@ -130,12 +130,45 @@ class Find: public FindOptional
         std::map<std::string, bool>     findFilter = {{"filter", false}, {"sort", false}};
 };
 
+template<typename Document>
+struct Cursor
+{
+    bool                    partialResultsReturneda = true;
+    std::int64_t            id                      = 0;
+    std::string             ns;
+    std::vector<Document>   firstBatch;
+};
+
+struct Signature
+{
+    std::int64_t            keyIdP                  = 0;
+    std::string             hash;
+};
+
+struct ClusterTime
+{
+    std::time_t             clusterTime             = 0;
+    Signature               signature;
+};
+
+template<typename Document>
+struct FindResult
+{
+    Cursor<Document>        cursor;
+    double                  ok                      = 0.0;
+    std::time_t             operationTime           = 0;
+    ClusterTime             $clusterTime;
+};
+
 template<typename Filter, typename Sort>
-using CmdDB_Find      = CmdDB_Query<Find<Filter, Sort>>;
+using CmdDB_Find        = CmdDB_Query<Find<Filter, Sort>>;
+
+template<typename Document>
+using CmdDB_FindResult  = Op_Reply<FindResult<Document>>;
 
 template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Filter = FindAll, typename Sort = DefaultSort>
 CmdDB_Find<Filter, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options, Filter&& filter = Filter{}, Sort&& sort = Sort{})
+make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
 {
     return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<Opt>(options), std::forward<Filter>(filter), std::forward<Sort>(sort));
 }
@@ -149,8 +182,10 @@ make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, O
 
 }
 
+// Default Actions
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindAll);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DefaultSort);
+// Find Action
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ReadConcern,                level);
 ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::FindOptional,              optionsFilter);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindOptional,               projection, hint, skip, limit, batchSize,
@@ -160,6 +195,11 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindOptional,               projecti
 ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,          findFilter);
 ThorsAnvil_Template_ExpandTrait(2,ThorsAnvil::DB::Mongo::FindOptional,
                                   ThorsAnvil::DB::Mongo::Find,          find, filter, sort);
+// Result Info
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::Cursor,          partialResultsReturned, id, ns, firstBatch);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::FindResult,      cursor, ok, operationTime, $clusterTime);
 
 #include "CmdDB_Find.tpp"
 

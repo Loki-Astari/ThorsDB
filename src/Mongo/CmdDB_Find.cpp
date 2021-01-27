@@ -115,7 +115,7 @@ void FindOptional::setBatchSize(std::size_t val)
 void FindOptional::oneBatch(bool val)
 {
     // Already set true. Just need to return it.
-    singleBatch = !val;
+    singleBatch = val;
     optionsFilter["singleBatch"] = true;
 }
 

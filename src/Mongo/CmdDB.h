@@ -69,7 +69,7 @@ struct CmdReply
 class CmdDB_Reply: public Op_Reply<CmdReply>
 {
     public:
-        bool replyCount() const;
+        std::size_t replyCount() const;
         virtual bool isOk() const override;
         virtual std::string getHRErrorMessage() const override;
     protected:

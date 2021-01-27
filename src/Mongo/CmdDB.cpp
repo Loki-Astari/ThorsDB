@@ -2,7 +2,7 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-bool CmdDB_Reply::replyCount() const
+std::size_t CmdDB_Reply::replyCount() const
 {
     // Assumes isCmdOK() is true
     return getDocument(0).n;
