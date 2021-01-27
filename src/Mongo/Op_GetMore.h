@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_GETMORE_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -11,15 +11,22 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-class Op_GetMore
+struct Op_GetMoreOptions
 {
-    MsgHeader       header;
-    // std::int32_t    zero;               // 0 reserved for future use
+    std::int32_t    ret         = 101;
+    std::int64_t    cursorID    = 0;
+};
+
+template<typename Actual>
+using ValidGetOptions = ValidOption<Actual, Op_GetMoreOptions>;
+
+class Op_GetMore: public Op_GetMoreOptions
+{
+    Op_MsgHeader     header;
     std::string     fullCollectionName;
-    std::int32_t    numberToReturn;
-    std::int64_t    cursorID;
     public:
-        Op_GetMore(std::string const& fullCollectionName, std::int32_t count, std::int64_t cursor);
+        template<typename Opt = Op_GetMoreOptions, ValidGetOptions<Opt> = true>
+        Op_GetMore(std::string const& fullCollectionName, Opt&& options);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_GetMore> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_GetMore const& data) {return data.print(stream);}

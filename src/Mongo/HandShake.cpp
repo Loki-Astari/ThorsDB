@@ -1,7 +1,6 @@
 #include "HandShake.h"
 #include "ThorsLogging/ThorsLogging.h"
 
-
 using namespace ThorsAnvil::DB::Mongo;
 
 Driver::Driver()

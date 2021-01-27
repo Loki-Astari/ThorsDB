@@ -1,6 +1,10 @@
 #ifndef THORSANVIL_DB_MONGO_OP_DELETE_TPP
 #define THORSANVIL_DB_MONGO_OP_DELETE_TPP
 
+#ifndef THORSANVIL_DB_MONGO_OP_DELETE_H
+#error  "This should only be included from Op_Delete.h"
+#endif
+
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
@@ -11,30 +15,15 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Remove remove, Args&&... args)
-    : header(OpCode::OP_DELETE)
+template<typename Opt, ValidDelOptions<Opt>, typename... Args>
+Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Opt&& options, Args&&... args)
+    : Op_DeleteOptions(std::forward<Opt>(options))
+    , header(OpCode::OP_DELETE)
     , fullCollectionName(fullCollectionName)
-    , flags(OP_DeleteFlag::empty)
-    , selector{std::move(args)...}
-{
-    if (remove == Remove::Single)
-    {
-        flags |= OP_DeleteFlag::SingleRemove;
-    }
-    header.prepareToSend(getSize());
-}
-template<typename Document>
-template<typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Args&&... args)
-    : header(OpCode::OP_DELETE)
-    , fullCollectionName(fullCollectionName)
-    , flags(OP_DeleteFlag::empty)
-    , selector{std::move(args)...}
+    , selector{std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }
-
 
 template<typename Document>
 std::size_t Op_Delete<Document>::getSize() const

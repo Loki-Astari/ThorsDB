@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_QUERY_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -35,62 +35,37 @@ enum class OP_QueryFlag : std::int32_t
 
 using FieldSelector = std::map<std::string, int>;
 
-enum class TailableCursor {Close,       LeaveOpen};
-enum class Slave          {Fail,        OK};
-enum class Oplog          {Replay,      NoReplay};
-enum class Curser         {IdleTimeout, NoTimeout};
-enum class Data           {Wait,        Timeout};
-enum class Drain          {SingleBlock, All};
-enum class Partial        {All,         Available};
-
-struct QueryOptions
+struct Op_QueryOptions
 {
-    QueryOptions()
-        : tailableCursor(TailableCursor::Close)
-        , slave(Slave::Fail)
-        , oplog(Oplog::Replay)
-        , curser(Curser::IdleTimeout)
-        , data(Data::Wait)
-        , drain(Drain::SingleBlock)
-        , partial(Partial::All)
-    {}
-
-    QueryOptions& leaveOpen()        {tailableCursor = TailableCursor::LeaveOpen;return *this;}
-    QueryOptions& slaveOK()          {slave          = Slave::OK;                return *this;}
-    QueryOptions& opLogNoReplay()    {oplog          = Oplog::NoReplay;          return *this;}
-    QueryOptions& curserNoTimeout()  {curser         = Curser::NoTimeout;        return *this;}
-    QueryOptions& dataTimeout()      {data           = Data::Timeout;            return *this;}
-    QueryOptions& drainAll()         {drain          = Drain::All;               return *this;}
-    QueryOptions& partialAvailable() {partial        = Partial::Available;       return *this;}
-
-    TailableCursor      tailableCursor;
-    Slave               slave;
-    Oplog               oplog;
-    Curser              curser;
-    Data                data;
-    Drain               drain;
-    Partial             partial;
+    OP_QueryFlag    flags                   = OP_QueryFlag::empty;
+    std::int32_t    skip                    = 0;
+    std::int32_t    ret                     = 1;
+    FieldSelector   returnFieldsSelector;
 };
 
+template<typename Actual>
+using ValidQueryOptions     = ValidOption<Actual, Op_QueryOptions>;
+template<typename Actual>
+using DerivedQueryOptions   = DerivedStrictOption<Actual, Op_QueryOptions>;
+
 template<typename Document>
-class Op_Query
+class Op_Query: public Op_QueryOptions
 {
-    MsgHeader       header;
-    OP_QueryFlag    flags;
+    Op_MsgHeader    header;
     std::string     fullCollectionName;
-    std::int32_t    numberToSkip;
-    std::int32_t    numberToReturn;
     Document        query;
-    FieldSelector   returnFieldsSelector;
     public:
-        template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, QueryOptions options, std::int32_t count, std::int32_t skip, Args&&... args);
+        template<typename Opt = Op_QueryOptions, ValidQueryOptions<Opt> = true, typename... Args>
+        Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
+        template<typename Opt = Op_QueryOptions, DerivedQueryOptions<Opt> = true, typename... Args>
+        Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
+
+        Document& getQuery();
     private:
         std::size_t   getSize()                     const;
-        void          handleOptions(QueryOptions const& options);
     protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;

@@ -9,10 +9,10 @@ using std::string_literals::operator""s;
 
 TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0x184A89);
+    Op_MsgHeader::messageIdSetForTest(0x184A89);
 
     std::stringstream stream;
-    stream << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
+    stream << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>("thor.collection", {}, SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x67\x00\x00\x00"                      // Size 32
@@ -37,8 +37,8 @@ TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
 
 TEST(Op_UpdateTest, Op_UpdateStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
-    Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>   update("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
+    Op_MsgHeader::messageIdSetForTest(0x124589);
+    Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>   update("thor.collection", {}, SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
 
     std::stringstream stream;
     stream << make_hr(update);

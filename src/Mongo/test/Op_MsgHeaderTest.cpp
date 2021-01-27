@@ -1,39 +1,39 @@
 
 #include <gtest/gtest.h>
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-TEST(MsgHeaderTest, CreateReply)
+TEST(Op_MsgHeaderTest, CreateReply)
 {
     // Should simply create.
-    MsgHeader   message(OpCode::OP_REPLY);
+    Op_MsgHeader   message(OpCode::OP_REPLY);
 }
 
-TEST(MsgHeaderTest, CheckEquality)
+TEST(Op_MsgHeaderTest, CheckEquality)
 {
-    MsgHeader   messageOne(OpCode::OP_UPDATE);
-    MsgHeader   messageTwo(OpCode::OP_UPDATE);
+    Op_MsgHeader   messageOne(OpCode::OP_UPDATE);
+    Op_MsgHeader   messageTwo(OpCode::OP_UPDATE);
 
     EXPECT_EQ(messageOne, messageTwo);
 }
 
-TEST(MsgHeaderTest, CheckNotEquality)
+TEST(Op_MsgHeaderTest, CheckNotEquality)
 {
-    MsgHeader   messageOne(OpCode::OP_INSERT);
-    MsgHeader   messageTwo(OpCode::OP_QUERY);
+    Op_MsgHeader   messageOne(OpCode::OP_INSERT);
+    Op_MsgHeader   messageTwo(OpCode::OP_QUERY);
 
     EXPECT_NE(messageOne, messageTwo);
 }
 
-TEST(MsgHeaderTest, SetDataSizeSerialize)
+TEST(Op_MsgHeaderTest, SetDataSizeSerialize)
 {
-    MsgHeader   messageOne(OpCode::OP_GET_MORE);
-    MsgHeader::messageIdSetForTest(0x23456789);
+    Op_MsgHeader   messageOne(OpCode::OP_GET_MORE);
+    Op_MsgHeader::messageIdSetForTest(0x23456789);
     messageOne.prepareToSend(15);   // Not size is 15 for the data.
                                     // The header contains the size of the data + the header.
-                                    // 15  + sizeof(MsgHeader) i.e. 15+16 => 31 (0x1F)
+                                    // 15  + sizeof(Op_MsgHeader) i.e. 15+16 => 31 (0x1F)
 
     std::stringstream message;
     message << messageOne;
@@ -47,13 +47,13 @@ TEST(MsgHeaderTest, SetDataSizeSerialize)
               output);
 }
 
-TEST(MsgHeaderTest, SerializeDeSerialize)
+TEST(Op_MsgHeaderTest, SerializeDeSerialize)
 {
-    MsgHeader   messageOne(OpCode::OP_DELETE);
-    MsgHeader::messageIdSetForTest(0xAFBECD);
+    Op_MsgHeader   messageOne(OpCode::OP_DELETE);
+    Op_MsgHeader::messageIdSetForTest(0xAFBECD);
     messageOne.prepareToSend(0x234589); // Not size is 15 for the data.
                                         // The header contains the size of the data + the header.
-                                        // 0x234589  + sizeof(MsgHeader) i.e. 0x234589+16 => 2311577 (0x0x234599)
+                                        // 0x234589  + sizeof(Op_MsgHeader) i.e. 0x234589+16 => 2311577 (0x0x234599)
 
     std::stringstream message;
     message << messageOne;
@@ -66,19 +66,19 @@ TEST(MsgHeaderTest, SerializeDeSerialize)
               "\xD6\x07\x00\x00"s,  // OpCodea OP_DELETE => 2006
               output);
 
-    MsgHeader   messageTwo;
+    Op_MsgHeader   messageTwo;
     message >> messageTwo;
 
     EXPECT_EQ(messageOne, messageTwo);
 }
 
-TEST(MsgHeaderTest, SerializeHumanReadable)
+TEST(Op_MsgHeaderTest, SerializeHumanReadable)
 {
-    MsgHeader   messageOne(OpCode::OP_KILL_CURSORS);
-    MsgHeader::messageIdSetForTest(0xAF0000A1);
+    Op_MsgHeader   messageOne(OpCode::OP_KILL_CURSORS);
+    Op_MsgHeader::messageIdSetForTest(0xAF0000A1);
     messageOne.prepareToSend(0xFE1200); // Not size is 15 for the data.
                                         // The header contains the size of the data + the header.
-                                        // 0xFE1200  + sizeof(MsgHeader) i.e. 0xFE1200+16 => 16650768 (0x0xFE1210)
+                                        // 0xFE1200  + sizeof(Op_MsgHeader) i.e. 0xFE1200+16 => 16650768 (0x0xFE1210)
 
     std::stringstream message;
     message << make_hr(messageOne);
