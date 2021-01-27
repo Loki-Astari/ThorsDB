@@ -15,31 +15,15 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename... Args>
-Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, InsertError insertError, Args&&... args)
-    : header(OpCode::OP_INSERT)
-    , flags(OP_InsertFlag::empty)
-    , fullCollectionName(fullCollectionName)
-    , documents({Document{std::forward<Args>(args)}...})
-{
-    if (insertError == InsertError::Cont)
-    {
-        flags |= OP_InsertFlag::ContinueOnError;
-    }
-    header.prepareToSend(getSize());
-}
-
-template<typename Document>
-template<typename... Args>
-Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Args&&... args)
-    : header(OpCode::OP_INSERT)
-    , flags(OP_InsertFlag::ContinueOnError)
+template<typename Opt, ValidInsOptions<Opt>, typename... Args>
+Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Opt&& options, Args&&... args)
+    : Op_InsertOptions(std::forward<Opt>(options))
+    , header(OpCode::OP_INSERT)
     , fullCollectionName(fullCollectionName)
     , documents({Document{std::forward<Args>(args)}...})
 {
     header.prepareToSend(getSize());
 }
-
 
 template<typename Document>
 std::size_t Op_Insert<Document>::getSize() const

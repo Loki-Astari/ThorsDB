@@ -1,33 +1,33 @@
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 
 using namespace ThorsAnvil::DB::Mongo;
 
-std::int32_t MsgHeader::uniqueMessageId = 0;
+std::int32_t Op_MsgHeader::uniqueMessageId = 0;
 
-MsgHeader::MsgHeader(OpCode opCode)
+Op_MsgHeader::Op_MsgHeader(OpCode opCode)
     : messageLength(0)
     , requestID(-1)//uniqueMessageId++)
     , responseTo(0)
     , opCode(opCode)
 {}
 
-void MsgHeader::prepareToSend(std::size_t dataSize)
+void Op_MsgHeader::prepareToSend(std::size_t dataSize)
 {
     messageLength = sizeof(messageLength) + sizeof(requestID) + sizeof(responseTo) + sizeof(opCode) + dataSize;
     requestID = uniqueMessageId++;
 }
 
-bool MsgHeader::operator==(MsgHeader const& rhs) const
+bool Op_MsgHeader::operator==(Op_MsgHeader const& rhs) const
 {
     return std::tie(messageLength, requestID, responseTo, opCode)
         == std::tie(rhs.messageLength, rhs.requestID, rhs.responseTo, rhs.opCode);
 }
-bool MsgHeader::operator!=(MsgHeader const& rhs) const
+bool Op_MsgHeader::operator!=(Op_MsgHeader const& rhs) const
 {
     return !((*this) == rhs);
 }
 
-std::ostream& MsgHeader::print(std::ostream& stream) const
+std::ostream& Op_MsgHeader::print(std::ostream& stream) const
 {
     return stream << make_LE(messageLength)
                   << make_LE(requestID)
@@ -35,7 +35,7 @@ std::ostream& MsgHeader::print(std::ostream& stream) const
                   << make_LE(opCode);
 }
 
-std::istream& MsgHeader::parse(std::istream& stream)
+std::istream& Op_MsgHeader::parse(std::istream& stream)
 {
     return stream >> make_LE(messageLength)
                   >> make_LE(requestID)
@@ -43,7 +43,7 @@ std::istream& MsgHeader::parse(std::istream& stream)
                   >> make_LE(opCode);
 }
 
-std::ostream& MsgHeader::printHR(std::ostream& stream) const
+std::ostream& Op_MsgHeader::printHR(std::ostream& stream) const
 {
     return stream << "messageLength: " << messageLength << "\n"
                   << "requestID:     " << requestID     << "\n"

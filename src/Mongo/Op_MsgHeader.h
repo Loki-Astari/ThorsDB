@@ -6,7 +6,7 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-class MsgHeader
+class Op_MsgHeader
 {
     static std::int32_t uniqueMessageId;
 
@@ -15,19 +15,19 @@ class MsgHeader
     std::int32_t    responseTo;             // requestID from the original request (used in responses from db)
     OpCode          opCode;                 // request type - see table below for details
     public:
-        MsgHeader(OpCode opCode = OpCode::OP_REPLY);
+        Op_MsgHeader(OpCode opCode = OpCode::OP_REPLY);
         void prepareToSend(std::size_t dataSize);
         std::int32_t getMessageLength() const       {return messageLength;}
-        bool operator==(MsgHeader const& rhs) const;
-        bool operator!=(MsgHeader const& rhs) const;
+        bool operator==(Op_MsgHeader const& rhs) const;
+        bool operator!=(Op_MsgHeader const& rhs) const;
 
         std::ostream& print(std::ostream& stream) const;
         std::istream& parse(std::istream& stream);
         std::ostream& printHR(std::ostream& stream) const;
 
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<MsgHeader> const& header);
-        friend std::ostream& operator<<(std::ostream& stream, MsgHeader const& header)                  {return header.print(stream);}
-        friend std::istream& operator>>(std::istream& stream, MsgHeader& header)                        {return header.parse(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_MsgHeader> const& header);
+        friend std::ostream& operator<<(std::ostream& stream, Op_MsgHeader const& header)                  {return header.print(stream);}
+        friend std::istream& operator>>(std::istream& stream, Op_MsgHeader& header)                        {return header.parse(stream);}
 
         [[deprecated("This function is for unit testing only. Do not use it. I will make it do silly things in the future to mess with people that use this function")]]
         static void messageIdSetForTest(int value)                {uniqueMessageId = value;}  // Used for testing

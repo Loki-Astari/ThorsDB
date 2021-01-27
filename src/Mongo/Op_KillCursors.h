@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_KILLCURSORS_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <initializer_list>
@@ -13,8 +13,7 @@ namespace ThorsAnvil::DB::Mongo
 
 class Op_KillCursors
 {
-    MsgHeader                   header;
-    // std::int32_t                zero;               // 0 reserved for future use
+    Op_MsgHeader                header;
     std::int32_t                numberOfCursorIDs;
     std::vector<std::int64_t>   cursorIDs;
     public:

@@ -13,42 +13,16 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector const& select, Update const& update)
-    : header(OpCode::OP_UPDATE)
+template<typename Opt, ValidUpdOptions<Opt>,
+         typename Sel, ValidOption<Sel, Selector>,
+         typename Upd, ValidOption<Upd, Update>
+        >
+Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Opt&& options, Sel&& selector, Upd&& update)
+    : Op_UpdateOptions(std::forward<Opt>(options))
+    , header(OpCode::OP_UPDATE)
     , fullCollectionName(fullCollectionName)
-    , flags(OP_UpdateFlag::empty)
-    , selector(select)
-    , update(update)
-{
-    header.prepareToSend(getSize());
-}
-template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector const& select, Update&& update)
-    : header(OpCode::OP_UPDATE)
-    , fullCollectionName(fullCollectionName)
-    , flags(OP_UpdateFlag::empty)
-    , selector(select)
-    , update(std::move(update))
-{
-    header.prepareToSend(getSize());
-}
-template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector&& select, Update const& update)
-    : header(OpCode::OP_UPDATE)
-    , fullCollectionName(fullCollectionName)
-    , flags(OP_UpdateFlag::empty)
-    , selector(std::move(select))
-    , update(update)
-{
-    header.prepareToSend(getSize());
-}
-template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Selector&& select, Update&& update)
-    : header(OpCode::OP_UPDATE)
-    , fullCollectionName(fullCollectionName)
-    , flags(OP_UpdateFlag::empty)
-    , selector(std::move(select))
-    , update(std::move(update))
+    , selector(std::forward<Sel>(selector))
+    , update(std::forward<Upd>(update))
 {
     header.prepareToSend(getSize());
 }

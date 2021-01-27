@@ -5,7 +5,6 @@
 #error  "This should only be included from CmdDB_Delete.h"
 #endif
 
-
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -17,31 +16,20 @@ DeleteQuery<Document>::DeleteQuery(Document const& q)
 {}
 
 template<typename Document>
-Delete<Document>::Delete(std::string const& collection, DeleteQuery<Document> const& doc)
-    : deleteFrom(collection)
+template<typename Opt, ValidCmdDelOption<Opt>>
+Delete<Document>::Delete(Opt&& options, std::string const& collection, DeleteQuery<Document> const& doc)
+    : DeleteOptional(std::forward<Opt>(options))
+    , deleteFrom(collection)
     , deletes(1, doc)
 {}
 
 template<typename Document>
-template<typename I>
-Delete<Document>::Delete(std::string const& collection, I begin, I end)
-    : deleteFrom(collection)
+template<typename Opt, ValidCmdDelOption<Opt>, typename I>
+Delete<Document>::Delete(Opt&& options, std::string const& collection, I begin, I end)
+    : DeleteOptional(std::forward<Opt>(options))
+    , deleteFrom(collection)
     , deletes(begin, end)
 {}
-
-template<typename Document>
-void Delete<Document>::unordered()
-{
-    ordered = false;
-    filter["ordered"] = true;
-}
-
-template<typename Document>
-void Delete<Document>::setWrieConcern(int w, bool j, std::time_t wtimeout)
-{
-    writeConcern    = WriteConcern{w, j, wtimeout};
-    filter["writeConcern"]  = true;
-}
 
 }
 

@@ -9,10 +9,10 @@ using std::string_literals::operator""s;
 
 TEST(Op_GetMoreTest, Op_GetMoreStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0x184A89);
+    Op_MsgHeader::messageIdSetForTest(0x184A89);
 
     std::stringstream stream;
-    stream << Op_GetMore("thor.collection", 100, 0x123456789ABCDEF0);
+    stream << Op_GetMore("thor.collection", {100, 0x123456789ABCDEF0});
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x30\x00\x00\x00"                      // Size 32
@@ -29,8 +29,8 @@ TEST(Op_GetMoreTest, Op_GetMoreStreamObjectNoFlag)
 
 TEST(Op_GetMoreTest, Op_GetMoreStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
-    Op_GetMore   getMore("thor.collection", 23, 0);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
+    Op_GetMore   getMore("thor.collection", {23, 0});
 
     std::stringstream stream;
     stream << make_hr(getMore);

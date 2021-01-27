@@ -12,7 +12,6 @@
 #include <string>
 #include <sys/utsname.h>
 
-
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -28,6 +27,7 @@ class Driver
             , version(version)
         {}
 };
+
 class OS
 {
     std::string     type;
@@ -38,6 +38,7 @@ class OS
     public:
         OS();
 };
+
 class Application
 {
     std::string     name;
@@ -45,6 +46,7 @@ class Application
     public:
         Application(std::string const& application);
 };
+
 class Client
 {
     Application     application;
@@ -126,6 +128,7 @@ struct Binary
         char const* getBuffer() const           {return &data[0];}
         char*       getBuffer()                 {return &data[0];}
 };
+
 class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerializer<Binary, '\x00'>
 {
     public:
@@ -215,7 +218,7 @@ class Op_QueryHandShake: public Op_Query<HandShake>
     public:
         template<typename... Args>
         Op_QueryHandShake(Args&&... args)
-            : Op_Query("admin.$cmd", QueryOptions{}, 1, 0, std::forward<Args>(args)...)
+            : Op_Query("admin.$cmd", {}, std::forward<Args>(args)...)
         {}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return data.print(stream);}
@@ -224,13 +227,11 @@ class Op_QueryHandShake: public Op_Query<HandShake>
 using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
 using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
 using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
-using Op_MsgAuthReply       = Op_Msg<Kind0<AuthReply>>;
+using Op_MsgAuthReply       = Op_MsgReply<Kind0<AuthReply>>;
 
 }
 
-
 ThorsAnvil_MakeTraitCustomSerialize(ThorsAnvil::DB::Mongo::Binary, ThorsAnvil::DB::Mongo::BinarySerializer);
-
 
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,             name, version);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,                 type, name, architecture, version);

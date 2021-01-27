@@ -11,13 +11,13 @@ using std::string_literals::operator""s;
 
 TEST(Op_InsertTest, Op_InsertStreamObjectNoFlags)
 {
-    MsgHeader::messageIdSetForTest(0x12A5E9);
+    Op_MsgHeader::messageIdSetForTest(0x12A5E9);
     StringAndIntNoConstructor               object1{"DataString"s, 48};
     StringAndIntNoConstructor               object2{"Another"s, 22};
     StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
     std::stringstream stream;
-    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", object1, object2, object3);
+    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", {.flags = OP_InsertFlag::ContinueOnError}, object1, object2, object3);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -44,13 +44,13 @@ TEST(Op_InsertTest, Op_InsertStreamObjectNoFlags)
 }
 TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorStop)
 {
-    MsgHeader::messageIdSetForTest(0x12A5E9);
+    Op_MsgHeader::messageIdSetForTest(0x12A5E9);
     StringAndIntNoConstructor               object1{"DataString"s, 48};
     StringAndIntNoConstructor               object2{"Another"s, 22};
     StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
     std::stringstream stream;
-    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", InsertError::Stop, object1, object2, object3);
+    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", {.flags = OP_InsertFlag::empty}, object1, object2, object3);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -77,13 +77,13 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorStop)
 }
 TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorCont)
 {
-    MsgHeader::messageIdSetForTest(0x12A5E9);
+    Op_MsgHeader::messageIdSetForTest(0x12A5E9);
     StringAndIntNoConstructor               object1{"DataString"s, 48};
     StringAndIntNoConstructor               object2{"Another"s, 22};
     StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
     std::stringstream stream;
-    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", InsertError::Cont, object1, object2, object3);
+    stream << Op_Insert<StringAndIntNoConstructor>("thor.collection", {.flags = OP_InsertFlag::ContinueOnError}, object1, object2, object3);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -111,11 +111,11 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorCont)
 
 TEST(Op_InsertTest, Op_InsertStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
     StringAndIntNoConstructor               object1{"DataString"s, 48};
     StringAndIntNoConstructor               object2{"Another"s, 22};
     StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
-    Op_Insert<StringAndIntNoConstructor>    query("thor.collection", object1, object2, object3);
+    Op_Insert<StringAndIntNoConstructor>    query("thor.collection", {}, object1, object2, object3);
 
     std::stringstream stream;
     stream << make_hr(query);

@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_MSG_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <istream>
@@ -46,21 +46,25 @@ struct Kind0
 
 // TODO Kind1
 
+struct Op_MsgOptions
+{
+    OP_MsgFlag              flags    = OP_MsgFlag::empty;
+};
+
+template<typename Actual>
+using ValidMsgOptions = ValidOption<Actual, Op_MsgOptions>;
 
 // Op_Msg: https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
 template<typename... Kind>
-class Op_Msg
+class Op_Msg: public Op_MsgOptions
 {
-    MsgHeader               header;             // standard message header
-    OP_MsgFlag              flagBits;           // message flags
+    Op_MsgHeader            header;             // standard message header
     std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
     std::int32_t            checksum;           // checksum of message;
 
     public:
-        template<typename... Args>
-        Op_Msg(Args&&... args);
-        template<typename... Args>
-        Op_Msg(OP_MsgFlag flag, Args&&... kind);
+        template<typename Opt = Op_MsgOptions, ValidMsgOptions<Opt> = true, typename... Args>
+        Op_Msg(Opt&& options, Args&&... args);
 
         std::ostream& print(std::ostream& stream)       const;
         std::istream& parse(std::istream& stream);
@@ -76,10 +80,17 @@ class Op_Msg
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
 };
 
+template<typename... Kind>
+class Op_MsgReply: public Op_Msg<Kind...>
+{
+    public:
+        template<typename... Args>
+        Op_MsgReply(Args&&... args);
+};
+
 }
 
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
-
 
 #include "Op_Msg.tpp"
 

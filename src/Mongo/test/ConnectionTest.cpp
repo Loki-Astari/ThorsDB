@@ -11,6 +11,7 @@
 // Middle Wire Protocol
 #include "CmdDB_Insert.h"
 #include "CmdDB_Delete.h"
+#include "CmdDB_Find.h"
 // Other Stuff
 #include "MongoConnection.h"
 #include "MongoConfig.h"
@@ -21,8 +22,8 @@
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-struct FindAll {};
-ThorsAnvil_MakeTrait(FindAll);
+struct TestFindAll {};
+ThorsAnvil_MakeTrait(TestFindAll);
 
 struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
 {
@@ -46,12 +47,12 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // reset the collection to be empty.
     {
-        connection << Op_Delete<FindAll>(fullConnection);
+        connection << Op_Delete<TestFindAll>(fullConnection, {});
     }
 
     // Make sure there are zero objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
+        connection << Op_Query<TestFindAll>(fullConnection, {.skip = 100, .ret = 0});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -75,12 +76,12 @@ TEST(ConnectionTest, YeOldWireProtocol)
         StringAndIntNoConstructor               object2{"Another"s, 22};
         StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
 
-        connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, object1, object2, object3);
+        connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, {}, object1, object2, object3);
     }
 
     // Check there are three objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
+        connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -100,7 +101,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Get the three objects one at time using GET_MORE
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 2, 0);
+        connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
@@ -110,7 +111,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
         EXPECT_EQ(reply1.numberReturned, 2);
         ASSERT_EQ(reply1.documents.size(), 2);
 
-        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply2;
         connection >> reply2;
@@ -119,7 +120,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
         EXPECT_EQ(reply2.numberReturned, 1);
         ASSERT_EQ(reply2.documents.size(), 1);
 
-        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply3;
         connection >> reply3;
@@ -130,7 +131,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
     // Get the two of three objects then kill cursor
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 2, 0);
+        connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply1;
         connection >> reply1;
@@ -142,7 +143,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
         connection << Op_KillCursors({reply1.cursorID});
 
-        connection << Op_GetMore(fullConnection, 1, reply1.cursorID);
+        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
 
         Op_Reply<StringAndIntNoConstructorReply>     reply2;
         connection >> reply2;
@@ -152,7 +153,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Check the query can actual filter.
     {
-        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, QueryOptions{}, 100, 0, "Another");
+        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -171,9 +172,9 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
     // Check the Update works see if the filter finds it.
     {
-        connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
+        connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
 
-        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, QueryOptions{}, 100, 0, "Another");
+        connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -193,12 +194,12 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Delete an item from the collection.
     {
-        connection << Op_Delete<SimpleStringNoConstructor>(fullConnection, "DataString");
+        connection << Op_Delete<SimpleStringNoConstructor>(fullConnection, {}, "DataString");
     }
 
     // Make sure that the delete worked.
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
+        connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
         Op_Reply<StringAndIntNoConstructorReply>     reply;
         connection >> reply;
 
@@ -230,7 +231,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // reset the collection to be empty.
     {
-        connection << make_CmdDB_Delete("test", "ConnectionTest", QueryOptions{}, FindAll{});
+        connection << make_CmdDB_Delete("test", "ConnectionTest", {}, TestFindAll{});
         CmdDB_Reply   reply;
         connection >> reply;
 
@@ -246,22 +247,23 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // Make sure there are zero objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        //connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
+        connection << make_CmdDB_Find("test", "ConnectionTest");
+
+        // Op_Reply<StringAndIntNoConstructorReply>     reply;
+        // connection >> reply;
+        CmdDB_Reply     reply;
         connection >> reply;
 
-        EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(0, reply.numberReturned);
-        if (!reply.isOk() || reply.numberReturned != 0)
+        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0)
         {
-            std::cerr << "Showing: " << reply.numberReturned << "\n";
-            for (int loop = 0; loop < reply.numberReturned; ++loop)
-            {
-                std::cerr << "Item: " << loop << "\n"
-                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
-                          << "\n\n";
-            }
+            std::cerr << make_hr(reply);
         }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.getDocumentCount());
+        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+        EXPECT_EQ(0,   reply.replyCount());
     }
 
     // Add three objects to the collection
@@ -271,11 +273,11 @@ TEST(ConnectionTest, MiddleWireProtocol)
                                                                      StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
                                                                     };
 
-        connection << make_CmdDB_Insert("test", "ConnectionTest", QueryOptions{}, std::begin(objects), std::end(objects));
+        connection << make_CmdDB_Insert("test", "ConnectionTest", {}, std::begin(objects), std::end(objects));
         CmdDB_Reply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.getDocument(0).n != 3)
+        if (!reply.isOk() || reply.getDocumentCount() == 0 || reply.getDocument(0).n != 3)
         {
             std::cerr << make_hr(reply);
         }
@@ -288,22 +290,20 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // Check there are three objects in the collection.
     {
-        connection << Op_Query<FindAll>(fullConnection, QueryOptions{}, 100, 0);
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        auto find = make_CmdDB_Find("test", "ConnectionTest");;
+        connection << find;
+
+        CmdDB_FindResult<StringAndIntNoConstructor>     reply;
         connection >> reply;
 
-        EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(3, reply.numberReturned);
-        if (!reply.isOk() || reply.numberReturned != 3)
+        if (!reply.isOk() || reply.getDocumentCount() == 0 || reply.getDocument(0).cursor.firstBatch.size() != 3)
         {
-            std::cerr << "Showing: " << reply.numberReturned << "\n";
-            for (int loop = 0; loop < reply.numberReturned; ++loop)
-            {
-                std::cerr << "Item: " << loop << "\n"
-                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
-                          << "\n\n";
-            }
+            std::cerr << make_hr(reply);
         }
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.getDocumentCount());
+        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+        EXPECT_EQ(3,   reply.getDocument(0).cursor.firstBatch.size());
     }
 }
 

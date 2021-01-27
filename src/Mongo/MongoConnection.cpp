@@ -3,7 +3,6 @@
 #include "HandShake.h"
 #include "ThorsCrypto/scram.h"
 
-
 using namespace ThorsAnvil::DB::Mongo;
 
 // This registers the name "mongo" to create a "MongoConnection" object.
@@ -54,7 +53,7 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
-    stream << Op_MsgAuthInit(AuthInit(database, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
+    stream << Op_MsgAuthInit({}, AuthInit(database, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
     Op_MsgAuthReply         authInitReply;
     stream >> authInitReply;
@@ -70,7 +69,7 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Cont: Send proof we know the password
-    stream << Op_MsgAuthCont(AuthCont(authInitReply.getDocument<0>().conversationId,
+    stream << Op_MsgAuthCont({}, AuthCont(authInitReply.getDocument<0>().conversationId,
                                       database,
                                       client.getProofMessage(password, authInitReply.getDocument<0>().payload.data)
                                      )
@@ -90,7 +89,7 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Cont 2: Send the DB Info
-    stream << Op_MsgAuthCont(AuthCont(authContReply.getDocument<0>().conversationId,
+    stream << Op_MsgAuthCont({}, AuthCont(authContReply.getDocument<0>().conversationId,
                                       database,
                                       ""s
                                      )

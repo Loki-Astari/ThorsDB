@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_REPLY_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 #include <map>
@@ -36,7 +36,7 @@ struct Op_Reply
 {
     using Documents = std::vector<Document>;
 
-    MsgHeader               header;                 // standard message header
+    Op_MsgHeader            header;                 // standard message header
     OP_ReplyFlag            responseFlags;          // bit vector - see details above
     std::int64_t            cursorID;               // cursor id if client needs to do get more's
     std::int32_t            startingFrom;           // where in the cursor this reply is starting
@@ -55,7 +55,8 @@ struct Op_Reply
         virtual ~Op_Reply() {}
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Reply> const& reply);
-        friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)  {return reply.parse(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_Reply const& reply) {return reply.print(stream);}
+        friend std::istream& operator>>(std::istream& stream, Op_Reply& reply)       {return reply.parse(stream);}
 
         std::size_t     getDocumentCount()              const {return documents.size();}
         Document const& getDocument(std::size_t size)   const {return documents[size];}
@@ -65,10 +66,12 @@ struct Op_Reply
         virtual std::string getHRErrorMessage() const;
     protected:
         std::istream& parse(std::istream& stream);
+        std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 };
 
 }
+
 ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_ReplyFlag, empty, CursorNotFound, QueryFailure, ShardConfigStale, AwaitCapable);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ErrorInfo,  ok, code, codeName, $err);
 

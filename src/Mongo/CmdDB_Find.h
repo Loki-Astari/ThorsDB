@@ -13,158 +13,69 @@ struct DefaultSort  {};
 
 struct ReadConcern
 {
-    ReadConcernLevel    level;
+    friend bool operator!=(ReadConcern const& lhs, ReadConcern const& rhs)
+    {
+        return lhs.level != rhs.level;
+    }
+    ReadConcernLevel    level = ReadConcernLevel::local;
 };
 
-template<typename Filter = FindAll, typename Sort = DefaultSort>
-class Find: public CmdDB_Base
+class Sort {};
+
+struct FindOptions
+{
+    std::map<std::string, int>  projection;
+    std::string                 hint;
+    std::size_t                 skip                = 0;
+    std::size_t                 limit               = 0;
+    std::size_t                 batchSize           = 101;
+    bool                        singleBatch         = false;
+    std::string                 comment;
+    std::size_t                 maxTimeMS           = 0;
+    ReadConcern                 readConcern;
+    std::map<std::string, int>  max;
+    std::map<std::string, int>  min;
+    bool                        returnKey           = false;
+    bool                        showRecordId        = false;
+    bool                        tailable            = false;
+    bool                        awaitData           = false;
+    bool                        noCursorTimeout     = false;
+    bool                        allowPartialResults = false;
+    Collation                   collation;
+    bool                        allowDiskUse        = false;
+};
+
+struct FindOptional
 {
     public:
-        Find(std::string const& collection, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
-            , skip(skip)
-            , limit(limit)
-            , batchSize(batchSize)
-        {
-            outputFilter["skip"]        = skip  == 0 ? false : true;
-            outputFilter["limit"]       = limit == 0 ? false : true;
-            outputFilter["batchSize"]   = batchSize == 101 ? false : true;
-        }
-        Find(std::string const& collection, Filter&& filter, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            , find(collection)
-            , filter(std::forward<Filter>(filter))
-            , skip(skip)
-            , limit(limit)
-            , batchSize(batchSize)
-        {
-            outputFilter["filter"]      = true;
-            outputFilter["skip"]        = skip  == 0 ? false : true;
-            outputFilter["limit"]       = limit == 0 ? false : true;
-            outputFilter["batchSize"]   = batchSize == 101 ? false : true;
-        }
-        Find(std::string const& collection, Filter&& filter, Sort&& sort, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
-            , filter(std::forward<Filter>(filter))
-            , sort(std::forward<Sort>(sort))
-            , skip(skip)
-            , limit(limit)
-            , batchSize(batchSize)
-        {
-            outputFilter["filter"]      = true;
-            outputFilter["sort"]        = true;
-            outputFilter["skip"]        = skip  == 0 ? false : true;
-            outputFilter["limit"]       = limit == 0 ? false : true;
-            outputFilter["batchSize"]   = batchSize == 101 ? false : true;
-        }
-        Find(std::string const& collection, Sort&& sort, std::size_t skip, std::size_t limit, std::size_t batchSize)
-            : find(collection)
-            , sort(std::forward<Sort>(sort))
-            , skip(skip)
-            , limit(limit)
-            , batchSize(batchSize)
-        {
-            outputFilter["sort"]        = true;
-            outputFilter["skip"]        = skip  == 0 ? false : true;
-            outputFilter["limit"]       = limit == 0 ? false : true;
-            outputFilter["batchSize"]   = batchSize == 101 ? false : true;
-        }
-        void addFileds(std::initializer_list<std::string> const& fieldNames)
-        {
-            for (auto const& name: fieldNames)
-            {
-                projection[name] = 1;
-            }
-            outputFilter["projection"]  = true;
-        }
-        void addHint(std::string&& hint)
-        {
-            hint = std::forward<std::string>(hint);
-            outputFilter["hint"]        = true;
-        }
-        void setSkip(std::size_t val)
-        {
-            skip = val;
-            outputFilter["skip"]        = true;
-        }
-        void setLimit(std::size_t val)
-        {
-            limit = val;
-            outputFilter["limit"]        = true;
-        }
-        void setBatchSize(std::size_t val)
-        {
-            batchSize = s;
-            outputFilter["batchSize"]   = true;
-        }
-        void singleBatch()
-        {
-            // Already set true. Just need to return it.
-            outputFilter["singleBatch"] = true;
-        }
-        void setComment(std::string&& val)
-        {
-            comment = std::forward<std::string>(val);
-            outputFilter["comment"]     = true;
-        }
-        void setMaxTimeout(std::size_t val)
-        {
-            maxTimeMS   = val;
-            outputFilter["maxTimeMS"]   = true;
-        }
-        void addReadConcern(ReadConcernLevel val)
-        {
-            readConcern = ReadConcern{val};
-            outputFilter["readConcern"] = true;
-        }
-        void addMax(std::string const& field, int val)
-        {
-            max[field] = val;
-            outputFilter["max"]         = true;
-        }
-        void addMin(std::string const& field, int val)
-        {
-            min[field] = val;
-            outputFilter["min"]         = true;
-        }
-        void justKeys()
-        {
-            // Already set true. Just need to return it.
-            outputFilter["returnKey"]   = true;
-        }
-        void showId()
-        {
-            // Already set true. Just need to return it.
-            outputFilter["showRecordId"]= true;
-        }
-        void tailableCursor()
-        {
-            outputFilter["tailable"]    = true;
-        }
-        void tailedCursorAwait()
-        {
-            outputFilter["tailable"]    = true;
-            outputFilter["awaitData"]   = true;
-        }
-        void setNoCursorTimeout()
-        {
-            outputFilter["noCursorTimeout"] = true;
-        }
-        void setAllowPartialResults()
-        {
-            outputFilter["allowPartialResults"] = true;
-        }
+        FindOptional(FindOptions const& options);
+        FindOptional(FindOptions&& options);
+
+        void addFileds(std::initializer_list<std::string> const& fieldNames);
+        void addHint(std::string const& hint);
+        void setSkip(std::size_t val);
+        void setLimit(std::size_t val);
+        void setBatchSize(std::size_t val);
+        void oneBatch(bool val = true);
+        void setComment(std::string const& val);
+        void setMaxTimeout(std::size_t val);
+        void addReadConcern(ReadConcernLevel val);
+        void addMax(std::string const& field, int val);
+        void addMin(std::string const& field, int val);
+        void justKeys(bool val = false);
+        void showId(bool val = true);
+        void tailableCursor(bool val = true);
+        void tailedCursorAwait(bool val = true);
+        void setNoCursorTimeout(bool val = true);
+        void setAllowPartialResults(bool val = true);
         // TODO setCollation
-        void useDisk()
-        {
-            outputFilter["allowDiskUse"]    = true;
-        }
+        void useDisk(bool val = true);
     private:
-        friend class ThorsAnvil::Serialize::Traits<Find>;
-        friend class ThorsAnvil::Serialize::Filter<Find>;
-        std::map<std::string, bool>     outputFilter = {{"filter", false}, {"sort", false},
+        void updateFilter();
+        std::map<std::string, bool>     optionsFilter ={
                                                         {"projection", false},
                                                         {"hint", false},
-                                                        {"skip", false}, {"limit", false}, {"batchSize": false}, {"singleBatch": false},
+                                                        {"skip", false}, {"limit", false}, {"batchSize", false}, {"singleBatch", false},
                                                         {"comment", false},
                                                         {"maxTimeMS", false},
                                                         {"readConcern", false},
@@ -174,66 +85,122 @@ class Find: public CmdDB_Base
                                                         {"collation", false},
                                                         {"allowDiskUse", false}
                                                        };
-
-        std::string                 find;
-        Filter                      filter;
-        Sort                        sort;
-        std::map<std::strig, int>   projection;
+        friend class ThorsAnvil::Serialize::Traits<FindOptional>;
+        friend class ThorsAnvil::Serialize::Filter<FindOptional>;
+        std::map<std::string, int>  projection;
         std::string                 hint;
         std::size_t                 skip;
         std::size_t                 limit;
         std::size_t                 batchSize;
-        bool                        singleBatch         = true;
+        bool                        singleBatch;
         std::string                 comment;
         std::size_t                 maxTimeMS;
-        ReadConcern                 readConcern{ReadConcernLevel::local};
+        ReadConcern                 readConcern;
         std::map<std::string, int>  max;
         std::map<std::string, int>  min;
-        bool                        returnKey           = true;
-        bool                        showRecordId        = true;
-        bool                        tailable            = true;
-        bool                        awaitData           = true;
-        bool                        noCursorTimeout     = true;
-        bool                        allowPartialResults = true;
+        bool                        returnKey;
+        bool                        showRecordId;
+        bool                        tailable;
+        bool                        awaitData;
+        bool                        noCursorTimeout;
+        bool                        allowPartialResults;
         Collation                   collation;
-        bool                        allowDiskUse        = true;
+        bool                        allowDiskUse;
 };
 
+struct FindQueryOptions: public Op_QueryOptions, public FindOptions {};
+
+template<typename Actual>
+using ValidCmdFindOption = ValidOption<Actual, FindQueryOptions>;
+
+template<typename Filter, typename Sort>
+class Find: public FindOptional
+{
+    public:
+        template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
+        Find(Opt&& options, std::string const& collection, Filter&& filter, Sort&& sort);
+    private:
+        void updateFilter();
+        friend class ThorsAnvil::Serialize::Traits<Find>;
+        friend class ThorsAnvil::Serialize::Filter<Find>;
+
+        std::string                 find;
+        Filter                      filter;
+        Sort                        sort;
+        std::map<std::string, bool>     findFilter = {{"filter", false}, {"sort", false}};
+};
 
 template<typename Document>
-using CmdDB_Find      = CmdDB_Query<Find<Document>>;
+struct Cursor
+{
+    bool                    partialResultsReturneda = true;
+    std::int64_t            id                      = 0;
+    std::string             ns;
+    std::vector<Document>   firstBatch;
+};
 
-CmdDB_Find<FindAll, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+struct Signature
 {
-    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<QueryOptions>(options), skip, limit, batchSize);
-}
-template<typename Filter>
-CmdDB_Find<Filter, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, Filter&& filter, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+    std::int64_t            keyIdP                  = 0;
+    std::string             hash;
+};
+
+struct ClusterTime
 {
-    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<QueryOptions>(options), std::forward<Filter>(filter), skip, limit, batchSize);
-}
+    std::time_t             clusterTime             = 0;
+    Signature               signature;
+};
+
+template<typename Document>
+struct FindResult
+{
+    Cursor<Document>        cursor;
+    double                  ok                      = 0.0;
+    std::time_t             operationTime           = 0;
+    ClusterTime             $clusterTime;
+};
+
 template<typename Filter, typename Sort>
-CmdDB_Find<Filter, Sort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, Filter&& filter, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+using CmdDB_Find        = CmdDB_Query<Find<Filter, Sort>>;
+
+template<typename Document>
+using CmdDB_FindResult  = Op_Reply<FindResult<Document>>;
+
+template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Filter = FindAll, typename Sort = DefaultSort>
+CmdDB_Find<Filter, DefaultSort>
+make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
 {
-    return CmdDB_Find<Filter, Sort>(db, collection, std::forward<QueryOptions>(options), std::forward<Filter>(filter), std::forward<Sort>(sort), skip, limit, batchSize);
+    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<Opt>(options), std::forward<Filter>(filter), std::forward<Sort>(sort));
 }
-template<typename Sort>
-CmdDB_FindAllSorted<FindAll, Sort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, QueryOptions&& options, Sort&& sort, std::size_t skip = 0, std::size_t limit = 0, std::size_t batchSize = 101)
+
+template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Sort>
+CmdDB_Find<FindAll, Sort>
+make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, Opt&& options, Sort&& sort)
 {
-    return CmdDB_Find<FindAll, Sort>(db, collection, std::forward<QueryOptions>(options), std::forward<Sort>(sort), skip, limit, batchSize);
+    return CmdDB_Find<FindAll, Sort>(db, collection, std::forward<Opt>(options), FindAll{}, std::forward<Sort>(sort));
 }
 
 }
 
-ThorsAnvil_MakeTraits(ThorsAnvil::DB::Mongo::ReadConcern,                                               level);
-ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,                                          outputFilter);
-ThorsAnvil_Template_ExpandTrait(2, ThorsAnvil::DB::Mongo::CmdDB_Base, ThorsAnvil::DB::Mongo::Find,      find, filter, sort, projection, hint, skip, limit, batchSize,
-                                                                                                        singleBatch, comment, maxTimeMS, readConcern, max, min, returnKey,
-                                                                                                        showRecordId, tailable, awaitData, noCursorTimeout, allowPartialResults,
-                                                                                                        collation, allowDiskUse);
+// Default Actions
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindAll);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DefaultSort);
+// Find Action
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ReadConcern,                level);
+ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::FindOptional,              optionsFilter);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindOptional,               projection, hint, skip, limit, batchSize,
+                                                                        singleBatch, comment, maxTimeMS, readConcern, max, min, returnKey,
+                                                                        showRecordId, tailable, awaitData, noCursorTimeout, allowPartialResults,
+                                                                        collation, allowDiskUse);
+ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,          findFilter);
+ThorsAnvil_Template_ExpandTrait(2,ThorsAnvil::DB::Mongo::FindOptional,
+                                  ThorsAnvil::DB::Mongo::Find,          find, filter, sort);
+// Result Info
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::Cursor,          partialResultsReturned, id, ns, firstBatch);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::FindResult,      cursor, ok, operationTime, $clusterTime);
+
+#include "CmdDB_Find.tpp"
 
 #endif

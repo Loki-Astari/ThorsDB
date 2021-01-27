@@ -11,10 +11,10 @@ using std::string_literals::operator""s;
 
 TEST(Op_DeleteTest, Op_DeleteStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0xA2A5F5);
+    Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", "DataString"s, 48);
+    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {}, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -34,10 +34,10 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectNoFlag)
 }
 TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
 {
-    MsgHeader::messageIdSetForTest(0xA2A5F5);
+    Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", Remove::Single, "DataString"s, 48);
+    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {.flags = OP_DeleteFlag::SingleRemove}, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -57,10 +57,10 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
 }
 TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
 {
-    MsgHeader::messageIdSetForTest(0xA2A5F5);
+    Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", Remove::Multiple, "DataString"s, 48);
+    stream << Op_Delete<StringAndIntNoConstructor>("thor.collection", {}, "DataString"s, 48);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -81,8 +81,8 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
 
 TEST(Op_DeleteTest, Op_DeleteStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
-    Op_Delete<StringAndIntNoConstructor>    query("thor.collection", "DataString"s, 48);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
+    Op_Delete<StringAndIntNoConstructor>    query("thor.collection", {}, "DataString"s, 48);
 
     std::stringstream stream;
     stream << make_hr(query);

@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_DELETE_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 
@@ -20,21 +20,24 @@ enum class OP_DeleteFlag : std::int32_t
                                     // 1-31 are reserved. Must be set to 0.
 };
 
-enum class Remove { Single, Multiple };
+struct Op_DeleteOptions
+{
+    OP_DeleteFlag           flags       = OP_DeleteFlag::empty;
+};
+
+template<typename Actual>
+using ValidDelOptions = ValidOption<Actual, Op_DeleteOptions>;
 
 template<typename Document>
-struct Op_Delete
+struct Op_Delete: public Op_DeleteOptions
 {
-    MsgHeader               header;             // standard message header
-    // std::int32_t            zero;               // 0 reserved for future use
-    std::string             fullCollectionName; // "dbname.collectionname"
-    OP_DeleteFlag           flags;              // bit vector - see below
+    Op_MsgHeader            header;             // standard message header
+    std::string             fullCollectionName;
     Document                selector;           // query object.
+
     public:
-        template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, Remove remove, Args&&... args);
-        template<typename... Args>
-        Op_Delete(std::string const& fullCollectionName, Args&&... args);
+        template<typename Opt = Op_DeleteOptions, ValidDelOptions<Opt> = true, typename... Args>
+        Op_Delete(std::string const& fullCollectionName, Opt&& flags, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Delete> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Delete const& data) {return data.print(stream);}

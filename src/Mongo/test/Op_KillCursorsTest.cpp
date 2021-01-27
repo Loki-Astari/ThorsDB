@@ -9,7 +9,7 @@ using std::string_literals::operator""s;
 
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0x184A89);
+    Op_MsgHeader::messageIdSetForTest(0x184A89);
 
     std::stringstream stream;
     stream << Op_KillCursors({0x123456789ABCDEF0L});
@@ -28,7 +28,7 @@ TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
+    Op_MsgHeader::messageIdSetForTest(0x124589);
     Op_KillCursors   getMore({0x123456789ABCDEF0L});
 
     std::stringstream stream;

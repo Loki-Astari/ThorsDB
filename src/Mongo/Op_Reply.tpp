@@ -47,10 +47,23 @@ std::istream& Op_Reply<Document>::parse(std::istream& stream)
 }
 
 template<typename Document>
+std::ostream& Op_Reply<Document>::print(std::ostream& stream) const
+{
+    stream << header
+           << make_LE(responseFlags)
+           << make_LE(cursorID)
+           << make_LE(startingFrom)
+           << make_LE(numberReturned)
+           << ThorsAnvil::Serialize::bsonExporter(documents);
+
+    return stream;
+}
+
+template<typename Document>
 std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
-           << "responseFlags: " << static_cast<std::int32_t>(responseFlags) << "\n"
+           << "responseFlags: " << responseFlags << "\n"
            << "cursorID:      " << cursorID      << "\n"
            << "startingFrom:  " << startingFrom  << "\n"
            << "numberReturned:" << numberReturned<< "\n";
@@ -102,4 +115,5 @@ std::string Op_Reply<Document>::getHRErrorMessage() const
 }
 
 }
+
 #endif

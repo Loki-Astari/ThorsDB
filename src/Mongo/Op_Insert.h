@@ -2,7 +2,7 @@
 #define THORSANVIL_DB_MONGO_OP_INSERT_H
 
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 #include <ostream>
 
@@ -21,20 +21,23 @@ enum class OP_InsertFlag : std::int32_t
                                 // reported by getLastError.
 };
 
-enum class InsertError { Stop, Cont };
+struct Op_InsertOptions
+{
+    OP_InsertFlag           flags           = OP_InsertFlag::empty;
+};
+
+template<typename Actual>
+using ValidInsOptions = ValidOption<Actual, Op_InsertOptions>;
 
 template<typename Document>
-struct Op_Insert
+struct Op_Insert: public Op_InsertOptions
 {
-    MsgHeader               header;             // standard message header
-    OP_InsertFlag           flags;              // bit vector - see above
-    std::string             fullCollectionName; // "dbname.collectionname"
+    Op_MsgHeader            header;             // standard message header
+    std::string             fullCollectionName;
     std::vector<Document>   documents;          // one or more documents to insert into the collection
     public:
-        template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, InsertError insertError, Args&&... args);
-        template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, Args&&... args);
+        template<typename Opt = Op_InsertOptions, ValidInsOptions<Opt> = true, typename... Args>
+        Op_Insert(std::string const& fullCollectionName, Opt&& options, Args&&... args);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Insert> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Insert const& data) {return data.print(stream);}
