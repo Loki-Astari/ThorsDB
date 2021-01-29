@@ -9,25 +9,24 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-DeleteQuery<Document>::DeleteQuery(Document const& q)
-    : q(q)
+DeleteQuery<Document>::DeleteQuery(Document q)
+    : q(std::move(q))
     , limit(0)
     , filter{{"collation", false}, {"hint", false}}
 {}
 
 template<typename Document>
-template<typename Opt, ValidCmdDelOption<Opt>>
-Delete<Document>::Delete(Opt&& options, std::string const& collection, DeleteQuery<Document> const& doc)
-    : DeleteOptional(std::forward<Opt>(options))
-    , deleteFrom(collection)
-    , deletes(1, doc)
+Delete<Document>::Delete(DeleteOptions options, std::string collection, DeleteQuery<Document> doc)
+    : DeleteOptional(std::move(options))
+    , deleteFrom(std::move(collection))
+    , deletes(1, std::move(doc))
 {}
 
 template<typename Document>
-template<typename Opt, ValidCmdDelOption<Opt>, typename I>
-Delete<Document>::Delete(Opt&& options, std::string const& collection, I begin, I end)
-    : DeleteOptional(std::forward<Opt>(options))
-    , deleteFrom(collection)
+template<typename I>
+Delete<Document>::Delete(DeleteOptions options, std::string collection, I begin, I end)
+    : DeleteOptional(std::move(options))
+    , deleteFrom(std::move(collection))
     , deletes(begin, end)
 {}
 

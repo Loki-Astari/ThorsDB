@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include "Op_KillCursors.h"
+#include "Op_Reply.h"
 #include "test/OpTest.h"
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -10,9 +11,12 @@ using std::string_literals::operator""s;
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 {
     Op_MsgHeader::messageIdSetForTest(0x184A89);
+    int              data1;
+    Op_Reply<int>    reply1(data1);
+    reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
 
     std::stringstream stream;
-    stream << Op_KillCursors({0x123456789ABCDEF0L});
+    stream << make_Op_KillCursors(reply1);
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x20\x00\x00\x00"                      // Size
@@ -29,10 +33,13 @@ TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
-    Op_KillCursors   getMore({0x123456789ABCDEF0L});
+    int              data1;
+    Op_Reply<int>    reply1(data1);
+    reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
+
 
     std::stringstream stream;
-    stream << make_hr(getMore);
+    stream << make_hr(make_Op_KillCursors(reply1));
 
     std::size_t lineCount = 0;
     std::string line;

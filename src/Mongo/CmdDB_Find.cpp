@@ -2,33 +2,7 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-FindOptional::FindOptional(FindOptions const& options)
-    : projection(std::move(options.projection))
-    , hint(options.hint)
-    , skip(options.skip)
-    , limit(options.limit)
-    , batchSize(options.batchSize)
-    , singleBatch(options.singleBatch)
-    , comment(options.comment)
-    , maxTimeMS(options.maxTimeMS)
-    , readConcern(options.readConcern)
-#pragma vera-pushoff
-    , max(options.max)
-    , min(options.min)
-#pragma vera-pop
-    , returnKey(options.returnKey)
-    , showRecordId(options.showRecordId)
-    , tailable(options.tailable)
-    , awaitData(options.awaitData)
-    , noCursorTimeout(options.noCursorTimeout)
-    , allowPartialResults(options.allowPartialResults)
-    , collation(options.collation)
-    , allowDiskUse(options.allowDiskUse)
-{
-    updateFilter();
-}
-
-FindOptional::FindOptional(FindOptions&& options)
+FindOptional::FindOptional(FindOptions options)
     : projection(std::move(options.projection))
     , hint(std::move(options.hint))
     , skip(std::move(options.skip))

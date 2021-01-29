@@ -4,6 +4,11 @@
 // https://docs.mongodb.com/manual/reference/command/delete/#dbcmd.delete
 
 #include "CmdDB.h"
+#include "CmdDB_Query.h"
+
+#include <map>
+#include <vector>
+#include <string>
 
 namespace ThorsAnvil::DB::Mongo
 {
@@ -11,7 +16,7 @@ namespace ThorsAnvil::DB::Mongo
 template<typename Document>
 struct DeleteQuery
 {
-    DeleteQuery(Document const& q);
+    DeleteQuery(Document q);
 
     Document        q;
     std::size_t     limit;
@@ -29,8 +34,7 @@ struct DeleteOptions
 class DeleteOptional
 {
     public:
-        DeleteOptional(DeleteOptions const& options);
-        DeleteOptional(DeleteOptions&& options);
+        DeleteOptional(DeleteOptions options);
 
         void unordered(bool val = true);
         void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
@@ -44,19 +48,15 @@ class DeleteOptional
         WriteConcern                            writeConcern;
 };
 
-struct DeleteQueryOptions: public Op_QueryOptions, public DeleteOptions {};
-
-template<typename Actual>
-using ValidCmdDelOption = ValidOption<Actual, DeleteQueryOptions>;
-
 template<typename Document>
 struct Delete: public DeleteOptional
 {
     public:
-        template<typename Opt = DeleteQueryOptions, ValidCmdDelOption<Opt> = true, typename I>
-        Delete(Opt&& options, std::string const& collection, I begin, I end);
-        template<typename Opt = DeleteQueryOptions, ValidCmdDelOption<Opt> = true>
-        Delete(Opt&& options, std::string const& collection, DeleteQuery<Document> const& doc);
+        using Options = DeleteOptions;
+
+        template<typename I>
+        Delete(DeleteOptions options, std::string collection, I begin, I end);
+        Delete(DeleteOptions options, std::string collection, DeleteQuery<Document> doc);
 
     private:
         friend class ThorsAnvil::Serialize::Traits<Delete>;
@@ -68,11 +68,30 @@ struct Delete: public DeleteOptional
 template<typename Document>
 using CmdDB_Delete      = CmdDB_Query<Delete<Document>>;
 
-template<typename Opt = DeleteQueryOptions, ValidCmdDelOption<Opt> = true, typename Document>
-CmdDB_Delete<Document>
-make_CmdDB_Delete(std::string const& db, std::string const& collection, Opt&& options, Document const& doc)
+template<typename Document>
+CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Document doc)
 {
-    return CmdDB_Delete<Document>(db, collection, std::forward<Opt>(options), DeleteQuery{doc});
+    using DelOpt    = typename Delete<Document>::Options;
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), Op_QueryOptions{}, DelOpt{}, DeleteQuery{std::move(doc)});
+}
+
+template<typename Document>
+CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, DeleteOptions deleteOpt, Document doc)
+{
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), Op_QueryOptions{}, std::move(deleteOpt), DeleteQuery{std::move(doc)});
+}
+
+template<typename Document>
+CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions options, Document doc)
+{
+    using DelOpt    = typename Delete<Document>::Options;
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), std::move(options), DelOpt{}, DeleteQuery{std::move(doc)});
+}
+
+template<typename Document>
+CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions options, DeleteOptions deleteOpt, Document doc)
+{
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), std::move(options), std::move(deleteOpt), DeleteQuery{std::move(doc)});
 }
 
 }

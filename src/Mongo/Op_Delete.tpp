@@ -5,22 +5,18 @@
 #error  "This should only be included from Op_Delete.h"
 #endif
 
-#include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
-
-#include <numeric>
 
 namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename Opt, ValidDelOptions<Opt>, typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Opt&& options, Args&&... args)
-    : Op_DeleteOptions(std::forward<Opt>(options))
-    , header(OpCode::OP_DELETE)
-    , fullCollectionName(fullCollectionName)
-    , selector{std::forward<Args>(args)...}
+Op_Delete<Document>::Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document selector)
+    : header(OpCode::OP_DELETE)
+    , fullCollectionName(std::move(fullCollectionName))
+    , flags(flags)
+    , selector(std::move(selector))
 {
     header.prepareToSend(getSize());
 }

@@ -5,7 +5,6 @@
 #error  "This should only be included from Op_Query.h"
 #endif
 
-#include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
 
@@ -13,23 +12,23 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename Opt, ValidQueryOptions<Opt>, typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args)
-    : Op_QueryOptions(std::forward<Opt>(options))
+template<typename Doc, NoOptions<Doc>, typename... Args>
+Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions options, Args&&... args)
+    : Op_QueryOptions(std::move(options))
     , header(OpCode::OP_QUERY)
-    , fullCollectionName(fullCollectionName)
+    , fullCollectionName(std::move(fullCollectionName))
     , query{std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }
 
 template<typename Document>
-template<typename Opt, DerivedQueryOptions<Opt>, typename... Args>
-Op_Query<Document>::Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args)
-    : Op_QueryOptions(std::forward<Opt>(options))
+template<typename Doc, HasOptions<Doc>, typename... Args>
+Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions options, typename Doc::Options docOpt, Args&&... args)
+    : Op_QueryOptions(std::move(options))
     , header(OpCode::OP_QUERY)
-    , fullCollectionName(fullCollectionName)
-    , query{std::forward<Opt>(options), std::forward<Args>(args)...}
+    , fullCollectionName(std::move(fullCollectionName))
+    , query{std::move(docOpt), std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }

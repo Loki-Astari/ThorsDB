@@ -5,20 +5,26 @@
 #error  "This should only be included from Op_KillCursors.h"
 #endif
 
-#include "ThorSerialize/Traits.h"
-#include "ThorSerialize/BsonThor.h"
-#include "ThorSerialize/JsonThor.h"
-
 namespace ThorsAnvil::DB::Mongo
 {
 
-inline
-Op_KillCursors::Op_KillCursors(std::initializer_list<std::int64_t> const& cursors)
+template<typename... Docs>
+Op_KillCursors::Op_KillCursors(Op_Reply<Docs> const&... replys)
     : header(OpCode::OP_KILL_CURSORS)
-    , numberOfCursorIDs(cursors.size())
-    , cursorIDs(cursors)
+    , numberOfCursorIDs(sizeof...(replys))
 {
+    cursorIDs.reserve(sizeof...(replys));
+    (cursorIDs.emplace_back(replys.cursorID),...);
     header.prepareToSend(getSize());
+}
+
+inline
+Op_KillCursors::Op_KillCursors(bool all)
+    : header(OpCode::OP_KILL_CURSORS)
+    , numberOfCursorIDs(all ? -2 : -1)
+{
+    // Update CursorExtractor<Op_KillCursors>
+    // As this will change the size of the object.
 }
 
 inline
@@ -26,7 +32,7 @@ std::size_t Op_KillCursors::getSize() const
 {
     std::size_t objectSize = sizeof(std::int32_t)
                            + sizeof(numberOfCursorIDs)
-                           + (cursorIDs.size() * sizeof(std::int64_t));
+                           + (cursorIDs.size() * sizeof(CursorId));
     return objectSize;
 }
 

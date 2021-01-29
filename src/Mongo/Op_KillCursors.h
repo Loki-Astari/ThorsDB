@@ -3,30 +3,45 @@
 
 #include "Op.h"
 #include "Op_MsgHeader.h"
-#include "ThorSerialize/Traits.h"
-#include <ostream>
-#include <initializer_list>
+#include "Op_Reply.h"
+
+#include <string>
+#include <vector>
+#include <iostream>
 
 // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-kill-cursors
+
 namespace ThorsAnvil::DB::Mongo
 {
 
+template<typename T>
+class CursorExtractor;
+
 class Op_KillCursors
 {
-    Op_MsgHeader                header;
-    std::int32_t                numberOfCursorIDs;
-    std::vector<std::int64_t>   cursorIDs;
+    Op_MsgHeader            header;
+    std::int32_t            numberOfCursorIDs;
+    std::vector<CursorId>   cursorIDs;
+    friend class CursorExtractor<Op_KillCursors>;
+
     public:
-        Op_KillCursors(std::initializer_list<std::int64_t> const& cursors);
+        template<typename... Docs>
+        Op_KillCursors(Op_Reply<Docs> const&... replys);
+        Op_KillCursors(bool all = false);
+
+    private:
+        std::size_t   getSize()                     const;
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_KillCursors> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_KillCursors const& data) {return data.print(stream);}
-    private:
-        std::size_t   getSize()                     const;
-    protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 };
+
+template<typename... Docs>
+Op_KillCursors make_Op_KillCursors(Op_Reply<Docs> const&... replys)     {return Op_KillCursors(replys...);}
+inline
+Op_KillCursors make_Op_KillCursors(bool all = false)                    {return Op_KillCursors(all);}
 
 }
 

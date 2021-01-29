@@ -3,39 +3,51 @@
 
 #include "Op.h"
 #include "Op_MsgHeader.h"
-#include "ThorSerialize/Traits.h"
-#include <ostream>
-#include <map>
+#include "Op_Reply.h"
+
+#include <string>
+#include <iostream>
 
 // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-get-more
+
 namespace ThorsAnvil::DB::Mongo
 {
 
-struct Op_GetMoreOptions
+template<typename T>
+class CursorExtractor;
+class Op_GetMore
 {
-    std::int32_t    ret         = 101;
-    std::int64_t    cursorID    = 0;
-};
+    Op_MsgHeader            header;
+    std::string             fullCollectionName;
+    std::int32_t            ret;
+    CursorId                cursorID;
+    friend class CursorExtractor<Op_GetMore>;
 
-template<typename Actual>
-using ValidGetOptions = ValidOption<Actual, Op_GetMoreOptions>;
-
-class Op_GetMore: public Op_GetMoreOptions
-{
-    Op_MsgHeader     header;
-    std::string     fullCollectionName;
     public:
-        template<typename Opt = Op_GetMoreOptions, ValidGetOptions<Opt> = true>
-        Op_GetMore(std::string const& fullCollectionName, Opt&& options);
+        template<typename Document>
+        Op_GetMore(std::string fullCollectionName, Op_Reply<Document> reply, std::int32_t ret = 101);
+        Op_GetMore(std::string fillCollectionName, std::int32_t ret = 101);
+
+    private:
+        std::size_t   getSize()                     const;
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_GetMore> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_GetMore const& data) {return data.print(stream);}
-    private:
-        std::size_t   getSize()                     const;
-    protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 };
+
+template<typename Document>
+inline
+Op_GetMore make_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> reply, std::int32_t ret = 101)
+{
+    return Op_GetMore(std::move(fullCollectionName), std::move(reply), ret);
+}
+inline
+Op_GetMore make_Op_GetMore(std::string fullCollectionName, std::int32_t ret = 101)
+{
+    return Op_GetMore(std::move(fullCollectionName), ret);
+}
 
 }
 

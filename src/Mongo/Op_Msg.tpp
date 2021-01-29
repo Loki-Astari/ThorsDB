@@ -5,7 +5,6 @@
 #error  "This should only be included from Op_Msg.h"
 #endif
 
-#include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
 
@@ -17,7 +16,7 @@ namespace ThorsAnvil::DB::Mongo
 template<typename Data>
 template<typename... Args>
 inline Kind0<Data>::Kind0(Args&&... args)
-    : data(std::forward<Args>(args)...)
+    : data{std::forward<Args>(args)...}
 {}
 
 template<typename Data>
@@ -56,19 +55,31 @@ inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
 // ---- Op_Msg
 
 template<typename... Kind>
-template<typename Opt, ValidMsgOptions<Opt>, typename... Args>
-inline Op_Msg<Kind...>::Op_Msg(Opt&& options, Args&&... args)
-    : Op_MsgOptions(std::forward<Opt>(options))
-    , header(OpCode::OP_MSG)
+template<typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(Args&&... args)
+    : Op_Msg(OP_MsgFlag::empty, std::forward<Args>(args)...)
+{}
+
+template<typename... Kind>
+template<typename... Args>
+inline Op_Msg<Kind...>::Op_Msg(OP_MsgFlag flags, Args&&... args)
+    : header(OpCode::OP_MSG)
+    , flags(flags)
     , sections(std::forward<Args>(args)...)
     , checksum(0)
+{
+    header.prepareToSend(getSize());
+}
+
+template<typename... Kind>
+std::size_t Op_Msg<Kind...>::getSize() const
 {
     std::size_t sectionSize = 0;
     std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
 
     bool        showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     std::size_t dataSize     = sizeof(flags) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
-    header.prepareToSend(dataSize);
+    return dataSize;
 }
 
 template<typename... Kind>

@@ -9,18 +9,10 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename Opt, ValidCmdInsOption<Opt>>
-Insert<Document>::Insert(Opt&& options, std::string const& collection, Document const& doc)
-    : InsertOptional(std::forward<Opt>(options))
-    , insert(collection)
-    , documents(1, doc)
-{}
-
-template<typename Document>
-template<typename Opt, ValidCmdInsOption<Opt>, typename I>
-Insert<Document>::Insert(Opt&& options, std::string const& collection, I begin, I end)
-    : InsertOptional(std::forward<Opt>(options))
-    , insert(collection)
+template<typename I>
+Insert<Document>::Insert(InsertOptions options, std::string collection, I begin, I end)
+    : InsertOptional(std::move(options))
+    , insert(std::move(collection))
     , documents(begin, end)
 {}
 

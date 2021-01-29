@@ -1,6 +1,7 @@
 
 #include <gtest/gtest.h>
 #include "Op.h"
+#include "Util.h"
 
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;

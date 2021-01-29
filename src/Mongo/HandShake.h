@@ -221,10 +221,17 @@ class Op_QueryHandShake: public Op_Query<HandShake>
             : Op_Query("admin.$cmd", {}, std::forward<Args>(args)...)
         {}
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return stream << static_cast<Op_Query<HandShake>>(data);}
 };
 
-using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
+class Op_ReplyHandShake: public Op_Reply<HandShakeReplyDoc>
+{
+    public:
+        HandShakeReplyDoc   handshake;
+        Op_ReplyHandShake()
+            : Op_Reply(handshake)
+        {}
+};
 using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
 using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
 using Op_MsgAuthReply       = Op_MsgReply<Kind0<AuthReply>>;

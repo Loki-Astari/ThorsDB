@@ -379,23 +379,22 @@ BSON
     Op_ReplyHandShake   reply;
     stream >> reply;
 
-    HandShakeReplyDoc const& doc = reply.getDocument(0);
-    EXPECT_EQ(doc.ok,                   1.0);
-    EXPECT_EQ(doc.ismaster,             1);
-    EXPECT_EQ(doc.topologyVersion.processId, ThorsAnvil::Serialize::MongoUtility::ObjectID(0x5f48aa04, 0x2d1dfb1dd7L, 0x52e00));
-    EXPECT_EQ(doc.topologyVersion.counter,   0x0L);
-    EXPECT_EQ(doc.maxBsonObjectSize,    0x1000000);
-    EXPECT_EQ(doc.maxMessageSizeBytes,  0x2dc6c00);
-    EXPECT_EQ(doc.maxWriteBatchSize,    0x186a0);
-    EXPECT_EQ(doc.localTime,            0x17476af112d);
-    EXPECT_EQ(doc.logicalSessionTimeoutMinutes, 0x1e);
-    EXPECT_EQ(doc.connectionId,         0x1e);
-    EXPECT_EQ(doc.minWireVersion,       0);
-    EXPECT_EQ(doc.maxWireVersion,       0x9);
-    EXPECT_EQ(doc.readOnly,             false);
-    ASSERT_EQ(doc.saslSupportedMechs.size(), 2);
-    EXPECT_EQ(doc.saslSupportedMechs[0],"SCRAM-SHA-1");
-    EXPECT_EQ(doc.saslSupportedMechs[1],"SCRAM-SHA-256");
+    EXPECT_EQ(reply.handshake.ok,                   1.0);
+    EXPECT_EQ(reply.handshake.ismaster,             1);
+    EXPECT_EQ(reply.handshake.topologyVersion.processId, ThorsAnvil::Serialize::MongoUtility::ObjectID(0x5f48aa04, 0x2d1dfb1dd7L, 0x52e00));
+    EXPECT_EQ(reply.handshake.topologyVersion.counter,   0x0L);
+    EXPECT_EQ(reply.handshake.maxBsonObjectSize,    0x1000000);
+    EXPECT_EQ(reply.handshake.maxMessageSizeBytes,  0x2dc6c00);
+    EXPECT_EQ(reply.handshake.maxWriteBatchSize,    0x186a0);
+    EXPECT_EQ(reply.handshake.localTime,            0x17476af112d);
+    EXPECT_EQ(reply.handshake.logicalSessionTimeoutMinutes, 0x1e);
+    EXPECT_EQ(reply.handshake.connectionId,         0x1e);
+    EXPECT_EQ(reply.handshake.minWireVersion,       0);
+    EXPECT_EQ(reply.handshake.maxWireVersion,       0x9);
+    EXPECT_EQ(reply.handshake.readOnly,             false);
+    ASSERT_EQ(reply.handshake.saslSupportedMechs.size(), 2);
+    EXPECT_EQ(reply.handshake.saslSupportedMechs[0],"SCRAM-SHA-1");
+    EXPECT_EQ(reply.handshake.saslSupportedMechs[1],"SCRAM-SHA-256");
 }
 
 TEST(HandShakeTest, CreateSASLFirstMessage)
@@ -450,7 +449,7 @@ BSON
 
     Op_MsgHeader::messageIdSetForTest(0x1);
     AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
-    Op_MsgAuthInit      authInitMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authInit);
+    Op_MsgAuthInit      authInitMessage(OP_MsgFlag::empty, authInit);
 
     std::stringstream   stream;
     stream << authInitMessage;
@@ -596,7 +595,7 @@ bd 34 27 d8 // Checksum
 
     Op_MsgHeader::messageIdSetForTest(0x2);
     AuthCont        authCont(1, "thor", "c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s);
-    Op_MsgAuthCont  authContMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authCont);
+    Op_MsgAuthCont  authContMessage(OP_MsgFlag::empty, authCont);
 
     std::stringstream stream;
     stream << authContMessage;
@@ -733,7 +732,7 @@ BSON
 
     Op_MsgHeader::messageIdSetForTest(0x3);
     AuthCont        authCont(1, "thor"s, ""s);
-    Op_MsgAuthCont  authContMessage({.flags = OP_MsgFlag::empty /*checksumPresent*/}, authCont);
+    Op_MsgAuthCont  authContMessage(OP_MsgFlag::empty, authCont);
 
     std::stringstream stream;
     stream << authContMessage;

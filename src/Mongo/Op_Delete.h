@@ -4,53 +4,60 @@
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
-#include <ostream>
+
+#include <string>
+#include <iostream>
 
 // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-delete
+
 namespace ThorsAnvil::DB::Mongo
 {
 
 enum class OP_DeleteFlag : std::int32_t
 {
     empty           = 0,
-    SingleRemove    = 1,            // If set, the database will remove only the first matching
+    SingleRemove    = 1 << 0,       // If set, the database will remove only the first matching
                                     // document in the collection. Otherwise all matching
                                     // documents will be removed.
 
                                     // 1-31 are reserved. Must be set to 0.
 };
+ThorsAnvil_MakeEnumFlag(OP_DeleteFlag, empty, SingleRemove);
 
-struct Op_DeleteOptions
-{
-    OP_DeleteFlag           flags       = OP_DeleteFlag::empty;
-};
-
-template<typename Actual>
-using ValidDelOptions = ValidOption<Actual, Op_DeleteOptions>;
 
 template<typename Document>
-struct Op_Delete: public Op_DeleteOptions
+class Op_Delete
 {
     Op_MsgHeader            header;             // standard message header
     std::string             fullCollectionName;
+    OP_DeleteFlag           flags;
     Document                selector;           // query object.
 
     public:
-        template<typename Opt = Op_DeleteOptions, ValidDelOptions<Opt> = true, typename... Args>
-        Op_Delete(std::string const& fullCollectionName, Opt&& flags, Args&&... args);
+        Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document selector);
+
+    private:
+        std::size_t   getSize()                     const;
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Delete> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Delete const& data) {return data.print(stream);}
-    private:
-        std::size_t   getSize()                     const;
-    protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 };
 
+template<typename Document>
+Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, Document selector)
+{
+    return Op_Delete<Document>(std::move(fullCollectionName), OP_DeleteFlag::empty, std::move(selector));
 }
 
-ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_DeleteFlag, empty, SingleRemove);
+template<typename Document>
+Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document selector)
+{
+    return Op_Delete<Document>(std::move(fullCollectionName), flags, std::move(selector));
+}
+
+}
 
 #include "Op_Delete.tpp"
 

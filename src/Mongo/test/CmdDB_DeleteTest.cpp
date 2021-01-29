@@ -15,7 +15,7 @@ using ThorsAnvil::DB::Mongo::make_CmdDB_Delete;
 TEST(CmdDB_DeleteTest, Base)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {}, user);
+    auto insert = make_CmdDB_Delete("database", "collection", user);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -26,7 +26,7 @@ TEST(CmdDB_DeleteTest, Base)
 TEST(CmdDB_DeleteTest, BaseUnordered)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {}, user).unordered();
+    auto insert = make_CmdDB_Delete("database", "collection", user).unordered();
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -37,7 +37,7 @@ TEST(CmdDB_DeleteTest, BaseUnordered)
 TEST(CmdDB_DeleteTest, BaseSetWrieConcern)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {}, user).setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Delete("database", "collection", user).setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -48,7 +48,7 @@ TEST(CmdDB_DeleteTest, BaseSetWrieConcern)
 TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcern)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {}, user).unordered().setWrieConcern(2, false, 400);
+    auto insert = make_CmdDB_Delete("database", "collection", user).unordered().setWrieConcern(2, false, 400);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -60,7 +60,7 @@ TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcern)
 TEST(CmdDB_DeleteTest, BaseUnorderedOptions)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {{}, {.ordered = false}}, user);
+    auto insert = make_CmdDB_Delete("database", "collection", {.ordered = false}, user);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -71,7 +71,7 @@ TEST(CmdDB_DeleteTest, BaseUnorderedOptions)
 TEST(CmdDB_DeleteTest, BaseSetWrieConcernOptions)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {{}, {.writeConcern{2, false, 400}}}, user);
+    auto insert = make_CmdDB_Delete("database", "collection", {}, {.writeConcern{2, false, 400}}, user);
 
     std::stringstream stream;
     stream << make_hr(insert);
@@ -82,7 +82,7 @@ TEST(CmdDB_DeleteTest, BaseSetWrieConcernOptions)
 TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcernOptions)
 {
     User   user{"M1", "P1", 25};
-    auto insert = make_CmdDB_Delete("database", "collection", {{}, {.ordered = false, .writeConcern{2, false, 400}}}, user);
+    auto insert = make_CmdDB_Delete("database", "collection", {.ordered = false, .writeConcern{2, false, 400}}, user);
 
     std::stringstream stream;
     stream << make_hr(insert);

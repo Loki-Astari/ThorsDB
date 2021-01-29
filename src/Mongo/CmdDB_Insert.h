@@ -4,6 +4,11 @@
 // https://docs.mongodb.com/manual/reference/command/insert/#dbcmd.insert
 
 #include "CmdDB.h"
+#include "CmdDB_Query.h"
+
+#include <map>
+#include <string>
+#include <vector>
 
 namespace ThorsAnvil::DB::Mongo
 {
@@ -19,8 +24,7 @@ struct InsertOptions
 class InsertOptional: public InsertOptions
 {
     public:
-        InsertOptional(InsertOptions const& options);
-        InsertOptional(InsertOptions&& options);
+        InsertOptional(InsertOptions options);
 
         void unordered(bool v = true);
         void byPass(bool v = true);
@@ -37,19 +41,14 @@ class InsertOptional: public InsertOptions
         std::string                 comment;
 };
 
-struct InsertQueryOptions: public Op_QueryOptions, public InsertOptions {};
-
-template<typename Actual>
-using ValidCmdInsOption = ValidOption<Actual, InsertQueryOptions>;
-
 template<typename Document>
 struct Insert: public InsertOptional
 {
     public:
-        template<typename Opt = InsertQueryOptions, ValidCmdInsOption<Opt> = true, typename I>
-        Insert(Opt&& options, std::string const& collection, I begin, I end);
-        template<typename Opt = InsertQueryOptions, ValidCmdInsOption<Opt> = true>
-        Insert(Opt&& options, std::string const& collection, Document const& doc);
+        using Options = InsertOptions;
+
+        template<typename I>
+        Insert(InsertOptions options, std::string collection, I begin, I end);
 
     private:
         friend class ThorsAnvil::Serialize::Traits<Insert>;
@@ -60,12 +59,38 @@ struct Insert: public InsertOptional
 template<typename Document>
 using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
 
-template<typename Opt = InsertQueryOptions, ValidCmdInsOption<Opt> = true, typename I>
+template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string const& db, std::string const& collection, Opt&& options, I begin, I end)
+make_CmdDB_Insert(std::string db, std::string collection, I begin, I end)
 {
-    using Document = typename std::iterator_traits<I>::value_type;
-    return CmdDB_Insert<Document>(db, collection, std::forward<Opt>(options), begin, end);
+    using Document  = typename std::iterator_traits<I>::value_type;
+    using InsOpt    = typename Insert<Document>::Options;
+    return CmdDB_Insert<Document>(std::move(db), std::move(collection), Op_QueryOptions{}, InsOpt{}, begin, end);
+}
+
+template<typename I>
+CmdDB_Insert<typename std::iterator_traits<I>::value_type>
+make_CmdDB_Insert(std::string db, std::string collection, InsertOptions options, I begin, I end)
+{
+    using Document  = typename std::iterator_traits<I>::value_type;
+    return CmdDB_Insert<Document>(std::move(db), std::move(collection), Op_QueryOptions{}, std::move(options), begin, end);
+}
+
+template<typename I>
+CmdDB_Insert<typename std::iterator_traits<I>::value_type>
+make_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions options, I begin, I end)
+{
+    using Document  = typename std::iterator_traits<I>::value_type;
+    using InsOpt    = typename Insert<Document>::Options;
+    return CmdDB_Insert<Document>(std::move(db), std::move(collection), std::move(options), InsOpt{}, begin, end);
+}
+
+template<typename I>
+CmdDB_Insert<typename std::iterator_traits<I>::value_type>
+make_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions options, InsertOptions insertOpt, I begin, I end)
+{
+    using Document  = typename std::iterator_traits<I>::value_type;
+    return CmdDB_Insert<Document>(std::move(db), std::move(collection), std::move(options), std::move(insertOpt), begin, end);
 }
 
 }
