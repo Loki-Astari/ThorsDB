@@ -5,32 +5,33 @@
 #error  "This should only be included from Op_Insert.h"
 #endif
 
-#include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
-
-#include <numeric>
 
 namespace ThorsAnvil::DB::Mongo
 {
 
-template<typename Document>
-template<typename Opt, ValidInsOptions<Opt>, typename... Args>
-Op_Insert<Document>::Op_Insert(std::string const& fullCollectionName, Opt&& options, Args&&... args)
-    : Op_InsertOptions(std::forward<Opt>(options))
-    , header(OpCode::OP_INSERT)
-    , fullCollectionName(fullCollectionName)
-    , documents({Document{std::forward<Args>(args)}...})
+template<typename View>
+Op_Insert<View>::Op_Insert(std::string fullCollectionName, View&& view)
+    : Op_Insert(std::move(fullCollectionName), OP_InsertFlag::empty, std::forward<View>(view))
+{}
+
+template<typename View>
+Op_Insert<View>::Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& view)
+    : header(OpCode::OP_INSERT)
+    , flags(flags)
+    , fullCollectionName(std::move(fullCollectionName))
+    , documents(std::forward<View>(view))
 {
     header.prepareToSend(getSize());
 }
 
-template<typename Document>
-std::size_t Op_Insert<Document>::getSize() const
+template<typename View>
+std::size_t Op_Insert<View>::getSize() const
 {
     std::size_t docSize = std::accumulate(std::begin(documents), std::end(documents),
                                           std::size_t{0},
-                                          [](std::size_t sum, Document const& d){return sum + ThorsAnvil::Serialize::bsonGetPrintSize(d);}
+                                          [](std::size_t sum, auto const& d){return sum + ThorsAnvil::Serialize::bsonGetPrintSize(d);}
                                          );
     std::size_t objectSize = sizeof(flags)
                            + fullCollectionName.size() + 1
@@ -38,8 +39,8 @@ std::size_t Op_Insert<Document>::getSize() const
     return objectSize;
 }
 
-template<typename Document>
-std::ostream& Op_Insert<Document>::print(std::ostream& stream) const
+template<typename View>
+std::ostream& Op_Insert<View>::print(std::ostream& stream) const
 {
     stream << header
            << make_LE(flags)
@@ -51,13 +52,13 @@ std::ostream& Op_Insert<Document>::print(std::ostream& stream) const
     return stream;
 }
 
-template<typename Document>
-std::ostream& Op_Insert<Document>::printHR(std::ostream& stream) const
+template<typename View>
+std::ostream& Op_Insert<View>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
            << flags << "\n"
            << "fullCollectionName: " << fullCollectionName << "\n"
-           << "Size: " << documents.size() << "\n[";
+           << "Size: " << std::size(documents) << "\n[";
     for (auto const& d: documents)
     {
         stream << ThorsAnvil::Serialize::jsonExporter(d);

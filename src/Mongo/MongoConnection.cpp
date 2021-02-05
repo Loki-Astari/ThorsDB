@@ -43,13 +43,13 @@ MongoConnection::MongoConnection(
     Op_ReplyHandShake   handShakeReply;
     stream >> handShakeReply;
 
-    if (handShakeReply.getDocument(0).ok != 1)
+    if (handShakeReply.handshake.ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake Request Failed: ",
-                                 "Code: ", handShakeReply.getDocument(0).codeName,
-                                 "Msg:  ", handShakeReply.getDocument(0).errmsg);
+                                 "Code: ", handShakeReply.handshake.codeName,
+                                 "Msg:  ", handShakeReply.handshake.errmsg);
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
@@ -122,4 +122,40 @@ int MongoConnection::getSocketId() const
 void MongoConnection::setYield(std::function<void()>&& readYield, std::function<void()>&& writeYield)
 {
     socket.setYield(std::move(readYield), std::move(writeYield));
+}
+
+MongoConnection::operator bool()
+{
+    return static_cast<bool>(stream);
+}
+
+CursorId MongoConnection::getLastOpenCursor(bool close)
+{
+    CursorId        result = lastCursor;
+    lastCursor             = close ? -1 : lastCursor;
+    return result;
+}
+
+std::vector<CursorId> MongoConnection::getAllOpenCursors(bool close)
+{
+    std::vector<CursorId>   result;
+    for (auto const& v: openCursors)
+    {
+        result.emplace_back(v.first);
+    }
+    if (close)
+    {
+        openCursors.clear();
+    }
+    return result;
+}
+
+MongoConnection::CursorInfo MongoConnection::getCursorInfo(CursorId cursor) const
+{
+    auto find = openCursors.find(cursor);
+    if (find == openCursors.end())
+    {
+        return CursorInfo{};
+    }
+    return find->second;
 }

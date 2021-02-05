@@ -5,20 +5,34 @@
 #error  "This should only be included from Op_GetMore.h"
 #endif
 
+#if 0
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
+#endif
 
 namespace ThorsAnvil::DB::Mongo
 {
 
-template<typename Opt, ValidGetOptions<Opt>>
-Op_GetMore::Op_GetMore(std::string const& fullCollectionName, Opt&& options)
-    : Op_GetMoreOptions(std::forward<Opt>(options))
-    , header(OpCode::OP_GET_MORE)
+template<typename Document>
+Op_GetMore::Op_GetMore(std::string fullCollectionName, Op_Reply<Document> reply, std::int32_t ret)
+    : header(OpCode::OP_GET_MORE)
     , fullCollectionName(fullCollectionName)
+    , ret(ret)
+    , cursorID(reply.cursorID)
 {
     header.prepareToSend(getSize());
+}
+
+inline
+Op_GetMore::Op_GetMore(std::string fullCollectionName, std::int32_t ret)
+    : header(OpCode::OP_GET_MORE)
+    , fullCollectionName(fullCollectionName)
+    , ret(ret)
+    , cursorID(-1)
+{
+    // Update CursorExtractor<Op_GetMore>
+    // As this will change the size of the object.
 }
 
 inline

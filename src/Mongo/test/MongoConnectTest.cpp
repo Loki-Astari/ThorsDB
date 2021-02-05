@@ -28,7 +28,6 @@ TEST(MongoConnectTest, CreateReply)
     stream >> handShakeReplyMessage;
 
     ASSERT_TRUE(handShakeReplyMessage.isOk());
-    HandShakeReplyDoc const&    handShakeReply = handShakeReplyMessage.getDocument(0);
 
     // Send Auth Init: We can use SHA-256 Send scram package
     stream << Op_MsgAuthInit({}, AuthInit(THOR_TESTING_MONGO_DB, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
@@ -62,12 +61,12 @@ TEST(MongoConnectTest, CreateReply)
     // Send Command to prove authentication worked and we have an open and working connection:
     stream << CmdAdmListDataBases{} << std::flush;
 
-    CmdAdmListDataBasesReply    listOfDatabases;
+    ListDataBaseReply           listDBReply;
+    CmdAdmListDataBasesReply    listOfDatabases(listDBReply);
     stream >> listOfDatabases;
 
     if (listOfDatabases)
     {
-        ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
 
         std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
         std::cerr << "ListDB DB: [";

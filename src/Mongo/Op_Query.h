@@ -4,10 +4,13 @@
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
-#include <ostream>
+
 #include <map>
+#include <string>
+#include <iostream>
 
 // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-query
+
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -32,6 +35,7 @@ enum class OP_QueryFlag : std::int32_t
                                             // unless it closes the connection.
     Partial         = 1 << 7                // Get partial results from a mongos if some shards are down (instead of throwing an error)
 };
+ThorsAnvil_MakeEnumFlag(OP_QueryFlag, empty, TailableCursor, SlaveOk, OplogReplay, NoCursorTimeout, AwaitData, Exhaust, Partial);
 
 using FieldSelector = std::map<std::string, int>;
 
@@ -43,37 +47,31 @@ struct Op_QueryOptions
     FieldSelector   returnFieldsSelector;
 };
 
-template<typename Actual>
-using ValidQueryOptions     = ValidOption<Actual, Op_QueryOptions>;
-template<typename Actual>
-using DerivedQueryOptions   = DerivedStrictOption<Actual, Op_QueryOptions>;
-
 template<typename Document>
 class Op_Query: public Op_QueryOptions
 {
-    Op_MsgHeader    header;
-    std::string     fullCollectionName;
-    Document        query;
+    Op_MsgHeader            header;
+    std::string             fullCollectionName;
+    Document                query;
+
     public:
-        template<typename Opt = Op_QueryOptions, ValidQueryOptions<Opt> = true, typename... Args>
-        Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
-        template<typename Opt = Op_QueryOptions, DerivedQueryOptions<Opt> = true, typename... Args>
-        Op_Query(std::string const& fullCollectionName, Opt&& options, Args&&... args);
+        template<typename Doc = Document, NoOptions<Doc> = true, typename... Args>
+        Op_Query(std::string fullCollectionName, Op_QueryOptions options, Args&&... args);
+        template<typename Doc = Document, HasOptions<Doc> = true, typename... Args>
+        Op_Query(std::string fullCollectionName, Op_QueryOptions options, typename Doc::Options docOpt, Args&&... args);
+
+        Document& getQuery();
+
+    private:
+        std::size_t   getSize() const;
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
-
-        Document& getQuery();
-    private:
-        std::size_t   getSize()                     const;
-    protected:
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 };
 
 }
-
-ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_QueryFlag, empty, TailableCursor, SlaveOk, OplogReplay, NoCursorTimeout, AwaitData, Exhaust, Partial);
 
 #include "Op_Query.tpp"
 

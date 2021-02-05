@@ -11,9 +11,19 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-template<typename Document>
+template<typename Document, typename View>
+Op_Reply<Document, View>::Op_Reply(Document& data)
+    : header(OpCode::OP_REPLY)
+    , responseFlags(OP_ReplyFlag::empty)
+    , cursorID(0)
+    , startingFrom(0)
+    , numberReturned(0)
+    , documents(make_XView(data))
+{}
+
+template<typename Document, typename View>
 #pragma vera-pushoff
-std::istream& Op_Reply<Document>::parse(std::istream& stream)
+std::istream& Op_Reply<Document, View>::parse(std::istream& stream)
 #pragma vera-pop
 {
     stream >> header
@@ -38,29 +48,53 @@ std::istream& Op_Reply<Document>::parse(std::istream& stream)
     {
         for (int loop = 0; loop < numberReturned; ++loop)
         {
-            documents.emplace_back();
-            stream >> ThorsAnvil::Serialize::bsonImporter(documents.back());
+            // documents.emplace_back();
+            stream >> ThorsAnvil::Serialize::bsonImporter(documents[loop]);//.back());
+        }
+    }
+    return stream;
+}
+
+template<typename Document, typename View>
+std::istream& Op_Reply<Document, View>::parseAndThrow(std::istream& stream)
+{
+    parse(stream);
+    if (!this->isOk())
+    {
+        throw MongoException(this->getHRErrorMessage(), errorInfo);
+    }
+    return stream;
+}
+
+template<typename Document, typename View>
+std::ostream& Op_Reply<Document, View>::print(std::ostream& stream) const
+{
+    stream << header
+           << make_LE(responseFlags)
+           << make_LE(cursorID)
+           << make_LE(startingFrom)
+           << make_LE(numberReturned);
+    if ((responseFlags & OP_ReplyFlag::CursorNotFound) == OP_ReplyFlag::CursorNotFound)
+    {
+        // Nothing
+    }
+    else if ((responseFlags & OP_ReplyFlag::QueryFailure) == OP_ReplyFlag::QueryFailure)
+    {
+        stream << ThorsAnvil::Serialize::bsonExporter(errorInfo);
+    }
+    else
+    {
+        for (int loop = 0; loop < numberReturned; ++loop)
+        {
+            stream << ThorsAnvil::Serialize::bsonExporter(documents[loop]);
         }
     }
 
     return stream;
 }
 
-template<typename Document>
-std::ostream& Op_Reply<Document>::print(std::ostream& stream) const
-{
-    stream << header
-           << make_LE(responseFlags)
-           << make_LE(cursorID)
-           << make_LE(startingFrom)
-           << make_LE(numberReturned)
-           << ThorsAnvil::Serialize::bsonExporter(documents);
-
-    return stream;
-}
-
-template<typename Document>
-std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
+template<typename Document, typename View>
+std::ostream& Op_Reply<Document, View>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
            << "responseFlags: " << responseFlags << "\n"
@@ -83,34 +117,45 @@ std::ostream& Op_Reply<Document>::printHR(std::ostream& stream) const
     return stream;
 }
 
-template<typename Document>
-Op_Reply<Document>::operator bool() const
+template<typename Document, typename View>
+Op_Reply<Document, View>::operator bool() const
 {
     return this->isOk();
 }
 
-template<typename Document>
-bool Op_Reply<Document>::isOk()  const
+template<typename Document, typename View>
+bool Op_Reply<Document, View>::isOk()  const
 {
-    return (responseFlags & (OP_ReplyFlag::QueryFailure | OP_ReplyFlag::CursorNotFound)) == OP_ReplyFlag::empty;
+    return ((responseFlags & (OP_ReplyFlag::QueryFailure | OP_ReplyFlag::CursorNotFound)) == OP_ReplyFlag::empty)
+        && (errorInfo.ok == 1.0);
 }
 
-template<typename Document>
-std::string Op_Reply<Document>::getHRErrorMessage() const
+template<typename Document, typename View>
+std::string Op_Reply<Document, View>::getHRErrorMessage() const
 {
     std::string result = "Op_Reply: ";
-    if (errorInfo.codeName.size() != 0 || errorInfo.$err.size() != 0)
+    if (!this->isOk())
     {
-        result += std::to_string(errorInfo.code);
-        result += ": ";
-        result += errorInfo.codeName;
-        result += ": ";
-        result += errorInfo.$err;
+        result += errorInfo.getHRErrorMessage();
     }
     else
     {
         result += "OK";
     }
+    return result;
+}
+
+inline
+std::string ErrorInfo::getHRErrorMessage() const
+{
+    std::string result;
+
+    result += std::to_string(code);
+    result += ": ";
+    result += codeName;
+    result += ": ";
+    result += $err;
+
     return result;
 }
 

@@ -5,7 +5,6 @@
 #error  "This should only be included from Op_Update.h"
 #endif
 
-#include "ThorSerialize/Traits.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
 
@@ -13,16 +12,23 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Selector, typename Update>
-template<typename Opt, ValidUpdOptions<Opt>,
-         typename Sel, ValidOption<Sel, Selector>,
-         typename Upd, ValidOption<Upd, Update>
-        >
-Op_Update<Selector, Update>::Op_Update(std::string const& fullCollectionName, Opt&& options, Sel&& selector, Upd&& update)
-    : Op_UpdateOptions(std::forward<Opt>(options))
-    , header(OpCode::OP_UPDATE)
-    , fullCollectionName(fullCollectionName)
-    , selector(std::forward<Sel>(selector))
-    , update(std::forward<Upd>(update))
+Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, Selector selector, Update update)
+    : header(OpCode::OP_UPDATE)
+    , fullCollectionName(std::move(fullCollectionName))
+    , flags(OP_UpdateFlag::empty)
+    , selector(std::forward<Selector>(selector))
+    , update(std::forward<Update>(update))
+{
+    header.prepareToSend(getSize());
+}
+
+template<typename Selector, typename Update>
+Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector selector, Update update)
+    : header(OpCode::OP_UPDATE)
+    , fullCollectionName(std::move(fullCollectionName))
+    , flags(flags)
+    , selector(std::forward<Selector>(selector))
+    , update(std::forward<Update>(update))
 {
     header.prepareToSend(getSize());
 }

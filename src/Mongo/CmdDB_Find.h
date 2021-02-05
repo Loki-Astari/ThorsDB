@@ -4,6 +4,12 @@
 // https://docs.mongodb.com/manual/reference/command/find/#dbcmd.find
 
 #include "CmdDB.h"
+#include "CmdDB_Query.h"
+
+#include <map>
+#include <vector>
+#include <string>
+#include <iostream>
 
 namespace ThorsAnvil::DB::Mongo
 {
@@ -48,8 +54,7 @@ struct FindOptions
 struct FindOptional
 {
     public:
-        FindOptional(FindOptions const& options);
-        FindOptional(FindOptions&& options);
+        FindOptional(FindOptions options);
 
         void addFileds(std::initializer_list<std::string> const& fieldNames);
         void addHint(std::string const& hint);
@@ -108,17 +113,13 @@ struct FindOptional
         bool                        allowDiskUse;
 };
 
-struct FindQueryOptions: public Op_QueryOptions, public FindOptions {};
-
-template<typename Actual>
-using ValidCmdFindOption = ValidOption<Actual, FindQueryOptions>;
-
 template<typename Filter, typename Sort>
 class Find: public FindOptional
 {
     public:
-        template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true>
-        Find(Opt&& options, std::string const& collection, Filter&& filter, Sort&& sort);
+        using Options = FindOptions;
+
+        Find(FindOptions options, std::string collection, Filter&& filter, Sort&& sort);
     private:
         void updateFilter();
         friend class ThorsAnvil::Serialize::Traits<Find>;
@@ -133,8 +134,8 @@ class Find: public FindOptional
 template<typename Document>
 struct Cursor
 {
-    bool                    partialResultsReturneda = true;
-    std::int64_t            id                      = 0;
+    bool                    partialResultsReturned  = true;
+    CursorId                id                      = 0;
     std::string             ns;
     std::vector<Document>   firstBatch;
 };
@@ -164,20 +165,38 @@ template<typename Filter, typename Sort>
 using CmdDB_Find        = CmdDB_Query<Find<Filter, Sort>>;
 
 template<typename Document>
-using CmdDB_FindResult  = Op_Reply<FindResult<Document>>;
-
-template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Filter = FindAll, typename Sort = DefaultSort>
-CmdDB_Find<Filter, DefaultSort>
-make_CmdDB_Find(std::string const& db, std::string const& collection, Opt&& options = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
+class CmdDB_FindResult: public Op_Reply<FindResult<Document>>
 {
-    return CmdDB_Find<Filter, DefaultSort>(db, collection, std::forward<Opt>(options), std::forward<Filter>(filter), std::forward<Sort>(sort));
+    public:
+        FindResult<Document>    findData;
+        CmdDB_FindResult()
+            : Op_Reply<FindResult<Document>>(findData)
+        {}
+        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindResult<Document>> const&>(*this));}
+};
+
+template<typename Filter = FindAll, typename Sort = DefaultSort>
+CmdDB_Find<Filter, DefaultSort> make_CmdDB_Find(std::string db, std::string collection, FindOptions findOpt = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
+{
+    return CmdDB_Find<Filter, DefaultSort>(std::move(db), std::move(collection), Op_QueryOptions{}, std::move(findOpt), std::forward<Filter>(filter), std::forward<Sort>(sort));
 }
 
-template<typename Opt = FindQueryOptions, ValidCmdFindOption<Opt> = true, typename Sort>
-CmdDB_Find<FindAll, Sort>
-make_CmdDB_FindAllSorted(std::string const& db, std::string const& collection, Opt&& options, Sort&& sort)
+template<typename Filter = FindAll, typename Sort = DefaultSort>
+CmdDB_Find<Filter, DefaultSort> make_CmdDB_Find(std::string db, std::string collection, Op_QueryOptions options, FindOptions findOpt = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
 {
-    return CmdDB_Find<FindAll, Sort>(db, collection, std::forward<Opt>(options), FindAll{}, std::forward<Sort>(sort));
+    return CmdDB_Find<Filter, DefaultSort>(std::move(db), std::move(collection), std::move(options), std::move(findOpt), std::forward<Filter>(filter), std::forward<Sort>(sort));
+}
+
+template<typename Sort>
+CmdDB_Find<FindAll, Sort> make_CmdDB_FindAllSorted(std::string db, std::string collection, FindOptions findOpt, Sort&& sort)
+{
+    return CmdDB_Find<FindAll, Sort>(std::move(db), std::move(collection), Op_QueryOptions{}, std::move(findOpt), FindAll{}, std::forward<Sort>(sort));
+}
+
+template<typename Sort>
+CmdDB_Find<FindAll, Sort> make_CmdDB_FindAllSorted(std::string db, std::string collection, Op_QueryOptions options, FindOptions&& findOpt, Sort&& sort)
+{
+    return CmdDB_Find<FindAll, Sort>(std::move(db), std::move(collection), std::move(options), std::move(findOpt), FindAll{}, std::forward<Sort>(sort));
 }
 
 }

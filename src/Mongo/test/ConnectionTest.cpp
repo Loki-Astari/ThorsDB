@@ -12,12 +12,17 @@
 #include "CmdDB_Insert.h"
 #include "CmdDB_Delete.h"
 #include "CmdDB_Find.h"
+#include "CmdDB_Reply.h"
 // Other Stuff
 #include "MongoConnection.h"
 #include "MongoConfig.h"
 #include "test/OpTest.h"
 
+// Serialization
+#include "ThorSerialize/JsonThor.h"
+
 #include <iostream>
+#include <vector>
 
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
@@ -27,8 +32,8 @@ ThorsAnvil_MakeTrait(TestFindAll);
 
 struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
 {
-    std::string         $err;
-    std::int32_t        code;
+    std::string         $err    = "Not Initialized";
+    std::int32_t        code    = 404;
     double              ok      = 1.0;
 };
 
@@ -41,99 +46,129 @@ TEST(ConnectionTest, YeOldWireProtocol)
     using namespace ThorsAnvil::DB::Mongo;
 
     MongoConnection  connection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
+    ErrorInfo        info;
+    bool             error = true;
 
     std::string fullConnection  = THOR_TESTING_MONGO_DB;
     fullConnection += ".ConnectionTest";
 
     // reset the collection to be empty.
     {
-        connection << Op_Delete<TestFindAll>(fullConnection, {});
+        connection << make_Op_Delete(fullConnection, TestFindAll{});
     }
 
     // Make sure there are zero objects in the collection.
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.skip = 100, .ret = 0});
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
-        connection >> reply;
+        std::vector<StringAndIntNoConstructorReply>   replyData;
 
-        EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(0, reply.numberReturned);
-        if (!reply.isOk() || reply.numberReturned != 0)
+        try
         {
-            std::cerr << "Showing: " << reply.numberReturned << "\n";
-            for (int loop = 0; loop < reply.numberReturned; ++loop)
-            {
-                std::cerr << "Item: " << loop << "\n"
-                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
-                          << "\n\n";
-            }
+            connection >> make_Op_Reply(replyData);
+            EXPECT_EQ(0, replyData.size());
+            error = false;
+        }
+        catch(MongoException const& e)
+        {
+            info = e.info;
+        }
+
+        if (error)
+        {
+            std::cerr << info.getHRErrorMessage()
+                      << ThorsAnvil::Serialize::jsonExporter(replyData)
+                      << "\n\n";
         }
     }
 
     // Add three objects to the collection
     {
-        StringAndIntNoConstructor               object1{"DataString"s, 48};
-        StringAndIntNoConstructor               object2{"Another"s, 22};
-        StringAndIntNoConstructor               object3{"ThirdAndLast"s, 0xFF};
+        std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48},
+                                                      {"Another"s, 22},
+                                                      {"ThirdAndLast"s, 0xFF}});
 
-        connection << Op_Insert<StringAndIntNoConstructor>(fullConnection, {}, object1, object2, object3);
+        connection << make_Op_Insert(fullConnection, data);
     }
 
     // Check there are three objects in the collection.
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
-        connection >> reply;
+        std::vector<StringAndIntNoConstructorReply> replyData;
+        error = true;
 
-        EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(3, reply.numberReturned);
-        if (!reply.isOk() || reply.numberReturned != 3)
+        try
         {
-            std::cerr << "Showing: " << reply.numberReturned << "\n";
-            for (int loop = 0; loop < reply.numberReturned; ++loop)
-            {
-                std::cerr << "Item: " << loop << "\n"
-                          << ThorsAnvil::Serialize::jsonExporter(reply.documents[loop])
-                          << "\n\n";
-            }
+            connection >> make_Op_Reply(replyData);
+            EXPECT_EQ(3, replyData.size());
+            error = false;
+        }
+        catch(MongoException const& e)
+        {
+            info = e.info;
+        }
+
+        if (error)
+        {
+            std::cerr << info.getHRErrorMessage()
+                      << ThorsAnvil::Serialize::jsonExporter(replyData)
+                      << "\n\n";
         }
     }
 
     // Get the three objects one at time using GET_MORE
     {
-        connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
+        std::vector<StringAndIntNoConstructorReply>             replyData1;
+        std::vector<StringAndIntNoConstructorReply>             replyData2;
+        std::vector<StringAndIntNoConstructorReply>             replyData3;
 
-        Op_Reply<StringAndIntNoConstructorReply>     reply1;
-        connection >> reply1;
+        error = true;
+        try
+        {
+            connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
 
-        EXPECT_TRUE(reply1.isOk());
-        EXPECT_EQ(reply1.startingFrom, 0);
-        EXPECT_EQ(reply1.numberReturned, 2);
-        ASSERT_EQ(reply1.documents.size(), 2);
+            connection >> make_Op_Reply(replyData1);
+            EXPECT_EQ(2, replyData1.size());
+            auto cursorInfo1 = connection.getCursorInfo(connection.getLastOpenCursor());
+            EXPECT_EQ(cursorInfo1.first, 0);
+            EXPECT_EQ(cursorInfo1.second, 2);
 
-        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
+            connection << make_Op_GetMore(fullConnection, 1);
 
-        Op_Reply<StringAndIntNoConstructorReply>     reply2;
-        connection >> reply2;
-        EXPECT_TRUE(reply2.isOk());
-        EXPECT_EQ(reply2.startingFrom, 2);
-        EXPECT_EQ(reply2.numberReturned, 1);
-        ASSERT_EQ(reply2.documents.size(), 1);
+            connection >> make_Op_Reply(replyData2);
+            EXPECT_EQ(1, replyData2.size());
+            auto cursorInfo2 = connection.getCursorInfo(connection.getLastOpenCursor());
+            EXPECT_EQ(cursorInfo2.first, 0);
+            EXPECT_EQ(cursorInfo2.second, 3);
 
-        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
+            connection << make_Op_GetMore(fullConnection, 1);
 
-        Op_Reply<StringAndIntNoConstructorReply>     reply3;
-        connection >> reply3;
-        EXPECT_TRUE(reply3.isOk());
-        EXPECT_EQ(reply3.startingFrom, 3);
-        EXPECT_EQ(reply3.numberReturned, 0);
-        ASSERT_GE(reply3.documents.size(), 0);
+            connection >> make_Op_Reply(replyData3);
+            EXPECT_EQ(0, replyData3.size());
+            auto cursorInfo3 = connection.getCursorInfo(connection.getLastOpenCursor());
+            EXPECT_EQ(cursorInfo3.first, 0);
+            EXPECT_EQ(cursorInfo3.second, 3);
+            error = false;
+        }
+        catch(MongoException const& e)
+        {
+            info = e.info;
+        }
+
+        if (error)
+        {
+            std::cerr << info.getHRErrorMessage()
+                      << ThorsAnvil::Serialize::jsonExporter(replyData1)
+                      << ThorsAnvil::Serialize::jsonExporter(replyData2)
+                      << ThorsAnvil::Serialize::jsonExporter(replyData3)
+                      << "\n\n";
+        }
     }
     // Get the two of three objects then kill cursor
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
 
-        Op_Reply<StringAndIntNoConstructorReply>     reply1;
+        std::vector<StringAndIntNoConstructorReply>             replyData1;
+        Op_Reply<std::vector<StringAndIntNoConstructorReply>>   reply1(replyData1);
         connection >> reply1;
 
         EXPECT_TRUE(reply1.isOk());
@@ -141,11 +176,12 @@ TEST(ConnectionTest, YeOldWireProtocol)
         EXPECT_EQ(reply1.numberReturned, 2);
         ASSERT_EQ(reply1.documents.size(), 2);
 
-        connection << Op_KillCursors({reply1.cursorID});
+        connection << make_Op_KillCursors(reply1);
 
-        connection << Op_GetMore(fullConnection, {1, reply1.cursorID});
+        connection << make_Op_GetMore(fullConnection, reply1);
 
-        Op_Reply<StringAndIntNoConstructorReply>     reply2;
+        StringAndIntNoConstructorReply              replyData2;
+        Op_Reply<StringAndIntNoConstructorReply>    reply2(replyData2);
         connection >> reply2;
         EXPECT_FALSE(reply2.isOk());
         EXPECT_EQ(reply2.responseFlags & OP_ReplyFlag::CursorNotFound, OP_ReplyFlag::CursorNotFound);
@@ -154,7 +190,8 @@ TEST(ConnectionTest, YeOldWireProtocol)
     // Check the query can actual filter.
     {
         connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        StringAndIntNoConstructorReply              replyData;
+        Op_Reply<StringAndIntNoConstructorReply>    reply(replyData);
         connection >> reply;
 
         EXPECT_TRUE(reply.isOk());
@@ -172,10 +209,11 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
     // Check the Update works see if the filter finds it.
     {
-        connection << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
+        connection << make_Op_Update(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
 
         connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        StringAndIntNoConstructorReply              replyData;
+        Op_Reply<StringAndIntNoConstructorReply>    reply(replyData);
         connection >> reply;
 
         EXPECT_TRUE(reply.isOk());
@@ -194,13 +232,14 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Delete an item from the collection.
     {
-        connection << Op_Delete<SimpleStringNoConstructor>(fullConnection, {}, "DataString");
+        connection << make_Op_Delete(fullConnection, SimpleStringNoConstructor{"DataString"});
     }
 
     // Make sure that the delete worked.
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
-        Op_Reply<StringAndIntNoConstructorReply>     reply;
+        StringAndIntNoConstructorReply              replyData;
+        Op_Reply<StringAndIntNoConstructorReply>    reply(replyData);
         connection >> reply;
 
         EXPECT_TRUE(reply.isOk());
@@ -231,18 +270,18 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
     // reset the collection to be empty.
     {
-        connection << make_CmdDB_Delete("test", "ConnectionTest", {}, TestFindAll{});
+        connection << make_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
         CmdDB_Reply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0)
+        if (!reply.isOk() || reply.reply.size() != 1 || reply.reply[0].ok != 1.0)
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1,   reply.getDocumentCount());
-        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+        EXPECT_EQ(1,   reply.reply.size());
+        EXPECT_EQ(1.0, reply.reply[0].ok);
     }
 
     // Make sure there are zero objects in the collection.
@@ -255,14 +294,14 @@ TEST(ConnectionTest, MiddleWireProtocol)
         CmdDB_Reply     reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.getDocumentCount() != 1 || reply.getDocument(0).ok != 1.0)
+        if (!reply.isOk() || reply.reply.size() != 1 || reply.reply[0].ok != 1.0)
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1,   reply.getDocumentCount());
-        EXPECT_EQ(1.0, reply.getDocument(0).ok);
+        EXPECT_EQ(1,   reply.reply.size());
+        EXPECT_EQ(1.0, reply.reply[0].ok);
         EXPECT_EQ(0,   reply.replyCount());
     }
 
@@ -273,19 +312,19 @@ TEST(ConnectionTest, MiddleWireProtocol)
                                                                      StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
                                                                     };
 
-        connection << make_CmdDB_Insert("test", "ConnectionTest", {}, std::begin(objects), std::end(objects));
+        connection << make_CmdDB_Insert("test", "ConnectionTest", std::begin(objects), std::end(objects));
         CmdDB_Reply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.getDocumentCount() == 0 || reply.getDocument(0).n != 3)
+        if (!reply.isOk() || reply.reply.size() == 0 || reply.reply[0].n != 3)
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1,   reply.getDocumentCount());
-        EXPECT_EQ(1.0, reply.getDocument(0).ok);
-        EXPECT_EQ(3,   reply.getDocument(0).n);
+        EXPECT_EQ(1,   reply.reply.size());
+        EXPECT_EQ(1.0, reply.reply[0].ok);
+        EXPECT_EQ(3,   reply.reply[0].n);
     }
 
     // Check there are three objects in the collection.
@@ -293,17 +332,17 @@ TEST(ConnectionTest, MiddleWireProtocol)
         auto find = make_CmdDB_Find("test", "ConnectionTest");;
         connection << find;
 
-        CmdDB_FindResult<StringAndIntNoConstructor>     reply;
+        CmdDB_FindResult<StringAndIntNoConstructor> reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.getDocumentCount() == 0 || reply.getDocument(0).cursor.firstBatch.size() != 3)
+        if (!reply.isOk() || reply.numberReturned != 1 || reply.findData.cursor.firstBatch.size() != 3)
         {
             std::cerr << make_hr(reply);
         }
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1,   reply.getDocumentCount());
-        EXPECT_EQ(1.0, reply.getDocument(0).ok);
-        EXPECT_EQ(3,   reply.getDocument(0).cursor.firstBatch.size());
+        EXPECT_EQ(1,   reply.numberReturned);
+        EXPECT_EQ(1.0, reply.findData.ok);
+        EXPECT_EQ(3,   reply.findData.cursor.firstBatch.size());
     }
 }
 
