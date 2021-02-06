@@ -9,10 +9,11 @@
 #include "Op_KillCursors.h"
 #include "Op_Update.h"
 // Middle Wire Protocol
+#include "CmdDB_Reply.h"
 #include "CmdDB_Insert.h"
 #include "CmdDB_Delete.h"
 #include "CmdDB_Find.h"
-#include "CmdDB_Reply.h"
+#include "CmdDB_FindModify.h"
 // Other Stuff
 #include "MongoConnection.h"
 #include "MongoConfig.h"
@@ -36,8 +37,13 @@ struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
     std::int32_t        code    = 404;
     double              ok      = 1.0;
 };
+struct FindValue
+{
+    int value;
+};
 
 ThorsAnvil_ExpandTrait(StringAndIntNoConstructor, StringAndIntNoConstructorReply, $err, code, ok);
+ThorsAnvil_MakeTrait(FindValue, value);
 
 
 TEST(ConnectionTest, YeOldWireProtocol)
@@ -271,7 +277,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
     // reset the collection to be empty.
     {
         connection << make_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
-        CmdDB_Reply   reply;
+        CmdDB_DeleteReply   reply;
         connection >> reply;
 
         if (!reply.isOk() || reply.reply.size() != 1 || reply.reply[0].ok != 1.0)
@@ -305,18 +311,20 @@ TEST(ConnectionTest, MiddleWireProtocol)
         EXPECT_EQ(0,   reply.replyCount());
     }
 
-    // Add three objects to the collection
+    // Add five objects to the collection
     {
-        std::vector<StringAndIntNoConstructor>               objects{StringAndIntNoConstructor{"DataString"s, 48},
-                                                                     StringAndIntNoConstructor{"Another"s, 22},
-                                                                     StringAndIntNoConstructor{"ThirdAndLast"s, 0xFF}
+        std::vector<StringAndIntNoConstructor>               objects{{"DataString"s, 48},
+                                                                     {"Another"s, 22},
+                                                                     {"ThirdAndLast"s, 0xFF},
+                                                                     {"ThisAndThat", 48},
+                                                                     {"Bit The Dust", 22},
                                                                     };
 
         connection << make_CmdDB_Insert("test", "ConnectionTest", std::begin(objects), std::end(objects));
-        CmdDB_Reply   reply;
+        CmdDB_InsertReply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.reply.size() == 0 || reply.reply[0].n != 3)
+        if (!reply.isOk() || reply.reply.size() == 0 || reply.reply[0].n != 5)
         {
             std::cerr << make_hr(reply);
         }
@@ -324,15 +332,48 @@ TEST(ConnectionTest, MiddleWireProtocol)
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.reply.size());
         EXPECT_EQ(1.0, reply.reply[0].ok);
-        EXPECT_EQ(3,   reply.reply[0].n);
+        EXPECT_EQ(5,   reply.reply[0].n);
     }
 
+    // Check there are five objects in the collection.
+    {
+        auto find = make_CmdDB_Find("test", "ConnectionTest");;
+        connection << find;
+
+        CmdDB_FindReply<StringAndIntNoConstructor> reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.numberReturned != 1 || reply.findData.cursor.firstBatch.size() != 5)
+        {
+            std::cerr << make_hr(reply);
+        }
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.numberReturned);
+        EXPECT_EQ(1.0, reply.findData.ok);
+        EXPECT_EQ(5,   reply.findData.cursor.firstBatch.size());
+    }
+    // Delete 2 item for the collection
+    {
+        connection << make_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
+        CmdDB_DeleteReply   reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.reply.size() != 1 || reply.reply[0].ok != 1.0)
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.reply.size());
+        EXPECT_EQ(1.0, reply.reply[0].ok);
+        EXPECT_EQ(2,   reply.reply[0].n);   // number deleted
+    }
     // Check there are three objects in the collection.
     {
         auto find = make_CmdDB_Find("test", "ConnectionTest");;
         connection << find;
 
-        CmdDB_FindResult<StringAndIntNoConstructor> reply;
+        CmdDB_FindReply<StringAndIntNoConstructor> reply;
         connection >> reply;
 
         if (!reply.isOk() || reply.numberReturned != 1 || reply.findData.cursor.firstBatch.size() != 3)
@@ -343,6 +384,56 @@ TEST(ConnectionTest, MiddleWireProtocol)
         EXPECT_EQ(1,   reply.numberReturned);
         EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(3,   reply.findData.cursor.firstBatch.size());
+    }
+    // FindRemove 1 item for the collection
+    {
+        connection << make_CmdDB_FindDelete("test", "ConnectionTest", {}, FindValue{48});   // 2 items have 48 values this should remove one
+        CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+        connection >> reply;
+
+        bool item1 = reply.findData.value->message == "ThisAndThat";
+        bool item2 = reply.findData.value->message == "DataString";
+        if (!reply.isOk() || reply.findData.ok != 1.0 || reply.findData.value->value != 48 || ((item1 || item2) != true))
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1.0,  reply.findData.ok);
+        EXPECT_EQ(48,   reply.findData.value->value);
+        EXPECT_TRUE(item1 || item2);
+    }
+    // Check there are two objects in the collection.
+    {
+        auto find = make_CmdDB_Find("test", "ConnectionTest");;
+        connection << find;
+
+        CmdDB_FindReply<StringAndIntNoConstructor> reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.numberReturned != 1 || reply.findData.cursor.firstBatch.size() != 2)
+        {
+            std::cerr << make_hr(reply);
+        }
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.numberReturned);
+        EXPECT_EQ(1.0, reply.findData.ok);
+        EXPECT_EQ(2,   reply.findData.cursor.firstBatch.size());
+    }
+    // FindRemove Remove an item that is not there.
+    {
+        connection << make_CmdDB_FindDelete("test", "ConnectionTest", {}, FindValue{112});
+        CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.findData.ok != 1.0 || reply.findData.value.get() != nullptr)
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1.0, reply.findData.ok);
+        EXPECT_EQ(nullptr,  reply.findData.value.get());
     }
 }
 

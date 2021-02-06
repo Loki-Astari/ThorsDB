@@ -149,7 +149,7 @@ struct ClusterTime
 };
 
 template<typename Document>
-struct FindResult
+struct FindReply
 {
     Cursor<Document>        cursor;
     double                  ok                      = 0.0;
@@ -161,14 +161,14 @@ template<typename Filter, typename Sort>
 using CmdDB_Find        = CmdDB_Query<Find<Filter, Sort>>;
 
 template<typename Document>
-class CmdDB_FindResult: public Op_Reply<FindResult<Document>>
+class CmdDB_FindReply: public Op_Reply<FindReply<Document>>
 {
     public:
-        FindResult<Document>    findData;
-        CmdDB_FindResult()
-            : Op_Reply<FindResult<Document>>(findData)
+        FindReply<Document>    findData;
+        CmdDB_FindReply()
+            : Op_Reply<FindReply<Document>>(findData)
         {}
-        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindResult<Document>> const&>(*this));}
+        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindReply<Document>> const&>(*this));}
 };
 
 template<typename Filter = FindAll, typename Sort = DefaultSort>
@@ -211,7 +211,7 @@ ThorsAnvil_Template_ExpandTrait(2,ThorsAnvil::DB::Mongo::FindOptional,
 ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::Cursor,          partialResultsReturned, id, ns, firstBatch);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
-ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::FindResult,      cursor, ok, operationTime, $clusterTime);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::FindReply,       cursor, ok, operationTime, $clusterTime);
 
 #include "CmdDB_Find.tpp"
 

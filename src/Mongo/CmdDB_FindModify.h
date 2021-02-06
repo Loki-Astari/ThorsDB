@@ -6,6 +6,7 @@
 #include "CmdDB.h"
 #include "CmdDB_FindCommon.h"
 #include "CmdDB_Query.h"
+#include "ThorSerialize/MongoUtility.h"
 
 #include <map>
 #include <vector>
@@ -95,6 +96,45 @@ class FindModify: public FindModifyOptional
             filter["sort"]      = !std::is_same_v<DefaultSort, Base<Sort>>;
             filter["remove"]    = true;
         }
+        FindModify(FindModifyOptions options, std::string collection, Update update, Find&& find, Sort&& sort)
+            : FindModifyOptional(std::move(options))
+            , findAndModify(std::move(collection))
+            , query(std::forward<Find>(find))
+            , sort(std::forward<Sort>(sort))
+            , remove(false)
+            , update(std::forward<Update>(update))
+        {
+            filter["query"]     = !std::is_same_v<FindAll, Base<Find>>;
+            filter["sort"]      = !std::is_same_v<DefaultSort, Base<Sort>>;
+            filter["update"]    = true;
+        }
+};
+
+struct LastErrorObject
+{
+    //using ThorsAnvil::Serialize::MongoUtility::ObjectID;
+
+    ThorsAnvil::Serialize::MongoUtility::ObjectID    upserted;
+    bool        updatedExisting;
+};
+
+template<typename Document>
+struct FindModifyReply
+{
+    LastErrorObject             lastErrorObject;
+    std::unique_ptr<Document>   value;
+    double                      ok                      = 0.0;
+};
+
+template<typename Document>
+class CmdDB_FindModifyReply: public Op_Reply<FindModifyReply<Document>>
+{
+    public:
+        FindModifyReply<Document>    findData;
+        CmdDB_FindModifyReply()
+            : Op_Reply<FindModifyReply<Document>>(findData)
+        {}
+        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindModifyReply<Document>> const&>(*this));}
 };
 
 template<typename Find, typename Sort, typename Update>
@@ -123,6 +163,9 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindModifyOptional,                 
 ThorsAnvil_Template_MakeFilter(3, ThorsAnvil::DB::Mongo::FindModify,                filter);
 ThorsAnvil_Template_ExpandTrait(3, ThorsAnvil::DB::Mongo::FindModifyOptional,
                                    ThorsAnvil::DB::Mongo::FindModify,               findAndModify, remove, update, query, sort);
+
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::LastErrorObject,                        updatedExisting, upserted);
+ThorsAnvil_Template_MakeTrait(1, ThorsAnvil::DB::Mongo::FindModifyReply,            lastErrorObject, value, ok);
 
 #include "CmdDB_FindModify.tpp"
 

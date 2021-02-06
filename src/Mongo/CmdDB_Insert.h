@@ -5,6 +5,7 @@
 
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
+#include "CmdDB_Reply.h"
 
 #include <map>
 #include <string>
@@ -58,6 +59,7 @@ struct Insert: public InsertOptional
 
 template<typename Document>
 using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
+using CmdDB_InsertReply = CmdDB_Reply;
 
 template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>
