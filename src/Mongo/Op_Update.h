@@ -31,8 +31,8 @@ class Op_Update
     Update                  update;
 
     public:
-        Op_Update(std::string fullCollectionName, Selector selector = {}, Update update = {});
-        Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector selector = {}, Update update = {});
+        Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {});
+        Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector = {}, Update&& update = {});
 
     private:
         std::size_t   getSize() const;
@@ -44,12 +44,12 @@ class Op_Update
 };
 
 template<typename Selector, typename Update>
-Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, Selector selector = {}, Update update = {})
+Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {})
 {
     return Op_Update<Selector, Update>(std::move(fullCollectionName), std::forward<Selector>(selector), std::forward<Update>(update));
 }
 template<typename Selector, typename Update>
-Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector selector = {}, Update update = {})
+Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector = {}, Update&& update = {})
 {
     return Op_Update<Selector, Update>(std::move(fullCollectionName), flags, std::forward<Selector>(selector), std::forward<Update>(update));
 }

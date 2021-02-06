@@ -25,7 +25,7 @@ class Op_GetMore
 
     public:
         template<typename Document>
-        Op_GetMore(std::string fullCollectionName, Op_Reply<Document> reply, std::int32_t ret = 101);
+        Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret = 101);
         Op_GetMore(std::string fillCollectionName, std::int32_t ret = 101);
 
     private:
@@ -39,9 +39,9 @@ class Op_GetMore
 
 template<typename Document>
 inline
-Op_GetMore make_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> reply, std::int32_t ret = 101)
+Op_GetMore make_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret = 101)
 {
-    return Op_GetMore(std::move(fullCollectionName), std::move(reply), ret);
+    return Op_GetMore(std::move(fullCollectionName), reply, ret);
 }
 inline
 Op_GetMore make_Op_GetMore(std::string fullCollectionName, std::int32_t ret = 101)

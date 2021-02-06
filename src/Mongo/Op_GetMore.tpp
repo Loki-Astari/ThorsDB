@@ -15,7 +15,7 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-Op_GetMore::Op_GetMore(std::string fullCollectionName, Op_Reply<Document> reply, std::int32_t ret)
+Op_GetMore::Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret)
     : header(OpCode::OP_GET_MORE)
     , fullCollectionName(fullCollectionName)
     , ret(ret)

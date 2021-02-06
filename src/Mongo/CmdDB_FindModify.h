@@ -84,7 +84,7 @@ class FindModify: public FindModifyOptional
     public:
         using Options = FindModifyOptions;
 
-        FindModify(FindModifyOptions options, std::string collection, bool remove, Find find, Sort sort)
+        FindModify(FindModifyOptions options, std::string collection, bool remove, Find&& find, Sort&& sort)
             : FindModifyOptional(std::move(options))
             , findAndModify(std::move(collection))
             , query(std::forward<Find>(find))
@@ -101,12 +101,12 @@ template<typename Find, typename Sort, typename Update>
 using CmdDB_FindModify        = CmdDB_Query<FindModify<Find, Sort, Update>>;
 
 template<typename Find = FindAll, typename Sort = DefaultSort>
-CmdDB_FindModify<Find, Sort, NoUpdate> make_CmdDB_FindDelete(std::string db, std::string collection, FindModifyOptions findModOpt = {}, Find find = {}, Sort sort = {})
+CmdDB_FindModify<Find, Sort, NoUpdate> make_CmdDB_FindDelete(std::string db, std::string collection, FindModifyOptions findModOpt = {}, Find&& find = {}, Sort&& sort = {})
 {
     return CmdDB_FindModify<Find, Sort, NoUpdate>(std::move(db), std::move(collection), {}, std::move(findModOpt), true, std::forward<Find>(find), std::forward<Sort>(sort));
 }
 template<typename Find = FindAll, typename Sort = DefaultSort>
-CmdDB_FindModify<Find, Sort, NoUpdate> make_CmdDB_FindDelete(std::string db, std::string collection, Op_QueryOptions options, FindModifyOptions findModOpt = {}, Find find = {}, Sort sort = {})
+CmdDB_FindModify<Find, Sort, NoUpdate> make_CmdDB_FindDelete(std::string db, std::string collection, Op_QueryOptions options, FindModifyOptions findModOpt = {}, Find&& find = {}, Sort&& sort = {})
 {
     return CmdDB_FindModify<Find, Sort, NoUpdate>(std::move(db), std::move(collection), std::move(options), std::move(findModOpt), true, std::forward<Find>(find), std::forward<Sort>(sort));
 }
