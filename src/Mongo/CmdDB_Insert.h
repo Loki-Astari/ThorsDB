@@ -29,7 +29,7 @@ class InsertOptional: public InsertOptions
         void unordered(bool v = true);
         void byPass(bool v = true);
         void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
-        void setComment(std::string&& c = "");
+        void setComment(std::string c = "");
     protected:
         void    updateFilter();
         friend class ThorsAnvil::Serialize::Traits<InsertOptional>;

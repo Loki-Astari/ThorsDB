@@ -9,10 +9,10 @@ DeleteOptional::DeleteOptional(DeleteOptions options)
     updateFilter();
 }
 
+static const DeleteOptions defaultValue;
+
 void DeleteOptional::updateFilter()
 {
-    static const DeleteOptions  defaultValue;
-
     filter["ordered"]       = ordered       != defaultValue.ordered;
     filter["writeConcern"]  = writeConcern  != defaultValue.writeConcern;
 }
@@ -20,11 +20,11 @@ void DeleteOptional::updateFilter()
 void DeleteOptional::unordered(bool val)
 {
     ordered = !val;
-    filter["ordered"] = true;
+    filter["ordered"]       = ordered       != defaultValue.ordered;
 }
 
 void DeleteOptional::setWrieConcern(int w, bool j, std::time_t wtimeout)
 {
     writeConcern    = WriteConcern{w, j, wtimeout};
-    filter["writeConcern"]  = true;
+    filter["writeConcern"]  = writeConcern  != defaultValue.writeConcern;
 }
