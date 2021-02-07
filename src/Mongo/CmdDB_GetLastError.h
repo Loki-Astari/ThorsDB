@@ -26,7 +26,7 @@ struct GetLastErrorOptional
     public:
         GetLastErrorOptional(GetLastErrorOptions options);
 
-        void waitFoolDiskFlush(bool val = false);
+        void waitFoolDiskFlush(bool val = true);
         void waitForReplication(std::int32_t count);
         void setWaitTimeout(std::int32_t millisec);
         void setComment(std::string comment);
@@ -35,9 +35,9 @@ struct GetLastErrorOptional
         friend class ThorsAnvil::Serialize::Filter<GetLastErrorOptional>;
         std::map<std::string, bool>     filter;
 
-        bool            j           = true;
-        std::int32_t    w           = 1;            // Needs to support "majority"
-        std::int32_t    wtimeout    = 0;
+        bool            j;
+        std::int32_t    w;
+        std::int32_t    wtimeout;
         std::string     comment;
 };
 

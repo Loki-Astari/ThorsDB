@@ -59,7 +59,7 @@ class CmdDB_Query: public Op_Query<Document>
         CmdDB_Query& setUpsert(bool val = true);
 
         // GetLastError
-        CmdDB_Query& waitFoolDiskFlush(bool val = false);
+        CmdDB_Query& waitFoolDiskFlush(bool val = true);
         CmdDB_Query& waitForReplication(std::int32_t count);
         CmdDB_Query& setWaitTimeout(std::int32_t millisec);
 
