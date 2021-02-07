@@ -168,6 +168,7 @@ class CmdDB_FindReply: public Op_Reply<FindReply<Document>>
         CmdDB_FindReply()
             : Op_Reply<FindReply<Document>>(findData)
         {}
+        virtual bool        isOk()              const override;
         std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindReply<Document>> const&>(*this));}
 };
 

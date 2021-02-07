@@ -285,14 +285,13 @@ TEST(ConnectionTest, MiddleWireProtocol)
         CmdDB_DeleteReply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.reply.size() != 1 || reply.reply[0].ok != 1.0)
+        if (!reply.isOk() || reply.reply.size() != 1)
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.reply.size());
-        EXPECT_EQ(1.0, reply.reply[0].ok);
     }
 
     // Make sure there are zero objects in the collection.
@@ -312,7 +311,6 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.reply.size());
-        EXPECT_EQ(1.0, reply.reply[0].ok);
         EXPECT_EQ(0,   reply.replyCount());
     }
 
@@ -336,7 +334,6 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.reply.size());
-        EXPECT_EQ(1.0, reply.reply[0].ok);
         EXPECT_EQ(5,   reply.reply[0].n);
     }
 
@@ -354,7 +351,6 @@ TEST(ConnectionTest, MiddleWireProtocol)
         }
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.numberReturned);
-        EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(5,   reply.findData.cursor.firstBatch.size());
     }
     // Delete 2 item for the collection
@@ -363,14 +359,13 @@ TEST(ConnectionTest, MiddleWireProtocol)
         CmdDB_DeleteReply   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.reply.size() != 1 || reply.reply[0].ok != 1.0)
+        if (!reply.isOk() || reply.reply.size() != 1)
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.reply.size());
-        EXPECT_EQ(1.0, reply.reply[0].ok);
         EXPECT_EQ(2,   reply.reply[0].n);   // number deleted
     }
     // Check there are three objects in the collection.
@@ -387,7 +382,6 @@ TEST(ConnectionTest, MiddleWireProtocol)
         }
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.numberReturned);
-        EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(3,   reply.findData.cursor.firstBatch.size());
     }
     // FindRemove 1 item for the collection
@@ -398,13 +392,12 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
         bool item1 = reply.findData.value->message == "ThisAndThat";
         bool item2 = reply.findData.value->message == "DataString";
-        if (!reply.isOk() || reply.findData.ok != 1.0 || reply.findData.value->value != 48 || ((item1 || item2) != true))
+        if (!reply.isOk() reply.findData.value->value != 48 || ((item1 || item2) != true))
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1.0,  reply.findData.ok);
         EXPECT_EQ(48,   reply.findData.value->value);
         EXPECT_TRUE(item1 || item2);
         EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
@@ -423,7 +416,6 @@ TEST(ConnectionTest, MiddleWireProtocol)
         }
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.numberReturned);
-        EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(2,   reply.findData.cursor.firstBatch.size());
     }
     // FindRemove Remove an item that is not there.
@@ -432,13 +424,12 @@ TEST(ConnectionTest, MiddleWireProtocol)
         CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
         connection >> reply;
 
-        if (!reply.isOk() || reply.findData.ok != 1.0 || reply.findData.value.get() != nullptr)
+        if (!reply.isOk() || reply.findData.value.get() != nullptr)
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(nullptr,  reply.findData.value.get());
         EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
     }
@@ -456,7 +447,6 @@ TEST(ConnectionTest, MiddleWireProtocol)
         }
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1,   reply.numberReturned);
-        EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(2,   reply.findData.cursor.firstBatch.size());
     }
     // FindUpdate 1 item for the collection
@@ -467,13 +457,12 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
         bool item1 = reply.findData.value->message == "ThisAndThat";
         bool item2 = reply.findData.value->message == "DataString";
-        if (!reply.isOk() || reply.findData.ok != 1.0 || reply.findData.value->value != 48 || ((item1 || item2) != true))
+        if (!reply.isOk() || reply.findData.value->value != 48 || ((item1 || item2) != true))
         {
             std::cerr << make_hr(reply);
         }
 
         EXPECT_TRUE(reply.isOk());
-        EXPECT_EQ(1.0,  reply.findData.ok);
         EXPECT_EQ(48,   reply.findData.value->value);
         EXPECT_TRUE(item1 || item2);
         EXPECT_TRUE(reply.findData.lastErrorObject.updatedExisting);

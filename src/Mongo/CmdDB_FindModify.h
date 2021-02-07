@@ -135,6 +135,7 @@ class CmdDB_FindModifyReply: public Op_Reply<FindModifyReply<Document>>
             : Op_Reply<FindModifyReply<Document>>(findData)
         {}
         std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindModifyReply<Document>> const&>(*this));}
+        virtual bool        isOk()              const override;
 };
 
 template<typename Find, typename Sort, typename Update>
