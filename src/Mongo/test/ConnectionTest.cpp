@@ -412,12 +412,13 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_1_Items)
 
     bool item1 = reply.findData.value->message == "ThisAndThat";
     bool item2 = reply.findData.value->message == "DataString";
-    if (!reply.isOk() || reply.findData.value->value != 48 || ((item1 || item2) != true))
+    if (!reply.isOk() || reply.findData.value.get() == nullptr || reply.findData.value->value != 48 || ((item1 || item2) != true))
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
+    ASSERT_NE(nullptr, reply.findData.value.get());
     EXPECT_EQ(48,   reply.findData.value->value);
     EXPECT_TRUE(item1 || item2);
     EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
@@ -454,15 +455,123 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items)
 
     bool item1 = reply.findData.value->message == "ThisAndThat";
     bool item2 = reply.findData.value->message == "DataString";
-    if (!reply.isOk() || reply.findData.value->value != 48 || ((item1 || item2) != true))
+    if (!reply.isOk() || reply.findData.value.get() == nullptr || reply.findData.value->value != 48 || ((item1 || item2) != true))
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
+    ASSERT_NE(nullptr, reply.findData.value.get());
     EXPECT_EQ(48,   reply.findData.value->value);
     EXPECT_TRUE(item1 || item2);
     EXPECT_TRUE(reply.findData.lastErrorObject.updatedExisting);
 
     checkTheNumberofObjectsIs(ConnectionTestMiddleWireAction::getConnection(), 5);
 }
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    ConnectionTestMiddleWireAction::getConnection() >> reply;
+
+    if (!reply.isOk() || reply.findData.value.get() != nullptr)
+    {
+        std::cerr << make_hr(reply);
+    }
+
+        std::cerr << make_hr(reply);
+    EXPECT_TRUE(reply.isOk());
+    EXPECT_EQ(nullptr,   reply.findData.value.get());
+    EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
+
+    checkTheNumberofObjectsIs(ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    ConnectionTestMiddleWireAction::getConnection() >> reply;
+
+    if (!reply.isOk() || reply.findData.value.get() != nullptr)
+    {
+        std::cerr << make_hr(reply);
+    }
+
+        std::cerr << make_hr(reply);
+    EXPECT_TRUE(reply.isOk());
+    EXPECT_EQ(nullptr,   reply.findData.value.get());
+    EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
+
+    checkTheNumberofObjectsIs(ConnectionTestMiddleWireAction::getConnection(), 6);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items_ReturnUpdated)
+{
+    // FindUpdate 1 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    ConnectionTestMiddleWireAction::getConnection() >> reply;
+
+    if (!reply.isOk() || reply.findData.value.get() == nullptr || reply.findData.value->value != 0 || reply.findData.value->message != "Bad Things Happen if you don't test")
+    {
+        std::cerr << make_hr(reply);
+    }
+
+    EXPECT_TRUE(reply.isOk());
+    ASSERT_NE(nullptr, reply.findData.value.get());
+    EXPECT_EQ(0,   reply.findData.value->value);
+    EXPECT_EQ("Bad Things Happen if you don't test", reply.findData.value->message);
+    EXPECT_TRUE(reply.findData.lastErrorObject.updatedExisting);
+
+    checkTheNumberofObjectsIs(ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items_ReturnNull)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    ConnectionTestMiddleWireAction::getConnection() >> reply;
+
+    if (!reply.isOk() || reply.findData.value.get() != nullptr)
+    {
+        std::cerr << make_hr(reply);
+    }
+
+    EXPECT_TRUE(reply.isOk());
+    EXPECT_EQ(nullptr,   reply.findData.value.get());
+    EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
+
+    checkTheNumberofObjectsIs(ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    ConnectionTestMiddleWireAction::getConnection() >> reply;
+
+    if (!reply.isOk() || reply.findData.value.get() == nullptr || reply.findData.value->value != 0 || reply.findData.value->message != "Bad Things Happen if you don't test")
+    {
+        std::cerr << make_hr(reply);
+    }
+
+    EXPECT_TRUE(reply.isOk());
+    EXPECT_NE(nullptr,   reply.findData.value.get());
+    EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
+    EXPECT_EQ(0, reply.findData.value->value);
+    EXPECT_EQ("Bad Things Happen if you don't test", reply.findData.value->message);
+
+    checkTheNumberofObjectsIs(ConnectionTestMiddleWireAction::getConnection(), 6);
+}
+
