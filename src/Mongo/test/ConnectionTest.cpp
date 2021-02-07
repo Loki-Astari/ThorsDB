@@ -14,6 +14,7 @@
 #include "CmdDB_Delete.h"
 #include "CmdDB_Find.h"
 #include "CmdDB_FindModify.h"
+#include "CmdDB_GetLastError.h"
 // Other Stuff
 #include "MongoConnection.h"
 #include "MongoConfig.h"
