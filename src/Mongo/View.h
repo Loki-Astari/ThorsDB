@@ -101,13 +101,11 @@ class ViewContainer: public View_Base
         std::size_t size()  const {return std::size(container);}
         value_type&     operator[](std::size_t pos)
         {
-            std::cerr << "Insert: " << pos << "\n";
             container.resize(pos + 1);
             return container[pos];
         }
         value_type const& operator[](std::size_t pos) const
         {
-            std::cerr << "Read Only: " << pos << "\n";
             return container[pos];
         }
 };
