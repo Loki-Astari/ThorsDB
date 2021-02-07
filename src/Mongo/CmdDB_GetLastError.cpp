@@ -77,7 +77,7 @@ std::string CmdDB_GetLastErrorReply::getHRErrorMessage() const
     lastReply.filter["wtimeout"]          = lastReply.wtimeout          != defaultValue.wtimeout;
     lastReply.filter["waited"]            = lastReply.waited            != defaultValue.waited;
     lastReply.filter["wtime"]             = lastReply.wtime             != defaultValue.wtime;
-    lastReply.filter["writtenTo"]         = lastReply.writtenTo.size() != 0;
+    lastReply.filter["writtenTo"]         = lastReply.writtenTo.get() != nullptr && lastReply.writtenTo->size() != 0;
 
     std::stringstream   errorMsg;
     errorMsg << Op_Reply<GetLastErrorReply>::getHRErrorMessage()

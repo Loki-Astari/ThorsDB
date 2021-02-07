@@ -67,9 +67,9 @@ struct GetLastErrorReply
     std::string                     index;
     std::string                     errmsg;
     std::int32_t                    code                = -1;
-    std::string                     connectionId;
+    std::int32_t                    connectionId        = -1;   // *
     std::time_t                     lastOp              = 0;
-    std::int32_t                    n                   = -1;
+    std::int32_t                    n                   = -1;   // *
     std::int32_t                    syncMillis          = -1;
     std::int32_t                    shards              = -1;
     std::int32_t                    singleShard         = -1;
@@ -79,7 +79,7 @@ struct GetLastErrorReply
     bool                            wtimeout            = false;
     std::time_t                     waited              = 0;
     std::time_t                     wtime               = 0;
-    std::vector<Host>               writtenTo;
+    std::unique_ptr<std::vector<Host>> writtenTo;                  // *
 };
 
 using CmdDB_GetLastError        = CmdDB_Query<GetLastError>;
@@ -91,6 +91,7 @@ class CmdDB_GetLastErrorReply: public Op_Reply<GetLastErrorReply>
         CmdDB_GetLastErrorReply();
         virtual bool        isOk()              const override;
         virtual std::string getHRErrorMessage() const override;
+        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<GetLastErrorReply> const&>(*this));}
 };
 
 inline
