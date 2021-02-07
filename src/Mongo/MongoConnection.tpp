@@ -7,6 +7,7 @@
 
 #include "Op_GetMore.h"
 #include "Op_KillCursors.h"
+#include "CmdDB_GetMore.h"
 #include <algorithm>
 
 namespace ThorsAnvil::DB::Mongo
@@ -41,6 +42,30 @@ class CursorExtractor<Op_GetMore>
             if (gotLastCursor)
             {
                 getMore.cursorID = -1;
+            }
+        }
+};
+template<>
+class CursorExtractor<CmdDB_GetMore>
+{
+    CmdDB_GetMore&     getMore;
+    bool            gotLastCursor;
+    public:
+        CursorExtractor(CmdDB_GetMore& value, MongoConnection& connection)
+            : getMore(value)
+            , gotLastCursor(false)
+        {
+            if (getMore.getQuery().getMore == -1)
+            {
+                gotLastCursor = true;
+                getMore.getQuery().getMore = connection.getLastOpenCursor();
+            }
+        }
+        ~CursorExtractor()
+        {
+            if (gotLastCursor)
+            {
+                getMore.getQuery().getMore = -1;
             }
         }
 };
