@@ -41,9 +41,14 @@ struct FindValue
 {
     int value;
 };
+struct UpdateMessage
+{
+    std::string message;
+};
 
 ThorsAnvil_ExpandTrait(StringAndIntNoConstructor, StringAndIntNoConstructorReply, $err, code, ok);
 ThorsAnvil_MakeTrait(FindValue, value);
+ThorsAnvil_MakeTrait(UpdateMessage, message);
 
 
 TEST(ConnectionTest, YeOldWireProtocol)
@@ -402,6 +407,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
         EXPECT_EQ(1.0,  reply.findData.ok);
         EXPECT_EQ(48,   reply.findData.value->value);
         EXPECT_TRUE(item1 || item2);
+        EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
     }
     // Check there are two objects in the collection.
     {
@@ -434,6 +440,43 @@ TEST(ConnectionTest, MiddleWireProtocol)
         EXPECT_TRUE(reply.isOk());
         EXPECT_EQ(1.0, reply.findData.ok);
         EXPECT_EQ(nullptr,  reply.findData.value.get());
+        EXPECT_FALSE(reply.findData.lastErrorObject.updatedExisting);
+    }
+    // Check there are two objects in the collection.
+    {
+        auto find = make_CmdDB_Find("test", "ConnectionTest");;
+        connection << find;
+
+        CmdDB_FindReply<StringAndIntNoConstructor> reply;
+        connection >> reply;
+
+        if (!reply.isOk() || reply.numberReturned != 1 || reply.findData.cursor.firstBatch.size() != 2)
+        {
+            std::cerr << make_hr(reply);
+        }
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1,   reply.numberReturned);
+        EXPECT_EQ(1.0, reply.findData.ok);
+        EXPECT_EQ(2,   reply.findData.cursor.firstBatch.size());
+    }
+    // FindUpdate 1 item for the collection
+    {
+        connection << make_CmdDB_FindUpdate("test", "ConnectionTest", {}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
+        CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+        connection >> reply;
+
+        bool item1 = reply.findData.value->message == "ThisAndThat";
+        bool item2 = reply.findData.value->message == "DataString";
+        if (!reply.isOk() || reply.findData.ok != 1.0 || reply.findData.value->value != 48 || ((item1 || item2) != true))
+        {
+            std::cerr << make_hr(reply);
+        }
+
+        EXPECT_TRUE(reply.isOk());
+        EXPECT_EQ(1.0,  reply.findData.ok);
+        EXPECT_EQ(48,   reply.findData.value->value);
+        EXPECT_TRUE(item1 || item2);
+        EXPECT_TRUE(reply.findData.lastErrorObject.updatedExisting);
     }
 }
 
