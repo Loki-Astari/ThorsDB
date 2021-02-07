@@ -5,6 +5,7 @@
 
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
+#include "CmdDB_Reply.h"
 
 #include <map>
 #include <string>
@@ -29,7 +30,7 @@ class InsertOptional: public InsertOptions
         void unordered(bool v = true);
         void byPass(bool v = true);
         void setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
-        void setComment(std::string&& c = "");
+        void setComment(std::string c = "");
     protected:
         void    updateFilter();
         friend class ThorsAnvil::Serialize::Traits<InsertOptional>;
@@ -58,6 +59,7 @@ struct Insert: public InsertOptional
 
 template<typename Document>
 using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
+using CmdDB_InsertReply = CmdDB_Reply;
 
 template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>

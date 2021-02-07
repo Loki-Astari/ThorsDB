@@ -31,6 +31,12 @@ void Find<Filter, Sort>::updateFilter()
     }
 }
 
+template<typename Document>
+bool CmdDB_FindReply<Document>::isOk() const
+{
+    return Op_Reply<FindReply<Document>>::isOk() && findData.ok == 1.0;
+}
+
 }
 
 #endif

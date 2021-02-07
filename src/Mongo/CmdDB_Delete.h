@@ -5,6 +5,7 @@
 
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
+#include "CmdDB_Reply.h"
 
 #include <map>
 #include <vector>
@@ -67,6 +68,7 @@ struct Delete: public DeleteOptional
 
 template<typename Document>
 using CmdDB_Delete      = CmdDB_Query<Delete<Document>>;
+using CmdDB_DeleteReply = CmdDB_Reply;
 
 template<typename Document>
 CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Document doc)

@@ -28,10 +28,11 @@ FindOptional::FindOptional(FindOptions options)
     updateFilter();
 }
 
+static const FindOptions defaultValue;
+
+
 void FindOptional::updateFilter()
 {
-    static const FindOptions defaultValue;
-
     optionsFilter["projection"]          = projection            != defaultValue.projection;
     optionsFilter["hint"]                = hint                  != defaultValue.hint;
     optionsFilter["skip"]                = skip                  != defaultValue.skip;
@@ -53,117 +54,117 @@ void FindOptional::updateFilter()
     optionsFilter["allowDiskUse"]        = allowDiskUse          != defaultValue.allowDiskUse;
 }
 
-void FindOptional::addFileds(std::initializer_list<std::string> const& fieldNames)
+void FindOptional::addFileds(std::initializer_list<std::string> fieldNames)
 {
-    for (auto const& name: fieldNames)
+    for (auto& name: fieldNames)
     {
-        projection[name] = 1;
+        projection[std::move(name)] = 1;
     }
-    optionsFilter["projection"]  = true;
+    optionsFilter["projection"]          = projection            != defaultValue.projection;
 }
 
-void FindOptional::addHint(std::string const& h)
+void FindOptional::addHint(std::string h)
 {
-    hint = h;
-    optionsFilter["hint"]        = true;
+    hint = std::move(h);
+    optionsFilter["hint"]                = hint                  != defaultValue.hint;
 }
 
 void FindOptional::setSkip(std::size_t val)
 {
     skip = val;
-    optionsFilter["skip"]        = true;
+    optionsFilter["skip"]                = skip                  != defaultValue.skip;
 }
 
 void FindOptional::setLimit(std::size_t val)
 {
     limit = val;
-    optionsFilter["limit"]        = true;
+    optionsFilter["limit"]               = limit                 != defaultValue.limit;
 }
 
 void FindOptional::setBatchSize(std::size_t val)
 {
     batchSize = val;
-    optionsFilter["batchSize"]   = true;
+    optionsFilter["batchSize"]           = batchSize             != defaultValue.batchSize;
 }
 
 void FindOptional::oneBatch(bool val)
 {
     // Already set true. Just need to return it.
     singleBatch = val;
-    optionsFilter["singleBatch"] = true;
+    optionsFilter["singleBatch"]         = singleBatch           != defaultValue.singleBatch;
 }
 
-void FindOptional::setComment(std::string const& val)
+void FindOptional::setComment(std::string val)
 {
-    comment = val;
-    optionsFilter["comment"]     = true;
+    comment = std::move(val);
+    optionsFilter["comment"]             = comment               != defaultValue.comment;
 }
 
 void FindOptional::setMaxTimeout(std::size_t val)
 {
     maxTimeMS   = val;
-    optionsFilter["maxTimeMS"]   = true;
+    optionsFilter["maxTimeMS"]           = maxTimeMS             != defaultValue.maxTimeMS;
 }
 
 void FindOptional::addReadConcern(ReadConcernLevel val)
 {
-    readConcern = ReadConcern{val};
-    optionsFilter["readConcern"] = true;
+    readConcern = ReadConcern{std::move(val)};
+    optionsFilter["readConcern"]         = readConcern           != defaultValue.readConcern;
 }
 
-void FindOptional::addMax(std::string const& field, int val)
+void FindOptional::addMax(std::string field, int val)
 {
-    max[field] = val;
-    optionsFilter["max"]         = true;
+    max[std::move(field)] = val;
+    optionsFilter["max"]                 = max                   != defaultValue.max;
 }
 
-void FindOptional::addMin(std::string const& field, int val)
+void FindOptional::addMin(std::string field, int val)
 {
-    min[field] = val;
-    optionsFilter["min"]         = true;
+    min[std::move(field)] = val;
+    optionsFilter["min"]                 = min                   != defaultValue.min;
 }
 
 void FindOptional::justKeys(bool val)
 {
     // Already set true. Just need to return it.
     returnKey = !val;
-    optionsFilter["returnKey"]   = true;
+    optionsFilter["returnKey"]           = returnKey             != defaultValue.returnKey;
 }
 
 void FindOptional::showId(bool val)
 {
     // Already set true. Just need to return it.
     showRecordId = val;
-    optionsFilter["showRecordId"]= true;
+    optionsFilter["showRecordId"]        = showRecordId          != defaultValue.showRecordId;
 }
 
 void FindOptional::tailableCursor(bool val)
 {
     tailable = val;
-    optionsFilter["tailable"]    = true;
+    optionsFilter["tailable"]            = tailable              != defaultValue.tailable;
 }
 
 void FindOptional::tailedCursorAwait(bool val)
 {
     awaitData = val;
-    optionsFilter["tailable"]    = true;
-    optionsFilter["awaitData"]   = true;
+    optionsFilter["tailable"]            = awaitData             != defaultValue.awaitData;
+    optionsFilter["awaitData"]           = awaitData             != defaultValue.awaitData;
 }
 
 void FindOptional::setNoCursorTimeout(bool val)
 {
     noCursorTimeout = val;
-    optionsFilter["noCursorTimeout"] = true;
+    optionsFilter["noCursorTimeout"]     = noCursorTimeout       != defaultValue.noCursorTimeout;
 }
 
 void FindOptional::setAllowPartialResults(bool val)
 {
     allowPartialResults = val;
-    optionsFilter["allowPartialResults"] = true;
+    optionsFilter["allowPartialResults"] = allowPartialResults   != defaultValue.allowPartialResults;
 }
 
 void FindOptional::useDisk(bool val)
 {
     allowDiskUse = val;
-    optionsFilter["allowDiskUse"]    = true;
+    optionsFilter["allowDiskUse"]        = allowDiskUse          != defaultValue.allowDiskUse;
 }

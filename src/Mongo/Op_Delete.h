@@ -34,7 +34,7 @@ class Op_Delete
     Document                selector;           // query object.
 
     public:
-        Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document selector);
+        Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector);
 
     private:
         std::size_t   getSize()                     const;
@@ -46,15 +46,15 @@ class Op_Delete
 };
 
 template<typename Document>
-Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, Document selector)
+Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, Document&& selector)
 {
-    return Op_Delete<Document>(std::move(fullCollectionName), OP_DeleteFlag::empty, std::move(selector));
+    return Op_Delete<Document>(std::move(fullCollectionName), OP_DeleteFlag::empty, std::forward<Document>(selector));
 }
 
 template<typename Document>
-Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document selector)
+Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector)
 {
-    return Op_Delete<Document>(std::move(fullCollectionName), flags, std::move(selector));
+    return Op_Delete<Document>(std::move(fullCollectionName), flags, std::forward<Document>(selector));
 }
 
 }

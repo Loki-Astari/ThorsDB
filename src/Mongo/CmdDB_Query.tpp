@@ -35,9 +35,9 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::byPass()
 }
 
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::setComment(std::string&& val)
+CmdDB_Query<Document>& CmdDB_Query<Document>::setComment(std::string val)
 {
-    this->getQuery().setComment(std::forward<std::string>(val));
+    this->getQuery().setComment(std::move(val));
     return *this;
 }
 
@@ -49,15 +49,15 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::setWrieConcern(int w, bool j, std:
 }
 
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::addFileds(std::initializer_list<std::string> const& fieldNames)
+CmdDB_Query<Document>& CmdDB_Query<Document>::addFileds(std::initializer_list<std::string> fieldNames)
 {
-    this->getQuery().addFileds(fieldNames);
+    this->getQuery().addFileds(std::move(fieldNames));
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::addHint(std::string&& hint)
+CmdDB_Query<Document>& CmdDB_Query<Document>::addHint(std::string hint)
 {
-    this->getQuery().addHint(hint);
+    this->getQuery().addHint(std::move(hint));
     return *this;
 }
 template<typename Document>
@@ -93,19 +93,19 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::setMaxTimeout(std::size_t val)
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::addReadConcern(ReadConcernLevel val)
 {
-    this->getQuery().addReadConcern(val);
+    this->getQuery().addReadConcern(std::move(val));
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::addMax(std::string const& field, int val)
+CmdDB_Query<Document>& CmdDB_Query<Document>::addMax(std::string field, int val)
 {
-    this->getQuery().addMax(field, val);
+    this->getQuery().addMax(std::move(field), val);
     return *this;
 }
 template<typename Document>
-CmdDB_Query<Document>& CmdDB_Query<Document>::addMin(std::string const& field, int val)
+CmdDB_Query<Document>& CmdDB_Query<Document>::addMin(std::string field, int val)
 {
-    this->getQuery().addMin(field, val);
+    this->getQuery().addMin(std::move(field), val);
     return *this;
 }
 template<typename Document>
@@ -148,6 +148,20 @@ template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::useDisk(bool val)
 {
     this->getQuery().useDisk(val);
+    return *this;
+}
+
+template<typename Document>
+CmdDB_Query<Document>& CmdDB_Query<Document>::setNew(bool val)
+{
+    this->getQuery().setNew(val);
+    return *this;
+}
+
+template<typename Document>
+CmdDB_Query<Document>& CmdDB_Query<Document>::setUpsert(bool val)
+{
+    this->getQuery().setUpsert(val);
     return *this;
 }
 

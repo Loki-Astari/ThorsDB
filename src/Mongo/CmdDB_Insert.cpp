@@ -11,10 +11,10 @@ InsertOptional::InsertOptional(InsertOptions options)
     updateFilter();
 }
 
+static const InsertOptions defaultValue;
+
 void InsertOptional::updateFilter()
 {
-    static const InsertOptions defaultValue;
-
     filter["ordered"]                  = ordered                    != defaultValue.ordered;;
     filter["writeConcern"]             = writeConcern               != defaultValue.writeConcern;
     filter["bypassDocumentValidation"] = bypassDocumentValidation   != defaultValue.bypassDocumentValidation;
@@ -24,23 +24,23 @@ void InsertOptional::updateFilter()
 void InsertOptional::unordered(bool val)
 {
     ordered = !val;
-    filter["ordered"] = true;
+    filter["ordered"]                  = ordered                    != defaultValue.ordered;
 }
 
 void InsertOptional::byPass(bool val)
 {
     bypassDocumentValidation = val;
-    filter["bypassDocumentValidation"] = true;
+    filter["bypassDocumentValidation"] = bypassDocumentValidation   != defaultValue.bypassDocumentValidation;
 }
 
 void InsertOptional::setWrieConcern(int w, bool j, std::time_t wtimeout)
 {
     writeConcern    = WriteConcern{w, j, wtimeout};
-    filter["writeConcern"]  = true;
+    filter["writeConcern"]              = writeConcern              != defaultValue.writeConcern;
 }
 
-void InsertOptional::setComment(std::string&& c)
+void InsertOptional::setComment(std::string c)
 {
-    comment = c;
-    filter["comment"] = true;
+    comment = std::move(c);
+    filter["comment"]                   = comment                   != defaultValue.comment;
 }

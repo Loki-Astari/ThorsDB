@@ -39,9 +39,9 @@ class Op_KillCursors
 };
 
 template<typename... Docs>
-Op_KillCursors make_Op_KillCursors(Op_Reply<Docs> const&... replys)     {return Op_KillCursors(replys...);}
+Op_KillCursors make_Op_KillCursors(Op_Reply<Docs> const&... replys)   {return Op_KillCursors(replys...);}
 inline
-Op_KillCursors make_Op_KillCursors(bool all = false)                    {return Op_KillCursors(all);}
+Op_KillCursors make_Op_KillCursors(bool all = false)                  {return Op_KillCursors(all);}
 
 }
 

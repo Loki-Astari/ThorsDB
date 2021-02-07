@@ -12,7 +12,7 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, Selector selector, Update update)
+Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, Selector&& selector, Update&& update)
     : header(OpCode::OP_UPDATE)
     , fullCollectionName(std::move(fullCollectionName))
     , flags(OP_UpdateFlag::empty)
@@ -23,7 +23,7 @@ Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, Selector 
 }
 
 template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector selector, Update update)
+Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector, Update&& update)
     : header(OpCode::OP_UPDATE)
     , fullCollectionName(std::move(fullCollectionName))
     , flags(flags)

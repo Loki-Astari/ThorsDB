@@ -94,7 +94,6 @@ Darwin
 
     EXPECT_EQ(output, expected);
 #else
-    std::cerr << output << "\n";
     EXPECT_EQ(output, "Please Add a test here");
 #endif
 }
