@@ -30,7 +30,7 @@ class CmdDB_Query: public Op_Query<Document>
         // Insert & Delete & FindModify
         CmdDB_Query& setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
 
-        // Insert & Find & FindModify
+        // Insert & Find & FindModify & GetLastError
         CmdDB_Query& setComment(std::string c);
 
         // Find & FindModify
@@ -57,6 +57,11 @@ class CmdDB_Query: public Op_Query<Document>
         // FindModify
         CmdDB_Query& setNew(bool val = true);
         CmdDB_Query& setUpsert(bool val = true);
+
+        // GetLastError
+        CmdDB_Query& waitFoolDiskFlush(bool val = true);
+        CmdDB_Query& waitForReplication(std::int32_t count);
+        CmdDB_Query& setWaitTimeout(std::int32_t millisec);
 
         friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Query> const& data);
         friend std::ostream& operator<<(std::ostream& stream, CmdDB_Query const& data) {return stream << static_cast<Op_Query<Document> const&>(data);}

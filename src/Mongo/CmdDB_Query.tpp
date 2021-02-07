@@ -165,6 +165,27 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::setUpsert(bool val)
     return *this;
 }
 
+template<typename Document>
+CmdDB_Query<Document>& CmdDB_Query<Document>::waitFoolDiskFlush(bool val)
+{
+    this->getQuery().waitFoolDiskFlush(val);
+    return *this;
+}
+
+template<typename Document>
+CmdDB_Query<Document>& CmdDB_Query<Document>::waitForReplication(std::int32_t count)
+{
+    this->getQuery().waitForReplication(count);
+    return *this;
+}
+
+template<typename Document>
+CmdDB_Query<Document>& CmdDB_Query<Document>::setWaitTimeout(std::int32_t millisec)
+{
+    this->getQuery().setWaitTimeout(millisec);
+    return *this;
+}
+
 }
 
 #endif
