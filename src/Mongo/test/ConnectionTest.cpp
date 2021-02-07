@@ -15,6 +15,7 @@
 #include "CmdDB_Find.h"
 #include "CmdDB_FindModify.h"
 #include "CmdDB_GetLastError.h"
+#include "CmdDB_GetMore.h"
 // Other Stuff
 #include "MongoConnection.h"
 #include "MongoConfig.h"
@@ -577,14 +578,11 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_Ret
 
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetLastError_NoError)
 {
-    std::cerr << "\n\nSend Start\n\n";
     ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_GetLastError("test");
-    std::cerr << "\n\nSend Done\n\n";
     CmdDB_GetLastErrorReply   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
-    std::cerr << "\n\nReceive Done\n\n";
 
-    if (!reply.isOk() || reply.lastReply.err.get() == nullptr || reply.lastReply.n != 0)
+    if (!reply.isOk() || reply.lastReply.err.get() != nullptr || reply.lastReply.n != 0)
     {
         std::cerr << make_hr(reply);
     }
