@@ -128,12 +128,20 @@ class Find: public FindOptional
 };
 
 template<typename Document>
-struct Cursor
+struct CursorFirst
 {
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
     std::vector<Document>   firstBatch;
+};
+template<typename Document>
+struct CursorNext
+{
+    bool                    partialResultsReturned  = true;
+    CursorId                id                      = 0;
+    std::string             ns;
+    std::vector<Document>   nextBatch;
 };
 
 struct Signature
@@ -148,10 +156,10 @@ struct ClusterTime
     Signature               signature;
 };
 
-template<typename Document>
+template<typename Cursor>
 struct FindReply
 {
-    Cursor<Document>        cursor;
+    Cursor                  cursor;
     double                  ok                      = 0.0;
     std::time_t             operationTime           = 0;
     ClusterTime             $clusterTime;
@@ -160,17 +168,20 @@ struct FindReply
 template<typename Filter, typename Sort>
 using CmdDB_Find        = CmdDB_Query<Find<Filter, Sort>>;
 
-template<typename Document>
-class CmdDB_FindReply: public Op_Reply<FindReply<Document>>
+template<typename Cursor>
+class CmdDB_FindReplyBase: public Op_Reply<FindReply<Cursor>>
 {
     public:
-        FindReply<Document>    findData;
-        CmdDB_FindReply()
-            : Op_Reply<FindReply<Document>>(findData)
+        FindReply<Cursor>    findData;
+        CmdDB_FindReplyBase()
+            : Op_Reply<FindReply<Cursor>>(findData)
         {}
         virtual bool        isOk()              const override;
-        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindReply<Document>> const&>(*this));}
+        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindReply<Cursor>> const&>(*this));}
 };
+
+template<typename Document>
+using CmdDB_FindReply   = CmdDB_FindReplyBase<CursorFirst<Document>>;
 
 template<typename Filter = FindAll, typename Sort = DefaultSort>
 CmdDB_Find<Filter, DefaultSort> make_CmdDB_Find(std::string db, std::string collection, FindOptions findOpt = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
@@ -209,7 +220,8 @@ ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,          findFilt
 ThorsAnvil_Template_ExpandTrait(2,ThorsAnvil::DB::Mongo::FindOptional,
                                   ThorsAnvil::DB::Mongo::Find,          find, filter, sort);
 // Result Info
-ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::Cursor,          partialResultsReturned, id, ns, firstBatch);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorFirst,     partialResultsReturned, id, ns, firstBatch);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorNext,      partialResultsReturned, id, ns, nextBatch);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
 ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::FindReply,       cursor, ok, operationTime, $clusterTime);

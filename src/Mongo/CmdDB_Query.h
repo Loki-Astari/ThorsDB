@@ -30,19 +30,21 @@ class CmdDB_Query: public Op_Query<Document>
         // Insert & Delete & FindModify
         CmdDB_Query& setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
 
-        // Insert & Find & FindModify & GetLastError
+        // Insert & Find & FindModify & GetLastError & GetMore
         CmdDB_Query& setComment(std::string c);
 
         // Find & FindModify
         CmdDB_Query& addFileds(std::initializer_list<std::string> fieldNames);
         CmdDB_Query& addHint(std::string hint);
 
+        // Find & GetMore
+        CmdDB_Query& setBatchSize(std::size_t val);
+        CmdDB_Query& setMaxTimeout(std::size_t val);
+
         // Find
         CmdDB_Query& setSkip(std::size_t val);
         CmdDB_Query& setLimit(std::size_t val);
-        CmdDB_Query& setBatchSize(std::size_t val);
         CmdDB_Query& oneBatch(bool val = true);
-        CmdDB_Query& setMaxTimeout(std::size_t val);
         CmdDB_Query& addReadConcern(ReadConcernLevel val);
         CmdDB_Query& addMax(std::string field, int val);
         CmdDB_Query& addMin(std::string field, int val);
