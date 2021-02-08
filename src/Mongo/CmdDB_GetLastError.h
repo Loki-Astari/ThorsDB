@@ -60,7 +60,8 @@ struct Host
 
 struct GetLastErrorReply
 {
-    std::map<std::string, bool>     filter;
+    mutable std::map<std::string, bool>     filter;
+
     double                          ok                  = 0.0;
     std::unique_ptr<std::string>    err;
     std::string                     ns;
@@ -80,19 +81,14 @@ struct GetLastErrorReply
     std::time_t                     waited              = 0;
     std::time_t                     wtime               = 0;
     std::unique_ptr<std::vector<Host>> writtenTo;                  // *
+
+    bool isOk() const                       {return ok;}
+    std::string getHRErrorMessage() const;
 };
 
 using CmdDB_GetLastError        = CmdDB_Query<GetLastError>;
 
-class CmdDB_GetLastErrorReply: public Op_Reply<GetLastErrorReply>
-{
-    public:
-        mutable GetLastErrorReply       lastReply;
-        CmdDB_GetLastErrorReply();
-        virtual bool        isOk()              const override;
-        virtual std::string getHRErrorMessage() const override;
-        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<GetLastErrorReply> const&>(*this));}
-};
+using CmdDB_GetLastErrorReply   = CmdDB_Reply<GetLastErrorReply>;
 
 inline
 CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, GetLastErrorOptions getLastErrorOpt = {})

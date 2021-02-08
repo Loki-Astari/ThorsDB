@@ -59,7 +59,7 @@ struct Insert: public InsertOptional
 
 template<typename Document>
 using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
-using CmdDB_InsertReply = CmdDB_Reply;
+using CmdDB_InsertReply = CmdDB_Reply<CmdReply>;
 
 template<typename I>
 CmdDB_Insert<typename std::iterator_traits<I>::value_type>

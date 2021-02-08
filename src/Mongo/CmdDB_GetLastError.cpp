@@ -47,41 +47,31 @@ GetLastError::GetLastError(GetLastErrorOptions options, std::string /*collection
 {
 }
 
-CmdDB_GetLastErrorReply::CmdDB_GetLastErrorReply()
-    : Op_Reply<GetLastErrorReply>(lastReply)
-{}
-
-bool CmdDB_GetLastErrorReply::isOk() const
-{
-    return Op_Reply<GetLastErrorReply>::isOk() && lastReply.ok == 1.0;
-}
-
-std::string CmdDB_GetLastErrorReply::getHRErrorMessage() const
+std::string GetLastErrorReply::getHRErrorMessage() const
 {
     static const GetLastErrorReply defaultValue;
 
-    lastReply.filter["err"]               = lastReply.err               != defaultValue.err;
-    lastReply.filter["ns"]                = lastReply.ns                != defaultValue.ns;
-    lastReply.filter["index"]             = lastReply.index             != defaultValue.index;
-    lastReply.filter["errmsg"]            = lastReply.errmsg            != defaultValue.errmsg;
-    lastReply.filter["code"]              = lastReply.code              != defaultValue.code;
-    lastReply.filter["connectionId"]      = lastReply.connectionId      != defaultValue.connectionId;
-    lastReply.filter["lastOp"]            = lastReply.lastOp            != defaultValue.lastOp;
-    lastReply.filter["n"]                 = lastReply.n                 != defaultValue.n;
-    lastReply.filter["syncMillis"]        = lastReply.syncMillis        != defaultValue.syncMillis;
-    lastReply.filter["shards"]            = lastReply.shards            != defaultValue.shards;
-    lastReply.filter["singleShard"]       = lastReply.singleShard       != defaultValue.singleShard;
-    lastReply.filter["updatedExisting"]   = lastReply.updatedExisting   != defaultValue.updatedExisting;
-    lastReply.filter["upserted"]          = lastReply.upserted          != defaultValue.upserted;
-    lastReply.filter["wnote"]             = lastReply.wnote             != defaultValue.wnote;
-    lastReply.filter["wtimeout"]          = lastReply.wtimeout          != defaultValue.wtimeout;
-    lastReply.filter["waited"]            = lastReply.waited            != defaultValue.waited;
-    lastReply.filter["wtime"]             = lastReply.wtime             != defaultValue.wtime;
-    lastReply.filter["writtenTo"]         = lastReply.writtenTo.get() != nullptr && lastReply.writtenTo->size() != 0;
+    filter["err"]               = err               != defaultValue.err;
+    filter["ns"]                = ns                != defaultValue.ns;
+    filter["index"]             = index             != defaultValue.index;
+    filter["errmsg"]            = errmsg            != defaultValue.errmsg;
+    filter["code"]              = code              != defaultValue.code;
+    filter["connectionId"]      = connectionId      != defaultValue.connectionId;
+    filter["lastOp"]            = lastOp            != defaultValue.lastOp;
+    filter["n"]                 = n                 != defaultValue.n;
+    filter["syncMillis"]        = syncMillis        != defaultValue.syncMillis;
+    filter["shards"]            = shards            != defaultValue.shards;
+    filter["singleShard"]       = singleShard       != defaultValue.singleShard;
+    filter["updatedExisting"]   = updatedExisting   != defaultValue.updatedExisting;
+    filter["upserted"]          = upserted          != defaultValue.upserted;
+    filter["wnote"]             = wnote             != defaultValue.wnote;
+    filter["wtimeout"]          = wtimeout          != defaultValue.wtimeout;
+    filter["waited"]            = waited            != defaultValue.waited;
+    filter["wtime"]             = wtime             != defaultValue.wtime;
+    filter["writtenTo"]         = writtenTo.get() != nullptr && writtenTo->size() != 0;
 
     std::stringstream   errorMsg;
-    errorMsg << Op_Reply<GetLastErrorReply>::getHRErrorMessage()
-             << ThorsAnvil::Serialize::jsonExporter(lastReply);
+    errorMsg << ThorsAnvil::Serialize::jsonExporter(*this);
 
     return errorMsg.str();
 }

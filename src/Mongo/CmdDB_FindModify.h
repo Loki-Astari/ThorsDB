@@ -6,6 +6,7 @@
 #include "CmdDB.h"
 #include "CmdDB_FindCommon.h"
 #include "CmdDB_Query.h"
+#include "CmdDB_Reply.h"
 #include "ThorSerialize/MongoUtility.h"
 
 #include <map>
@@ -124,19 +125,13 @@ struct FindModifyReply
     LastErrorObject             lastErrorObject;
     std::unique_ptr<Document>   value;
     double                      ok                      = 0.0;
+
+    bool isOk() const                       {return ok;}
+    std::string getHRErrorMessage() const   {return "XXX";}
 };
 
 template<typename Document>
-class CmdDB_FindModifyReply: public Op_Reply<FindModifyReply<Document>>
-{
-    public:
-        FindModifyReply<Document>    findData;
-        CmdDB_FindModifyReply()
-            : Op_Reply<FindModifyReply<Document>>(findData)
-        {}
-        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindModifyReply<Document>> const&>(*this));}
-        virtual bool        isOk()              const override;
-};
+using CmdDB_FindModifyReply     = CmdDB_Reply<FindModifyReply<Document>>;
 
 template<typename Find, typename Sort, typename Update>
 using CmdDB_FindModify        = CmdDB_Query<FindModify<Find, Sort, Update>>;
