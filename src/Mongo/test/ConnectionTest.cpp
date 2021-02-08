@@ -274,14 +274,15 @@ static bool checkTheNumberofObjectsIs(std::string const& message, MongoConnectio
 {
     connection << make_CmdDB_Find("test", "ConnectionTest");
 
-    CmdDB_FindReply<StringAndIntNoConstructor>     reply;
+    std::vector<StringAndIntNoConstructor>      data;
+    CmdDB_FindReply<StringAndIntNoConstructor>  reply(data);
     connection >> reply;
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(expected,   reply.reply.cursor.firstBatch.size());
+    EXPECT_EQ(expected,   data.size());
     EXPECT_EQ(1.0, reply.reply.ok);
 
-    if (!reply.isOk() || reply.reply.cursor.firstBatch.size() != expected || reply.reply.ok != 1.0)
+    if (!reply.isOk() || data.size() != expected)
     {
         std::cerr << "Fail in: " << message << "\n";
         std::cerr << make_hr(reply);
@@ -595,28 +596,35 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
 {
     MongoConnection& connection = ConnectionTestMiddleWireAction::getConnection();
 
-    CmdDB_FindReply<StringAndIntNoConstructor>     reply1;
+    std::vector<StringAndIntNoConstructor>      data;
+    CmdDB_FindReply<StringAndIntNoConstructor>  reply1(data);
     connection << make_CmdDB_Find("test", "ConnectionTest", {.batchSize = 2});
     connection >> reply1;
 
     EXPECT_TRUE(reply1.isOk());
-    EXPECT_EQ(2,   reply1.reply.cursor.firstBatch.size());
+    EXPECT_EQ(2,   data.size());
     EXPECT_NE(0,   reply1.reply.cursor.id);
 
-    CmdDB_GetMoreReply<StringAndIntNoConstructor>     reply2;
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply2(data);
     connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply1);
     connection >> reply2;
 
     EXPECT_TRUE(reply2.isOk());
-    EXPECT_EQ(2,   reply2.reply.cursor.nextBatch.size());
+    EXPECT_EQ(4,   data.size());
     EXPECT_NE(0,   reply2.reply.cursor.id);
 
-    CmdDB_GetMoreReply<StringAndIntNoConstructor>     reply3;
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply3(data);
     connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
     connection >> reply3;
 
     EXPECT_TRUE(reply3.isOk());
-    EXPECT_EQ(1,   reply3.reply.cursor.nextBatch.size());
+    EXPECT_EQ(5,   data.size());
     EXPECT_EQ(0,   reply3.reply.cursor.id);
+
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply4(data);
+    connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
+    connection >> reply4;
+
+    EXPECT_FALSE(reply4.isOk());
 }
 

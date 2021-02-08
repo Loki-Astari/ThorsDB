@@ -131,18 +131,28 @@ class Find: public FindOptional
 template<typename Document>
 struct CursorFirst
 {
+    using DataType = Document;
+    CursorFirst(std::vector<Document>& container)
+        : firstBatch(container)
+    {}
+
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::vector<Document>   firstBatch;
+    std::reference_wrapper<std::vector<Document>>  firstBatch;
 };
 template<typename Document>
 struct CursorNext
 {
+    using DataType = Document;
+    CursorNext(std::vector<Document>& container)
+        : nextBatch(container)
+    {}
+
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::vector<Document>   nextBatch;
+    std::reference_wrapper<std::vector<Document>>  nextBatch;
 };
 
 struct Signature
@@ -157,9 +167,33 @@ struct ClusterTime
     Signature               signature;
 };
 
+template<typename T>
+struct DataTypeExtractor
+{
+    using DataType = T;
+};
+
+
+template<typename Doc>
+struct DataTypeExtractor<CursorFirst<Doc>>
+{
+    using DataType = typename CursorFirst<Doc>::DataType;
+};
+template<typename Doc>
+struct DataTypeExtractor<CursorNext<Doc>>
+{
+    using DataType = typename CursorFirst<Doc>::DataType;
+};
+
+
 template<typename Cursor>
 struct FindReply
 {
+    using Options = typename DataTypeExtractor<Cursor>::DataType;
+    FindReply(std::vector<Options>& container)
+        : cursor(container)
+    {}
+
     Cursor                  cursor;
     double                  ok                      = 0.0;
     std::time_t             operationTime           = 0;

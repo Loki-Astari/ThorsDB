@@ -32,8 +32,14 @@ class CmdDB_Reply: public Op_Reply<Document>
 {
     public:
         Document   reply;
+        template<typename Doc = Document, NoOptions<Doc> = true>
         CmdDB_Reply()
             : Op_Reply<Document>(reply)
+        {}
+        template<typename Doc = Document, HasOptions<Doc> = true>
+        CmdDB_Reply(std::vector<typename Doc::Options>& container)
+            : Op_Reply<Document>(reply)
+            , reply(container)
         {}
         virtual bool isOk() const override;
         virtual std::string getHRErrorMessage() const override;
