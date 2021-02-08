@@ -31,10 +31,10 @@ void Find<Filter, Sort>::updateFilter()
     }
 }
 
-template<typename Document>
-bool CmdDB_FindReply<Document>::isOk() const
+template<typename Cursor>
+bool CmdDB_FindReplyBase<Cursor>::isOk() const
 {
-    return Op_Reply<FindReply<Document>>::isOk() && findData.ok == 1.0;
+    return Op_Reply<FindReply<Cursor>>::isOk() && findData.ok == 1.0;
 }
 
 }

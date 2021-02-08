@@ -594,3 +594,32 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetLastError_NoError)
     checkTheNumberofObjectsIs("CmdDB_GetLastError_NoError", ConnectionTestMiddleWireAction::getConnection(), 5);
 }
 
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
+{
+    MongoConnection& connection = ConnectionTestMiddleWireAction::getConnection();
+
+    CmdDB_FindReply<StringAndIntNoConstructor>     reply1;
+    connection << make_CmdDB_Find("test", "ConnectionTest", {.batchSize = 2});
+    connection >> reply1;
+
+    EXPECT_TRUE(reply1.isOk());
+    EXPECT_EQ(2,   reply1.findData.cursor.firstBatch.size());
+    EXPECT_NE(0,   reply1.findData.cursor.id);
+
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>     reply2;
+    connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply1);
+    connection >> reply2;
+
+    EXPECT_TRUE(reply2.isOk());
+    EXPECT_EQ(2,   reply2.findData.cursor.nextBatch.size());
+    EXPECT_NE(0,   reply2.findData.cursor.id);
+
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>     reply3;
+    connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
+    connection >> reply3;
+
+    EXPECT_TRUE(reply3.isOk());
+    EXPECT_EQ(1,   reply3.findData.cursor.nextBatch.size());
+    EXPECT_EQ(0,   reply3.findData.cursor.id);
+}
+

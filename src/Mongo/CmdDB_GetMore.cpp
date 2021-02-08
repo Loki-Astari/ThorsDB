@@ -32,14 +32,8 @@ void GetMoreOptional::setComment(std::string c)
     filter["comment"]       = comment != defaultValue.comment;
 }
 
-GetMore::GetMore(GetMoreOptions options, std::string collection)
+GetMore::GetMore(GetMoreOptions options, std::string collection, CursorId cursor)
     : GetMoreOptional(options)
-    , getMore(-1)
-    , collection(std::move(collection))
-{}
-
-GetMore::GetMore(GetMoreOptions options, std::string collection, CmdDB_Reply const& reply)
-    : GetMoreOptional(options)
-    , getMore(reply.cursorID)
+    , getMore(cursor)
     , collection(std::move(collection))
 {}
