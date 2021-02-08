@@ -2,49 +2,43 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-std::size_t CmdDB_Reply::replyCount() const
+bool CmdReply::isOk() const
 {
-    // Assumes isCmdOK() is true
-    return reply[0].n;
+    return ok;
 }
 
-bool CmdDB_Reply::isOk() const
-{
-    return Op_Reply::isOk() && reply.size() > 0 && reply[0].ok == 1.0;
-}
-
-std::string CmdDB_Reply::getHRErrorMessage() const
+std::string CmdReply::getHRErrorMessage() const
 {
     bool        ok     = true;
-    std::string result = Op_Reply::getHRErrorMessage();
-    result += ": CmdReply: ";
+    std::stringstream result;
+    result << ": CmdReply: ";
 
-    if (reply[0].codeName.size() != 0 || reply[0].errmsg.size() != 0)
+    if (codeName.size() != 0 || errmsg.size() != 0)
     {
         ok = false;
-        result += std::to_string(reply[0].code);
-        result += ": ";
-        result += reply[0].codeName;
-        result += ": ";
-        result += reply[0].errmsg;
+        result  << std::to_string(code)
+                << ": "
+                << codeName
+                << ": "
+                << errmsg;
     }
-    if (reply[0].writeErrors.size() != 0)
+    if (writeErrors.size() != 0)
     {
         ok = false;
-        result += ": writeErrors: ";
-        for (auto const& error: reply[0].writeErrors)
+        result << ": writeErrors: ";
+        for (auto const& error: writeErrors)
         {
-            result += " At: ";
-            result += std::to_string(error.index);
-            result += ": ";
-            result += std::to_string(error.code);
-            result += ": ";
-            result += error.errmsg;
+            result  << " At: "
+                    << std::to_string(error.index)
+                    << ": "
+                    << std::to_string(error.code)
+                    << ": "
+                    << error.errmsg;
         }
     }
     if (ok)
     {
-        result += "OK";
+        result << "OK";
     }
-    return result;
+    return result.str();
 }

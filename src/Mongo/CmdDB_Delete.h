@@ -68,7 +68,7 @@ struct Delete: public DeleteOptional
 
 template<typename Document>
 using CmdDB_Delete      = CmdDB_Query<Delete<Document>>;
-using CmdDB_DeleteReply = CmdDB_Reply;
+using CmdDB_DeleteReply = CmdDB_Reply<CmdReply>;
 
 template<typename Document>
 CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Document doc)

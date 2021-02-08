@@ -83,21 +83,21 @@ inline
 CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, CmdDB_FindReplyBase<Cursor> const& reply)
 {
     using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), Op_QueryOptions{}, {}, reply.findData.cursor.id);
+    return CmdDB_GetMore(std::move(db), std::move(collection), Op_QueryOptions{}, {}, reply.reply.cursor.id);
 }
 template<typename Cursor>
 inline
 CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply)
 {
     using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), Op_QueryOptions{}, std::move(getMoreOpt), reply.findData.cursor.id);
+    return CmdDB_GetMore(std::move(db), std::move(collection), Op_QueryOptions{}, std::move(getMoreOpt), reply.reply.cursor.id);
 }
 template<typename Cursor>
 inline
 CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions options, GetMoreOptions getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply)
 {
     using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), std::move(options), std::move(getMoreOpt), reply.findData.cursor.id);
+    return CmdDB_GetMore(std::move(db), std::move(collection), std::move(options), std::move(getMoreOpt), reply.reply.cursor.id);
 }
 
 }

@@ -31,12 +31,6 @@ void Find<Filter, Sort>::updateFilter()
     }
 }
 
-template<typename Cursor>
-bool CmdDB_FindReplyBase<Cursor>::isOk() const
-{
-    return Op_Reply<FindReply<Cursor>>::isOk() && findData.ok == 1.0;
-}
-
 }
 
 #endif

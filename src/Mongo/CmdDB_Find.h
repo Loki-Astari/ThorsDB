@@ -6,6 +6,7 @@
 #include "CmdDB.h"
 #include "CmdDB_FindCommon.h"
 #include "CmdDB_Query.h"
+#include "CmdDB_Reply.h"
 
 #include <map>
 #include <vector>
@@ -130,18 +131,28 @@ class Find: public FindOptional
 template<typename Document>
 struct CursorFirst
 {
+    using DataType = Document;
+    CursorFirst(std::vector<Document>& container)
+        : firstBatch(container)
+    {}
+
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::vector<Document>   firstBatch;
+    std::reference_wrapper<std::vector<Document>>  firstBatch;
 };
 template<typename Document>
 struct CursorNext
 {
+    using DataType = Document;
+    CursorNext(std::vector<Document>& container)
+        : nextBatch(container)
+    {}
+
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::vector<Document>   nextBatch;
+    std::reference_wrapper<std::vector<Document>>  nextBatch;
 };
 
 struct Signature
@@ -156,32 +167,50 @@ struct ClusterTime
     Signature               signature;
 };
 
+template<typename T>
+struct DataTypeExtractor
+{
+    using DataType = T;
+};
+
+
+template<typename Doc>
+struct DataTypeExtractor<CursorFirst<Doc>>
+{
+    using DataType = typename CursorFirst<Doc>::DataType;
+};
+template<typename Doc>
+struct DataTypeExtractor<CursorNext<Doc>>
+{
+    using DataType = typename CursorFirst<Doc>::DataType;
+};
+
+
 template<typename Cursor>
 struct FindReply
 {
+    using Options = typename DataTypeExtractor<Cursor>::DataType;
+    FindReply(std::vector<Options>& container)
+        : cursor(container)
+    {}
+
     Cursor                  cursor;
     double                  ok                      = 0.0;
     std::time_t             operationTime           = 0;
     ClusterTime             $clusterTime;
+
+    bool isOk() const                       {return ok;}
+    std::string getHRErrorMessage() const   {return "XX";}
 };
 
 template<typename Filter, typename Sort>
-using CmdDB_Find        = CmdDB_Query<Find<Filter, Sort>>;
+using CmdDB_Find            = CmdDB_Query<Find<Filter, Sort>>;
 
 template<typename Cursor>
-class CmdDB_FindReplyBase: public Op_Reply<FindReply<Cursor>>
-{
-    public:
-        FindReply<Cursor>    findData;
-        CmdDB_FindReplyBase()
-            : Op_Reply<FindReply<Cursor>>(findData)
-        {}
-        virtual bool        isOk()              const override;
-        std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<FindReply<Cursor>> const&>(*this));}
-};
+using CmdDB_FindReplyBase   = CmdDB_Reply<FindReply<Cursor>>;
 
 template<typename Document>
-using CmdDB_FindReply   = CmdDB_FindReplyBase<CursorFirst<Document>>;
+using CmdDB_FindReply       = CmdDB_FindReplyBase<CursorFirst<Document>>;
 
 template<typename Filter = FindAll, typename Sort = DefaultSort>
 CmdDB_Find<Filter, DefaultSort> make_CmdDB_Find(std::string db, std::string collection, FindOptions findOpt = {}, Filter&& filter = Filter{}, Sort&& sort = Sort{})
