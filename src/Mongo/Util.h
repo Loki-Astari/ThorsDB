@@ -78,11 +78,23 @@ struct HumanReadable
         HumanReadable(Streamable const& object)
             : object(object)
         {}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable const& reply) {return reply.object.printHR(stream);}
+        std::ostream& print(std::ostream& stream) const
+        {
+            return object.printHR(stream);
+        }
 };
 
+template<typename Streamable>
+std::ostream& operator<<(std::ostream& stream, HumanReadable<Streamable> const& reply)
+{
+    return reply.print(stream);
+}
+
 template<typename Stremable>
-HumanReadable<Stremable> make_hr(Stremable const& object) {return HumanReadable<Stremable>(object);}
+HumanReadable<Stremable> make_hr(Stremable const& object)
+{
+    return HumanReadable<Stremable>(object);
+}
 
 
 /*
@@ -101,10 +113,10 @@ struct BinaryDump
         BinaryDump(Streamable const& object)
             : object(object)
         {}
-        friend std::ostream& operator<<(std::ostream& stream, BinaryDump const& reply)
+        std::ostream& print(std::ostream& stream)
         {
             std::stringstream tmp;
-            tmp << reply.object;
+            tmp << object;
             std::string dump = tmp.str();
             std::string line;
             int loop = 0;
@@ -126,8 +138,17 @@ struct BinaryDump
         }
 };
 
+template<typename Streamable>
+std::ostream& operator<<(std::ostream& stream, BinaryDump<Streamable> const& reply)
+{
+    return reply.print(stream);
+}
+
 template<typename Stremable>
-BinaryDump<Stremable> make_bd(Stremable const& object) {return BinaryDump<Stremable>(object);}
+BinaryDump<Stremable> make_bd(Stremable const& object)
+{
+    return BinaryDump<Stremable>(object);
+}
 
 /*
  * Send integer to/from stream in little endian form
@@ -154,20 +175,32 @@ struct LittleEndian
     LittleEndian(T& value)
         : value(value)
     {}
-    friend std::ostream& operator<<(std::ostream& stream, LittleEndian const& data)
+    std::ostream& print(std::ostream& stream) const
     {
-        ST   output = boost::endian::native_to_little(static_cast<ST>(static_cast<UT>(data.value)));
+        ST   output = boost::endian::native_to_little(static_cast<ST>(static_cast<UT>(value)));
         stream.write(reinterpret_cast<char const*>(&output), sizeof(output));
         return stream;
     }
-    friend std::istream& operator>>(std::istream& stream, LittleEndian const& data)
+    std::istream& scan(std::istream& stream) const
     {
         ST   input;
         stream.read(reinterpret_cast<char*>(&input), sizeof(input));
-        data.value = static_cast<T>(boost::endian::little_to_native(input));
+        value = static_cast<T>(boost::endian::little_to_native(input));
         return stream;
     }
 };
+
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, LittleEndian<T> const& data)
+{
+    return data.print(stream);
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& stream, LittleEndian<T> const& data)
+{
+    return data.scan(stream);
+}
 
 template<typename T>
 struct LittleEndianConst
@@ -178,13 +211,19 @@ struct LittleEndianConst
     LittleEndianConst(T const& value)
         : value(value)
     {}
-    friend std::ostream& operator<<(std::ostream& stream, LittleEndianConst const& data)
+    std::ostream& print(std::ostream& stream) const
     {
-        ST   output = boost::endian::native_to_little(static_cast<ST>(static_cast<UT>(data.value)));
+        ST   output = boost::endian::native_to_little(static_cast<ST>(static_cast<UT>(value)));
         stream.write(reinterpret_cast<char const*>(&output), sizeof(output));
         return stream;
     }
 };
+
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, LittleEndianConst<T> const& data)
+{
+    return data.print(stream);
+}
 
 template<typename T>
 LittleEndian<T> make_LE(T& value)               {return LittleEndian<T>(value);}

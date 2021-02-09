@@ -15,6 +15,7 @@ void testStreamOutput(Input data, std::string const& expected)
     std::string output = stream.str();
     EXPECT_EQ(expected, output);
 }
+
 template<typename Input>
 void testStreamInput(Input expected, std::string const& input)
 {
@@ -30,57 +31,67 @@ TEST(OpTest, StreamOutCharAsLittelIndian)
     char data='a';
     testStreamOutput(data, "a"s);
 }
+
 TEST(OpTest, StreamOutShortAsLittelIndian)
 {
     short data=0xB723;
     testStreamOutput(data, "\x23\xB7"s);
 }
+
 TEST(OpTest, StreamOutIntAsLittelIndian)
 {
     int data=0xA1A523;
     testStreamOutput(data, "\x23\xA5\xA1\x00"s);
 }
+
 TEST(OpTest, StreamOutUCharAsLittelIndian)
 {
     unsigned char data='a';
     testStreamOutput(data, "a"s);
 }
+
 TEST(OpTest, StreamOutUShortAsLittelIndian)
 {
     unsigned short data=0xA501;
     testStreamOutput(data, "\x01\xA5"s);
 }
+
 TEST(OpTest, StreamOutUIntAsLittelIndian)
 {
     unsigned int data=0xA1A3F3;
     testStreamOutput(data, "\xF3\xA3\xA1\x00"s);
 }
-///
+
 TEST(OpTest, StreamInCharAsLittelIndian)
 {
     char data='a';
     testStreamInput(data, "a"s);
 }
+
 TEST(OpTest, StreamInShortAsLittelIndian)
 {
     short data=0xB723;
     testStreamInput(data, "\x23\xB7"s);
 }
+
 TEST(OpTest, StreamInIntAsLittelIndian)
 {
     int data=0xA1A523;
     testStreamInput(data, "\x23\xA5\xA1\x00"s);
 }
+
 TEST(OpTest, StreamInUCharAsLittelIndian)
 {
     unsigned char data='a';
     testStreamInput(data, "a"s);
 }
+
 TEST(OpTest, StreamInUShortAsLittelIndian)
 {
     unsigned short data=0xA501;
     testStreamInput(data, "\x01\xA5"s);
 }
+
 TEST(OpTest, StreamInUIntAsLittelIndian)
 {
     unsigned int data=0xA1A3F3;
@@ -117,6 +128,7 @@ TEST(OpTest, convertToLittleE1)
 
     ASSERT_EQ(src, dst);
 }
+
 TEST(OpTest, convertToLittleE2)
 {
     std::stringstream   stream;
@@ -129,6 +141,7 @@ TEST(OpTest, convertToLittleE2)
 
     ASSERT_EQ(src, dst);
 }
+
 TEST(OpTest, convertToLittleE3)
 {
     std::int64_t    src = 0x83D6C9ED3E4826B8L;
@@ -140,6 +153,7 @@ TEST(OpTest, convertToLittleE3)
 
     ASSERT_EQ(src, dst);
 }
+
 TEST(OpTest, convertToLittleE4)
 {
     std::stringstream   stream;

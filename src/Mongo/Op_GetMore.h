@@ -15,6 +15,7 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename T>
 class CursorExtractor;
+
 class Op_GetMore
 {
     Op_MsgHeader            header;
@@ -28,13 +29,12 @@ class Op_GetMore
         Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret = 101);
         Op_GetMore(std::string fillCollectionName, std::int32_t ret = 101);
 
+        std::ostream& print(std::ostream& stream)   const;
+        std::ostream& printHR(std::ostream& stream) const;
+        friend std::ostream& operator<<(std::ostream& stream, Op_GetMore const& data) {return data.print(stream);}
     private:
         std::size_t   getSize()                     const;
 
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_GetMore> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_GetMore const& data) {return data.print(stream);}
-        std::ostream& print(std::ostream& stream) const;
-        std::ostream& printHR(std::ostream& stream) const;
 };
 
 template<typename Document>

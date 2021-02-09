@@ -73,20 +73,31 @@ struct Op_Reply
         virtual bool        isOk()              const;
         virtual std::string getHRErrorMessage() const;
 
-    private: //protected:
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Reply> const& reply);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Reply const& reply) {return reply.print(stream);}
-        friend std::istream& operator>>(std::istream& stream, Op_Reply&  reply)      {return reply.parse(stream);}
-        friend std::istream& operator>>(std::istream& stream, Op_Reply&& reply)      {return reply.parseAndThrow(stream);}
         std::istream& parse(std::istream& stream);
         std::istream& parseAndThrow(std::istream& stream);
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
 
-    public:
         [[deprecated("This function is for unit testing only. Do not use it. I will make it do silly things in the future to mess with people that use this function")]]
         void cursorIDSetForTest(CursorId value)                {cursorID = value;}  // Used for testing
 };
+template<typename Document, typename View = ViewType<Document>>
+std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply)
+{
+    return reply.print(stream);
+}
+
+template<typename Document, typename View = ViewType<Document>>
+std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&  reply)
+{
+    return reply.parse(stream);
+}
+
+template<typename Document, typename View = ViewType<Document>>
+std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&& reply)
+{
+    return reply.parseAndThrow(stream);
+}
 
 template<typename Object, ValidSingle<Object> = true>
 Op_Reply<Object> make_Op_Reply(Object& object)

@@ -54,96 +54,112 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::addFileds(std::initializer_list<st
     this->getQuery().addFileds(std::move(fieldNames));
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::addHint(std::string hint)
 {
     this->getQuery().addHint(std::move(hint));
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::setSkip(std::size_t val)
 {
     this->getQuery().setSkip(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::setLimit(std::size_t val)
 {
     this->getQuery().setLimit(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::setBatchSize(std::size_t val)
 {
     this->getQuery().setBatchSize(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::oneBatch(bool val)
 {
     this->getQuery().oneBatch(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::setMaxTimeout(std::size_t val)
 {
     this->getQuery().setMaxTimeout(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::addReadConcern(ReadConcernLevel val)
 {
     this->getQuery().addReadConcern(std::move(val));
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::addMax(std::string field, int val)
 {
     this->getQuery().addMax(std::move(field), val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::addMin(std::string field, int val)
 {
     this->getQuery().addMin(std::move(field), val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::justKeys(bool val)
 {
     this->getQuery().justKeys(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::showId(bool val)
 {
     this->getQuery().showId(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::tailableCursor(bool val)
 {
     this->getQuery().tailableCursor(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::tailedCursorAwait(bool val)
 {
     this->getQuery().tailedCursorAwait(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::setNoCursorTimeout(bool val)
 {
     this->getQuery().setNoCursorTimeout(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::setAllowPartialResults(bool val)
 {
     this->getQuery().setAllowPartialResults(val);
     return *this;
 }
+
 template<typename Document>
 CmdDB_Query<Document>& CmdDB_Query<Document>::useDisk(bool val)
 {

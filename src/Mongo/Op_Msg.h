@@ -37,15 +37,23 @@ struct Kind0
         Data&       getDocument()       {return data;}
         Data const& getDocument() const {return data;}
 
-    private:
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Kind0> const& msg);
-        friend std::ostream& operator<<(std::ostream& stream, Kind0 const& msg)                 {return msg.print(stream);}
-        friend std::istream& operator>>(std::istream& stream, Kind0& msg)                       {return msg.parse(stream);}
         std::istream& parse(std::istream& stream);
         std::ostream& print(std::ostream& stream)       const;
         std::ostream& printHR(std::ostream& stream)     const;
 
 };
+
+template<typename Data>
+std::ostream& operator<<(std::ostream& stream, Kind0<Data> const& msg)
+{
+    return msg.print(stream);
+}
+
+template<typename Data>
+std::istream& operator>>(std::istream& stream, Kind0<Data>& msg)
+{
+    return msg.parse(stream);
+}
 
 // TODO Kind1
 
@@ -68,16 +76,24 @@ class Op_Msg
         template<std::size_t I>
         auto const& getDocument() const {return std::get<I>(sections).getDocument();}
 
-    private:
-        std::size_t   getSize()                     const;
-
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Msg> const& msg);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Msg const& msg)           {return msg.print(stream);}
-        friend std::istream& operator>>(std::istream& stream, Op_Msg& msg)                 {return msg.parse(stream);}
         std::ostream& print(std::ostream& stream)       const;
         std::ostream& printHR(std::ostream& stream)     const;
         std::istream& parse(std::istream& stream);
+    private:
+        std::size_t   getSize()                     const;
 };
+
+template<typename... Kind>
+std::ostream& operator<<(std::ostream& stream, Op_Msg<Kind...> const& msg)
+{
+    return msg.print(stream);
+}
+
+template<typename... Kind>
+std::istream& operator>>(std::istream& stream, Op_Msg<Kind...>& msg)
+{
+    return msg.parse(stream);
+}
 
 template<typename... Kind>
 class Op_MsgReply: public Op_Msg<Kind...>

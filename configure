@@ -716,8 +716,8 @@ echo
 HAVE_ThorsSerialize
 ThorsSerialize_ROOT_LIB
 ThorsSerialize_ROOT_DIR
-crypto_ROOT_LIB
 crypto_ROOT_DIR
+crypto_ROOT_LIB
 yaml_ROOT_LIB
 yaml_ROOT_DIR
 EGREP
@@ -806,6 +806,7 @@ enable_vera
 with_hostbuild
 with_yamlroot
 with_cryptoroot
+enable_travis
 with_ThorsSerializeroot
 enable_ThorsSerialize
 with_timegm
@@ -1463,6 +1464,9 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-vera          Disable vera. Disable Static analysis of source.
+
+  --disable-travis        This disables test that don't work on Travis.ci but
+                          don't cause a build break
 
   --disable-ThorsSerialize
                           Don't use ThorsSerialize. This means features that
@@ -5920,19 +5924,21 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
+    yaml_ROOT_DIR=""
+    yaml_ROOT_LIB=""
 
 # Check whether --with-yamlroot was given.
 if test "${with_yamlroot+set}" = set; then :
   withval=$with_yamlroot;
 fi
 
-        if test "${with_yamlroot}" == ""; then
-            with_yamlroot="/usr/local"
-        fi
-        ORIG_LDFLAGS="${LDFLAGS}"
-        LDFLAGS="$LDFLAGS -L$with_yamlroot/lib"
+    if test "${with_yamlroot}" == ""; then
+        with_yamlroot="/usr/local"
+    fi
+    ORIG_LDFLAGS="${LDFLAGS}"
+    LDFLAGS="$LDFLAGS -L$with_yamlroot/lib"
 
-        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
 $as_echo_n "checking for yaml_parser_initialize in -lyaml... " >&6; }
 if ${ac_cv_lib_yaml_yaml_parser_initialize+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -5973,10 +5979,8 @@ if test "x$ac_cv_lib_yaml_yaml_parser_initialize" = xyes; then :
 
 $as_echo "#define HAVE_YAML 1" >>confdefs.h
 
-                yaml_ROOT_DIR=$with_yamlroot
-
-                yaml_ROOT_LIB=yaml
-
+            yaml_ROOT_DIR="${with_yamlroot}"
+            yaml_ROOT_LIB="yaml"
 
 else
   as_fn_error 1 "
@@ -5993,13 +5997,20 @@ If you do not want to use yaml serialization then it
 can be disabled with:
     --disable-yaml
 
-                " "$LINENO" 5
+            " "$LINENO" 5
 
 fi
 
 
-        LDFLAGS="${ORIG_LDFLAGS}"
+    LDFLAGS="${ORIG_LDFLAGS}"
+    yaml_ROOT_DIR=${yaml_ROOT_DIR}
 
+    yaml_ROOT_LIB=${yaml_ROOT_LIB}
+
+
+
+    crypto_ROOT_LIB=""
+    crypto_ROOT_DIR=""
 
 
 # Check whether --with-cryptoroot was given.
@@ -6050,8 +6061,7 @@ if test "x$ac_cv_lib_crypto_SHA1_Init" = xyes; then :
 
             if test "$with_cryptoroot" != ""; then :
 
-                    crypto_ROOT_DIR=$with_cryptoroot
-
+                    crypto_ROOT_DIR="$with_cryptoroot"
 
 fi
 
@@ -6075,15 +6085,44 @@ Error: Could not find libcrypto
 
 fi
 
-    crypto_ROOT_LIB="ssl crypto"
+    # AC_CANONICAL_HOST is needed to access the 'host_os' variable
 
+    case "${host_os}" in
+        linux*)
+            crypto_ROOT_LIB="ssl crypto"
+            ;;
+        darwin*)
+            crypto_ROOT_LIB=""
+            ;;
+        *)
+            as_fn_error $? "\"OS $host_os is not supported\"" "$LINENO" 5
+            ;;
+    esac
 
     LDFLAGS="${ORIG_LDFLAGS}"
+    crypto_ROOT_LIB=${crypto_ROOT_LIB}
+
+    crypto_ROOT_DIR=${crypto_ROOT_DIR}
 
 
 
+# Check whether --enable-travis was given.
+if test "${enable_travis+set}" = set; then :
+  enableval=$enable_travis;
+fi
+
+if test "x$enable_travis" == "xno"; then :
 
 
+        ThorsSerialize_ROOT_LIB=ThorSerialize
+
+
+else
+
+
+
+    local_ROOT_DIR=""
+    local_ROOT_LIB=""
 
 
 # Check whether --with-ThorsSerializeroot was given.
@@ -6098,7 +6137,13 @@ fi
 
     if flag=enable_ThorsSerialize
         test "x${!flag}" != "xno"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Got HERE" >&5
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: Got HERE" >&5
 $as_echo "$as_me: Got HERE" >&6;}
         { $as_echo "$as_me:${as_lineno-$LINENO}: Name: Serialize" >&5
 $as_echo "$as_me: Name: Serialize" >&6;}
@@ -6109,7 +6154,7 @@ $as_echo "$as_me: With: ${with_ThorsSerializeroot}" >&6;}
             declare with_ThorsSerializeroot="/usr/local"
         fi
         ORIG_LDFLAGS="${LDFLAGS}"
-        LDFLAGS="$LDFLAGS -L${with_ThorsSerializeroot}/lib"
+        LDFLAGS="-std=c++17 $LDFLAGS -L${with_ThorsSerializeroot}/lib"
         { $as_echo "$as_me:${as_lineno-$LINENO}: LDFLAGS: ${LDFLAGS}" >&5
 $as_echo "$as_me: LDFLAGS: ${LDFLAGS}" >&6;}
         { $as_echo "$as_me:${as_lineno-$LINENO}: LIB: ThorSerialize17" >&5
@@ -6123,7 +6168,8 @@ if ${ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTok
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lThorSerialize17  $LIBS"
+LIBS="-lThorSerialize17 -ldl
+         $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -6142,7 +6188,7 @@ return _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv ();
   return 0;
 }
 _ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
+if ac_fn_cxx_try_link "$LINENO"; then :
   ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv=yes
 else
   ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv=no
@@ -6158,10 +6204,8 @@ if test "x$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getN
 
 $as_echo "#define HAVE_ThorsSerialize 1" >>confdefs.h
 
-                ThorsSerialize_ROOT_DIR=${with_ThorsSerializeroot}
-
-                ThorsSerialize_ROOT_LIB=ThorSerialize
-
+                local_ROOT_DIR="${with_ThorsSerializeroot}"
+                local_ROOT_LIB="ThorSerialize"
                 HAVE_ThorsSerialize=yes
 
 else
@@ -6180,15 +6224,26 @@ can be disabled with:
     --disable-ThorsSerialize
 
                 " "$LINENO" 5
-
 fi
-
 
         LDFLAGS="${ORIG_LDFLAGS}"
+        ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 fi
+    ThorsSerialize_ROOT_DIR=${local_ROOT_DIR}
+
+    ThorsSerialize_ROOT_LIB=${local_ROOT_LIB}
 
 
+
+
+
+fi
 
 
 # Check whether --with-timegm was given.

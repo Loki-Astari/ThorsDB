@@ -23,6 +23,7 @@ TEST(CmdDB_DeleteTest, Base)
     std::string result = stream.str();
     EXPECT_EQ(22, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_DeleteTest, BaseUnordered)
 {
     User   user{"M1", "P1", 25};
@@ -34,6 +35,7 @@ TEST(CmdDB_DeleteTest, BaseUnordered)
     std::string result = stream.str();
     EXPECT_EQ(23, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_DeleteTest, BaseSetWrieConcern)
 {
     User   user{"M1", "P1", 25};
@@ -45,6 +47,7 @@ TEST(CmdDB_DeleteTest, BaseSetWrieConcern)
     std::string result = stream.str();
     EXPECT_EQ(28, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcern)
 {
     User   user{"M1", "P1", 25};
@@ -68,6 +71,7 @@ TEST(CmdDB_DeleteTest, BaseUnorderedOptions)
     std::string result = stream.str();
     EXPECT_EQ(23, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_DeleteTest, BaseSetWrieConcernOptions)
 {
     User   user{"M1", "P1", 25};
@@ -79,6 +83,7 @@ TEST(CmdDB_DeleteTest, BaseSetWrieConcernOptions)
     std::string result = stream.str();
     EXPECT_EQ(28, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_DeleteTest, BaseUnorderedWrieConcernOptions)
 {
     User   user{"M1", "P1", 25};

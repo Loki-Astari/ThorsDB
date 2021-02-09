@@ -22,6 +22,7 @@ TEST(MongoConnectionTest, CreateConnection)
     };
     EXPECT_NO_THROW(action());
 }
+
 TEST(MongoConnectionTest, CreateConnectionAppNameSet)
 {
     auto action = [](){

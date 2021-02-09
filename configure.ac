@@ -89,7 +89,21 @@ Error: Could not find one or more of: echo wc awk
 
 AX_THOR_FUNC_USE_YAML
 AX_THOR_FUNC_USE_CRYPTO
-AX_THOR_FUNC_USE_THORS_LIB_SERIALIZE(17)
+
+AC_ARG_ENABLE(
+    [travis],
+    AS_HELP_STRING([--disable-travis], [This disables test that don't work on Travis.ci but don't cause a build break])
+)
+AS_IF(
+    [test "x$enable_travis" == "xno"],
+    [
+        AC_SUBST(ThorsSerialize_ROOT_DIR, [])
+        AC_SUBST(ThorsSerialize_ROOT_LIB, [ThorSerialize])
+    ],
+    [
+        AX_THOR_FUNC_USE_THORS_LIB_SERIALIZE(17)
+    ]
+)
 AX_THOR_USE_TIMEGM
 AX_THOR_USE_MODTEST
 

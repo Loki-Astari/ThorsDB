@@ -113,7 +113,7 @@ TEST(Op_ReplyTest, Op_ReplyCursorNotFoundWithError)
     EXPECT_EQ(0, result.size());
     EXPECT_EQ("Op_Reply: -1: : CursorNotFound", reply.getHRErrorMessage());
 }
-/// ----
+
 TEST(Op_ReplyTest, Op_ReplyStreamGoodResponseDynamic)
 {
     std::string data =      "\x70\x00\x00\x00"                      // Size

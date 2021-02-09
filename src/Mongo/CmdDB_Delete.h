@@ -32,6 +32,7 @@ struct DeleteOptions
         bool                                    ordered                  = true;
         WriteConcern                            writeConcern;
 };
+
 class DeleteOptional
 {
     public:

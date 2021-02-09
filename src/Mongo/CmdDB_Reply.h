@@ -44,8 +44,6 @@ class CmdDB_Reply: public Op_Reply<Document>
         virtual bool isOk() const override;
         virtual std::string getHRErrorMessage() const override;
 
-    protected:
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Reply> const& reply);
         std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Reply<Document> const&>(*this));}
 };
 
