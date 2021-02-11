@@ -16,16 +16,16 @@ DeleteQuery<Document>::DeleteQuery(Document q)
 {}
 
 template<typename Document>
-Delete<Document>::Delete(DeleteOptions options, std::string collection, DeleteQuery<Document> doc)
-    : DeleteOptional(std::move(options))
+Delete<Document>::Delete(DeleteOptions const& options, std::string collection, DeleteQuery<Document> doc)
+    : DeleteOptional(options)
     , deleteFrom(std::move(collection))
     , deletes(1, std::move(doc))
 {}
 
 template<typename Document>
 template<typename I>
-Delete<Document>::Delete(DeleteOptions options, std::string collection, I begin, I end)
-    : DeleteOptional(std::move(options))
+Delete<Document>::Delete(DeleteOptions const& options, std::string collection, I begin, I end)
+    : DeleteOptional(options)
     , deleteFrom(std::move(collection))
     , deletes(begin, end)
 {}

@@ -2,7 +2,7 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-DeleteOptional::DeleteOptional(DeleteOptions options)
+DeleteOptional::DeleteOptional(DeleteOptions const& options)
     : ordered(std::move(options.ordered))
     , writeConcern(std::move(options.writeConcern))
 {

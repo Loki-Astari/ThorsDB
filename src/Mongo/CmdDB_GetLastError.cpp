@@ -5,7 +5,7 @@ using namespace ThorsAnvil::DB::Mongo;
 
 static const GetLastErrorOptions defaultValues;
 
-GetLastErrorOptional::GetLastErrorOptional(GetLastErrorOptions options)
+GetLastErrorOptional::GetLastErrorOptional(GetLastErrorOptions const& options)
     : j(options.j)
     , w(options.w)
     , wtimeout(options.wtimeout)
@@ -42,8 +42,8 @@ void GetLastErrorOptional::setComment(std::string c)
     filter["comment"]           = comment   != defaultValues.comment;
 }
 
-GetLastError::GetLastError(GetLastErrorOptions options, std::string /*collection*/)
-    : GetLastErrorOptional(std::move(options))
+GetLastError::GetLastError(GetLastErrorOptions const& options, std::string /*collection*/)
+    : GetLastErrorOptional(options)
 {
 }
 

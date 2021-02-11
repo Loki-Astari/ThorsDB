@@ -13,8 +13,8 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename Doc, NoOptions<Doc>, typename... Args>
-Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions options, Args&&... args)
-    : Op_QueryOptions(std::move(options))
+Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions const& options, Args&&... args)
+    : Op_QueryOptions(options)
     , header(OpCode::OP_QUERY)
     , fullCollectionName(std::move(fullCollectionName))
     , query{std::forward<Args>(args)...}
@@ -24,11 +24,11 @@ Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions opt
 
 template<typename Document>
 template<typename Doc, HasOptions<Doc>, typename... Args>
-Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions options, typename Doc::Options docOpt, Args&&... args)
-    : Op_QueryOptions(std::move(options))
+Op_Query<Document>::Op_Query(std::string fullCollectionName, Op_QueryOptions const& options, typename Doc::Options const& docOpt, Args&&... args)
+    : Op_QueryOptions(options)
     , header(OpCode::OP_QUERY)
     , fullCollectionName(std::move(fullCollectionName))
-    , query{std::move(docOpt), std::forward<Args>(args)...}
+    , query{docOpt, std::forward<Args>(args)...}
 {
     header.prepareToSend(getSize());
 }

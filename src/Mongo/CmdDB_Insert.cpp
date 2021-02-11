@@ -2,7 +2,7 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-InsertOptional::InsertOptional(InsertOptions options)
+InsertOptional::InsertOptional(InsertOptions const& options)
     : ordered(std::move(options.ordered))
     , writeConcern(std::move(options.writeConcern))
     , bypassDocumentValidation(std::move(options.bypassDocumentValidation))

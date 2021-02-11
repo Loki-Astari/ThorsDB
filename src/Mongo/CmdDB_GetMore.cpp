@@ -4,7 +4,7 @@ using namespace ThorsAnvil::DB::Mongo;
 
 static const GetMoreOptions defaultValue;
 
-GetMoreOptional::GetMoreOptional(GetMoreOptions options)
+GetMoreOptional::GetMoreOptional(GetMoreOptions const& options)
     : batchSize(options.batchSize)
     , maxTimeMS(options.maxTimeMS)
     , comment(std::move(options.comment))
@@ -32,7 +32,7 @@ void GetMoreOptional::setComment(std::string c)
     filter["comment"]       = comment != defaultValue.comment;
 }
 
-GetMore::GetMore(GetMoreOptions options, std::string collection, CursorId cursor)
+GetMore::GetMore(GetMoreOptions const& options, std::string collection, CursorId cursor)
     : GetMoreOptional(options)
     , getMore(cursor)
     , collection(std::move(collection))

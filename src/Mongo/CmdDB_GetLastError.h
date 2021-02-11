@@ -24,7 +24,7 @@ struct GetLastErrorOptions
 struct GetLastErrorOptional
 {
     public:
-        GetLastErrorOptional(GetLastErrorOptions options);
+        GetLastErrorOptional(GetLastErrorOptions const& options);
 
         void waitFoolDiskFlush(bool val = true);
         void waitForReplication(std::int32_t count);
@@ -46,7 +46,7 @@ class GetLastError: public GetLastErrorOptional
     public:
         using Options = GetLastErrorOptions;
 
-        GetLastError(GetLastErrorOptions options, std::string collection);
+        GetLastError(GetLastErrorOptions const& options, std::string collection);
     private:
         friend class ThorsAnvil::Serialize::Traits<GetLastError>;
         std::int32_t    getLastError    = 1;
@@ -91,17 +91,17 @@ using CmdDB_GetLastError        = CmdDB_Query<GetLastError>;
 using CmdDB_GetLastErrorReply   = CmdDB_Reply<GetLastErrorReply>;
 
 inline
-CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, GetLastErrorOptions getLastErrorOpt = {})
+CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, GetLastErrorOptions const& getLastErrorOpt = {})
 {
     using namespace std::string_literals;
-    return CmdDB_GetLastError(std::move(db), ""s, Op_QueryOptions{}, std::move(getLastErrorOpt));
+    return CmdDB_GetLastError(std::move(db), ""s, {}, getLastErrorOpt);
 }
 
 inline
-CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, Op_QueryOptions options, GetLastErrorOptions getLastErrorOpt = {})
+CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, Op_QueryOptions const& options, GetLastErrorOptions const& getLastErrorOpt = {})
 {
     using namespace std::string_literals;
-    return CmdDB_GetLastError(std::move(db), ""s, std::move(options), std::move(getLastErrorOpt));
+    return CmdDB_GetLastError(std::move(db), ""s, options, getLastErrorOpt);
 }
 
 }

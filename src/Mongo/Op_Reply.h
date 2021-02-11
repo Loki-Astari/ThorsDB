@@ -81,6 +81,7 @@ struct Op_Reply
         [[deprecated("This function is for unit testing only. Do not use it. I will make it do silly things in the future to mess with people that use this function")]]
         void cursorIDSetForTest(CursorId value)                {cursorID = value;}  // Used for testing
 };
+
 template<typename Document, typename View = ViewType<Document>>
 std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply)
 {
@@ -104,6 +105,7 @@ Op_Reply<Object> make_Op_Reply(Object& object)
 {
     return Op_Reply<Object>(object);
 }
+
 template<typename Range, ValidContainer<Range> = true>
 Op_Reply<Range> make_Op_Reply(Range& container)
 {
