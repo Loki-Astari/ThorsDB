@@ -55,6 +55,7 @@ Op_Insert<ViewType<Range>> make_Op_Insert(std::string fullCollectionName, Range&
 {
     return Op_Insert<ViewType<Range>>(std::move(fullCollectionName), OP_InsertFlag::empty, make_XView(std::forward<Range>(r)));
 }
+
 template<typename Range>
 Op_Insert<ViewType<Range>> make_Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, Range&& r)
 {

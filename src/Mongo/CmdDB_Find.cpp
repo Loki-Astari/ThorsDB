@@ -2,7 +2,7 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-FindOptional::FindOptional(FindOptions options)
+FindOptional::FindOptional(FindOptions const& options)
     : projection(std::move(options.projection))
     , hint(std::move(options.hint))
     , skip(std::move(options.skip))

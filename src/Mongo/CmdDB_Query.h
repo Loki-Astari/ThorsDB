@@ -17,9 +17,9 @@ class CmdDB_Query: public Op_Query<Document>
 {
     public:
         template<typename Doc = Document, NoOptions<Doc> = true, typename... Args>
-        CmdDB_Query(std::string db, std::string collection, Op_QueryOptions option, Args&&... args);
+        CmdDB_Query(std::string db, std::string collection, Op_QueryOptions const& option, Args&&... args);
         template<typename Doc = Document, HasOptions<Doc> = true, typename... Args>
-        CmdDB_Query(std::string db, std::string collection, Op_QueryOptions option, typename Doc::Options docOpt, Args&&... args);
+        CmdDB_Query(std::string db, std::string collection, Op_QueryOptions const& option, typename Doc::Options const& docOpt, Args&&... args);
 
         // Insert & FindModify
         CmdDB_Query& byPass();

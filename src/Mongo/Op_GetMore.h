@@ -43,6 +43,7 @@ Op_GetMore make_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> co
 {
     return Op_GetMore(std::move(fullCollectionName), reply, ret);
 }
+
 inline
 Op_GetMore make_Op_GetMore(std::string fullCollectionName, std::int32_t ret = 101)
 {

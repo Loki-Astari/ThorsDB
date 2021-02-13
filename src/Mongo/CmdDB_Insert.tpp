@@ -10,8 +10,8 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename I>
-Insert<Document>::Insert(InsertOptions options, std::string collection, I begin, I end)
-    : InsertOptional(std::move(options))
+Insert<Document>::Insert(InsertOptions const& options, std::string collection, I begin, I end)
+    : InsertOptional(options)
     , insert(std::move(collection))
     , documents(begin, end)
 {}

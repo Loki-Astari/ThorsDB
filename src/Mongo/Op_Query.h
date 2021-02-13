@@ -56,9 +56,9 @@ class Op_Query: public Op_QueryOptions
 
     public:
         template<typename Doc = Document, NoOptions<Doc> = true, typename... Args>
-        Op_Query(std::string fullCollectionName, Op_QueryOptions options, Args&&... args);
+        Op_Query(std::string fullCollectionName, Op_QueryOptions const& options, Args&&... args);
         template<typename Doc = Document, HasOptions<Doc> = true, typename... Args>
-        Op_Query(std::string fullCollectionName, Op_QueryOptions options, typename Doc::Options docOpt, Args&&... args);
+        Op_Query(std::string fullCollectionName, Op_QueryOptions const& options, typename Doc::Options const& docOpt, Args&&... args);
 
         Document& getQuery();
 

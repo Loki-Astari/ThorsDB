@@ -4,7 +4,7 @@ using namespace ThorsAnvil::DB::Mongo;
 
 static const FindModifyOptions defaultOptions;
 
-FindModifyOptional::FindModifyOptional(FindModifyOptions options)
+FindModifyOptional::FindModifyOptional(FindModifyOptions const& options)
     : returnModified(options.returnModified)
     , fields(std::move(options.fields))
     , upsert(options.upsert)
