@@ -159,6 +159,36 @@ std::string ErrorInfo::getHRErrorMessage() const
     return result;
 }
 
+template<typename Document, typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply)
+{
+    return reply.print(stream);
+}
+
+template<typename Document, typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&  reply)
+{
+    return reply.parse(stream);
+}
+
+template<typename Document, typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&& reply)
+{
+    return reply.parseAndThrow(stream);
+}
+
+template<typename Object, ValidSingle<Object>>
+Op_Reply<Object> get_Op_Reply(Object& object)
+{
+    return Op_Reply<Object>(object);
+}
+
+template<typename Range, ValidContainer<Range>>
+Op_Reply<Range> get_Op_Reply(Range& container)
+{
+    return Op_Reply<Range>(container);// | FilterBackInserter{});
+}
+
 }
 
 #endif

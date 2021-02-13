@@ -1,6 +1,13 @@
 #ifndef THORSANVIL_DB_MONGO_OP_INSERT_H
 #define THORSANVIL_DB_MONGO_OP_INSERT_H
 
+/* $    Usage: Op_Insert
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:     connection to mongo DB or a stream.
+ *
+ * >    connection << send_Op_Insert("db.collection" [, OP_InsertFlag::<flag>] , <Document>);
+ */
+
 #include "Op.h"
 #include "Util.h"
 #include "View.h"
@@ -45,22 +52,13 @@ struct Op_Insert
 };
 
 template<typename View>
-std::ostream& operator<<(std::ostream& stream, Op_Insert<View> const& data)
-{
-    return data.print(stream);
-}
+std::ostream& operator<<(std::ostream& stream, Op_Insert<View> const& data);
 
 template<typename Range>
-Op_Insert<ViewType<Range>> make_Op_Insert(std::string fullCollectionName, Range&& r)
-{
-    return Op_Insert<ViewType<Range>>(std::move(fullCollectionName), OP_InsertFlag::empty, make_XView(std::forward<Range>(r)));
-}
+Op_Insert<ViewType<Range>> send_Op_Insert(std::string fullCollectionName, Range&& r);
 
 template<typename Range>
-Op_Insert<ViewType<Range>> make_Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, Range&& r)
-{
-    return Op_Insert<ViewType<Range>>(std::move(fullCollectionName), flags, make_XView(std::forward<Range>(r)));
-}
+Op_Insert<ViewType<Range>> send_Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, Range&& r);
 
 }
 

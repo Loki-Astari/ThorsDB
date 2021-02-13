@@ -1,6 +1,16 @@
 #ifndef THORSANVIL_DB_MONGO_OP_GETMORE_H
 #define THORSANVIL_DB_MONGO_OP_GETMORE_H
 
+/* $    Usage: Op_GetMore
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:     connection to mongo DB or a stream.
+ * #        Note:           reply: will retrieve the cursor from the reply object.
+ * #                           if none is provided will use the last reply on the connection.
+ * #                           if you pass to a stream without a reply object it may be funky.
+ *
+ * >    connection << send_Op_GetMore("db.collection" [, reply] [, <number to return]);
+ * >    connection >> get_Op_Reply(<Document>)
+ */
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "Op_Reply.h"
@@ -38,17 +48,10 @@ class Op_GetMore
 };
 
 template<typename Document>
-inline
-Op_GetMore make_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret = 101)
-{
-    return Op_GetMore(std::move(fullCollectionName), reply, ret);
-}
+Op_GetMore send_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret = 101);
 
 inline
-Op_GetMore make_Op_GetMore(std::string fullCollectionName, std::int32_t ret = 101)
-{
-    return Op_GetMore(std::move(fullCollectionName), ret);
-}
+Op_GetMore send_Op_GetMore(std::string fullCollectionName, std::int32_t ret = 101);
 
 }
 

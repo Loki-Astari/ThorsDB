@@ -67,6 +67,24 @@ std::ostream& Op_Update<Selector, Update>::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename Selector, typename Update>
+std::ostream& operator<<(std::ostream& stream, Op_Update<Selector, Update> const& data)
+{
+    return data.print(stream);
+}
+
+template<typename Selector, typename Update>
+Op_Update<Selector, Update> send_Op_Update(std::string fullCollectionName, Selector&& selector, Update&& update)
+{
+    return Op_Update<Selector, Update>(std::move(fullCollectionName), std::forward<Selector>(selector), std::forward<Update>(update));
+}
+
+template<typename Selector, typename Update>
+Op_Update<Selector, Update> send_Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector, Update&& update)
+{
+    return Op_Update<Selector, Update>(std::move(fullCollectionName), flags, std::forward<Selector>(selector), std::forward<Update>(update));
+}
+
 }
 
 #endif

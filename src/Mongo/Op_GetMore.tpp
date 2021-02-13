@@ -17,7 +17,7 @@ namespace ThorsAnvil::DB::Mongo
 template<typename Document>
 Op_GetMore::Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret)
     : header(OpCode::OP_GET_MORE)
-    , fullCollectionName(fullCollectionName)
+    , fullCollectionName(std::move(fullCollectionName))
     , ret(ret)
     , cursorID(reply.cursorID)
 {
@@ -27,7 +27,7 @@ Op_GetMore::Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const&
 inline
 Op_GetMore::Op_GetMore(std::string fullCollectionName, std::int32_t ret)
     : header(OpCode::OP_GET_MORE)
-    , fullCollectionName(fullCollectionName)
+    , fullCollectionName(std::move(fullCollectionName))
     , ret(ret)
     , cursorID(-1)
 {
@@ -65,6 +65,18 @@ std::ostream& Op_GetMore::printHR(std::ostream& stream) const
            << "numberToReturn:      " << ret << "\n"
            << "cursorID:            " << cursorID << "\n";
     return stream;
+}
+
+template<typename Document>
+Op_GetMore send_Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret)
+{
+    return Op_GetMore(std::move(fullCollectionName), reply, ret);
+}
+
+inline
+Op_GetMore send_Op_GetMore(std::string fullCollectionName, std::int32_t ret)
+{
+    return Op_GetMore(std::move(fullCollectionName), ret);
 }
 
 }

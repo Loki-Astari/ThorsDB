@@ -68,7 +68,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // reset the collection to be empty.
     {
-        connection << make_Op_Delete(fullConnection, TestFindAll{});
+        connection << send_Op_Delete(fullConnection, TestFindAll{});
     }
 
     // Make sure there are zero objects in the collection.
@@ -78,7 +78,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
         try
         {
-            connection >> make_Op_Reply(replyData);
+            connection >> get_Op_Reply(replyData);
             EXPECT_EQ(0, replyData.size());
             error = false;
         }
@@ -101,7 +101,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
                                                       {"Another"s, 22},
                                                       {"ThirdAndLast"s, 0xFF}});
 
-        connection << make_Op_Insert(fullConnection, data);
+        connection << send_Op_Insert(fullConnection, data);
     }
 
     // Check there are three objects in the collection.
@@ -112,7 +112,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
         try
         {
-            connection >> make_Op_Reply(replyData);
+            connection >> get_Op_Reply(replyData);
             EXPECT_EQ(3, replyData.size());
             error = false;
         }
@@ -140,23 +140,23 @@ TEST(ConnectionTest, YeOldWireProtocol)
         {
             connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
 
-            connection >> make_Op_Reply(replyData1);
+            connection >> get_Op_Reply(replyData1);
             EXPECT_EQ(2, replyData1.size());
             auto cursorInfo1 = connection.getCursorInfo(connection.getLastOpenCursor());
             EXPECT_EQ(cursorInfo1.first, 0);
             EXPECT_EQ(cursorInfo1.second, 2);
 
-            connection << make_Op_GetMore(fullConnection, 1);
+            connection << send_Op_GetMore(fullConnection, 1);
 
-            connection >> make_Op_Reply(replyData2);
+            connection >> get_Op_Reply(replyData2);
             EXPECT_EQ(1, replyData2.size());
             auto cursorInfo2 = connection.getCursorInfo(connection.getLastOpenCursor());
             EXPECT_EQ(cursorInfo2.first, 0);
             EXPECT_EQ(cursorInfo2.second, 3);
 
-            connection << make_Op_GetMore(fullConnection, 1);
+            connection << send_Op_GetMore(fullConnection, 1);
 
-            connection >> make_Op_Reply(replyData3);
+            connection >> get_Op_Reply(replyData3);
             EXPECT_EQ(0, replyData3.size());
             auto cursorInfo3 = connection.getCursorInfo(connection.getLastOpenCursor());
             EXPECT_EQ(cursorInfo3.first, 0);
@@ -190,9 +190,9 @@ TEST(ConnectionTest, YeOldWireProtocol)
         EXPECT_EQ(reply1.numberReturned, 2);
         ASSERT_EQ(reply1.documents.size(), 2);
 
-        connection << make_Op_KillCursors(reply1);
+        connection << send_Op_KillCursors(reply1);
 
-        connection << make_Op_GetMore(fullConnection, reply1);
+        connection << send_Op_GetMore(fullConnection, reply1);
 
         StringAndIntNoConstructorReply              replyData2;
         Op_Reply<StringAndIntNoConstructorReply>    reply2(replyData2);
@@ -223,7 +223,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
     // Check the Update works see if the filter finds it.
     {
-        connection << make_Op_Update(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
+        connection << send_Op_Update(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
 
         connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
         StringAndIntNoConstructorReply              replyData;
@@ -246,7 +246,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
     // Delete an item from the collection.
     {
-        connection << make_Op_Delete(fullConnection, SimpleStringNoConstructor{"DataString"});
+        connection << send_Op_Delete(fullConnection, SimpleStringNoConstructor{"DataString"});
     }
 
     // Make sure that the delete worked.

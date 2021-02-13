@@ -145,7 +145,7 @@ TEST(Op_ReplyTest, Op_ReplyStreamGoodResponseDynamic)
     {
         std::vector<OpReplyData>    result;
 
-        stream >> make_Op_Reply(result);
+        stream >> get_Op_Reply(result);
 
         EXPECT_EQ(2, result.size());
         EXPECT_EQ(1, result[0].data1);
@@ -185,7 +185,7 @@ TEST(Op_ReplyTest, Op_ReplyQueryFailureWithErrorDynamic)
 
     try
     {
-        stream >> make_Op_Reply(result);
+        stream >> get_Op_Reply(result);
         EXPECT_TRUE(false);
     }
     catch(MongoException const& e)
@@ -213,7 +213,7 @@ TEST(Op_ReplyTest, Op_ReplyCursorNotFoundWithErrorDynamic)
 
     try
     {
-        stream >> make_Op_Reply(result);
+        stream >> get_Op_Reply(result);
         EXPECT_TRUE(false);
     }
     catch(MongoException const& e)

@@ -1,6 +1,15 @@
 #ifndef THORSANVIL_DB_MONGO_OP_REPLY_H
 #define THORSANVIL_DB_MONGO_OP_REPLY_H
 
+/* $    Usage: Op_Reply
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        View:           A container that holds Documents
+ * $        connection:     connection to mongo DB or a stream.
+ *
+ * >    connection << send_Op_QueryDerivedType(...);
+ * >    connection >> get_Op_Reply(<Document or View>);
+ */
+
 #include "Op.h"
 #include "Util.h"
 #include "View.h"
@@ -83,34 +92,19 @@ struct Op_Reply
 };
 
 template<typename Document, typename View = ViewType<Document>>
-std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply)
-{
-    return reply.print(stream);
-}
+std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply);
 
 template<typename Document, typename View = ViewType<Document>>
-std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&  reply)
-{
-    return reply.parse(stream);
-}
+std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>& reply);
 
 template<typename Document, typename View = ViewType<Document>>
-std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&& reply)
-{
-    return reply.parseAndThrow(stream);
-}
+std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&& reply);
 
 template<typename Object, ValidSingle<Object> = true>
-Op_Reply<Object> make_Op_Reply(Object& object)
-{
-    return Op_Reply<Object>(object);
-}
+Op_Reply<Object> get_Op_Reply(Object& object);
 
 template<typename Range, ValidContainer<Range> = true>
-Op_Reply<Range> make_Op_Reply(Range& container)
-{
-    return Op_Reply<Range>(container);// | FilterBackInserter{});
-}
+Op_Reply<Range> get_Op_Reply(Range& container);
 
 }
 

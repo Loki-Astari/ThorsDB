@@ -16,7 +16,7 @@ TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
     reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
 
     std::stringstream stream;
-    stream << make_Op_KillCursors(reply1);
+    stream << send_Op_KillCursors(reply1);
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x20\x00\x00\x00"                      // Size
@@ -39,7 +39,7 @@ TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectHumanReadable)
 
 
     std::stringstream stream;
-    stream << make_hr(make_Op_KillCursors(reply1));
+    stream << make_hr(send_Op_KillCursors(reply1));
 
     std::size_t lineCount = 0;
     std::string line;

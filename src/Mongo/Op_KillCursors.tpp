@@ -64,6 +64,18 @@ std::ostream& Op_KillCursors::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename... Docs>
+Op_KillCursors send_Op_KillCursors(Op_Reply<Docs> const&... replys)
+{
+    return Op_KillCursors(replys...);
+}
+
+inline
+Op_KillCursors send_Op_KillCursors(bool all)
+{
+    return Op_KillCursors(all);
+}
+
 }
 
 #endif

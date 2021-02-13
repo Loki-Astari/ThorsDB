@@ -1,6 +1,13 @@
 #ifndef THORSANVIL_DB_MONGO_OP_DELETE_H
 #define THORSANVIL_DB_MONGO_OP_DELETE_H
 
+/* $    Usage: Op_Delete
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:     connection to mongo DB or a stream.
+ *
+ * >    connection << send_Op_Delete("db.collection" [, OP_DeleteFlag::<flag>] ,<Document>);
+ */
+
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
@@ -41,23 +48,15 @@ class Op_Delete
     private:
         std::size_t   getSize()                     const;
 };
-template<typename Document>
-std::ostream& operator<<(std::ostream& stream, Op_Delete<Document> const& data)
-{
-    return data.print(stream);
-}
 
 template<typename Document>
-Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, Document&& selector)
-{
-    return Op_Delete<Document>(std::move(fullCollectionName), OP_DeleteFlag::empty, std::forward<Document>(selector));
-}
+std::ostream& operator<<(std::ostream& stream, Op_Delete<Document> const& data);
 
 template<typename Document>
-Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector)
-{
-    return Op_Delete<Document>(std::move(fullCollectionName), flags, std::forward<Document>(selector));
-}
+Op_Delete<Document> send_Op_Delete(std::string fullCollectionName, Document&& selector);
+
+template<typename Document>
+Op_Delete<Document> send_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector);
 
 }
 

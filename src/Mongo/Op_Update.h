@@ -1,6 +1,14 @@
 #ifndef THORSANVIL_DB_MONGO_OP_UPDATE_H
 #define THORSANVIL_DB_MONGO_OP_UPDATE_H
 
+/* $    Usage: Op_Update
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $            Select:     Document that will be matched against records.
+ * $            Update:     Document specifying fields to update.
+ * $        connection:     connection to mongo DB or a stream.
+ *
+ * >    connection << send_Op_Update("db.collection" [, OP_DeleteFlag::<flag>] [, <Document: Select> [, <Document: Update>]]);
+ */
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
@@ -41,21 +49,13 @@ class Op_Update
 };
 
 template<typename Selector, typename Update>
-std::ostream& operator<<(std::ostream& stream, Op_Update<Selector, Update> const& data)
-{
-    return data.print(stream);
-}
+std::ostream& operator<<(std::ostream& stream, Op_Update<Selector, Update> const& data);
 
 template<typename Selector, typename Update>
-Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {})
-{
-    return Op_Update<Selector, Update>(std::move(fullCollectionName), std::forward<Selector>(selector), std::forward<Update>(update));
-}
+Op_Update<Selector, Update> send_Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {});
+
 template<typename Selector, typename Update>
-Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector = {}, Update&& update = {})
-{
-    return Op_Update<Selector, Update>(std::move(fullCollectionName), flags, std::forward<Selector>(selector), std::forward<Update>(update));
-}
+Op_Update<Selector, Update> send_Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector = {}, Update&& update = {});
 
 }
 

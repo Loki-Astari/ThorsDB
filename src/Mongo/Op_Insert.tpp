@@ -67,6 +67,24 @@ std::ostream& Op_Insert<View>::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Insert<View> const& data)
+{
+    return data.print(stream);
+}
+
+template<typename Range>
+Op_Insert<ViewType<Range>> send_Op_Insert(std::string fullCollectionName, Range&& r)
+{
+    return Op_Insert<ViewType<Range>>(std::move(fullCollectionName), OP_InsertFlag::empty, make_XView(std::forward<Range>(r)));
+}
+
+template<typename Range>
+Op_Insert<ViewType<Range>> send_Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, Range&& r)
+{
+    return Op_Insert<ViewType<Range>>(std::move(fullCollectionName), flags, make_XView(std::forward<Range>(r)));
+}
+
 }
 
 #endif

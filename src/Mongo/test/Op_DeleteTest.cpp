@@ -14,7 +14,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectNoFlag)
     Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << make_Op_Delete("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
+    stream << send_Op_Delete("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -38,7 +38,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
     Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << make_Op_Delete("thor.collection", OP_DeleteFlag::SingleRemove, StringAndIntNoConstructor{"DataString"s, 48});
+    stream << send_Op_Delete("thor.collection", OP_DeleteFlag::SingleRemove, StringAndIntNoConstructor{"DataString"s, 48});
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -62,7 +62,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
     Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
 
     std::stringstream stream;
-    stream << make_Op_Delete("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
+    stream << send_Op_Delete("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x50\x00\x00\x00"          // Size
@@ -84,7 +84,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
 TEST(Op_DeleteTest, Op_DeleteStreamObjectHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
-    auto query = make_Op_Delete("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
+    auto query = send_Op_Delete("thor.collection", StringAndIntNoConstructor{"DataString"s, 48});
 
     std::stringstream stream;
     stream << make_hr(query);

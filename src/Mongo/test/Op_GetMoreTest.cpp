@@ -16,7 +16,7 @@ TEST(Op_GetMoreTest, Op_GetMoreStreamObjectNoFlag)
     reply1.cursorIDSetForTest(0x123456789ABCDEF0);
 
     std::stringstream stream;
-    stream << make_Op_GetMore("thor.collection", reply1, 100);
+    stream << send_Op_GetMore("thor.collection", reply1, 100);
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x30\x00\x00\x00"                      // Size 32
@@ -40,7 +40,7 @@ TEST(Op_GetMoreTest, Op_GetMoreStreamObjectHumanReadable)
 
 
     std::stringstream stream;
-    stream << make_hr(make_Op_GetMore("thor.collection", reply1, 0));
+    stream << make_hr(send_Op_GetMore("thor.collection", reply1, 0));
 
     std::size_t lineCount = 0;
     std::string line;

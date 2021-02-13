@@ -15,7 +15,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectContinueOnError)
     std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48}, {"Another"s, 22}, {"ThirdAndLast"s, 0xFF}});
 
     std::stringstream stream;
-    stream << make_Op_Insert("thor.collection", OP_InsertFlag::ContinueOnError, data);
+    stream << send_Op_Insert("thor.collection", OP_InsertFlag::ContinueOnError, data);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -47,7 +47,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertFlagEmpty)
     std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48}, {"Another"s, 22}, {"ThirdAndLast"s, 0xFF}});
 
     std::stringstream stream;
-    stream << make_Op_Insert("thor.collection", OP_InsertFlag::empty, data);
+    stream << send_Op_Insert("thor.collection", OP_InsertFlag::empty, data);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -79,7 +79,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorCont2)
     std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48}, {"Another"s, 22}, {"ThirdAndLast"s, 0xFF}});
 
     std::stringstream stream;
-    stream << make_Op_Insert("thor.collection", OP_InsertFlag::ContinueOnError, data);
+    stream << send_Op_Insert("thor.collection", OP_InsertFlag::ContinueOnError, data);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -109,7 +109,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectHumanReadableFlagEmpty)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
     std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48}, {"Another"s, 22}, {"ThirdAndLast"s, 0xFF}});
-    auto query  = make_Op_Insert("thor.collection", OP_InsertFlag::empty, data);
+    auto query  = send_Op_Insert("thor.collection", OP_InsertFlag::empty, data);
 
     std::stringstream stream;
     stream << make_hr(query);
@@ -130,7 +130,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectNoFlag)
     std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48}, {"Another"s, 22}, {"ThirdAndLast"s, 0xFF}});
 
     std::stringstream stream;
-    stream << make_Op_Insert("thor.collection", data);
+    stream << send_Op_Insert("thor.collection", data);
 
     EXPECT_EQ(stream.str(),                         // Message Header
                             "\x9B\x00\x00\x00"          // Size
@@ -160,7 +160,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectHumanReadableNoFlag)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
     std::vector<StringAndIntNoConstructor>  data({{"DataString"s, 48}, {"Another"s, 22}, {"ThirdAndLast"s, 0xFF}});
-    auto query  = make_Op_Insert("thor.collection", data);
+    auto query  = send_Op_Insert("thor.collection", data);
 
     std::stringstream stream;
     stream << make_hr(query);

@@ -1,6 +1,18 @@
 #ifndef THORSANVIL_DB_MONGO_OP_KILLCURSORS_H
 #define THORSANVIL_DB_MONGO_OP_KILLCURSORS_H
 
+/* $    Usage: Op_KillCursors
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:     connection to mongo DB or a stream.
+ * #        Note:           reply: will retrieve the cursor from the reply object.
+ * #                           if none is provided will use the last reply on the connection.
+ * #                           if none are provided and a boolean yes is used then all open
+ * #                           cursors on that connection will be killed.
+ *
+ * >    connection << send_Op_KillCursors(reply...);
+ * >    connection << send_Op_KillCursors([true]);
+ */
+
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "Op_Reply.h"
@@ -37,10 +49,10 @@ class Op_KillCursors
 };
 
 template<typename... Docs>
-Op_KillCursors make_Op_KillCursors(Op_Reply<Docs> const&... replys)   {return Op_KillCursors(replys...);}
+Op_KillCursors send_Op_KillCursors(Op_Reply<Docs> const&... replys);
 
 inline
-Op_KillCursors make_Op_KillCursors(bool all = false)                  {return Op_KillCursors(all);}
+Op_KillCursors send_Op_KillCursors(bool all = false);
 
 }
 
