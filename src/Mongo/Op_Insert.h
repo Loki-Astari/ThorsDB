@@ -38,14 +38,17 @@ struct Op_Insert
         Op_Insert(std::string fullCollectionName, View&& range);
         Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& range);
 
-    private:
-        std::size_t   getSize()                     const;
-
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Insert> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Insert const& data) {return data.print(stream);}
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
+    private:
+        std::size_t   getSize()                     const;
 };
+
+template<typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Insert<View> const& data)
+{
+    return data.print(stream);
+}
 
 template<typename Range>
 Op_Insert<ViewType<Range>> make_Op_Insert(std::string fullCollectionName, Range&& r)

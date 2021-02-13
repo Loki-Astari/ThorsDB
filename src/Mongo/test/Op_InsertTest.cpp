@@ -40,6 +40,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectContinueOnError)
                             "\x00"s
                             );
 }
+
 TEST(Op_InsertTest, Op_InsertStreamObjectInsertFlagEmpty)
 {
     Op_MsgHeader::messageIdSetForTest(0x12A5E9);
@@ -71,6 +72,7 @@ TEST(Op_InsertTest, Op_InsertStreamObjectInsertFlagEmpty)
                             "\x00"s
                             );
 }
+
 TEST(Op_InsertTest, Op_InsertStreamObjectInsertErrorCont2)
 {
     Op_MsgHeader::messageIdSetForTest(0x12A5E9);

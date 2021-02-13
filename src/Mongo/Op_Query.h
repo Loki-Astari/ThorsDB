@@ -62,14 +62,17 @@ class Op_Query: public Op_QueryOptions
 
         Document& getQuery();
 
-    private:
-        std::size_t   getSize() const;
-
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
+    private:
+        std::size_t   getSize() const;
 };
+
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, Op_Query<Document> const& data)
+{
+    return data.print(stream);
+}
 
 }
 

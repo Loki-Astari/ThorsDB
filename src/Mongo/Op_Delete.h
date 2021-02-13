@@ -36,14 +36,16 @@ class Op_Delete
     public:
         Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector);
 
+        std::ostream& print(std::ostream& stream)   const;
+        std::ostream& printHR(std::ostream& stream) const;
     private:
         std::size_t   getSize()                     const;
-
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Delete> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Delete const& data) {return data.print(stream);}
-        std::ostream& print(std::ostream& stream) const;
-        std::ostream& printHR(std::ostream& stream) const;
 };
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, Op_Delete<Document> const& data)
+{
+    return data.print(stream);
+}
 
 template<typename Document>
 Op_Delete<Document> make_Op_Delete(std::string fullCollectionName, Document&& selector)

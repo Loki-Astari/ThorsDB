@@ -39,10 +39,12 @@ struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
     std::int32_t        code    = 404;
     double              ok      = 1.0;
 };
+
 struct FindValue
 {
     int value;
 };
+
 struct UpdateMessage
 {
     std::string message;
@@ -51,7 +53,6 @@ struct UpdateMessage
 ThorsAnvil_ExpandTrait(StringAndIntNoConstructor, StringAndIntNoConstructorReply, $err, code, ok);
 ThorsAnvil_MakeTrait(FindValue, value);
 ThorsAnvil_MakeTrait(UpdateMessage, message);
-
 
 TEST(ConnectionTest, YeOldWireProtocol)
 {
@@ -290,6 +291,7 @@ static bool checkTheNumberofObjectsIs(std::string const& message, MongoConnectio
     }
     return true;
 }
+
 static bool zeroOutCollection(MongoConnection& connection)
 {
     connection << make_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
@@ -306,6 +308,7 @@ static bool zeroOutCollection(MongoConnection& connection)
     }
     return true;
 }
+
 static bool setTheDefaultCollectinState(MongoConnection& connection)
 {
     std::vector<StringAndIntNoConstructor>               objects{{"DataString"s, 48},
@@ -384,6 +387,7 @@ class ConnectionTestMiddleWireAction : public ::testing::Test
             ASSERT_TRUE(ok);
         }
 };
+
 std::unique_ptr<MongoConnection> ConnectionTestMiddleWireAction::connection;
 
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)

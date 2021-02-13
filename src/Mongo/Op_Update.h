@@ -34,14 +34,17 @@ class Op_Update
         Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {});
         Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector = {}, Update&& update = {});
 
-    private:
-        std::size_t   getSize() const;
-
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Update> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Update const& data) {return data.print(stream);}
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
+    private:
+        std::size_t   getSize() const;
 };
+
+template<typename Selector, typename Update>
+std::ostream& operator<<(std::ostream& stream, Op_Update<Selector, Update> const& data)
+{
+    return data.print(stream);
+}
 
 template<typename Selector, typename Update>
 Op_Update<Selector, Update> make_Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {})

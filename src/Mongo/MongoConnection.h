@@ -5,6 +5,7 @@
 #include "ThorsSocket/Socket.h"
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsDB/Connection.h"
+#include "ThorsDB/Statement.h"
 #include <string>
 #include <memory>
 

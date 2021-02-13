@@ -65,10 +65,14 @@ class CmdDB_Query: public Op_Query<Document>
         CmdDB_Query& waitForReplication(std::int32_t count);
         CmdDB_Query& setWaitTimeout(std::int32_t millisec);
 
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<CmdDB_Query> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, CmdDB_Query const& data) {return stream << static_cast<Op_Query<Document> const&>(data);}
         std::ostream& printHR(std::ostream& stream) const {return stream << make_hr(static_cast<Op_Query<Document> const&>(*this));}
 };
+
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, CmdDB_Query<Document> const& data)
+{
+    return stream << static_cast<Op_Query<Document> const&>(data);
+}
 
 }
 

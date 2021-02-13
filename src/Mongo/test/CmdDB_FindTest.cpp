@@ -13,6 +13,7 @@ TEST(CmdDB_FindTest, Base)
     std::string result = stream.str();
     EXPECT_EQ(12, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Projection)
 {
     auto find = make_CmdDB_Find("database", "collection").addFileds({"Ace", "Cool", "Three"});
@@ -22,6 +23,7 @@ TEST(CmdDB_FindTest, Projection)
     std::string result = stream.str();
     EXPECT_EQ(18, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, ProjectionOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.projection = {{"Ace",1}, {"Cool",1}, {"Three",1}}});
@@ -31,6 +33,7 @@ TEST(CmdDB_FindTest, ProjectionOptions)
     std::string result = stream.str();
     EXPECT_EQ(18, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Hint)
 {
     auto find = make_CmdDB_Find("database", "collection").addHint("Do Stuff");
@@ -40,6 +43,7 @@ TEST(CmdDB_FindTest, Hint)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, HintOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {.hint = "Do Stuff"});
@@ -49,6 +53,7 @@ TEST(CmdDB_FindTest, HintOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Skip)
 {
     auto find = make_CmdDB_Find("database", "collection").setSkip(12);
@@ -58,6 +63,7 @@ TEST(CmdDB_FindTest, Skip)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, SkipOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.skip = 12});
@@ -67,6 +73,7 @@ TEST(CmdDB_FindTest, SkipOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Limit)
 {
     auto find = make_CmdDB_Find("database", "collection").setLimit(12);
@@ -76,6 +83,7 @@ TEST(CmdDB_FindTest, Limit)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, LimitOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {.limit = 12});
@@ -85,6 +93,7 @@ TEST(CmdDB_FindTest, LimitOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Batch)
 {
     auto find = make_CmdDB_Find("database", "collection").setBatchSize(12);
@@ -94,6 +103,7 @@ TEST(CmdDB_FindTest, Batch)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, BatchOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.batchSize = 12});
@@ -103,6 +113,7 @@ TEST(CmdDB_FindTest, BatchOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, SingleBatch)
 {
     auto find = make_CmdDB_Find("database", "collection").oneBatch(true);
@@ -112,6 +123,7 @@ TEST(CmdDB_FindTest, SingleBatch)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, SingleBatchOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {.singleBatch = true});
@@ -121,6 +133,7 @@ TEST(CmdDB_FindTest, SingleBatchOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Comment)
 {
     auto find = make_CmdDB_Find("database", "collection").setComment("Comment Here");
@@ -130,6 +143,7 @@ TEST(CmdDB_FindTest, Comment)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, CommentOption)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.comment = "Comment Here"});
@@ -139,6 +153,7 @@ TEST(CmdDB_FindTest, CommentOption)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, TimeOut)
 {
     auto find = make_CmdDB_Find("database", "collection").setMaxTimeout(6000);
@@ -148,6 +163,7 @@ TEST(CmdDB_FindTest, TimeOut)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, TimeOutOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {.maxTimeMS = 6000});
@@ -157,6 +173,7 @@ TEST(CmdDB_FindTest, TimeOutOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, ReadConcern)
 {
     auto find = make_CmdDB_Find("database", "collection").addReadConcern(ReadConcernLevel::majority);
@@ -166,15 +183,17 @@ TEST(CmdDB_FindTest, ReadConcern)
     std::string result = stream.str();
     EXPECT_EQ(16, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, ReadConcernOption)
 {
-    auto find = make_CmdDB_Find("database", "collection", {}, {.readConcern = ReadConcernLevel::majority});
+    auto find = make_CmdDB_Find("database", "collection", {}, {.readConcern = ReadConcern{ReadConcernLevel::majority}});
     std::stringstream stream;
     stream << make_hr(find);
 
     std::string result = stream.str();
     EXPECT_EQ(16, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Max)
 {
     auto find = make_CmdDB_Find("database", "collection").addMax("Age", 12);
@@ -184,6 +203,7 @@ TEST(CmdDB_FindTest, Max)
     std::string result = stream.str();
     EXPECT_EQ(16, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, MaxOption)
 {
     auto find = make_CmdDB_Find("database", "collection", {.max = {{"Age",12}}});
@@ -193,6 +213,7 @@ TEST(CmdDB_FindTest, MaxOption)
     std::string result = stream.str();
     EXPECT_EQ(16, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Min)
 {
     auto find = make_CmdDB_Find("database", "collection").addMin("Age", 12);
@@ -202,6 +223,7 @@ TEST(CmdDB_FindTest, Min)
     std::string result = stream.str();
     EXPECT_EQ(16, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, MinOption)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.min = {{"Age",12}}});
@@ -211,6 +233,7 @@ TEST(CmdDB_FindTest, MinOption)
     std::string result = stream.str();
     EXPECT_EQ(16, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Key)
 {
     auto find = make_CmdDB_Find("database", "collection").justKeys(false);
@@ -220,6 +243,7 @@ TEST(CmdDB_FindTest, Key)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, KeyOption)
 {
     auto find = make_CmdDB_Find("database", "collection", {.returnKey = true});
@@ -229,6 +253,7 @@ TEST(CmdDB_FindTest, KeyOption)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, ID)
 {
     auto find = make_CmdDB_Find("database", "collection").showId(true);
@@ -238,6 +263,7 @@ TEST(CmdDB_FindTest, ID)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, IDOption)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.showRecordId = true});
@@ -247,6 +273,7 @@ TEST(CmdDB_FindTest, IDOption)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Tailable)
 {
     auto find = make_CmdDB_Find("database", "collection").tailableCursor(true);
@@ -256,6 +283,7 @@ TEST(CmdDB_FindTest, Tailable)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, TailableOption)
 {
     auto find = make_CmdDB_Find("database", "collection", {.tailable = true});
@@ -265,6 +293,7 @@ TEST(CmdDB_FindTest, TailableOption)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, Await)
 {
     auto find = make_CmdDB_Find("database", "collection").tailedCursorAwait(true);
@@ -274,6 +303,7 @@ TEST(CmdDB_FindTest, Await)
     std::string result = stream.str();
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, AwaitOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.awaitData = true});
@@ -283,6 +313,7 @@ TEST(CmdDB_FindTest, AwaitOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, CursorTimeOut)
 {
     auto find = make_CmdDB_Find("database", "collection").setNoCursorTimeout(true);
@@ -292,6 +323,7 @@ TEST(CmdDB_FindTest, CursorTimeOut)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, CursorTimeOutOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {.noCursorTimeout = true});
@@ -301,6 +333,7 @@ TEST(CmdDB_FindTest, CursorTimeOutOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, PartialResults)
 {
     auto find = make_CmdDB_Find("database", "collection").setAllowPartialResults(true);
@@ -310,6 +343,7 @@ TEST(CmdDB_FindTest, PartialResults)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, PartialResultsOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.allowPartialResults = true});
@@ -319,6 +353,7 @@ TEST(CmdDB_FindTest, PartialResultsOptions)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, CollationOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {.collation = {.locale = "GB", .caseLevel = true, .caseFirst = "P", .strength = 10, .numericOrdering = true, .alternate = "X", .maxVariable = "Plop", .backwards = true}});
@@ -328,6 +363,7 @@ TEST(CmdDB_FindTest, CollationOptions)
     std::string result = stream.str();
     EXPECT_EQ(22, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, UseDisk)
 {
     auto find = make_CmdDB_Find("database", "collection").useDisk(true);
@@ -337,6 +373,7 @@ TEST(CmdDB_FindTest, UseDisk)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindTest, UseDiskOptions)
 {
     auto find = make_CmdDB_Find("database", "collection", {}, {.allowDiskUse = true});

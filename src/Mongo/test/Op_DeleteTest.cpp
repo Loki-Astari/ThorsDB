@@ -32,6 +32,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectNoFlag)
                             "\x00"s
                             );
 }
+
 TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
 {
     Op_MsgHeader::messageIdSetForTest(0xA2A5F5);
@@ -55,6 +56,7 @@ TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveSingle)
                             "\x00"s
                             );
 }
+
 TEST(Op_DeleteTest, Op_DeleteStreamObjectRemoveMultiple)
 {
     Op_MsgHeader::messageIdSetForTest(0xA2A5F5);

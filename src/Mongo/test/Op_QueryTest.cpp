@@ -30,6 +30,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectNoFlag2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorLeaveOpen2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -53,6 +54,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorLeaveOpen2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorSlaveOk2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -76,6 +78,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorSlaveOk2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorOpLogNoReplay2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -99,6 +102,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorOpLogNoReplay2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorCurserNoTimeout2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -122,6 +126,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorCurserNoTimeout2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDataTimeout2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -145,6 +150,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDataTimeout2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDrainAll2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -168,6 +174,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorDrainAll2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorPartialAvailable2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
@@ -191,6 +198,7 @@ TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorPartialAvailable2)
                             "\x10"  "value\x00"     "\x30\x00\x00\x00"
                             "\x00"s);
 }
+
 TEST(Op_QueryTest, Op_QueryStreamObjectFlag_CursorAll2)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);

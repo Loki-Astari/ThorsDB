@@ -8,6 +8,7 @@ struct SimpleStringNoConstructor
 {
     std::string     message;
 };
+
 struct SimpleStringWithConstructor
 {
     SimpleStringWithConstructor(std::string const& message)
@@ -15,11 +16,13 @@ struct SimpleStringWithConstructor
     {}
     std::string     message;
 };
+
 struct StringAndIntNoConstructor
 {
     std::string     message;
     int             value;
 };
+
 struct StringAndIntWithConstructor
 {
     StringAndIntWithConstructor(std::string const& message, int value)

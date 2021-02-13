@@ -6,7 +6,6 @@ DEFER_NAME					= ThorsDB
 NO_HEADER					= 1
 LDLIBS_EXTERN_BUILD			= ThorsSerialize crypto
 UNITTEST_LINK_LIBS			= ThorsSocket UnitTestThorsDB UnitTestThorsDBCommon ThorsLogging
-UNITTEST_LDLIBS				+= -lssl
 FILE_WARNING_FLAGS			+= -Wno-dollar-in-identifier-extension -Wno-unknown-pragmas
 
 %/Op_MsgTest.o:				CXXFLAGS += -Wno-deprecated-declarations

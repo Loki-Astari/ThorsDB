@@ -141,6 +141,7 @@ struct CursorFirst
     std::string             ns;
     std::reference_wrapper<std::vector<Document>>  firstBatch;
 };
+
 template<typename Document>
 struct CursorNext
 {
@@ -173,7 +174,6 @@ struct DataTypeExtractor
     using DataType = T;
 };
 
-
 template<typename Doc>
 struct DataTypeExtractor<CursorFirst<Doc>>
 {
@@ -184,7 +184,6 @@ struct DataTypeExtractor<CursorNext<Doc>>
 {
     using DataType = typename CursorFirst<Doc>::DataType;
 };
-
 
 template<typename Cursor>
 struct FindReply

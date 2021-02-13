@@ -13,6 +13,7 @@ TEST(CmdDB_FindModifyTest, Base)
     std::string result = stream.str();
     EXPECT_EQ(13, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetNew)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.returnModified = true});
@@ -23,6 +24,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetNew)
     EXPECT_NE(std::string::npos, result.find("\"new\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetNewChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").setNew();
@@ -33,6 +35,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetNewChain)
     EXPECT_NE(std::string::npos, result.find("\"new\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetFields)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.fields = {{"John",1},{"Mark",1}}});
@@ -43,6 +46,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetFields)
     EXPECT_NE(std::string::npos, result.find("\"fields\":"));
     EXPECT_EQ(18, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetFieldsChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").addFileds({"John", "Mark"});
@@ -53,6 +57,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetFieldsChain)
     EXPECT_NE(std::string::npos, result.find("\"fields\":"));
     EXPECT_EQ(18, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetUpsert)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.upsert = true});
@@ -63,6 +68,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetUpsert)
     EXPECT_NE(std::string::npos, result.find("\"upsert\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetUpsertChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").setUpsert();
@@ -73,6 +79,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetUpsertChain)
     EXPECT_NE(std::string::npos, result.find("\"upsert\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetByPass)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.bypassDocumentValidation = true});
@@ -83,6 +90,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetByPass)
     EXPECT_NE(std::string::npos, result.find("\"bypassDocumentValidation\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetByPassChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").byPass();
@@ -93,6 +101,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetByPassChain)
     EXPECT_NE(std::string::npos, result.find("\"bypassDocumentValidation\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetHint)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.hint = "Cool"});
@@ -103,6 +112,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetHint)
     EXPECT_NE(std::string::npos, result.find("\"hint\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetHintChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").addHint("Cool");
@@ -113,6 +123,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetHintChain)
     EXPECT_NE(std::string::npos, result.find("\"hint\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetComment)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.comment = "Long comment"});
@@ -123,6 +134,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetComment)
     EXPECT_NE(std::string::npos, result.find("\"comment\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetCommentChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").setComment("A Comment for the ages");
@@ -133,6 +145,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetCommentChain)
     EXPECT_NE(std::string::npos, result.find("\"comment\":"));
     EXPECT_EQ(14, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetAll)
 {
     auto find = make_CmdDB_FindDelete("database", "collection", {.returnModified = true, .fields = {{"John",1},{"Mark",1}}, .upsert = true, .bypassDocumentValidation = true, .hint = "Cool", .comment = "Long comment"});
@@ -143,6 +156,7 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetAll)
     EXPECT_NE(std::string::npos, result.find("\"comment\":"));
     EXPECT_EQ(23, std::count(std::begin(result), std::end(result), '\n'));
 }
+
 TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetAllChain)
 {
     auto find = make_CmdDB_FindDelete("database", "collection").setNew().addFileds({"John", "Mark"}).setUpsert().byPass().addHint("Cool").setComment("A Comment for the ages");
@@ -153,7 +167,4 @@ TEST(CmdDB_FindModifyTest, PassQueryFMFlagsFlagsSetAllChain)
     EXPECT_NE(std::string::npos, result.find("\"comment\":"));
     EXPECT_EQ(23, std::count(std::begin(result), std::end(result), '\n'));
 }
-
-
-
 

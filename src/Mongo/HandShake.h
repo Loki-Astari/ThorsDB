@@ -122,11 +122,10 @@ struct Binary
     int                 type;
     std::string         data;
 
-    // DataInterface needed by BinarySerializer (see below)
-        std::size_t getSize() const             {return data.size();}
-        void        resize(std::size_t size)    {data.resize(size);}
-        char const* getBuffer() const           {return &data[0];}
-        char*       getBuffer()                 {return &data[0];}
+    std::size_t getSize() const             {return data.size();}
+    void        resize(std::size_t size)    {data.resize(size);}
+    char const* getBuffer() const           {return &data[0];}
+    char*       getBuffer()                 {return &data[0];}
 };
 
 class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerializer<Binary, '\x00'>
@@ -137,7 +136,6 @@ class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerial
             printer.addValue(object.data);
         }
 };
-//using BinarySerializer = ThorsAnvil::Serialize::MongoUtility::BinarySerializer<ThorsAnvil::DB::Mongo::Binary, '\x00'>;
 
 struct AuthInit
 {
@@ -169,9 +167,6 @@ struct AuthInit
     std::string         mechanism;
     std::string         $db;
     Binary              payload;
-
-    // Interface needed by Op_Msg
-    //std::size_t getSize()   const {return ThorsAnvil::Serialize::bsonGetPrintSize(*this);}
 };
 
 struct AuthCont
@@ -220,7 +215,6 @@ class Op_QueryHandShake: public Op_Query<HandShake>
         Op_QueryHandShake(Args&&... args)
             : Op_Query("admin.$cmd", {}, std::forward<Args>(args)...)
         {}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return stream << static_cast<Op_Query<HandShake>>(data);}
 };
 
@@ -232,6 +226,7 @@ class Op_ReplyHandShake: public Op_Reply<HandShakeReplyDoc>
             : Op_Reply(handshake)
         {}
 };
+
 using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
 using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
 using Op_MsgAuthReply       = Op_MsgReply<Kind0<AuthReply>>;
