@@ -11,8 +11,8 @@ using std::string_literals::operator""s;
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 {
     Op_MsgHeader::messageIdSetForTest(0x184A89);
-    int              data1;
-    Op_Reply<int>    reply1(data1);
+    int             data1;
+    auto            reply1 = get_Op_Reply(data1);
     reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
 
     std::stringstream stream;
@@ -33,8 +33,8 @@ TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
-    int              data1;
-    Op_Reply<int>    reply1(data1);
+    int             data1;
+    auto            reply1 = get_Op_Reply(data1);
     reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
 
 

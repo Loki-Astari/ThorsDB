@@ -59,7 +59,7 @@ class Op_GetMore;
 class Op_KillCursor;
 class MongoConnection;
 
-template<typename Document, typename View = ViewType<Document>>
+template<typename View>
 struct Op_Reply
 {
     Op_MsgHeader            header;                 // standard message header
@@ -75,7 +75,7 @@ struct Op_Reply
     friend class MongoConnection;
 
     public:
-        Op_Reply(Document& data);
+        Op_Reply(View&& view);
         virtual ~Op_Reply() {}
 
         explicit operator   bool()              const;
@@ -91,20 +91,17 @@ struct Op_Reply
         void cursorIDSetForTest(CursorId value)                {cursorID = value;}  // Used for testing
 };
 
-template<typename Document, typename View = ViewType<Document>>
-std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply);
+template<typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Reply<View> const& reply);
 
-template<typename Document, typename View = ViewType<Document>>
-std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>& reply);
+template<typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<View>& reply);
 
-template<typename Document, typename View = ViewType<Document>>
-std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&& reply);
+template<typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<View>&& reply);
 
-template<typename Object, ValidSingle<Object> = true>
-Op_Reply<Object> get_Op_Reply(Object& object);
-
-template<typename Range, ValidContainer<Range> = true>
-Op_Reply<Range> get_Op_Reply(Range& container);
+template<typename Range>
+Op_Reply<ViewType<Range>> get_Op_Reply(Range&& range);
 
 }
 

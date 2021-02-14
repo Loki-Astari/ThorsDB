@@ -44,7 +44,7 @@ TEST(Op_ReplyTest, Op_ReplyStreamGoodResponse)
     std::stringstream stream(data);
     std::vector<OpReplyData>    result;
 
-    Op_Reply<std::vector<OpReplyData>>  reply(result);
+    auto                        reply = get_Op_Reply(result);
     stream >> reply;
 
     EXPECT_TRUE(reply.isOk());
@@ -81,7 +81,7 @@ TEST(Op_ReplyTest, Op_ReplyQueryFailureWithError)
     std::stringstream stream(data);
     std::vector<OpReplyData>    result;
 
-    Op_Reply<std::vector<OpReplyData>>  reply(result);
+    auto                        reply = get_Op_Reply(result);
     stream >> reply;
 
     EXPECT_FALSE(reply.isOk());
@@ -106,7 +106,7 @@ TEST(Op_ReplyTest, Op_ReplyCursorNotFoundWithError)
     std::stringstream stream(data);
     std::vector<OpReplyData>    result;
 
-    Op_Reply<std::vector<OpReplyData>>  reply(result);
+    auto                        reply = get_Op_Reply(result);
     stream >> reply;
 
     EXPECT_FALSE(reply.isOk());

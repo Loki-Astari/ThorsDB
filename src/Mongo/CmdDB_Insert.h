@@ -3,6 +3,18 @@
 
 // https://docs.mongodb.com/manual/reference/command/insert/#dbcmd.insert
 
+/* $    Usage: CmdDB_Insert
+ * $        Document:           Serializeable object that is sent/retrieved to/from Mongo.
+ * $        Document-View:      Either a single "Document" item or a range of "Document" range: [begin(),  end())
+ * $        connection:         connection to mongo DB or a stream.
+ * $        Op_QueryOptions:    See: Op_Query.h
+ * $        DeleteOptions:      See: below
+ *
+ * >    connection << send_CmdDB_Insert("db", "collection" [, Op_Query_Options] [, InsertOptions] [,<Document-View>]);
+ */
+
+#include "Util.h"
+#include "View.h"
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
@@ -42,19 +54,18 @@ class InsertOptional: public InsertOptions
         std::string                 comment;
 };
 
-template<typename Document>
+template<typename View>
 struct Insert: public InsertOptional
 {
     public:
         using Options = InsertOptions;
 
-        template<typename I>
-        Insert(InsertOptions const& options, std::string collection, I begin, I end);
+        Insert(InsertOptions const& options, std::string collection, View&& view);
 
     private:
         friend class ThorsAnvil::Serialize::Traits<Insert>;
         std::string                 insert;
-        std::vector<Document>       documents;
+        View                        documents;
 };
 
 template<typename Document>
@@ -62,37 +73,17 @@ using CmdDB_Insert      = CmdDB_Query<Insert<Document>>;
 
 using CmdDB_InsertReply = CmdDB_Reply<CmdReply>;
 
-template<typename I>
-CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string db, std::string collection, I begin, I end)
-{
-    using Document  = typename std::iterator_traits<I>::value_type;
-    return CmdDB_Insert<Document>(std::move(db), std::move(collection), {}, {}, begin, end);
-}
+template<typename Range>
+CmdDB_Insert<ViewType<Range>> send_CmdDB_Insert(std::string db, std::string collection, Range&& r);
 
-template<typename I>
-CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string db, std::string collection, InsertOptions const& options, I begin, I end)
-{
-    using Document  = typename std::iterator_traits<I>::value_type;
-    return CmdDB_Insert<Document>(std::move(db), std::move(collection), {}, options, begin, end);
-}
+template<typename Range>
+CmdDB_Insert<ViewType<Range>> send_CmdDB_Insert(std::string db, std::string collection, InsertOptions const& options, Range&& r);
 
-template<typename I>
-CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions const& options, I begin, I end)
-{
-    using Document  = typename std::iterator_traits<I>::value_type;
-    return CmdDB_Insert<Document>(std::move(db), std::move(collection), options, {}, begin, end);
-}
+template<typename Range>
+CmdDB_Insert<ViewType<Range>> send_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions const& options, Range&& r);
 
-template<typename I>
-CmdDB_Insert<typename std::iterator_traits<I>::value_type>
-make_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions const& options, InsertOptions const& insertOpt, I begin, I end)
-{
-    using Document  = typename std::iterator_traits<I>::value_type;
-    return CmdDB_Insert<Document>(std::move(db), std::move(collection), options, insertOpt, begin, end);
-}
+template<typename Range>
+CmdDB_Insert<ViewType<Range>> send_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions const& options, InsertOptions const& insertOpt, Range&& r);
 
 }
 

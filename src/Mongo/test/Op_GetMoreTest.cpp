@@ -11,8 +11,8 @@ using std::string_literals::operator""s;
 TEST(Op_GetMoreTest, Op_GetMoreStreamObjectNoFlag)
 {
     Op_MsgHeader::messageIdSetForTest(0x184A89);
-    int              data1;
-    Op_Reply<int>    reply1(data1);
+    int             data1;
+    auto            reply1 = get_Op_Reply(data1);
     reply1.cursorIDSetForTest(0x123456789ABCDEF0);
 
     std::stringstream stream;
@@ -34,8 +34,8 @@ TEST(Op_GetMoreTest, Op_GetMoreStreamObjectNoFlag)
 TEST(Op_GetMoreTest, Op_GetMoreStreamObjectHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
-    int              data1;
-    Op_Reply<int>    reply1(data1);
+    int             data1;
+    auto            reply1 = get_Op_Reply(data1);
     reply1.cursorIDSetForTest(0x123456789ABCDEF0);
 
 

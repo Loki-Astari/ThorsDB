@@ -202,6 +202,12 @@ CmdDB_Query<Document>& CmdDB_Query<Document>::setWaitTimeout(std::int32_t millis
     return *this;
 }
 
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, CmdDB_Query<Document> const& data)
+{
+    return stream << static_cast<Op_Query<Document> const&>(data);
+}
+
 }
 
 #endif

@@ -3,6 +3,15 @@
 
 // https://docs.mongodb.com/manual/reference/command/delete/#dbcmd.delete
 
+/* $    Usage: CmdDB_Delete
+ * $        Document:           Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:         connection to mongo DB or a stream.
+ * $        Op_QueryOptions:    See: Op_Query.h
+ * $        DeleteOptions:      See: below
+ *
+ * >    connection << send_CmdDB_Delete("db", "collection" [, Op_Query_Options] [, DeleteOptions] [,<Document>]);
+ */
+
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
@@ -72,28 +81,16 @@ using CmdDB_Delete      = CmdDB_Query<Delete<Document>>;
 using CmdDB_DeleteReply = CmdDB_Reply<CmdReply>;
 
 template<typename Document>
-CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Document doc)
-{
-    return CmdDB_Delete<Document>(std::move(db), std::move(collection), {}, {}, DeleteQuery{std::move(doc)});
-}
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Document doc);
 
 template<typename Document>
-CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, DeleteOptions const& deleteOpt, Document doc)
-{
-    return CmdDB_Delete<Document>(std::move(db), std::move(collection), {}, deleteOpt, DeleteQuery{std::move(doc)});
-}
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, DeleteOptions const& deleteOpt, Document doc);
 
 template<typename Document>
-CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, Document doc)
-{
-    return CmdDB_Delete<Document>(std::move(db), std::move(collection), options, {}, DeleteQuery{std::move(doc)});
-}
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, Document doc);
 
 template<typename Document>
-CmdDB_Delete<Document> make_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, DeleteOptions const& deleteOpt, Document doc)
-{
-    return CmdDB_Delete<Document>(std::move(db), std::move(collection), options, deleteOpt, DeleteQuery{std::move(doc)});
-}
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, DeleteOptions const& deleteOpt, Document doc);
 
 }
 

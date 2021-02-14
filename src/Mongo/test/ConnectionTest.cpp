@@ -181,8 +181,8 @@ TEST(ConnectionTest, YeOldWireProtocol)
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
 
-        std::vector<StringAndIntNoConstructorReply>             replyData1;
-        Op_Reply<std::vector<StringAndIntNoConstructorReply>>   reply1(replyData1);
+        std::vector<StringAndIntNoConstructorReply>     replyData1;
+        auto                                            reply1 = get_Op_Reply(replyData1);
         connection >> reply1;
 
         EXPECT_TRUE(reply1.isOk());
@@ -194,8 +194,8 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
         connection << send_Op_GetMore(fullConnection, reply1);
 
-        StringAndIntNoConstructorReply              replyData2;
-        Op_Reply<StringAndIntNoConstructorReply>    reply2(replyData2);
+        StringAndIntNoConstructorReply                  replyData2;
+        auto                                            reply2  = get_Op_Reply(replyData2);
         connection >> reply2;
         EXPECT_FALSE(reply2.isOk());
         EXPECT_EQ(reply2.responseFlags & OP_ReplyFlag::CursorNotFound, OP_ReplyFlag::CursorNotFound);
@@ -204,8 +204,8 @@ TEST(ConnectionTest, YeOldWireProtocol)
     // Check the query can actual filter.
     {
         connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
-        StringAndIntNoConstructorReply              replyData;
-        Op_Reply<StringAndIntNoConstructorReply>    reply(replyData);
+        StringAndIntNoConstructorReply                  replyData;
+        auto                                            reply = get_Op_Reply(replyData);
         connection >> reply;
 
         EXPECT_TRUE(reply.isOk());
@@ -226,8 +226,8 @@ TEST(ConnectionTest, YeOldWireProtocol)
         connection << send_Op_Update(fullConnection, {}, SimpleStringNoConstructor{"ThirdAndLast"}, StringAndIntNoConstructor{"Another", 45});
 
         connection << Op_Query<SimpleStringNoConstructor>(fullConnection, {.ret = 100}, "Another");
-        StringAndIntNoConstructorReply              replyData;
-        Op_Reply<StringAndIntNoConstructorReply>    reply(replyData);
+        StringAndIntNoConstructorReply                  replyData;
+        auto                                            reply = get_Op_Reply(replyData);
         connection >> reply;
 
         EXPECT_TRUE(reply.isOk());
@@ -252,8 +252,8 @@ TEST(ConnectionTest, YeOldWireProtocol)
     // Make sure that the delete worked.
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
-        StringAndIntNoConstructorReply              replyData;
-        Op_Reply<StringAndIntNoConstructorReply>    reply(replyData);
+        StringAndIntNoConstructorReply                  replyData;
+        auto                                            reply = get_Op_Reply(replyData);
         connection >> reply;
 
         EXPECT_TRUE(reply.isOk());
@@ -273,7 +273,7 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
 static bool checkTheNumberofObjectsIs(std::string const& message, MongoConnection& connection, int expected)
 {
-    connection << make_CmdDB_Find("test", "ConnectionTest");
+    connection << send_CmdDB_Find("test", "ConnectionTest");
 
     std::vector<StringAndIntNoConstructor>      data;
     CmdDB_FindReply<StringAndIntNoConstructor>  reply(data);
@@ -294,7 +294,7 @@ static bool checkTheNumberofObjectsIs(std::string const& message, MongoConnectio
 
 static bool zeroOutCollection(MongoConnection& connection)
 {
-    connection << make_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
+    connection << send_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
 
     CmdDB_DeleteReply   reply;
     connection >> reply;
@@ -318,7 +318,7 @@ static bool setTheDefaultCollectinState(MongoConnection& connection)
                                                                  {"Bit The Dust", 22},
                                                                 };
 
-    connection << make_CmdDB_Insert("test", "ConnectionTest", std::begin(objects), std::end(objects));
+    connection << send_CmdDB_Insert("test", "ConnectionTest", objects);
     CmdDB_InsertReply   reply;
     connection >> reply;
 
@@ -393,7 +393,7 @@ std::unique_ptr<MongoConnection> ConnectionTestMiddleWireAction::connection;
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)
 {
     // Delete 2 item for the collection
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
     CmdDB_DeleteReply   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -411,7 +411,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_1_Items)
 {
     // FindRemove 1 item for the collection
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindDelete("test", "ConnectionTest", {}, FindValue{48});   // 2 items have 48 values this should remove one
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{48});   // 2 items have 48 values this should remove one
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -434,7 +434,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_1_Items)
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_0_Items)
 {
     // FindRemove Remove an item that is not there.
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindDelete("test", "ConnectionTest", {}, FindValue{112});
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{112});
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -454,7 +454,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items)
 {
     // FindUpdate 1 item for the collection
 
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -478,7 +478,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items)
 {
     // FindUpdate 0 item for the collection
 
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -498,7 +498,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert)
 {
     // FindUpdate 0 item for the collection
 
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -518,7 +518,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items_ReturnUpdated)
 {
     // FindUpdate 1 item for the collection
 
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -540,7 +540,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items_ReturnNull)
 {
     // FindUpdate 0 item for the collection
 
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -560,7 +560,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_Ret
 {
     // FindUpdate 0 item for the collection
 
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
     CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -580,7 +580,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_Ret
 
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetLastError_NoError)
 {
-    ConnectionTestMiddleWireAction::getConnection() << make_CmdDB_GetLastError("test");
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_GetLastError("test");
     CmdDB_GetLastErrorReply   reply;
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
@@ -602,7 +602,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
 
     std::vector<StringAndIntNoConstructor>      data;
     CmdDB_FindReply<StringAndIntNoConstructor>  reply1(data);
-    connection << make_CmdDB_Find("test", "ConnectionTest", {.batchSize = 2});
+    connection << send_CmdDB_Find("test", "ConnectionTest", {.batchSize = 2});
     connection >> reply1;
 
     EXPECT_TRUE(reply1.isOk());
@@ -610,7 +610,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
     EXPECT_NE(0,   reply1.reply.cursor.id);
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply2(data);
-    connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply1);
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply1);
     connection >> reply2;
 
     EXPECT_TRUE(reply2.isOk());
@@ -618,7 +618,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
     EXPECT_NE(0,   reply2.reply.cursor.id);
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply3(data);
-    connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
     connection >> reply3;
 
     EXPECT_TRUE(reply3.isOk());
@@ -626,7 +626,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
     EXPECT_EQ(0,   reply3.reply.cursor.id);
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply4(data);
-    connection << make_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
     connection >> reply4;
 
     EXPECT_FALSE(reply4.isOk());

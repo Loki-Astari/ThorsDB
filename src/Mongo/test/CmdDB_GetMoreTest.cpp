@@ -6,7 +6,7 @@ using namespace ThorsAnvil::DB::Mongo;
 
 TEST(CmdDB_GetMoreTest, Base)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection");
+    auto getMore = send_CmdDB_GetMore("database", "collection");
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -16,7 +16,7 @@ TEST(CmdDB_GetMoreTest, Base)
 
 TEST(CmdDB_GetMoreTest, SetBatchSize)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection").setBatchSize(3);
+    auto getMore = send_CmdDB_GetMore("database", "collection").setBatchSize(3);
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -27,7 +27,7 @@ TEST(CmdDB_GetMoreTest, SetBatchSize)
 
 TEST(CmdDB_GetMoreTest, SetBatchSizeOptions)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection", {.batchSize = 3});
+    auto getMore = send_CmdDB_GetMore("database", "collection", {.batchSize = 3});
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -38,7 +38,7 @@ TEST(CmdDB_GetMoreTest, SetBatchSizeOptions)
 
 TEST(CmdDB_GetMoreTest, SetMaxTimeout)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection").setMaxTimeout(6);
+    auto getMore = send_CmdDB_GetMore("database", "collection").setMaxTimeout(6);
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -49,7 +49,7 @@ TEST(CmdDB_GetMoreTest, SetMaxTimeout)
 
 TEST(CmdDB_GetMoreTest, SetMaxTimeoutOptions)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection", {.maxTimeMS = 3});
+    auto getMore = send_CmdDB_GetMore("database", "collection", {.maxTimeMS = 3});
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -60,7 +60,7 @@ TEST(CmdDB_GetMoreTest, SetMaxTimeoutOptions)
 
 TEST(CmdDB_GetMoreTest, SetComment)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection").setComment("Hi There");
+    auto getMore = send_CmdDB_GetMore("database", "collection").setComment("Hi There");
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -71,7 +71,7 @@ TEST(CmdDB_GetMoreTest, SetComment)
 
 TEST(CmdDB_GetMoreTest, SetCommentOptions)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection", {.comment = "Hi There Again"});
+    auto getMore = send_CmdDB_GetMore("database", "collection", {.comment = "Hi There Again"});
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -82,7 +82,7 @@ TEST(CmdDB_GetMoreTest, SetCommentOptions)
 
 TEST(CmdDB_GetMoreTest, SetAll)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection").setComment("Hi There").setMaxTimeout(89).setBatchSize(102);
+    auto getMore = send_CmdDB_GetMore("database", "collection").setComment("Hi There").setMaxTimeout(89).setBatchSize(102);
     std::stringstream stream;
     stream << make_hr(getMore);
 
@@ -95,7 +95,7 @@ TEST(CmdDB_GetMoreTest, SetAll)
 
 TEST(CmdDB_GetMoreTest, SetAllOptions)
 {
-    auto getMore = make_CmdDB_GetMore("database", "collection", {.batchSize = 12, .maxTimeMS = 104, .comment = "Hi There Again"});
+    auto getMore = send_CmdDB_GetMore("database", "collection", {.batchSize = 12, .maxTimeMS = 104, .comment = "Hi There Again"});
     std::stringstream stream;
     stream << make_hr(getMore);
 

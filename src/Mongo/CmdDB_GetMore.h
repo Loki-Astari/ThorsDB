@@ -3,6 +3,18 @@
 
 // https://docs.mongodb.com/manual/reference/command/getMore/#getmore
 
+/* $    Usage: CmdDB_GetMore
+ * $        Document:           Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:         connection to mongo DB or a stream.
+ * $        Op_QueryOptions:    See: Op_Query.h
+ * $        GetMoreOptions:     See: below
+ * $        Reply:              object returned from CmdDB_Find or CmdDB_GetMore
+ * $                            If provided the cursor is extracted from this, otherwise the cursor
+ * $                            is retrived from the connection that keeps track of the last cursor used.
+ *
+ * >    connection << send_CmdDB_GetMore("db", "collection" [, Op_Query_Options] [, GetMoreOptions], [, CmdDB_FindReply]);
+ */
+
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
@@ -68,40 +80,21 @@ template<typename Document>
 using CmdDB_GetMoreReply    = CmdDB_FindReplyBase<CursorNext<Document>>;
 
 // Helper functions to return object
-inline
-CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt)
-{
-    using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), {}, getMoreOpt, -1);
-}
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt);
 
-inline
-CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options = {}, GetMoreOptions const& getMoreOpt = {})
-{
-    using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), options, getMoreOpt, -1);
-}
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options = {}, GetMoreOptions const& getMoreOpt = {});
 
 template<typename Cursor>
-CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, CmdDB_FindReplyBase<Cursor> const& reply)
-{
-    using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), {}, {}, reply.reply.cursor.id);
-}
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, CmdDB_FindReplyBase<Cursor> const& reply);
 
 template<typename Cursor>
-CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply)
-{
-    using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), {}, getMoreOpt, reply.reply.cursor.id);
-}
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply);
 
 template<typename Cursor>
-CmdDB_GetMore make_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options, GetMoreOptions const& getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply)
-{
-    using namespace std::string_literals;
-    return CmdDB_GetMore(std::move(db), std::move(collection), options, getMoreOpt, reply.reply.cursor.id);
-}
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options, CmdDB_FindReplyBase<Cursor> const& reply);
+
+template<typename Cursor>
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options, GetMoreOptions const& getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply);
 
 }
 
@@ -110,5 +103,7 @@ ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::GetMoreOptional,           filter);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::GetMoreOptional,            batchSize, maxTimeMS, comment);
 ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::GetMoreOptional,
                        ThorsAnvil::DB::Mongo::GetMore,                  getMore, collection);
+
+#include "CmdDB_GetMore.tpp"
 
 #endif

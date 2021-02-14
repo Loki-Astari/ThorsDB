@@ -3,6 +3,13 @@
 
 // https://docs.mongodb.com/manual/reference/command/getLastError/#getlasterror
 
+/* $    Usage: CmdDB_GetLastError
+ * $        connection:         connection to mongo DB or a stream.
+ * $        Op_QueryOptions:    See: Op_Query.h
+ * $        GetLastErrorOptions:See: below
+ *
+ * >    connection << send_CmdDB_GetLastError("db", [, Op_Query_Options] [, GetLastErrorOptions]);
+ */
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
@@ -90,19 +97,9 @@ using CmdDB_GetLastError        = CmdDB_Query<GetLastError>;
 
 using CmdDB_GetLastErrorReply   = CmdDB_Reply<GetLastErrorReply>;
 
-inline
-CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, GetLastErrorOptions const& getLastErrorOpt = {})
-{
-    using namespace std::string_literals;
-    return CmdDB_GetLastError(std::move(db), ""s, {}, getLastErrorOpt);
-}
+CmdDB_GetLastError send_CmdDB_GetLastError(std::string db, GetLastErrorOptions const& getLastErrorOpt = {});
 
-inline
-CmdDB_GetLastError make_CmdDB_GetLastError(std::string db, Op_QueryOptions const& options, GetLastErrorOptions const& getLastErrorOpt = {})
-{
-    using namespace std::string_literals;
-    return CmdDB_GetLastError(std::move(db), ""s, options, getLastErrorOpt);
-}
+CmdDB_GetLastError send_CmdDB_GetLastError(std::string db, Op_QueryOptions const& options, GetLastErrorOptions const& getLastErrorOpt = {});
 
 }
 

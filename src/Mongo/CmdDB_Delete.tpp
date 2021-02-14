@@ -30,6 +30,29 @@ Delete<Document>::Delete(DeleteOptions const& options, std::string collection, I
     , deletes(begin, end)
 {}
 
+template<typename Document>
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Document doc)
+{
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), {}, {}, DeleteQuery{std::move(doc)});
+}
+
+template<typename Document>
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, DeleteOptions const& deleteOpt, Document doc)
+{
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), {}, deleteOpt, DeleteQuery{std::move(doc)});
+}
+
+template<typename Document>
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, Document doc)
+{
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), options, {}, DeleteQuery{std::move(doc)});
+}
+
+template<typename Document>
+CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, DeleteOptions const& deleteOpt, Document doc)
+{
+    return CmdDB_Delete<Document>(std::move(db), std::move(collection), options, deleteOpt, DeleteQuery{std::move(doc)});
+}
 }
 
 #endif

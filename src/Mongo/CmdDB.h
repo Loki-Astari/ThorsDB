@@ -16,11 +16,8 @@ enum class ReadConcernLevel {local, available, majority, linearizable};
 
 struct Collation
 {
-    friend bool operator!=(Collation const& lhs, Collation const& rhs)
-    {
-        return std::tie(lhs.locale, lhs.caseLevel, lhs.caseFirst, lhs.strength, lhs.numericOrdering, lhs.alternate, lhs.maxVariable, lhs.backwards)
-            != std::tie(rhs.locale, rhs.caseLevel, rhs.caseFirst, rhs.strength, rhs.numericOrdering, rhs.alternate, rhs.maxVariable, rhs.backwards);
-    }
+    friend bool operator!=(Collation const& lhs, Collation const& rhs);
+
     std::string     locale;
     bool            caseLevel           = false;
     std::string     caseFirst;
@@ -38,6 +35,12 @@ struct WriteErrors
     std::string                 errmsg;
 };
 
+struct ReadConcern
+{
+    friend bool operator!=(ReadConcern const& lhs, ReadConcern const& rhs);
+    ReadConcernLevel    level = ReadConcernLevel::local;
+};
+
 struct WriteConcernError
 {
     int                         code;
@@ -47,10 +50,7 @@ struct WriteConcernError
 struct WriteConcern
 {
     WriteConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
-    friend bool operator!=(WriteConcern const& lhs, WriteConcern const& rhs)
-    {
-        return std::tie(lhs.w, lhs.j, lhs.wtimeout) != std::tie(rhs.w, rhs.j, rhs.wtimeout);
-    }
+    friend bool operator!=(WriteConcern const& lhs, WriteConcern const& rhs);
 
     int             w           = 0;
     bool            j           = 0;
