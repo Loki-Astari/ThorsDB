@@ -42,7 +42,6 @@ struct Op_Insert
     View                    documents;
 
     public:
-        Op_Insert(std::string fullCollectionName, View&& range);
         Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& range);
 
         std::ostream& print(std::ostream& stream) const;

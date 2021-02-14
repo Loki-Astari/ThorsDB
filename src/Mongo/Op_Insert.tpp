@@ -12,11 +12,6 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename View>
-Op_Insert<View>::Op_Insert(std::string fullCollectionName, View&& view)
-    : Op_Insert(std::move(fullCollectionName), OP_InsertFlag::empty, std::forward<View>(view))
-{}
-
-template<typename View>
 Op_Insert<View>::Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& view)
     : header(OpCode::OP_INSERT)
     , flags(flags)

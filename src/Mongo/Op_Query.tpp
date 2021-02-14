@@ -86,6 +86,12 @@ std::ostream& Op_Query<Document>::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, Op_Query<Document> const& data)
+{
+    return data.print(stream);
+}
+
 }
 
 #endif

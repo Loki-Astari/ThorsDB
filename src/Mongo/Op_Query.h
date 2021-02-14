@@ -76,10 +76,7 @@ class Op_Query: public Op_QueryOptions
 };
 
 template<typename Document>
-std::ostream& operator<<(std::ostream& stream, Op_Query<Document> const& data)
-{
-    return data.print(stream);
-}
+std::ostream& operator<<(std::ostream& stream, Op_Query<Document> const& data);
 
 }
 

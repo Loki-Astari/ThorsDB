@@ -12,17 +12,6 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Selector, typename Update>
-Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, Selector&& selector, Update&& update)
-    : header(OpCode::OP_UPDATE)
-    , fullCollectionName(std::move(fullCollectionName))
-    , flags(OP_UpdateFlag::empty)
-    , selector(std::forward<Selector>(selector))
-    , update(std::forward<Update>(update))
-{
-    header.prepareToSend(getSize());
-}
-
-template<typename Selector, typename Update>
 Op_Update<Selector, Update>::Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector, Update&& update)
     : header(OpCode::OP_UPDATE)
     , fullCollectionName(std::move(fullCollectionName))
@@ -76,7 +65,7 @@ std::ostream& operator<<(std::ostream& stream, Op_Update<Selector, Update> const
 template<typename Selector, typename Update>
 Op_Update<Selector, Update> send_Op_Update(std::string fullCollectionName, Selector&& selector, Update&& update)
 {
-    return Op_Update<Selector, Update>(std::move(fullCollectionName), std::forward<Selector>(selector), std::forward<Update>(update));
+    return Op_Update<Selector, Update>(std::move(fullCollectionName), OP_UpdateFlag::empty, std::forward<Selector>(selector), std::forward<Update>(update));
 }
 
 template<typename Selector, typename Update>

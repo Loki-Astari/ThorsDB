@@ -39,7 +39,6 @@ class Op_Update
     Update                  update;
 
     public:
-        Op_Update(std::string fullCollectionName, Selector&& selector = {}, Update&& update = {});
         Op_Update(std::string fullCollectionName, OP_UpdateFlag flags, Selector&& selector = {}, Update&& update = {});
 
         std::ostream& print(std::ostream& stream) const;
