@@ -60,8 +60,6 @@ TEST(ConnectionTest, YeOldWireProtocol)
     using namespace ThorsAnvil::DB::Mongo;
 
     MongoConnection  connection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
-    ErrorInfo        info;
-    bool             error = true;
 
     std::string fullConnection  = THOR_TESTING_MONGO_DB;
     fullConnection += ".ConnectionTest";
@@ -80,16 +78,10 @@ TEST(ConnectionTest, YeOldWireProtocol)
         {
             connection >> get_Op_Reply(replyData);
             EXPECT_EQ(0, replyData.size());
-            error = false;
         }
         catch(MongoException const& e)
         {
-            info = e.info;
-        }
-
-        if (error)
-        {
-            std::cerr << info.getHRErrorMessage()
+            std::cerr << e
                       << ThorsAnvil::Serialize::jsonExporter(replyData)
                       << "\n\n";
         }
@@ -108,22 +100,15 @@ TEST(ConnectionTest, YeOldWireProtocol)
     {
         connection << Op_Query<TestFindAll>(fullConnection, {.ret = 100});
         std::vector<StringAndIntNoConstructorReply> replyData;
-        error = true;
 
         try
         {
             connection >> get_Op_Reply(replyData);
             EXPECT_EQ(3, replyData.size());
-            error = false;
         }
         catch(MongoException const& e)
         {
-            info = e.info;
-        }
-
-        if (error)
-        {
-            std::cerr << info.getHRErrorMessage()
+            std::cerr << e
                       << ThorsAnvil::Serialize::jsonExporter(replyData)
                       << "\n\n";
         }
@@ -135,7 +120,6 @@ TEST(ConnectionTest, YeOldWireProtocol)
         std::vector<StringAndIntNoConstructorReply>             replyData2;
         std::vector<StringAndIntNoConstructorReply>             replyData3;
 
-        error = true;
         try
         {
             connection << Op_Query<TestFindAll>(fullConnection, {.ret = 2});
@@ -161,16 +145,10 @@ TEST(ConnectionTest, YeOldWireProtocol)
             auto cursorInfo3 = connection.getCursorInfo(connection.getLastOpenCursor());
             EXPECT_EQ(cursorInfo3.first, 0);
             EXPECT_EQ(cursorInfo3.second, 3);
-            error = false;
         }
         catch(MongoException const& e)
         {
-            info = e.info;
-        }
-
-        if (error)
-        {
-            std::cerr << info.getHRErrorMessage()
+            std::cerr << e
                       << ThorsAnvil::Serialize::jsonExporter(replyData1)
                       << ThorsAnvil::Serialize::jsonExporter(replyData2)
                       << ThorsAnvil::Serialize::jsonExporter(replyData3)
