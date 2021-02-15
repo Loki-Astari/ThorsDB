@@ -385,6 +385,26 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)
 
     checkTheNumberofObjectsIs("CmdDB_Delete_2_Items", ConnectionTestMiddleWireAction::getConnection(), 3);
 }
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items_RValue)
+{
+    // Delete 2 item for the collection
+    bool ok = false;
+    try
+    {
+        ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
+        ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_DeleteReply();
+        ok = true;
+    }
+    catch(MongoException const& e)
+    {
+        std::cerr << e
+                  << "\n\n";
+    }
+
+    EXPECT_TRUE(true);
+
+    checkTheNumberofObjectsIs("CmdDB_Delete_2_Items", ConnectionTestMiddleWireAction::getConnection(), 3);
+}
 
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_1_Items)
 {
