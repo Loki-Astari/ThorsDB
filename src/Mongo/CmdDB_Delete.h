@@ -10,6 +10,7 @@
  * $        DeleteOptions:      See: below
  *
  * >    connection << send_CmdDB_Delete("db", "collection" [, Op_Query_Options] [, DeleteOptions] [,<Document>]);
+ * <    connection >> get_CmdDB_DeleteReply();
  */
 
 #include "CmdDB.h"
@@ -91,6 +92,8 @@ CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection,
 
 template<typename Document>
 CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, DeleteOptions const& deleteOpt, Document doc);
+
+inline CmdDB_DeleteReply get_CmdDB_DeleteReply() {return CmdDB_DeleteReply{};}
 
 }
 

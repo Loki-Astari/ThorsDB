@@ -15,6 +15,7 @@
 #include "View.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
+#include "ThorSerialize/JsonThor.h"
 
 #include <string>
 #include <iostream>
@@ -53,6 +54,10 @@ struct MongoException: public std::runtime_error
         : runtime_error(message)
         , info(info)
     {}
+    friend std::ostream& operator<<(std::ostream& stream, MongoException const& data)
+    {
+        return stream << data.what() << "\n" << ThorsAnvil::Serialize::jsonExporter(data.info);
+    }
 };
 
 class Op_GetMore;
