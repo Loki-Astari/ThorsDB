@@ -251,20 +251,28 @@ TEST(ConnectionTest, YeOldWireProtocol)
 
 static bool checkTheNumberofObjectsIs(std::string const& message, MongoConnection& connection, int expected)
 {
-    connection << send_CmdDB_Find("test", "ConnectionTest");
-
     std::vector<StringAndIntNoConstructor>      data;
-    CmdDB_FindReply<StringAndIntNoConstructor>  reply(data);
-    connection >> reply;
 
-    EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(expected,   data.size());
-    EXPECT_EQ(1.0, reply.reply.ok);
-
-    if (!reply.isOk() || data.size() != expected)
+    try
     {
-        std::cerr << "Fail in: " << message << "\n";
-        std::cerr << make_hr(reply);
+        connection << send_CmdDB_Find("test", "ConnectionTest");
+        connection >> get_CmdDB_FindReply(data);
+    }
+    catch(MongoException const& e)
+    {
+        EXPECT_TRUE(false);
+        std::cerr << "Fail in: " << message
+                  << " Exception: " << e
+                  << "\n\n";
+        return false;
+    }
+
+    EXPECT_EQ(expected,   data.size());
+
+    if (data.size() != expected)
+    {
+        std::cerr << "Fail in: " << message
+                  << "Bad Result Size\n";
         return false;
     }
     return true;
@@ -609,6 +617,39 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply2(data);
     connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply1);
+    connection >> reply2;
+
+    EXPECT_TRUE(reply2.isOk());
+    EXPECT_EQ(4,   data.size());
+    EXPECT_NE(0,   reply2.reply.cursor.id);
+
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply3(data);
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
+    connection >> reply3;
+
+    EXPECT_TRUE(reply3.isOk());
+    EXPECT_EQ(5,   data.size());
+    EXPECT_EQ(0,   reply3.reply.cursor.id);
+
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply4(data);
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
+    connection >> reply4;
+
+    EXPECT_FALSE(reply4.isOk());
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMoreUsing_RValue)
+{
+    MongoConnection& connection = ConnectionTestMiddleWireAction::getConnection();
+
+    std::vector<StringAndIntNoConstructor>      data;
+    connection << send_CmdDB_Find("test", "ConnectionTest", {.batchSize = 2});
+    connection >> get_CmdDB_FindReply(data);
+
+    EXPECT_EQ(2,   data.size());
+
+    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply2(data);
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}/*, reply1*/);
     connection >> reply2;
 
     EXPECT_TRUE(reply2.isOk());

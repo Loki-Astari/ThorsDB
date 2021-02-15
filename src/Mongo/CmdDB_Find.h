@@ -12,7 +12,10 @@
  * $        DeleteOptions:      See: below
  *
  * >    connection << send_CmdDB_Find("db", "collection" [, Op_Query_Options] [, FindOptions] [,<Document: Find> [, <Document:Sort>]]);
+ * >    // OR
  * >    connection << send_CmdDB_FindAllSort("db", "collection" [, Op_Query_Options] [, FindOptions] [, <Document:Sort>]);
+ * >    // Followed by
+ * >    connection >> get_CmdDB_FindReply(std::vector<Document>)
  */
 
 #include "CmdDB.h"
@@ -131,88 +134,11 @@ class Find: public FindOptional
         std::map<std::string, bool>     findFilter = {{"filter", false}, {"sort", false}};
 };
 
-template<typename Document>
-struct CursorFirst
-{
-    using DataType = Document;
-    CursorFirst(std::vector<Document>& container)
-        : firstBatch(container)
-    {}
-
-    bool                    partialResultsReturned  = true;
-    CursorId                id                      = 0;
-    std::string             ns;
-    std::reference_wrapper<std::vector<Document>>  firstBatch;
-};
-
-template<typename Document>
-struct CursorNext
-{
-    using DataType = Document;
-    CursorNext(std::vector<Document>& container)
-        : nextBatch(container)
-    {}
-
-    bool                    partialResultsReturned  = true;
-    CursorId                id                      = 0;
-    std::string             ns;
-    std::reference_wrapper<std::vector<Document>>  nextBatch;
-};
-
-struct Signature
-{
-    std::int64_t            keyIdP                  = 0;
-    std::string             hash;
-};
-
-struct ClusterTime
-{
-    std::time_t             clusterTime             = 0;
-    Signature               signature;
-};
-
-template<typename T>
-struct DataTypeExtractor
-{
-    using DataType = T;
-};
-
-template<typename Doc>
-struct DataTypeExtractor<CursorFirst<Doc>>
-{
-    using DataType = typename CursorFirst<Doc>::DataType;
-};
-template<typename Doc>
-struct DataTypeExtractor<CursorNext<Doc>>
-{
-    using DataType = typename CursorFirst<Doc>::DataType;
-};
-
-template<typename Cursor>
-struct FindReply
-{
-    using Options = typename DataTypeExtractor<Cursor>::DataType;
-    FindReply(std::vector<Options>& container)
-        : cursor(container)
-    {}
-
-    Cursor                  cursor;
-    double                  ok                      = 0.0;
-    std::time_t             operationTime           = 0;
-    ClusterTime             $clusterTime;
-
-    bool isOk() const                       {return ok;}
-    std::string getHRErrorMessage() const   {return "XX";}
-};
-
 template<typename Filter, typename Sort>
 using CmdDB_Find            = CmdDB_Query<Find<Filter, Sort>>;
 
-template<typename Cursor>
-using CmdDB_FindReplyBase   = CmdDB_Reply<FindReply<Cursor>>;
-
 template<typename Document>
-using CmdDB_FindReply       = CmdDB_FindReplyBase<CursorFirst<Document>>;
+using CmdDB_FindReply       = CmdDB_FindReplyBase<CursorFirst<Base<Document>>>;
 
 template<typename Filter = FindAll, typename Sort = DefaultSort>
 CmdDB_Find<Filter, DefaultSort> send_CmdDB_Find(std::string db, std::string collection, Filter&& filter = Filter{}, Sort&& sort = Sort{});
@@ -237,6 +163,9 @@ CmdDB_Find<FindAll, Sort> send_CmdDB_FindAllSort(std::string db, std::string col
 
 template<typename Sort>
 CmdDB_Find<FindAll, Sort> send_CmdDB_FindAllSort(std::string db, std::string collection, Op_QueryOptions const& options, FindOptions const&findOpt, Sort&& sort);
+
+template<typename Document>
+CmdDB_FindReply<Document> get_CmdDB_FindReply(std::vector<Document>& data)  {return CmdDB_FindReply<Document>(data);}
 
 }
 

@@ -77,12 +77,12 @@ class GetMore: public GetMoreOptional
 };
 
 template<typename Document>
-using CmdDB_GetMoreReply    = CmdDB_FindReplyBase<CursorNext<Document>>;
+using CmdDB_GetMoreReply    = CmdDB_FindReplyBase<CursorNext<Base<Document>>>;
 
 // Helper functions to return object
-CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt);
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt = {});
 
-CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options = {}, GetMoreOptions const& getMoreOpt = {});
+CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options, GetMoreOptions const& getMoreOpt = {});
 
 template<typename Cursor>
 CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, CmdDB_FindReplyBase<Cursor> const& reply);
