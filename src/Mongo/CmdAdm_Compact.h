@@ -16,10 +16,14 @@ namespace ThorsAnvil::DB::Mongo
 
 struct Compact
 {
+    Compact(std::string compact)
+        : compact(std::move(compact))
+    {}
     std::string    compact;
 };
 
 using CmdAdm_Compact      = CmdAdm_Query<Compact>;
+using CmdAdm_CompactReply = CmdAdm_Reply<CmdReplyBase>;
 
 }
 

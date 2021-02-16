@@ -59,6 +59,8 @@ struct WriteConcern
 
 struct CmdReplyBase
 {
+    using UserData  = void;
+
     double                      ok              = 0.0;
     std::string                 errmsg;
     std::string                 codeName;
