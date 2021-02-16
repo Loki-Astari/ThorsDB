@@ -4,7 +4,9 @@
 #include "UnitTestWithConnection.h"
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
+#include "CmdDB_GetLastError.h"
 #include "CmdAdm_ListDataBases.h"
+#include "CmdAdm_Compact.h"
 
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -20,22 +22,22 @@ class CmdAdmTest: public UnitTestWithConnection
 };
 
 
-TEST(CmdAdmTest, ListDB)
+TEST_F(CmdAdmTest, ListDataBasesB)
 {
-    MongoConnection  connection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
+    MongoConnection&  connection    = CmdAdmTest::getConnection();
 
     // Send Command to prove authentication worked and we have an open and working connection:
     connection << CmdAdm_ListDataBases{};
 
-    CmdAdm_ListDataBasesReply   listOfDatabases;
-    connection >> listOfDatabases;
+    CmdAdm_ListDataBasesReply   listOfDataBases;
+    connection >> listOfDataBases;
 
-    if (listOfDatabases)
+    if (listOfDataBases)
     {
 
-        std::cerr << "ListDB TS:   " << listOfDatabases.reply.totalSize << "\n";
+        std::cerr << "ListDB TS:   " << listOfDataBases.reply.totalSize << "\n";
         std::cerr << "ListDB DB: [";
-        for (auto const& db: listOfDatabases.reply.databases)
+        for (auto const& db: listOfDataBases.reply.databases)
         {
             std::cerr << "{Name: " << db.name << ", Size: " << db.sizeOnDisk << ", Empty: " << db.empty << "}";
         }
@@ -43,7 +45,18 @@ TEST(CmdAdmTest, ListDB)
     }
     else
     {
-        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getHRErrorMessage() << "\n";
+        std::cerr << "Failure retrieving DB List: " << listOfDataBases.getHRErrorMessage() << "\n";
     }
 }
 
+TEST_F(CmdAdmTest, Compact)
+{
+    MongoConnection&  connection    = CmdAdmTest::getConnection();
+    connection << CmdAdm_Compact{"ConnectionTest"s};
+
+    connection << send_CmdDB_GetLastError("ConnectionTest");
+    CmdDB_GetLastErrorReply     lastError;
+    connection >> lastError;
+    std::cout << lastError.reply.to_String();
+
+}

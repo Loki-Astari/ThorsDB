@@ -10,6 +10,12 @@ namespace ThorsAnvil::DB::Mongo
 
 template<typename Document>
 template<typename Doc, NoOptions<Doc>, typename... Args>
+CmdAdm_Query<Document>::CmdAdm_Query(Args&&... args)
+    : Op_Query<Document>("admin.$cmd", {}, std::forward<Args>(args)...)
+{}
+
+template<typename Document>
+template<typename Doc, NoOptions<Doc>, typename... Args>
 CmdAdm_Query<Document>::CmdAdm_Query(Op_QueryOptions const& options, Args&&... args)
     : Op_Query<Document>("admin.$cmd", options, std::forward<Args>(args)...)
 {}

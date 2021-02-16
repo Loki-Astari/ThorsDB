@@ -23,7 +23,9 @@ class CmdAdm_Query: public Op_Query<Document>
 {
     public:
         template<typename Doc = Document, NoOptions<Doc> = true, typename... Args>
-        CmdAdm_Query(Op_QueryOptions const& option = {}, Args&&... args);
+        CmdAdm_Query(Args&&... args);
+        template<typename Doc = Document, NoOptions<Doc> = true, typename... Args>
+        CmdAdm_Query(Op_QueryOptions const& option, Args&&... args);
         template<typename Doc = Document, HasOptions<Doc> = true, typename... Args>
         CmdAdm_Query(Op_QueryOptions const& option, typename Doc::Options const& docOpt, Args&&... args);
 
