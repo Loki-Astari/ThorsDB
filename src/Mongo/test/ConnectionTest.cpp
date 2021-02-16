@@ -776,6 +776,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
     EXPECT_TRUE(reply1.isOk());
     EXPECT_EQ(2,   data.size());
     EXPECT_NE(0,   reply1.reply.cursor.id);
+    EXPECT_TRUE(reply1.reply.cursor.partialResultsReturned);
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply2(data);
     connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply1);
@@ -784,6 +785,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
     EXPECT_TRUE(reply2.isOk());
     EXPECT_EQ(4,   data.size());
     EXPECT_NE(0,   reply2.reply.cursor.id);
+    EXPECT_TRUE(reply1.reply.cursor.partialResultsReturned);
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply3(data);
     connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
@@ -792,6 +794,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMore)
     EXPECT_TRUE(reply3.isOk());
     EXPECT_EQ(5,   data.size());
     EXPECT_EQ(0,   reply3.reply.cursor.id);
+    EXPECT_TRUE(reply1.reply.cursor.partialResultsReturned);
 
     CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply4(data);
     connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
@@ -810,26 +813,27 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_GetMoreUsing_RValue)
 
     EXPECT_EQ(2,   data.size());
 
-    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply2(data);
-    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}/*, reply1*/);
-    connection >> reply2;
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2});
+    connection >> get_CmdDB_GetMoreReply(data);
 
-    EXPECT_TRUE(reply2.isOk());
     EXPECT_EQ(4,   data.size());
-    EXPECT_NE(0,   reply2.reply.cursor.id);
 
-    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply3(data);
-    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
-    connection >> reply3;
+    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2});
+    connection >> get_CmdDB_GetMoreReply(data);
 
-    EXPECT_TRUE(reply3.isOk());
     EXPECT_EQ(5,   data.size());
-    EXPECT_EQ(0,   reply3.reply.cursor.id);
 
-    CmdDB_GetMoreReply<StringAndIntNoConstructor>   reply4(data);
-    connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2}, reply2);
-    connection >> reply4;
+    bool good = false;
+    try
+    {
+        connection << send_CmdDB_GetMore("test", "ConnectionTest", {.batchSize = 2});
+        connection >> get_CmdDB_GetMoreReply(data);
+        good = true;
+    }
+    catch(MongoException const&)
+    {}
 
-    EXPECT_FALSE(reply4.isOk());
+    EXPECT_FALSE(good); // We expect the exception to be thrown
+    EXPECT_EQ(5,   data.size());
 }
 

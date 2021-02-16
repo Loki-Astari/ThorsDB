@@ -13,6 +13,7 @@
  * $                            is retrived from the connection that keeps track of the last cursor used.
  *
  * >    connection << send_CmdDB_GetMore("db", "collection" [, Op_Query_Options] [, GetMoreOptions], [, CmdDB_FindReply]);
+ * >    connection >> get_CmdDB_GetMoreReply(std::vector<Document>);    // CmdDB_Find
  */
 
 #include "CmdDB.h"
@@ -95,6 +96,9 @@ CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_Quer
 
 template<typename Cursor>
 CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_QueryOptions const& options, GetMoreOptions const& getMoreOpt, CmdDB_FindReplyBase<Cursor> const& reply);
+
+template<typename Document>
+CmdDB_GetMoreReply<Document> get_CmdDB_GetMoreReply(std::vector<Document>& data)  {return CmdDB_GetMoreReply<Document>(data);}
 
 }
 

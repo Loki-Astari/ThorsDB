@@ -16,6 +16,10 @@
  * >    connection << send_CmdDB_FindAllSort("db", "collection" [, Op_Query_Options] [, FindOptions] [, <Document:Sort>]);
  * >    // Followed by
  * >    connection >> get_CmdDB_FindReply(std::vector<Document>)
+ * >
+ * >    // Optionally
+ * >    connection << send_CmdDB_GetMore("db", "collection" [, Op_Query_Options] [, GetMoreOptions], [, CmdDB_FindReply]);
+ * >    connection >> get_CmdDB_GetMoreReply(std::vector<Document>);    // Appends
  */
 
 #include "CmdDB.h"

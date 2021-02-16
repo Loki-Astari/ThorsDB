@@ -9,6 +9,9 @@
  * $        GetLastErrorOptions:See: below
  *
  * >    connection << send_CmdDB_GetLastError("db", [, Op_Query_Options] [, GetLastErrorOptions]);
+ * >    CmdDB_GetLastErrorReply     lastError
+ * >    connection >> lastError;
+ * >    std::cout << lastError.getHRErrorMessage();
  */
 #include "CmdDB.h"
 #include "CmdDB_Query.h"
