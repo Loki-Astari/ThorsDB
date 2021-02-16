@@ -11,6 +11,9 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
+// TODO Add ListDataBase Options.
+// See CmdDB_Find for the pattern.
+
 struct ListDataBases
 {
     bool    listDatabases = 1;
