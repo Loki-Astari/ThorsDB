@@ -13,7 +13,10 @@
  * $        FindModifyOptions:  See: below
  *
  * >    connection << send_CmdDB_FindDelete("db", "collection" [, Op_Query_Options] [, FindModifyOptions], <Document:Find> [, <Document:Sort>]);
+ * >    connection >> get_CmdDB_FindDelete(std::unique_ptr<Document>);
+ * >    // OR
  * >    connection << send_CmdDB_FindUpdate("db", "collection" [, Op_Query_Options] [, FindModifyOptions], <Document:Update>, <Document:Find> [, <Document:Sort>]);
+ * >    connection >> get_CmdDB_FindUpdate(std::unique_ptr<Document>);
  */
 
 #include "CmdDB.h"
@@ -114,8 +117,15 @@ struct LastErrorObject
 template<typename Document>
 struct FindModifyReply
 {
+    using Options = std::unique_ptr<Document>;
+    using Reference = std::reference_wrapper<Options>;
+
+    FindModifyReply(std::unique_ptr<Document>& v)
+        : value(v)
+    {}
+
     LastErrorObject             lastErrorObject;
-    std::unique_ptr<Document>   value;
+    Reference                   value;
     double                      ok                      = 0.0;
 
     bool isOk() const                       {return ok;}
@@ -151,6 +161,12 @@ CmdDB_FindModify<Find, Sort, Update> send_CmdDB_FindUpdate(std::string db, std::
 
 template<typename Update, typename Find, typename Sort = DefaultSort>
 CmdDB_FindModify<Find, Sort, Update> send_CmdDB_FindUpdate(std::string db, std::string collection, Op_QueryOptions const& options, FindModifyOptions const& findModOpt, Update&& update, Find&& find, Sort&& sort = {});
+
+template<typename Document>
+CmdDB_FindModifyReply<Document> get_CmdDB_FindDeleteReply(std::unique_ptr<Document>& doc)   {return CmdDB_FindModifyReply<Document>(doc);}
+
+template<typename Document>
+CmdDB_FindModifyReply<Document> get_CmdDB_FindUpdateReply(std::unique_ptr<Document>& doc)   {return CmdDB_FindModifyReply<Document>(doc);}
 
 }
 

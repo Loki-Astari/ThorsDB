@@ -418,19 +418,20 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_1_Items)
 {
     // FindRemove 1 item for the collection
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{48});   // 2 items have 48 values this should remove one
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    bool item1 = reply.reply.value->message == "ThisAndThat";
-    bool item2 = reply.reply.value->message == "DataString";
-    if (!reply.isOk() || reply.reply.value.get() == nullptr || reply.reply.value->value != 48 || ((item1 || item2) != true))
+    bool item1 = result->message == "ThisAndThat";
+    bool item2 = result->message == "DataString";
+    if (!reply.isOk() || result.get() == nullptr || result->value != 48 || ((item1 || item2) != true))
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    ASSERT_NE(nullptr, reply.reply.value.get());
-    EXPECT_EQ(48,   reply.reply.value->value);
+    ASSERT_NE(nullptr, result.get());
+    EXPECT_EQ(48,   result.get()->value);
     EXPECT_TRUE(item1 || item2);
     EXPECT_FALSE(reply.reply.lastErrorObject.updatedExisting);
 
@@ -441,16 +442,17 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_0_Items)
 {
     // FindRemove Remove an item that is not there.
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{112});
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    if (!reply.isOk() || reply.reply.value.get() != nullptr)
+    if (!reply.isOk() || result.get() != nullptr)
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(nullptr,  reply.reply.value.get());
+    EXPECT_EQ(nullptr, result.get());
     EXPECT_FALSE(reply.reply.lastErrorObject.updatedExisting);
 
     checkTheNumberofObjectsIs("CmdDB_FindRemove_0_Items", ConnectionTestMiddleWireAction::getConnection(), 5);
@@ -461,19 +463,20 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items)
     // FindUpdate 1 item for the collection
 
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    bool item1 = reply.reply.value->message == "ThisAndThat";
-    bool item2 = reply.reply.value->message == "DataString";
-    if (!reply.isOk() || reply.reply.value.get() == nullptr || reply.reply.value->value != 48 || ((item1 || item2) != true))
+    bool item1 = result->message == "ThisAndThat";
+    bool item2 = result->message == "DataString";
+    if (!reply.isOk() || result.get() == nullptr || result->value != 48 || ((item1 || item2) != true))
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    ASSERT_NE(nullptr, reply.reply.value.get());
-    EXPECT_EQ(48,   reply.reply.value->value);
+    ASSERT_NE(nullptr, result.get());
+    EXPECT_EQ(48,   result->value);
     EXPECT_TRUE(item1 || item2);
     EXPECT_TRUE(reply.reply.lastErrorObject.updatedExisting);
 
@@ -485,16 +488,17 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items)
     // FindUpdate 0 item for the collection
 
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    if (!reply.isOk() || reply.reply.value.get() != nullptr)
+    if (!reply.isOk() || result.get() != nullptr)
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(nullptr,   reply.reply.value.get());
+    EXPECT_EQ(nullptr,   result.get());
     EXPECT_FALSE(reply.reply.lastErrorObject.updatedExisting);
 
     checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Items", ConnectionTestMiddleWireAction::getConnection(), 5);
@@ -505,16 +509,17 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert)
     // FindUpdate 0 item for the collection
 
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    if (!reply.isOk() || reply.reply.value.get() != nullptr)
+    if (!reply.isOk() || result.get() != nullptr)
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(nullptr,   reply.reply.value.get());
+    EXPECT_EQ(nullptr,   result.get());
     EXPECT_FALSE(reply.reply.lastErrorObject.updatedExisting);
 
     checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Item_And_Upsert", ConnectionTestMiddleWireAction::getConnection(), 6);
@@ -525,18 +530,19 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items_ReturnUpdated)
     // FindUpdate 1 item for the collection
 
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    if (!reply.isOk() || reply.reply.value.get() == nullptr || reply.reply.value->value != 0 || reply.reply.value->message != "Bad Things Happen if you don't test")
+    if (!reply.isOk() || result.get() == nullptr || result->value != 0 || result->message != "Bad Things Happen if you don't test")
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    ASSERT_NE(nullptr, reply.reply.value.get());
-    EXPECT_EQ(0,   reply.reply.value->value);
-    EXPECT_EQ("Bad Things Happen if you don't test", reply.reply.value->message);
+    ASSERT_NE(nullptr, result.get());
+    EXPECT_EQ(0,   result->value);
+    EXPECT_EQ("Bad Things Happen if you don't test", result->message);
     EXPECT_TRUE(reply.reply.lastErrorObject.updatedExisting);
 
     checkTheNumberofObjectsIs("CmdDB_FindUpdate_1_Items_ReturnUpdated", ConnectionTestMiddleWireAction::getConnection(), 5);
@@ -547,16 +553,17 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items_ReturnNull)
     // FindUpdate 0 item for the collection
 
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    if (!reply.isOk() || reply.reply.value.get() != nullptr)
+    if (!reply.isOk() || result.get() != nullptr)
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(nullptr,   reply.reply.value.get());
+    EXPECT_EQ(nullptr,   result.get());
     EXPECT_FALSE(reply.reply.lastErrorObject.updatedExisting);
 
     checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Items_ReturnNull", ConnectionTestMiddleWireAction::getConnection(), 5);
@@ -567,19 +574,174 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_Ret
     // FindUpdate 0 item for the collection
 
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
-    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply;
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    CmdDB_FindModifyReply<StringAndIntNoConstructor>   reply(result);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
-    if (!reply.isOk() || reply.reply.value.get() == nullptr || reply.reply.value->value != 0 || reply.reply.value->message != "Bad Things Happen if you don't test")
+    if (!reply.isOk() || result.get() == nullptr || result->value != 0 || result->message != "Bad Things Happen if you don't test")
     {
         std::cerr << make_hr(reply);
     }
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_NE(nullptr,   reply.reply.value.get());
+    EXPECT_NE(nullptr,   result.get());
     EXPECT_FALSE(reply.reply.lastErrorObject.updatedExisting);
-    EXPECT_EQ(0, reply.reply.value->value);
-    EXPECT_EQ("Bad Things Happen if you don't test", reply.reply.value->message);
+    EXPECT_EQ(0, result->value);
+    EXPECT_EQ("Bad Things Happen if you don't test", result->message);
+
+    checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted", ConnectionTestMiddleWireAction::getConnection(), 6);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_1_Items_RValue)
+{
+    // FindRemove 1 item for the collection
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{48});   // 2 items have 48 values this should remove one
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindDeleteReply(result);
+
+    bool item1 = result->message == "ThisAndThat";
+    bool item2 = result->message == "DataString";
+    if (result.get() == nullptr || result->value != 48 || ((item1 || item2) != true))
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    ASSERT_NE(nullptr, result.get());
+    EXPECT_EQ(48,   result.get()->value);
+    EXPECT_TRUE(item1 || item2);
+
+    checkTheNumberofObjectsIs("CmdDB_FindRemove_1_Items", ConnectionTestMiddleWireAction::getConnection(), 4);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindRemove_0_Items_RValue)
+{
+    // FindRemove Remove an item that is not there.
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{112});
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindDeleteReply(result);;
+
+    if (result.get() != nullptr)
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    EXPECT_EQ(nullptr, result.get());
+
+    checkTheNumberofObjectsIs("CmdDB_FindRemove_0_Items", ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items_RValue)
+{
+    // FindUpdate 1 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindUpdateReply(result);;
+
+    bool item1 = result->message == "ThisAndThat";
+    bool item2 = result->message == "DataString";
+    if (result.get() == nullptr || result->value != 48 || ((item1 || item2) != true))
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    ASSERT_NE(nullptr, result.get());
+    EXPECT_EQ(48,   result->value);
+    EXPECT_TRUE(item1 || item2);
+
+    checkTheNumberofObjectsIs("CmdDB_FindUpdate_1_Items", ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items_RValue)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindUpdateReply(result);;
+
+    if (result.get() != nullptr)
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    EXPECT_EQ(nullptr,   result.get());
+
+    checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Items", ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_RValue)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindUpdateReply(result);;
+
+    if (result.get() != nullptr)
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    EXPECT_EQ(nullptr,   result.get());
+
+    checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Item_And_Upsert", ConnectionTestMiddleWireAction::getConnection(), 6);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_1_Items_ReturnUpdated_RValue)
+{
+    // FindUpdate 1 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindUpdateReply(result);;
+
+    if (result.get() == nullptr || result->value != 0 || result->message != "Bad Things Happen if you don't test")
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    ASSERT_NE(nullptr, result.get());
+    EXPECT_EQ(0,   result->value);
+    EXPECT_EQ("Bad Things Happen if you don't test", result->message);
+
+    checkTheNumberofObjectsIs("CmdDB_FindUpdate_1_Items_ReturnUpdated", ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Items_ReturnNull_RValue)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindUpdateReply(result);;
+
+    if (result.get() != nullptr)
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    EXPECT_EQ(nullptr,   result.get());
+
+    checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Items_ReturnNull", ConnectionTestMiddleWireAction::getConnection(), 5);
+}
+
+TEST_F(ConnectionTestMiddleWireAction, CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted_RValue)
+{
+    // FindUpdate 0 item for the collection
+
+    ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
+    std::unique_ptr<StringAndIntNoConstructor>         result;
+    ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_FindUpdateReply(result);;
+
+    if (result.get() == nullptr || result->value != 0 || result->message != "Bad Things Happen if you don't test")
+    {
+        std::cerr << ThorsAnvil::Serialize::jsonExporter(result);
+    }
+
+    EXPECT_NE(nullptr,   result.get());
+    EXPECT_EQ(0, result->value);
+    EXPECT_EQ("Bad Things Happen if you don't test", result->message);
 
     checkTheNumberofObjectsIs("CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted", ConnectionTestMiddleWireAction::getConnection(), 6);
 }

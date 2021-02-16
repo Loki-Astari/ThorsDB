@@ -44,6 +44,11 @@ class CmdDB_Reply: public Op_Reply<ViewType<Document>>
             : Op_Reply<ViewType<Document>>(reply)
         {}
         template<typename Doc = Document, HasOptions<Doc> = true>
+        CmdDB_Reply(typename Doc::Options& value)
+            : Op_Reply<ViewType<Document>>(reply)
+            , reply(value)
+        {}
+        template<typename Doc = Document, HasOptions<Doc> = true>
         CmdDB_Reply(std::vector<typename Doc::Options>& container)
             : Op_Reply<ViewType<Document>>(reply)
             , reply(container)
