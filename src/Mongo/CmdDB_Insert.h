@@ -17,7 +17,7 @@
 
 #include "Util.h"
 #include "View.h"
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
 

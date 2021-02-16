@@ -9,7 +9,7 @@
  * >        This is not designed to be used directly. See CmdDB_Find.h for example.
  * >        It is expected for a CmdDB that you create an appropriate typedef.
  */
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "Op_Query.h"
 
 #include <string>

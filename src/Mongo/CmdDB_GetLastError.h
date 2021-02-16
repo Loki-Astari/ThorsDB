@@ -13,7 +13,7 @@
  * >    connection >> lastError;
  * >    std::cout << lastError.getHRErrorMessage();
  */
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
 
