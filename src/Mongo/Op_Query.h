@@ -1,13 +1,23 @@
 #ifndef THORSANVIL_DB_MONGO_OP_QUERY_H
 #define THORSANVIL_DB_MONGO_OP_QUERY_H
 
+/*
+ * $    Usage:  Op_Query
+ *
+ * >        This is not designed to be used directly. See HandShake.h for example
+ * >        I would expect you to define the Kind and what goes into it as part of a typedef.
+ */
+
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
-#include <ostream>
+
 #include <map>
+#include <string>
+#include <iostream>
 
 // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-query
+
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -32,73 +42,43 @@ enum class OP_QueryFlag : std::int32_t
                                             // unless it closes the connection.
     Partial         = 1 << 7                // Get partial results from a mongos if some shards are down (instead of throwing an error)
 };
+ThorsAnvil_MakeEnumFlag(OP_QueryFlag, empty, TailableCursor, SlaveOk, OplogReplay, NoCursorTimeout, AwaitData, Exhaust, Partial);
 
 using FieldSelector = std::map<std::string, int>;
 
-enum class TailableCursor {Close,       LeaveOpen};
-enum class Slave          {Fail,        OK};
-enum class Oplog          {Replay,      NoReplay};
-enum class Curser         {IdleTimeout, NoTimeout};
-enum class Data           {Wait,        Timeout};
-enum class Drain          {SingleBlock, All};
-enum class Partial        {All,         Available};
-
-struct QueryOptions
+struct Op_QueryOptions
 {
-    QueryOptions()
-        : tailableCursor(TailableCursor::Close)
-        , slave(Slave::Fail)
-        , oplog(Oplog::Replay)
-        , curser(Curser::IdleTimeout)
-        , data(Data::Wait)
-        , drain(Drain::SingleBlock)
-        , partial(Partial::All)
-    {}
-
-    QueryOptions& leaveOpen()        {tailableCursor = TailableCursor::LeaveOpen;return *this;}
-    QueryOptions& slaveOK()          {slave          = Slave::OK;                return *this;}
-    QueryOptions& opLogNoReplay()    {oplog          = Oplog::NoReplay;          return *this;}
-    QueryOptions& curserNoTimeout()  {curser         = Curser::NoTimeout;        return *this;}
-    QueryOptions& dataTimeout()      {data           = Data::Timeout;            return *this;}
-    QueryOptions& drainAll()         {drain          = Drain::All;               return *this;}
-    QueryOptions& partialAvailable() {partial        = Partial::Available;       return *this;}
-
-    TailableCursor      tailableCursor;
-    Slave               slave;
-    Oplog               oplog;
-    Curser              curser;
-    Data                data;
-    Drain               drain;
-    Partial             partial;
+    OP_QueryFlag    flags                   = OP_QueryFlag::empty;
+    std::int32_t    skip                    = 0;
+    std::int32_t    ret                     = 1;
+    FieldSelector   returnFieldsSelector;
 };
 
 template<typename Document>
-class Op_Query
+class Op_Query: public Op_QueryOptions
 {
-    MsgHeader       header;
-    OP_QueryFlag    flags;
-    std::string     fullCollectionName;
-    std::int32_t    numberToSkip;
-    std::int32_t    numberToReturn;
-    Document        query;
-    FieldSelector   returnFieldsSelector;
-    public:
-        template<typename... Args>
-        Op_Query(std::string const& fullCollectionName, QueryOptions options, std::int32_t count, std::int32_t skip, Args&&... args);
+    Op_MsgHeader            header;
+    std::string             fullCollectionName;
+    Document                query;
 
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Query> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Query const& data) {return data.print(stream);}
-    private:
-        std::size_t   getSize()                     const;
-        void          handleOptions(QueryOptions const& options);
-    protected:
+    public:
+        template<typename Doc = Document, NoOptions<Doc> = true, typename... Args>
+        Op_Query(std::string fullCollectionName, Op_QueryOptions const& options, Args&&... args);
+        template<typename Doc = Document, HasOptions<Doc> = true, typename... Args>
+        Op_Query(std::string fullCollectionName, Op_QueryOptions const& options, typename Doc::Options const& docOpt, Args&&... args);
+
+        Document& getQuery();
+
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
+    private:
+        std::size_t   getSize() const;
 };
 
-}
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, Op_Query<Document> const& data);
 
-ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_QueryFlag, empty, TailableCursor, SlaveOk, OplogReplay, NoCursorTimeout, AwaitData, Exhaust, Partial);
+}
 
 #include "Op_Query.tpp"
 

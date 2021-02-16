@@ -1,10 +1,21 @@
 #ifndef THORSANVIL_DB_MONGO_OP_INSERT_H
 #define THORSANVIL_DB_MONGO_OP_INSERT_H
 
+/* $    Usage: Op_Insert
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        connection:     connection to mongo DB or a stream.
+ *
+ * >    connection << send_Op_Insert("db.collection" [, OP_InsertFlag::<flag>] , <Document>);
+ */
+
 #include "Op.h"
-#include "MsgHeader.h"
+#include "Util.h"
+#include "View.h"
+#include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
-#include <ostream>
+
+#include <string>
+#include <iostream>
 
 // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-insert
 namespace ThorsAnvil::DB::Mongo
@@ -13,41 +24,42 @@ namespace ThorsAnvil::DB::Mongo
 enum class OP_InsertFlag : std::int32_t
 {
     empty           = 0,
-    ContinueOnError = 1,        // If set, the database will not stop processing a bulk insert
+    ContinueOnError = 1 << 0,   // If set, the database will not stop processing a bulk insert
                                 // if one fails (eg due to duplicate IDs). This makes bulk insert
                                 // behave similarly to a series of single inserts, except lastError
                                 // will be set if any insert fails, not just the last one.
                                 // If multiple errors occur, only the most recent will be
                                 // reported by getLastError.
 };
+ThorsAnvil_MakeEnumFlag(OP_InsertFlag, empty, ContinueOnError);
 
-enum class InsertError { Stop, Cont };
-
-template<typename Document>
+template<typename View>
 struct Op_Insert
 {
-    MsgHeader               header;             // standard message header
-    OP_InsertFlag           flags;              // bit vector - see above
-    std::string             fullCollectionName; // "dbname.collectionname"
-    std::vector<Document>   documents;          // one or more documents to insert into the collection
-    public:
-        template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, InsertError insertError, Args&&... args);
-        template<typename... Args>
-        Op_Insert(std::string const& fullCollectionName, Args&&... args);
+    Op_MsgHeader            header;             // standard message header
+    OP_InsertFlag           flags;
+    std::string             fullCollectionName;
+    View                    documents;
 
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_Insert> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_Insert const& data) {return data.print(stream);}
-    private:
-        std::size_t   getSize()                     const;
-    protected:
+    public:
+        Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& range);
+
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
+    private:
+        std::size_t   getSize()                     const;
 };
 
-}
+template<typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Insert<View> const& data);
 
-ThorsAnvil_MakeEnumFlag(ThorsAnvil::DB::Mongo::OP_InsertFlag, empty, ContinueOnError);
+template<typename Range>
+Op_Insert<ViewType<Range>> send_Op_Insert(std::string fullCollectionName, Range&& r);
+
+template<typename Range>
+Op_Insert<ViewType<Range>> send_Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, Range&& r);
+
+}
 
 #include "Op_Insert.tpp"
 

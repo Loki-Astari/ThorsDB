@@ -1,6 +1,7 @@
 #include "HandShake.h"
 #include "ThorsLogging/ThorsLogging.h"
 
+#include <stdio.h>
 
 using namespace ThorsAnvil::DB::Mongo;
 
@@ -20,8 +21,11 @@ OS::OS()
         return;
     }
     type         = buffer.sysname;
-#ifdef   __APPLE__
+#if defined(__APPLE__)
     FILE* fp = popen("sw_vers -productName", "r");
+#elif defined(__linux__)
+    FILE* fp = popen("lsb_release -a", "r");
+#endif
     if (fp == nullptr)
     {
         ThorsLogAndThrowFatal("ThorsAnvil::DB::Mongo::OS", "OS", "Can not get OS Information");
@@ -29,13 +33,21 @@ OS::OS()
     char pBuffer[100];
     while (fgets(pBuffer, sizeof(pBuffer), fp) != NULL)
     {
+#if defined(__APPLE__)
         name += pBuffer;
+#elif defined(__linux__)
+        char pValue[100];
+        if (sscanf(pBuffer, " Distributor ID: %s", pValue) == 1)
+        {
+            name = pValue;
+        }
+#endif
     }
     if (name[name.size() -1] == '\n')
     {
         name.resize(name.size() -1);
     }
-#endif
+
     architecture = buffer.machine;
     version      = buffer.release;
 }

@@ -1,40 +1,25 @@
 #ifndef THORSANVIL_DB_MONGO_OP_DELETE_TPP
 #define THORSANVIL_DB_MONGO_OP_DELETE_TPP
 
-#include "ThorSerialize/Traits.h"
+#ifndef THORSANVIL_DB_MONGO_OP_DELETE_H
+#error  "This should only be included from Op_Delete.h"
+#endif
+
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
-
-#include <numeric>
 
 namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-template<typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Remove remove, Args&&... args)
+Op_Delete<Document>::Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector)
     : header(OpCode::OP_DELETE)
-    , fullCollectionName(fullCollectionName)
-    , flags(OP_DeleteFlag::empty)
-    , selector{std::move(args)...}
-{
-    if (remove == Remove::Single)
-    {
-        flags |= OP_DeleteFlag::SingleRemove;
-    }
-    header.prepareToSend(getSize());
-}
-template<typename Document>
-template<typename... Args>
-Op_Delete<Document>::Op_Delete(std::string const& fullCollectionName, Args&&... args)
-    : header(OpCode::OP_DELETE)
-    , fullCollectionName(fullCollectionName)
-    , flags(OP_DeleteFlag::empty)
-    , selector{std::move(args)...}
+    , fullCollectionName(std::move(fullCollectionName))
+    , flags(flags)
+    , selector(std::forward<Document>(selector))
 {
     header.prepareToSend(getSize());
 }
-
 
 template<typename Document>
 std::size_t Op_Delete<Document>::getSize() const
@@ -68,6 +53,23 @@ std::ostream& Op_Delete<Document>::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, Op_Delete<Document> const& data)
+{
+    return data.print(stream);
+}
+
+template<typename Document>
+Op_Delete<Document> send_Op_Delete(std::string fullCollectionName, Document&& selector)
+{
+    return Op_Delete<Document>(std::move(fullCollectionName), OP_DeleteFlag::empty, std::forward<Document>(selector));
+}
+
+template<typename Document>
+Op_Delete<Document> send_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector)
+{
+    return Op_Delete<Document>(std::move(fullCollectionName), flags, std::forward<Document>(selector));
+}
 }
 
 #endif

@@ -3,7 +3,6 @@
 #include "HandShake.h"
 #include "ThorsCrypto/scram.h"
 
-
 using namespace ThorsAnvil::DB::Mongo;
 
 // This registers the name "mongo" to create a "MongoConnection" object.
@@ -27,6 +26,7 @@ MongoConnection::MongoConnection(
     : ConnectionProxy()
     , socket(host, port == 0 ? 27017 : port)
     , stream(socket)
+    , dbName(database)
 {
     using std::string_literals::operator""s;
 
@@ -43,17 +43,17 @@ MongoConnection::MongoConnection(
     Op_ReplyHandShake   handShakeReply;
     stream >> handShakeReply;
 
-    if (handShakeReply.getDocument(0).ok != 1)
+    if (handShakeReply.handshake.ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake Request Failed: ",
-                                 "Code: ", handShakeReply.getDocument(0).codeName,
-                                 "Msg:  ", handShakeReply.getDocument(0).errmsg);
+                                 "Code: ", handShakeReply.handshake.codeName,
+                                 "Msg:  ", handShakeReply.handshake.errmsg);
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
-    stream << Op_MsgAuthInit(AuthInit(std::string(database), "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
+    stream << Op_MsgAuthInit({}, AuthInit(database, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
     Op_MsgAuthReply         authInitReply;
     stream >> authInitReply;
@@ -69,8 +69,8 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Cont: Send proof we know the password
-    stream << Op_MsgAuthCont(AuthCont(authInitReply.getDocument<0>().conversationId,
-                                      std::string(database),
+    stream << Op_MsgAuthCont({}, AuthCont(authInitReply.getDocument<0>().conversationId,
+                                      database,
                                       client.getProofMessage(password, authInitReply.getDocument<0>().payload.data)
                                      )
                             ) << std::flush;
@@ -89,8 +89,8 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Cont 2: Send the DB Info
-    stream << Op_MsgAuthCont(AuthCont(authContReply.getDocument<0>().conversationId,
-                                      std::string(database),
+    stream << Op_MsgAuthCont({}, AuthCont(authContReply.getDocument<0>().conversationId,
+                                      database,
                                       ""s
                                      )
                             ) << std::flush;
@@ -122,4 +122,40 @@ int MongoConnection::getSocketId() const
 void MongoConnection::setYield(std::function<void()>&& readYield, std::function<void()>&& writeYield)
 {
     socket.setYield(std::move(readYield), std::move(writeYield));
+}
+
+MongoConnection::operator bool()
+{
+    return static_cast<bool>(stream);
+}
+
+CursorId MongoConnection::getLastOpenCursor(bool close)
+{
+    CursorId        result = lastCursor;
+    lastCursor             = close ? -1 : lastCursor;
+    return result;
+}
+
+std::vector<CursorId> MongoConnection::getAllOpenCursors(bool close)
+{
+    std::vector<CursorId>   result;
+    for (auto const& v: openCursors)
+    {
+        result.emplace_back(v.first);
+    }
+    if (close)
+    {
+        openCursors.clear();
+    }
+    return result;
+}
+
+MongoConnection::CursorInfo MongoConnection::getCursorInfo(CursorId cursor) const
+{
+    auto find = openCursors.find(cursor);
+    if (find == openCursors.end())
+    {
+        return CursorInfo{};
+    }
+    return find->second;
 }

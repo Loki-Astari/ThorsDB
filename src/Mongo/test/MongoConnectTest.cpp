@@ -4,7 +4,7 @@
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
 #include "HandShake.h"
-#include "AdmCmdListDatabases.h"
+#include "CmdAdmListDatabases.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
@@ -27,11 +27,10 @@ TEST(MongoConnectTest, CreateReply)
     Op_ReplyHandShake   handShakeReplyMessage;
     stream >> handShakeReplyMessage;
 
-    HandShakeReplyDoc const&    handShakeReply = handShakeReplyMessage.getDocument(0);
-    ASSERT_EQ(handShakeReply.ok,    1);
+    ASSERT_TRUE(handShakeReplyMessage.isOk());
 
     // Send Auth Init: We can use SHA-256 Send scram package
-    stream << Op_MsgAuthInit(AuthInit(THOR_TESTING_MONGO_DB, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
+    stream << Op_MsgAuthInit({}, AuthInit(THOR_TESTING_MONGO_DB, "SCRAM-SHA-256"s, client.getFirstMessage())) << std::flush;
 
     Op_MsgAuthReply         authInitReplyMessage;
     stream >> authInitReplyMessage;
@@ -40,7 +39,7 @@ TEST(MongoConnectTest, CreateReply)
     ASSERT_EQ(authInitReply.ok,     1);
 
     // Send Auth Cont: Send proof we know the password
-    stream << Op_MsgAuthCont(AuthCont(authInitReply.conversationId, THOR_TESTING_MONGO_DB, client.getProofMessage(THOR_TESTING_MONGO_PASS, authInitReply.payload.data))) << std::flush;
+    stream << Op_MsgAuthCont({}, AuthCont(authInitReply.conversationId, THOR_TESTING_MONGO_DB, client.getProofMessage(THOR_TESTING_MONGO_PASS, authInitReply.payload.data))) << std::flush;
 
     Op_MsgAuthReply         authContReplyMessage;
     stream >> authContReplyMessage;
@@ -49,7 +48,7 @@ TEST(MongoConnectTest, CreateReply)
     ASSERT_EQ(authContReply.ok,     1);
 
     // Send Auth Cont 2: Send the DB Info
-    stream << Op_MsgAuthCont(AuthCont(authContReply.conversationId, THOR_TESTING_MONGO_DB, ""s)) << std::flush;
+    stream << Op_MsgAuthCont({}, AuthCont(authContReply.conversationId, THOR_TESTING_MONGO_DB, ""s)) << std::flush;
 
     Op_MsgAuthReply         authContReply2Message;
     stream >> authContReply2Message;
@@ -60,18 +59,15 @@ TEST(MongoConnectTest, CreateReply)
 
 
     // Send Command to prove authentication worked and we have an open and working connection:
-    stream << Op_QueryAdmCmdListDataBases{} << std::flush;
+    stream << CmdAdmListDataBases{} << std::flush;
 
-    Op_ReplAdmCmdListDataBases    listOfDatabases;
+    ListDataBaseReply           listDBReply;
+    CmdAdmListDataBasesReply    listOfDatabases(listDBReply);
     stream >> listOfDatabases;
 
     if (listOfDatabases)
     {
-        ListDataBaseReply const&    listDBReply = listOfDatabases.getDocument(0);
 
-        std::cerr << "ListDB OK: "   << listDBReply.ok << "\n";
-        std::cerr << "ListDB Code: " << listDBReply.code << "\n";
-        std::cerr << "ListDB Err:  " << listDBReply.$err << "\n";
         std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
         std::cerr << "ListDB DB: [";
         for (auto const& db: listDBReply.databases)
@@ -82,7 +78,7 @@ TEST(MongoConnectTest, CreateReply)
     }
     else
     {
-        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getFailureMessage() << "\n";
+        std::cerr << "Failure retrieving DB List: " << listOfDatabases.getHRErrorMessage() << "\n";
     }
 }
 

@@ -4,7 +4,6 @@
 #include <string>
 
 
-
 class LoggingEnvironment: public ::testing::Environment
 {
     public:

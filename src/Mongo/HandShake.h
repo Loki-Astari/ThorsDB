@@ -12,7 +12,6 @@
 #include <string>
 #include <sys/utsname.h>
 
-
 namespace ThorsAnvil::DB::Mongo
 {
 
@@ -28,6 +27,7 @@ class Driver
             , version(version)
         {}
 };
+
 class OS
 {
     std::string     type;
@@ -38,6 +38,7 @@ class OS
     public:
         OS();
 };
+
 class Application
 {
     std::string     name;
@@ -45,6 +46,7 @@ class Application
     public:
         Application(std::string const& application);
 };
+
 class Client
 {
     Application     application;
@@ -120,12 +122,12 @@ struct Binary
     int                 type;
     std::string         data;
 
-    // DataInterface needed by BinarySerializer (see below)
-        std::size_t getSize() const             {return data.size();}
-        void        resize(std::size_t size)    {data.resize(size);}
-        char const* getBuffer() const           {return &data[0];}
-        char*       getBuffer()                 {return &data[0];}
+    std::size_t getSize() const             {return data.size();}
+    void        resize(std::size_t size)    {data.resize(size);}
+    char const* getBuffer() const           {return &data[0];}
+    char*       getBuffer()                 {return &data[0];}
 };
+
 class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerializer<Binary, '\x00'>
 {
     public:
@@ -134,10 +136,27 @@ class BinarySerializer: public ThorsAnvil::Serialize::MongoUtility::BinarySerial
             printer.addValue(object.data);
         }
 };
-//using BinarySerializer = ThorsAnvil::Serialize::MongoUtility::BinarySerializer<ThorsAnvil::DB::Mongo::Binary, '\x00'>;
 
 struct AuthInit
 {
+    AuthInit(std::string const& db, std::string const& mechanism, std::string&& payload)
+        : saslStart(1)
+        , mechanism(mechanism)
+        , $db(db)
+        , payload(0, std::move(payload))
+    {}
+    AuthInit(std::string const& db, std::string&& mechanism, std::string&& payload)
+        : saslStart(1)
+        , mechanism(std::move(mechanism))
+        , $db(db)
+        , payload(0, std::move(payload))
+    {}
+    AuthInit(std::string&& db, std::string const& mechanism, std::string&& payload)
+        : saslStart(1)
+        , mechanism(mechanism)
+        , $db(std::move(db))
+        , payload(0, std::move(payload))
+    {}
     AuthInit(std::string&& db, std::string&& mechanism, std::string&& payload)
         : saslStart(1)
         , mechanism(std::move(mechanism))
@@ -148,13 +167,16 @@ struct AuthInit
     std::string         mechanism;
     std::string         $db;
     Binary              payload;
-
-    // Interface needed by Op_Msg
-    //std::size_t getSize()   const {return ThorsAnvil::Serialize::bsonGetPrintSize(*this);}
 };
 
 struct AuthCont
 {
+    AuthCont(std::int32_t convId, std::string const& db, std::string&& payload)
+        : saslContinue(1)
+        , conversationId(convId)
+        , $db(db)
+        , payload(0, std::move(payload))
+    {}
     AuthCont(std::int32_t convId, std::string&& db, std::string&& payload)
         : saslContinue(1)
         , conversationId(convId)
@@ -191,22 +213,27 @@ class Op_QueryHandShake: public Op_Query<HandShake>
     public:
         template<typename... Args>
         Op_QueryHandShake(Args&&... args)
-            : Op_Query("admin.$cmd", QueryOptions{}, 1, 0, std::move(args)...)
+            : Op_Query("admin.$cmd", {}, std::forward<Args>(args)...)
         {}
-        friend std::ostream& operator<<(std::ostream& stream, HumanReadable<Op_QueryHandShake> const& data);
-        friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return data.print(stream);}
+        friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return stream << static_cast<Op_Query<HandShake>>(data);}
 };
 
-using Op_ReplyHandShake     = Op_Reply<HandShakeReplyDoc>;
+class Op_ReplyHandShake: public Op_Reply<ViewType<HandShakeReplyDoc>>
+{
+    public:
+        HandShakeReplyDoc   handshake;
+        Op_ReplyHandShake()
+            : Op_Reply(make_XView(handshake))
+        {}
+};
+
 using Op_MsgAuthInit        = Op_Msg<Kind0<AuthInit>>;
 using Op_MsgAuthCont        = Op_Msg<Kind0<AuthCont>>;
-using Op_MsgAuthReply       = Op_Msg<Kind0<AuthReply>>;
+using Op_MsgAuthReply       = Op_MsgReply<Kind0<AuthReply>>;
 
 }
 
-
 ThorsAnvil_MakeTraitCustomSerialize(ThorsAnvil::DB::Mongo::Binary, ThorsAnvil::DB::Mongo::BinarySerializer);
-
 
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,             name, version);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,                 type, name, architecture, version);
@@ -217,6 +244,6 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, count
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReplyDoc,  ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,      ok, code, errmsg, codeName, conversationId, done, payload);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,          ok, code, errmsg, codeName, conversationId, done, payload);
 
 #endif

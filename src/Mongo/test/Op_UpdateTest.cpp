@@ -9,10 +9,10 @@ using std::string_literals::operator""s;
 
 TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
 {
-    MsgHeader::messageIdSetForTest(0x184A89);
+    Op_MsgHeader::messageIdSetForTest(0x184A89);
 
     std::stringstream stream;
-    stream << Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
+    stream << send_Op_Update("thor.collection", OP_UpdateFlag::Upsert, SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x67\x00\x00\x00"                      // Size 32
@@ -22,7 +22,7 @@ TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
                                                                 // OP_Update
                             "\x00\x00\x00\x00"                      // ZERO
                             "thor.collection\x00"                   // Collection -> See constructo
-                            "\x00\x00\x00\x00"                      // Flags
+                            "\x01\x00\x00\x00"                      // Flags
                             // BSON Selector    => SimpleStringNoConstructor
                             "\x1A\x00\x00\x00"
                             "\x02"  "message\x00"   "\x08\x00\x00\x00"  "Another\x00"
@@ -37,11 +37,10 @@ TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
 
 TEST(Op_UpdateTest, Op_UpdateStreamObjectHumanReadable)
 {
-    MsgHeader::messageIdSetForTest(0x124589);
-    Op_Update<SimpleStringNoConstructor, StringAndIntNoConstructor>   update("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
+    Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << make_hr(update);
+    stream << make_hr(send_Op_Update("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56}));
 
     std::size_t lineCount = 0;
     std::string line;

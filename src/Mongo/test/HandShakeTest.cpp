@@ -70,33 +70,19 @@ TEST(HandShakeTest, CreateOS)
         output.erase(findVersion, (findeEndVersion - findVersion));
     }
 
-#ifdef   __APPLE__
-#if 0
-sw_vers -productName
-macOS
-uname -m
-x86_64
-uname -n
-BatCave.local
-uname -p
-i386
-uname -r
-20.2.0
-uname -s
-Darwin
-#endif
     using namespace std::string_literals;
     std::string typeVal = getSystemInfo("uname -s");
-    std::string osVal   = getSystemInfo("sw_vers -productName");
     std::string archVal = getSystemInfo("uname -m");
-
-    std::string expected = makeFormat(R"({"type":"%s","name":"%s","architecture":"%s","version":""})", typeVal.c_str(), osVal.c_str(), archVal.c_str());
+#if defined(__APPLE__)
+    std::string osVal   = getSystemInfo("sw_vers -productName");
+#elif defined(__linux__)
+    // Which is: "{\"type\":\"Linux\",\"name\":\"Ubuntu\",\"architecture\":\"x86_64\",\"version\":\"\"}"
+    std::string osVal   = getSystemInfo(R"(awk -F\" '/NAME/{print $2}' /etc/os-release)");
+#endif
+    std::string vers    = "";
+    std::string expected = makeFormat(R"({"type":"%s","name":"%s","architecture":"%s","version":"%s"})", typeVal.c_str(), osVal.c_str(), archVal.c_str(), vers.c_str());
 
     EXPECT_EQ(output, expected);
-#else
-    std::cerr << output << "\n";
-    EXPECT_EQ(output, "Please Add a test here");
-#endif
 }
 
 TEST(HandShakeTest, CreateApplication)
@@ -199,18 +185,28 @@ BSON
     00
 00
 #endif
-#ifdef   __APPLE__
-    using namespace std::string_literals;
+#if defined(__APPLE__)
     std::string   typeVal         = getSystemInfo("uname -s");                // Darwin
     std::string   osVal           = getSystemInfo("sw_vers -productName");    // macOS
     std::string   archVal         = getSystemInfo("uname -m");                // x86_64
     std::string   osVerVal        = getSystemInfo("uname -r");                // 20.2.0
+#elif defined(__linux__)
+    std::string   typeVal         = getSystemInfo("uname -s");                // Linux
+    std::string   osVal           = getSystemInfo(R"(awk -F\" '/NAME/{print $2}' /etc/os-release)");    // Ubuntu
+    std::string   archVal         = getSystemInfo("uname -m");                // x86_64
+    std::string   osVerVal        = getSystemInfo("uname -r");                // 4.15.0-1077-gcp
+#else
+#error "See above and fix"
+#endif
+
+    using namespace std::string_literals;
     std::uint32_t typeSz          = typeVal.size() + 1;
     std::uint32_t osSz            = osVal.size() + 1;
     std::uint32_t archSz          = archVal.size() + 1;
     std::uint32_t osVerSz         = osVerVal.size() + 1;
     std::uint32_t osInfoSize      = 0x53  - 0x1b + typeSz + osSz + archSz + osVerSz;
     std::uint32_t allInfoSize     = 0xc8  - 0x53 + osInfoSize;
+    std::uint32_t bsonInfoSize    = 0x127 - 0xc8 + allInfoSize;
     std::uint32_t msgSize         = 0x14e - 0xc8 + allInfoSize;
     std::string   typeSzStr       = createSizeString(typeSz);
     std::string   osSzStr         = createSizeString(osSz);
@@ -218,10 +214,8 @@ BSON
     std::string   osVerSzStr      = createSizeString(osVerSz);
     std::string   osInfoSizeStr   = createSizeString(osInfoSize);
     std::string   allInfoSizeStr  = createSizeString(allInfoSize);
+    std::string   bsonInfoSizeStr = createSizeString(bsonInfoSize);
     std::string   msgSizeStr      = createSizeString(msgSize);
-#else
-#error "See above and fix"
-#endif
     std::string expected =
    //     "\x4e\x01\x00\x00"      // Size
         msgSizeStr +
@@ -232,9 +226,10 @@ BSON
         "\x00\x00\x00\x00"      // Flag
         "\x61\x64\x6d\x69\x6e\x2e\x24\x63\x6d\x64\x00"
         "\x00\x00\x00\x00"      // Number to Skip
-        "\x01\x00\x00\x00"      // Number to return
+        "\x01\x00\x00\x00"s     // Number to return
         // BSON
-        "\x27\x01\x00\x00"      // Size
+        //"\x27\x01\x00\x00"      // Size
+        + bsonInfoSizeStr +
         "\x10\x69\x73\x4d\x61\x73\x74\x65\x72\x00"  "\x01\x00\x00\x00"
         "\x02\x73\x61\x73\x6c\x53\x75\x70\x70\x6f\x72\x74\x65\x64\x4d\x65\x63\x68\x73\x00"  "\x0a\x00\x00\x00"  "\x74\x68\x6f\x72\x2e\x6c\x6f\x6b\x69\x00"
         "\x02\x68\x6f\x73\x74\x49\x6e\x66\x6f\x00"  "\x14\x00\x00\x00"  "\x42\x61\x74\x43\x61\x76\x65\x2e\x6c\x6f\x63\x61\x6c\x3a\x32\x37\x30\x31\x37\x00"
@@ -270,8 +265,7 @@ BSON
             "\x00"
         "\x00"s;
 
-
-    MsgHeader::messageIdSetForTest(0);
+    Op_MsgHeader::messageIdSetForTest(0);
     Op_QueryHandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
 
     std::stringstream   stream;
@@ -379,23 +373,22 @@ BSON
     Op_ReplyHandShake   reply;
     stream >> reply;
 
-    HandShakeReplyDoc const& doc = reply.getDocument(0);
-    EXPECT_EQ(doc.ok,                   1.0);
-    EXPECT_EQ(doc.ismaster,             1);
-    EXPECT_EQ(doc.topologyVersion.processId, ThorsAnvil::Serialize::MongoUtility::ObjectID(0x5f48aa04, 0x2d1dfb1dd7L, 0x52e00));
-    EXPECT_EQ(doc.topologyVersion.counter,   0x0L);
-    EXPECT_EQ(doc.maxBsonObjectSize,    0x1000000);
-    EXPECT_EQ(doc.maxMessageSizeBytes,  0x2dc6c00);
-    EXPECT_EQ(doc.maxWriteBatchSize,    0x186a0);
-    EXPECT_EQ(doc.localTime,            0x17476af112d);
-    EXPECT_EQ(doc.logicalSessionTimeoutMinutes, 0x1e);
-    EXPECT_EQ(doc.connectionId,         0x1e);
-    EXPECT_EQ(doc.minWireVersion,       0);
-    EXPECT_EQ(doc.maxWireVersion,       0x9);
-    EXPECT_EQ(doc.readOnly,             false);
-    ASSERT_EQ(doc.saslSupportedMechs.size(), 2);
-    EXPECT_EQ(doc.saslSupportedMechs[0],"SCRAM-SHA-1");
-    EXPECT_EQ(doc.saslSupportedMechs[1],"SCRAM-SHA-256");
+    EXPECT_EQ(reply.handshake.ok,                   1.0);
+    EXPECT_EQ(reply.handshake.ismaster,             1);
+    EXPECT_EQ(reply.handshake.topologyVersion.processId, ThorsAnvil::Serialize::MongoUtility::ObjectID(0x5f48aa04, 0x2d1dfb1dd7L, 0x52e00));
+    EXPECT_EQ(reply.handshake.topologyVersion.counter,   0x0L);
+    EXPECT_EQ(reply.handshake.maxBsonObjectSize,    0x1000000);
+    EXPECT_EQ(reply.handshake.maxMessageSizeBytes,  0x2dc6c00);
+    EXPECT_EQ(reply.handshake.maxWriteBatchSize,    0x186a0);
+    EXPECT_EQ(reply.handshake.localTime,            0x17476af112d);
+    EXPECT_EQ(reply.handshake.logicalSessionTimeoutMinutes, 0x1e);
+    EXPECT_EQ(reply.handshake.connectionId,         0x1e);
+    EXPECT_EQ(reply.handshake.minWireVersion,       0);
+    EXPECT_EQ(reply.handshake.maxWireVersion,       0x9);
+    EXPECT_EQ(reply.handshake.readOnly,             false);
+    ASSERT_EQ(reply.handshake.saslSupportedMechs.size(), 2);
+    EXPECT_EQ(reply.handshake.saslSupportedMechs[0],"SCRAM-SHA-1");
+    EXPECT_EQ(reply.handshake.saslSupportedMechs[1],"SCRAM-SHA-256");
 }
 
 TEST(HandShakeTest, CreateSASLFirstMessage)
@@ -448,9 +441,9 @@ BSON
                             "\x6c\x53\x65\x4d\x4a\x50\x56\x02\x24\x64\x62\x00\x05\x00\x00\x00"
                             "\x74\x68\x6f\x72\x00\x00"s; // \x10\x44\x12\x5c"s;
 
-    MsgHeader::messageIdSetForTest(0x1);
+    Op_MsgHeader::messageIdSetForTest(0x1);
     AuthInit            authInit("thor"s, "SCRAM-SHA-256"s, "n,,n=loki,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV"s);
-    Op_MsgAuthInit      authInitMessage(/*OP_MsgFlag::checksumPresent,*/authInit);
+    Op_MsgAuthInit      authInitMessage(OP_MsgFlag::empty, authInit);
 
     std::stringstream   stream;
     stream << authInitMessage;
@@ -594,9 +587,9 @@ bd 34 27 d8 // Checksum
                             "\x73\x61\x74\x69\x6f\x6e\x49\x64\x00\x01\x00\x00\x00\x02\x24\x64"
                             "\x62\x00\x05\x00\x00\x00\x74\x68\x6f\x72\x00\x00"s; //"\xbd\x34\x27\xd8"s;
 
-    MsgHeader::messageIdSetForTest(0x2);
+    Op_MsgHeader::messageIdSetForTest(0x2);
     AuthCont        authCont(1, "thor", "c=biws,r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,p=h8+KRHxFHkrvC3t6Cq6KVLAt4mlBP/V6JrtTLMKvW/4="s);
-    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
+    Op_MsgAuthCont  authContMessage(OP_MsgFlag::empty, authCont);
 
     std::stringstream stream;
     stream << authContMessage;
@@ -731,9 +724,9 @@ BSON
                             "\x00\x01\x00\x00\x00\x02\x24\x64\x62\x00\x05\x00\x00\x00\x74\x68"
                             "\x6f\x72\x00\x00"s;//\x3d\x9c\x10\x02"s;
 
-    MsgHeader::messageIdSetForTest(0x3);
+    Op_MsgHeader::messageIdSetForTest(0x3);
     AuthCont        authCont(1, "thor"s, ""s);
-    Op_MsgAuthCont  authContMessage(/*OP_MsgFlag::checksumPresent,*/authCont);
+    Op_MsgAuthCont  authContMessage(OP_MsgFlag::empty, authCont);
 
     std::stringstream stream;
     stream << authContMessage;
