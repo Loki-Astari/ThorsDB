@@ -8,6 +8,7 @@
 #include "CmdAdm_ListDataBases.h"
 #include "CmdAdm_Compact.h"
 #include "CmdAdm_Create.h"
+#include "CmdAdm_Drop.h"
 
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -76,7 +77,7 @@ TEST_F(CmdAdmTest, Create)
     connection >> reply;
 
     std::cerr << "Checking\n";
-    //EXPECT_EQ(1, reply.reply.ok);
+    EXPECT_EQ(1, reply.reply.ok);
     std::cerr << "Test\n";
     if (reply.reply.ok != 1)
     {
@@ -99,4 +100,14 @@ TEST_F(CmdAdmTest, Create)
         }
     }
     //EXPECT_TRUE(found);
+
+    connection << CmdAdm_Drop("ConnectionCreateCollection"s);
+    CmdAdm_DropReply    dropReply;
+    connection >> dropReply;
+
+    EXPECT_TRUE(dropReply.reply.ok);
+    if (dropReply.reply.ok != 1)
+    {
+        std::cerr << dropReply.reply.getHRErrorMessage() << "\n";
+    }
 }
