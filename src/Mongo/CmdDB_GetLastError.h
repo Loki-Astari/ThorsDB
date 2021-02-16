@@ -70,6 +70,8 @@ struct Host
 
 struct GetLastErrorReply: public CmdReplyBase
 {
+    using UserData = void;
+
     mutable std::map<std::string, bool>     filter;
 
     std::unique_ptr<std::string>    err;
@@ -89,7 +91,7 @@ struct GetLastErrorReply: public CmdReplyBase
     std::time_t                     wtime               = 0;
     std::unique_ptr<std::vector<Host>> writtenTo;                  // *
 
-    std::string getHRErrorMessage() const;
+    std::string to_String() const;
 };
 
 using CmdDB_GetLastError        = CmdDB_Query<GetLastError>;

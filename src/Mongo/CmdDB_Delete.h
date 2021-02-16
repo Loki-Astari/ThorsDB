@@ -8,9 +8,10 @@
  * $        connection:         connection to mongo DB or a stream.
  * $        Op_QueryOptions:    See: Op_Query.h
  * $        DeleteOptions:      See: below
+ * $        count:              std::size_t number of documents deleted.
  *
  * >    connection << send_CmdDB_Delete("db", "collection" [, Op_Query_Options] [, DeleteOptions] [,<Document>]);
- * <    connection >> get_CmdDB_DeleteReply();
+ * <    connection >> get_CmdDB_DeleteReply(count);
  */
 
 #include "CmdDB.h"
@@ -93,7 +94,7 @@ CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection,
 template<typename Document>
 CmdDB_Delete<Document> send_CmdDB_Delete(std::string db, std::string collection, Op_QueryOptions const& options, DeleteOptions const& deleteOpt, Document doc);
 
-inline CmdDB_DeleteReply get_CmdDB_DeleteReply() {return CmdDB_DeleteReply{};}
+inline CmdDB_DeleteReply get_CmdDB_DeleteReply(std::size_t& count) {return CmdDB_DeleteReply(count);}
 
 }
 

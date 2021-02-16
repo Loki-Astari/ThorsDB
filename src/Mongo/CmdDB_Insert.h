@@ -9,9 +9,10 @@
  * $        connection:         connection to mongo DB or a stream.
  * $        Op_QueryOptions:    See: Op_Query.h
  * $        DeleteOptions:      See: below
+ * $        count:              std::size_t number of items inserted.
  *
  * >    connection << send_CmdDB_Insert("db", "collection" [, Op_Query_Options] [, InsertOptions] [,<Document-View>]);
- * >    connection >> get_CmdDB_InsertReply();
+ * >    connection >> get_CmdDB_InsertReply(count);
  */
 
 #include "Util.h"
@@ -86,7 +87,7 @@ CmdDB_Insert<ViewType<Range>> send_CmdDB_Insert(std::string db, std::string coll
 template<typename Range>
 CmdDB_Insert<ViewType<Range>> send_CmdDB_Insert(std::string db, std::string collection, Op_QueryOptions const& options, InsertOptions const& insertOpt, Range&& r);
 
-inline CmdDB_InsertReply get_CmdDB_InsertReply() {return CmdDB_InsertReply{};}
+inline CmdDB_InsertReply get_CmdDB_InsertReply(std::size_t& count) {return CmdDB_InsertReply(count);}
 }
 
 ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::InsertOptional,                filter);

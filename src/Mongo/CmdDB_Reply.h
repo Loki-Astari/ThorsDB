@@ -32,7 +32,14 @@ struct CmdReplyBase
 
 struct CmdReply: public CmdReplyBase
 {
-    std::size_t                 n               = 0;
+    using UserData  = std::size_t;
+    using Reference = std::reference_wrapper<UserData>;
+
+    CmdReply(UserData& count)
+        : n(count)
+    {}
+
+    Reference                   n;
     std::vector<WriteErrors>    writeErrors;
     WriteConcernError           writeConcernError;
 
@@ -45,19 +52,14 @@ class CmdDB_Reply: public Op_Reply<ViewType<Document>>
 {
     public:
         Document   reply;
-        template<typename Doc = Document, NoOptions<Doc> = true>
+        template<typename Doc = Document, NoUserData<Doc> = true>
         CmdDB_Reply()
             : Op_Reply<ViewType<Document>>(reply)
         {}
-        template<typename Doc = Document, HasOptions<Doc> = true>
-        CmdDB_Reply(typename Doc::Options& value)
+        template<typename Doc = Document, HasUserData<Doc> = true>
+        CmdDB_Reply(typename Doc::UserData& value)
             : Op_Reply<ViewType<Document>>(reply)
             , reply(value)
-        {}
-        template<typename Doc = Document, HasOptions<Doc> = true>
-        CmdDB_Reply(std::vector<typename Doc::Options>& container)
-            : Op_Reply<ViewType<Document>>(reply)
-            , reply(container)
         {}
         virtual bool isOk() const override;
         virtual std::string getHRErrorMessage() const override;

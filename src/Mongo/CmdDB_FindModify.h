@@ -117,10 +117,10 @@ struct LastErrorObject
 template<typename Document>
 struct FindModifyReply: public CmdReplyBase
 {
-    using Options = std::unique_ptr<Document>;
-    using Reference = std::reference_wrapper<Options>;
+    using UserData = std::unique_ptr<Document>;
+    using Reference = std::reference_wrapper<UserData>;
 
-    FindModifyReply(std::unique_ptr<Document>& v)
+    FindModifyReply(UserData& v)
         : value(v)
     {}
 

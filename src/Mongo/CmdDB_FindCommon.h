@@ -15,47 +15,53 @@ template<typename Document> struct CursorFirst;
 template<typename Document> struct CursorNext;
 
 template<typename T>
-struct DocumentExtractor
+struct UserDataExtractor
 {
-    using Doc = T;
+    using UserData = T;
 };
 
 template<typename Document>
-struct DocumentExtractor<CursorFirst<Document>>
+struct UserDataExtractor<CursorFirst<Document>>
 {
-    using Doc = Document;
+    using UserData = typename CursorFirst<Document>::UserData;
 };
 
 template<typename Document>
-struct DocumentExtractor<CursorNext<Document>>
+struct UserDataExtractor<CursorNext<Document>>
 {
-    using Doc = Document;
+    using UserData = typename CursorNext<Document>::UserData;
 };
 
 template<typename Document>
 struct CursorFirst
 {
-    CursorFirst(std::vector<Document>& container)
+    using UserData = std::vector<Document>;
+    using Reference = std::reference_wrapper<UserData>;
+
+    CursorFirst(UserData& container)
         : firstBatch(container)
     {}
 
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::reference_wrapper<std::vector<Document>>  firstBatch;
+    Reference               firstBatch;
 };
 
 template<typename Document>
 struct CursorNext
 {
-    CursorNext(std::vector<Document>& container)
+    using UserData = std::vector<Document>;
+    using Reference = std::reference_wrapper<UserData>;
+
+    CursorNext(UserData& container)
         : nextBatch(container)
     {}
 
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::reference_wrapper<std::vector<Document>>  nextBatch;
+    Reference               nextBatch;
 };
 
 struct Signature
@@ -73,9 +79,9 @@ struct ClusterTime
 template<typename Cursor>
 struct FindReply: public CmdReplyBase
 {
-    using Document = typename DocumentExtractor<Cursor>::Doc;
-    using Options  = Document;
-    FindReply(std::vector<Options>& container)
+    using UserData  = typename UserDataExtractor<Cursor>::UserData;
+
+    FindReply(UserData& container)
         : cursor(container)
     {}
 

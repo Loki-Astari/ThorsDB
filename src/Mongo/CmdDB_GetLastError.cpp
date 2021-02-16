@@ -47,7 +47,7 @@ GetLastError::GetLastError(GetLastErrorOptions const& options, std::string /*col
 {
 }
 
-std::string GetLastErrorReply::getHRErrorMessage() const
+std::string GetLastErrorReply::to_String() const
 {
     static const GetLastErrorReply defaultValue;
 
@@ -71,7 +71,7 @@ std::string GetLastErrorReply::getHRErrorMessage() const
     filter["writtenTo"]         = writtenTo.get() != nullptr && writtenTo->size() != 0;
 
     std::stringstream   errorMsg;
-    errorMsg << CmdReplyBase::getHRErrorMessage() << " " << ThorsAnvil::Serialize::jsonExporter(*this);
+    errorMsg << ThorsAnvil::Serialize::jsonExporter(*this);
 
     return errorMsg.str();
 }
