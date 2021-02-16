@@ -75,3 +75,22 @@ std::string GetLastErrorReply::getHRErrorMessage() const
 
     return errorMsg.str();
 }
+
+namespace ThorsAnvil::DB::Mongo
+{
+
+#pragma vera-pushoff
+CmdDB_GetLastError send_CmdDB_GetLastError(std::string db, GetLastErrorOptions const& getLastErrorOpt)
+{
+    using namespace std::string_literals;
+    return CmdDB_GetLastError(std::move(db), ""s, {}, getLastErrorOpt);
+}
+
+CmdDB_GetLastError send_CmdDB_GetLastError(std::string db, Op_QueryOptions const& options, GetLastErrorOptions const& getLastErrorOpt)
+{
+    using namespace std::string_literals;
+    return CmdDB_GetLastError(std::move(db), ""s, options, getLastErrorOpt);
+}
+#pragma vera-pop
+
+}

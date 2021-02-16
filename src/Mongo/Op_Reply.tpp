@@ -11,19 +11,19 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-template<typename Document, typename View>
-Op_Reply<Document, View>::Op_Reply(Document& data)
+template<typename View>
+Op_Reply<View>::Op_Reply(View&& view)
     : header(OpCode::OP_REPLY)
     , responseFlags(OP_ReplyFlag::empty)
     , cursorID(0)
     , startingFrom(0)
     , numberReturned(0)
-    , documents(make_XView(data))
+    , documents(std::forward<View>(view))
 {}
 
-template<typename Document, typename View>
+template<typename View>
 #pragma vera-pushoff
-std::istream& Op_Reply<Document, View>::parse(std::istream& stream)
+std::istream& Op_Reply<View>::parse(std::istream& stream)
 #pragma vera-pop
 {
     stream >> header
@@ -55,8 +55,8 @@ std::istream& Op_Reply<Document, View>::parse(std::istream& stream)
     return stream;
 }
 
-template<typename Document, typename View>
-std::istream& Op_Reply<Document, View>::parseAndThrow(std::istream& stream)
+template<typename View>
+std::istream& Op_Reply<View>::parseAndThrow(std::istream& stream)
 {
     parse(stream);
     if (!this->isOk())
@@ -66,8 +66,8 @@ std::istream& Op_Reply<Document, View>::parseAndThrow(std::istream& stream)
     return stream;
 }
 
-template<typename Document, typename View>
-std::ostream& Op_Reply<Document, View>::print(std::ostream& stream) const
+template<typename View>
+std::ostream& Op_Reply<View>::print(std::ostream& stream) const
 {
     stream << header
            << make_LE(responseFlags)
@@ -93,8 +93,8 @@ std::ostream& Op_Reply<Document, View>::print(std::ostream& stream) const
     return stream;
 }
 
-template<typename Document, typename View>
-std::ostream& Op_Reply<Document, View>::printHR(std::ostream& stream) const
+template<typename View>
+std::ostream& Op_Reply<View>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
            << "responseFlags: " << responseFlags << "\n"
@@ -117,21 +117,21 @@ std::ostream& Op_Reply<Document, View>::printHR(std::ostream& stream) const
     return stream;
 }
 
-template<typename Document, typename View>
-Op_Reply<Document, View>::operator bool() const
+template<typename View>
+Op_Reply<View>::operator bool() const
 {
     return this->isOk();
 }
 
-template<typename Document, typename View>
-bool Op_Reply<Document, View>::isOk()  const
+template<typename View>
+bool Op_Reply<View>::isOk()  const
 {
     return ((responseFlags & (OP_ReplyFlag::QueryFailure | OP_ReplyFlag::CursorNotFound)) == OP_ReplyFlag::empty)
         && (errorInfo.ok == 1.0);
 }
 
-template<typename Document, typename View>
-std::string Op_Reply<Document, View>::getHRErrorMessage() const
+template<typename View>
+std::string Op_Reply<View>::getHRErrorMessage() const
 {
     std::string result = "Op_Reply: ";
     if (!this->isOk())
@@ -158,6 +158,44 @@ std::string ErrorInfo::getHRErrorMessage() const
 
     return result;
 }
+
+template<typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Reply<View> const& reply)
+{
+    return reply.print(stream);
+}
+
+template<typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<View>&  reply)
+{
+    return reply.parse(stream);
+}
+
+template<typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<View>&& reply)
+{
+    return reply.parseAndThrow(stream);
+}
+
+template<typename Range>
+Op_Reply<ViewType<Range>> get_Op_Reply(Range&& range)
+{
+    return Op_Reply<ViewType<Range>>(make_XView(std::forward<Range>(range)));
+}
+
+#if 0
+template<typename Object, ValidSingle<Object>>
+Op_Reply<Object> get_Op_Reply(Object& object)
+{
+    return Op_Reply<Object>(object);
+}
+
+template<typename Range, ValidContainer<Range>>
+Op_Reply<Range> get_Op_Reply(Range& container)
+{
+    return Op_Reply<Range>(container);// | FilterBackInserter{});
+}
+#endif
 
 }
 

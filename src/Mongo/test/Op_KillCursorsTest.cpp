@@ -11,12 +11,12 @@ using std::string_literals::operator""s;
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 {
     Op_MsgHeader::messageIdSetForTest(0x184A89);
-    int              data1;
-    Op_Reply<int>    reply1(data1);
+    int             data1;
+    auto            reply1 = get_Op_Reply(data1);
     reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
 
     std::stringstream stream;
-    stream << make_Op_KillCursors(reply1);
+    stream << send_Op_KillCursors(reply1);
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x20\x00\x00\x00"                      // Size
@@ -33,13 +33,13 @@ TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectNoFlag)
 TEST(Op_KillCursorsTest, Op_KillCursorsStreamObjectHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0x124589);
-    int              data1;
-    Op_Reply<int>    reply1(data1);
+    int             data1;
+    auto            reply1 = get_Op_Reply(data1);
     reply1.cursorIDSetForTest(0x123456789ABCDEF0L);
 
 
     std::stringstream stream;
-    stream << make_hr(make_Op_KillCursors(reply1));
+    stream << make_hr(send_Op_KillCursors(reply1));
 
     std::size_t lineCount = 0;
     std::string line;

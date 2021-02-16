@@ -3,6 +3,12 @@
 
 // https://docs.mongodb.com/manual/reference/command/nav-crud/
 
+/*
+ * $    Usage:  CmdDB_Query
+ *
+ * >        This is not designed to be used directly. See CmdDB_Find.h for example.
+ * >        It is expected for a CmdDB that you create an appropriate typedef.
+ */
 #include "CmdDB.h"
 #include "Op_Query.h"
 
@@ -69,10 +75,7 @@ class CmdDB_Query: public Op_Query<Document>
 };
 
 template<typename Document>
-std::ostream& operator<<(std::ostream& stream, CmdDB_Query<Document> const& data)
-{
-    return stream << static_cast<Op_Query<Document> const&>(data);
-}
+std::ostream& operator<<(std::ostream& stream, CmdDB_Query<Document> const& data);
 
 }
 

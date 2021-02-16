@@ -82,8 +82,6 @@ class ViewSingle: public View_Base
 template<typename C>
 class ViewContainer: public View_Base
 {
-    friend class ViewBackInsertContainer<C>;
-
     C& container;
     public:
         using value_type    = typename C::value_type;
@@ -101,7 +99,10 @@ class ViewContainer: public View_Base
         std::size_t size()  const {return std::size(container);}
         value_type&     operator[](std::size_t pos)
         {
-            container.resize(pos + 1);
+            if (pos <= container.size())
+            {
+                container.resize(pos + 1);
+            }
             return container[pos];
         }
         value_type const& operator[](std::size_t pos) const

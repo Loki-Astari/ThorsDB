@@ -1,6 +1,13 @@
 #ifndef THORSANVIL_DB_MONGO_OP_MSG_H
 #define THORSANVIL_DB_MONGO_OP_MSG_H
 
+/*
+ * $    Usage:  Op_Msg
+ *
+ * >        This is not designed to be used directly. See HandShake.h for example
+ * >        I would expect you to define the Kind and what goes into it as part of a typedef.
+ */
+
 #include "Op.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"

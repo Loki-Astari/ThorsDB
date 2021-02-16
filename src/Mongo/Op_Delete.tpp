@@ -53,6 +53,23 @@ std::ostream& Op_Delete<Document>::printHR(std::ostream& stream) const
     return stream;
 }
 
+template<typename Document>
+std::ostream& operator<<(std::ostream& stream, Op_Delete<Document> const& data)
+{
+    return data.print(stream);
+}
+
+template<typename Document>
+Op_Delete<Document> send_Op_Delete(std::string fullCollectionName, Document&& selector)
+{
+    return Op_Delete<Document>(std::move(fullCollectionName), OP_DeleteFlag::empty, std::forward<Document>(selector));
+}
+
+template<typename Document>
+Op_Delete<Document> send_Op_Delete(std::string fullCollectionName, OP_DeleteFlag flags, Document&& selector)
+{
+    return Op_Delete<Document>(std::move(fullCollectionName), flags, std::forward<Document>(selector));
+}
 }
 
 #endif

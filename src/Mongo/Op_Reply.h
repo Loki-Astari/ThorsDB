@@ -1,11 +1,21 @@
 #ifndef THORSANVIL_DB_MONGO_OP_REPLY_H
 #define THORSANVIL_DB_MONGO_OP_REPLY_H
 
+/* $    Usage: Op_Reply
+ * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.
+ * $        View:           A container that holds Documents
+ * $        connection:     connection to mongo DB or a stream.
+ *
+ * >    connection << send_Op_QueryDerivedType(...);
+ * >    connection >> get_Op_Reply(<Document or View>);
+ */
+
 #include "Op.h"
 #include "Util.h"
 #include "View.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
+#include "ThorSerialize/JsonThor.h"
 
 #include <string>
 #include <iostream>
@@ -44,13 +54,17 @@ struct MongoException: public std::runtime_error
         : runtime_error(message)
         , info(info)
     {}
+    friend std::ostream& operator<<(std::ostream& stream, MongoException const& data)
+    {
+        return stream << data.what() << "\n" << ThorsAnvil::Serialize::jsonExporter(data.info);
+    }
 };
 
 class Op_GetMore;
 class Op_KillCursor;
 class MongoConnection;
 
-template<typename Document, typename View = ViewType<Document>>
+template<typename View>
 struct Op_Reply
 {
     Op_MsgHeader            header;                 // standard message header
@@ -66,7 +80,7 @@ struct Op_Reply
     friend class MongoConnection;
 
     public:
-        Op_Reply(Document& data);
+        Op_Reply(View&& view);
         virtual ~Op_Reply() {}
 
         explicit operator   bool()              const;
@@ -82,35 +96,17 @@ struct Op_Reply
         void cursorIDSetForTest(CursorId value)                {cursorID = value;}  // Used for testing
 };
 
-template<typename Document, typename View = ViewType<Document>>
-std::ostream& operator<<(std::ostream& stream, Op_Reply<Document, View> const& reply)
-{
-    return reply.print(stream);
-}
+template<typename View>
+std::ostream& operator<<(std::ostream& stream, Op_Reply<View> const& reply);
 
-template<typename Document, typename View = ViewType<Document>>
-std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&  reply)
-{
-    return reply.parse(stream);
-}
+template<typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<View>& reply);
 
-template<typename Document, typename View = ViewType<Document>>
-std::istream& operator>>(std::istream& stream, Op_Reply<Document, View>&& reply)
-{
-    return reply.parseAndThrow(stream);
-}
+template<typename View>
+std::istream& operator>>(std::istream& stream, Op_Reply<View>&& reply);
 
-template<typename Object, ValidSingle<Object> = true>
-Op_Reply<Object> make_Op_Reply(Object& object)
-{
-    return Op_Reply<Object>(object);
-}
-
-template<typename Range, ValidContainer<Range> = true>
-Op_Reply<Range> make_Op_Reply(Range& container)
-{
-    return Op_Reply<Range>(container);// | FilterBackInserter{});
-}
+template<typename Range>
+Op_Reply<ViewType<Range>> get_Op_Reply(Range&& range);
 
 }
 

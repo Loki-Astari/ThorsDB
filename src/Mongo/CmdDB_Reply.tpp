@@ -13,13 +13,13 @@ template<typename Document>
 bool CmdDB_Reply<Document>::isOk() const
 #pragma vera-pop
 {
-    return Op_Reply<Document>::isOk() && reply.isOk();
+    return Op_Reply<ViewType<Document>>::isOk() && reply.isOk();
 }
 
 template<typename Document>
 std::string CmdDB_Reply<Document>::getHRErrorMessage() const
 {
-    return Op_Reply<Document>::getHRErrorMessage() + reply.getHRErrorMessage();
+    return Op_Reply<ViewType<Document>>::getHRErrorMessage() + reply.getHRErrorMessage();
 }
 
 }

@@ -12,7 +12,7 @@ TEST(Op_UpdateTest, Op_UpdateStreamObjectNoFlag)
     Op_MsgHeader::messageIdSetForTest(0x184A89);
 
     std::stringstream stream;
-    stream << make_Op_Update("thor.collection", OP_UpdateFlag::Upsert, SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
+    stream << send_Op_Update("thor.collection", OP_UpdateFlag::Upsert, SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56});
 
     EXPECT_EQ(stream.str(),                                     // Message Header
                             "\x67\x00\x00\x00"                      // Size 32
@@ -40,7 +40,7 @@ TEST(Op_UpdateTest, Op_UpdateStreamObjectHumanReadable)
     Op_MsgHeader::messageIdSetForTest(0x124589);
 
     std::stringstream stream;
-    stream << make_hr(make_Op_Update("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56}));
+    stream << make_hr(send_Op_Update("thor.collection", SimpleStringNoConstructor{"Another"}, StringAndIntNoConstructor{"Another", 56}));
 
     std::size_t lineCount = 0;
     std::string line;

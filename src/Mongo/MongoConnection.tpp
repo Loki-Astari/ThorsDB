@@ -17,7 +17,10 @@ template<typename T>
 class CursorExtractor
 {
     public:
-        CursorExtractor(T& /*value*/, MongoConnection& /*connection*/) {}
+        CursorExtractor(T& /*value*/, MongoConnection& /*connection*/)
+        {
+            std::cerr << "\tDo Nothing Cursor Extractor\n";
+        }
 };
 
 template<>
@@ -30,6 +33,7 @@ class CursorExtractor<Op_GetMore>
             : getMore(value)
             , gotLastCursor(false)
         {
+            std::cerr << "\tOp_GetMore Cursor Extractor\n";
             if (getMore.cursorID == -1)
             {
                 gotLastCursor = true;
@@ -55,8 +59,13 @@ class CursorExtractor<CmdDB_GetMore>
             : getMore(value)
             , gotLastCursor(false)
         {
+            std::cerr << "\tCmdDB_GetMore Cursor Extractor\n";
+            std::cerr << "\tCurrent: " << getMore.getQuery().getMore << "\n";
             if (getMore.getQuery().getMore == -1)
             {
+                std::cerr << "\t\tWe need to extract\n"
+                          << "\t\t" << connection.getLastOpenCursor() << "\n";
+
                 gotLastCursor = true;
                 getMore.getQuery().getMore = connection.getLastOpenCursor();
             }
@@ -79,6 +88,7 @@ class CursorExtractor<Op_KillCursors>
             : killCursor(value)
             , gotLastCursor(0)
         {
+            std::cerr << "\tOp_KillCursor Cursor Extractor\n";
             if (killCursor.numberOfCursorIDs == -1)
             {
                 gotLastCursor = -1;
@@ -103,18 +113,43 @@ class CursorExtractor<Op_KillCursors>
 template<typename T>
 MongoConnection& MongoConnection::operator<<(T&& value)
 {
+    std::cerr << "Pulling last cursor ID\n";
     CursorExtractor<T>  setCursor(value, *this);
+    std::cerr << "Sending Data to Connection\n";
     stream << std::forward<T>(value) << std::flush;
+    std::cerr << "All Send\n";
     return *this;
 }
+
+template<typename Reply>
+struct CursorRetriever
+{
+    static CursorId getCursorId(Reply const& reply)
+    {
+        std::cerr << "Op Reply Get Cursor\n";
+        return reply.cursorID;
+    }
+};
+template<typename Cursor>
+struct CursorRetriever<CmdDB_FindReplyBase<Cursor>>
+{
+    static CursorId getCursorId(CmdDB_FindReplyBase<Cursor> const& reply)
+    {
+        std::cerr << "CmdDB Reply Get Cursor\n";
+        return reply.reply.cursor.id;
+    }
+};
 
 template<typename T>
 MongoConnection& MongoConnection::operator>>(T&& value)
 {
     stream >> std::forward<T>(value);
-    if (value.cursorID != 0)
+
+    CursorId cursor = CursorRetriever<T>::getCursorId(value);
+
+    if (cursor != 0)
     {
-        lastCursor = value.cursorID;
+        lastCursor = cursor;
         auto& find = openCursors[lastCursor];
 
         find.first     = std::min(find.first, value.startingFrom);

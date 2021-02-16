@@ -40,7 +40,7 @@ class CmdAdmListDataBases: public Op_Query<AdmCmdListDataBases>
         friend std::ostream& operator<<(std::ostream& stream, CmdAdmListDataBases const& data) {return stream << static_cast<Op_Query<AdmCmdListDataBases>>(data);}
 };
 
-using CmdAdmListDataBasesReply = Op_Reply<ListDataBaseReply>;
+using CmdAdmListDataBasesReply = Op_Reply<ViewType<ListDataBaseReply>>;
 
 }
 

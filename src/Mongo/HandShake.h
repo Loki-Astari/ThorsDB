@@ -218,12 +218,12 @@ class Op_QueryHandShake: public Op_Query<HandShake>
         friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return stream << static_cast<Op_Query<HandShake>>(data);}
 };
 
-class Op_ReplyHandShake: public Op_Reply<HandShakeReplyDoc>
+class Op_ReplyHandShake: public Op_Reply<ViewType<HandShakeReplyDoc>>
 {
     public:
         HandShakeReplyDoc   handshake;
         Op_ReplyHandShake()
-            : Op_Reply(handshake)
+            : Op_Reply(make_XView(handshake))
         {}
 };
 
