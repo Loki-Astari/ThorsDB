@@ -115,21 +115,17 @@ struct LastErrorObject
 };
 
 template<typename Document>
-struct FindModifyReply
+struct FindModifyReply: public CmdReplyBase
 {
-    using Options = std::unique_ptr<Document>;
-    using Reference = std::reference_wrapper<Options>;
+    using UserData = std::unique_ptr<Document>;
+    using Reference = std::reference_wrapper<UserData>;
 
-    FindModifyReply(std::unique_ptr<Document>& v)
+    FindModifyReply(UserData& v)
         : value(v)
     {}
 
     LastErrorObject             lastErrorObject;
     Reference                   value;
-    double                      ok                      = 0.0;
-
-    bool isOk() const                       {return ok;}
-    std::string getHRErrorMessage() const   {return "XXX";}
 };
 
 template<typename Document>
@@ -181,7 +177,8 @@ ThorsAnvil_Template_ExpandTrait(3, ThorsAnvil::DB::Mongo::FindModifyOptional,
                                    ThorsAnvil::DB::Mongo::FindModify,               findAndModify, remove, update, query, sort);
 
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::LastErrorObject,                        updatedExisting, upserted);
-ThorsAnvil_Template_MakeTrait(1, ThorsAnvil::DB::Mongo::FindModifyReply,            lastErrorObject, value, ok);
+ThorsAnvil_Template_ExpandTrait(1, ThorsAnvil::DB::Mongo::CmdReplyBase,
+                                   ThorsAnvil::DB::Mongo::FindModifyReply,          lastErrorObject, value);
 
 #include "CmdDB_FindModify.tpp"
 

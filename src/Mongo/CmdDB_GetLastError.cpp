@@ -47,7 +47,7 @@ GetLastError::GetLastError(GetLastErrorOptions const& options, std::string /*col
 {
 }
 
-std::string GetLastErrorReply::getHRErrorMessage() const
+std::string GetLastErrorReply::to_String() const
 {
     static const GetLastErrorReply defaultValue;
 

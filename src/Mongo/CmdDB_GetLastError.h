@@ -68,16 +68,15 @@ struct Host
     std::int32_t                    port;
 };
 
-struct GetLastErrorReply
+struct GetLastErrorReply: public CmdReplyBase
 {
+    using UserData = void;
+
     mutable std::map<std::string, bool>     filter;
 
-    double                          ok                  = 0.0;
     std::unique_ptr<std::string>    err;
     std::string                     ns;
     std::string                     index;
-    std::string                     errmsg;
-    std::int32_t                    code                = -1;
     std::int32_t                    connectionId        = -1;   // *
     std::time_t                     lastOp              = 0;
     std::int32_t                    n                   = -1;   // *
@@ -92,8 +91,7 @@ struct GetLastErrorReply
     std::time_t                     wtime               = 0;
     std::unique_ptr<std::vector<Host>> writtenTo;                  // *
 
-    bool isOk() const                       {return ok;}
-    std::string getHRErrorMessage() const;
+    std::string to_String() const;
 };
 
 using CmdDB_GetLastError        = CmdDB_Query<GetLastError>;
@@ -113,7 +111,8 @@ ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::GetLastErrorOptional,
 
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Host,                           hostname, port);
 ThorsAnvil_MakeFilter(ThorsAnvil::DB::Mongo::GetLastErrorReply,             filter);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::GetLastErrorReply,              ok, err, ns, index, errmsg, code, connectionId,
+ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,
+                     ThorsAnvil::DB::Mongo::GetLastErrorReply,              err, ns, index, connectionId,
                                                                             lastOp, n, syncMillis, shards, singleShard, updatedExisting,
                                                                             upserted, wnote, wtimeout, waited, wtime, writtenTo);
 

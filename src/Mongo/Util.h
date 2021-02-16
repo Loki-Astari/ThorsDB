@@ -56,6 +56,11 @@ using HasOptions            = std::enable_if_t<hasOptions<Actual>, bool>;
 template<typename Actual>
 using NoOptions             = std::enable_if_t<!hasOptions<Actual>, bool>;
 
+template<typename Actual>
+using HasUserData         = std::enable_if_t<!std::is_same_v<typename Actual::UserData, void>, bool>;
+template<typename Actual>
+using NoUserData          = std::enable_if_t<std::is_same_v<typename Actual::UserData, void>, bool>;
+
 /*
  * Remove all const/volatile/reference from the types Actual
  * This probably needs some deeper review. I am sure somebody else has this problem before

@@ -2,9 +2,24 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-bool CmdReply::isOk() const
+bool CmdReplyBase::isOk() const
 {
     return ok;
+}
+
+std::string CmdReplyBase::getHRErrorMessage() const
+{
+    std::stringstream result;
+
+    if (codeName.size() != 0 || errmsg.size() != 0)
+    {
+        result  << std::to_string(code)
+                << ": "
+                << codeName
+                << ": "
+                << errmsg;
+    }
+    return result.str();
 }
 
 std::string CmdReply::getHRErrorMessage() const
@@ -13,14 +28,11 @@ std::string CmdReply::getHRErrorMessage() const
     std::stringstream result;
     result << ": CmdReply: ";
 
-    if (codeName.size() != 0 || errmsg.size() != 0)
+    std::string base = CmdReplyBase::getHRErrorMessage();
+    if (base.size() != 0)
     {
         ok = false;
-        result  << std::to_string(code)
-                << ": "
-                << codeName
-                << ": "
-                << errmsg;
+        result  << base;
     }
     if (writeErrors.size() != 0)
     {

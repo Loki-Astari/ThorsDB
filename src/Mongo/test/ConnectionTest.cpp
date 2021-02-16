@@ -282,7 +282,8 @@ static bool zeroOutCollection(MongoConnection& connection)
 {
     connection << send_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
 
-    CmdDB_DeleteReply   reply;
+    std::size_t     size;
+    CmdDB_DeleteReply   reply(size);
     connection >> reply;
 
     EXPECT_TRUE(reply.isOk());
@@ -304,26 +305,25 @@ static bool setTheDefaultCollectinState(MongoConnection& connection)
                                                                  {"Bit The Dust", 22},
                                                                 };
 
-    bool ok = false;
+    std::size_t count;
     try
     {
         connection << send_CmdDB_Insert("test", "ConnectionTest", objects);
-        connection >> get_CmdDB_InsertReply();
-        ok = true;
+        connection >> get_CmdDB_InsertReply(count);
     }
     catch(MongoException const& e)
     {
+        EXPECT_TRUE(false);
         std::cerr << e;
+        return false;
     }
 
-    EXPECT_TRUE(ok);
-    //EXPECT_EQ(5, reply.reply.n);
+    EXPECT_EQ(5, count);
 
-    //if (!ok|| reply.reply.n != 5)
-    //{
-    //    std::cerr << make_hr(reply);
-    //    return false;
-    //}
+    if (count != 5)
+    {
+        return false;
+    }
     return true;
 }
 
@@ -388,7 +388,9 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)
 {
     // Delete 2 item for the collection
     ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
-    CmdDB_DeleteReply   reply;
+
+    std::size_t         count;
+    CmdDB_DeleteReply   reply(count);
     ConnectionTestMiddleWireAction::getConnection() >> reply;
 
     if (!reply.isOk())
@@ -397,7 +399,7 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)
     }
 
     EXPECT_TRUE(reply.isOk());
-    EXPECT_EQ(2, reply.reply.n);   // number deleted
+    EXPECT_EQ(2, count);   // number deleted
 
     checkTheNumberofObjectsIs("CmdDB_Delete_2_Items", ConnectionTestMiddleWireAction::getConnection(), 3);
 }
@@ -405,10 +407,11 @@ TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items_RValue)
 {
     // Delete 2 item for the collection
     bool ok = false;
+    std::size_t count;
     try
     {
         ConnectionTestMiddleWireAction::getConnection() << send_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
-        ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_DeleteReply();
+        ConnectionTestMiddleWireAction::getConnection() >> get_CmdDB_DeleteReply(count);
         ok = true;
     }
     catch(MongoException const& e)

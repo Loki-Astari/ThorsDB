@@ -15,47 +15,53 @@ template<typename Document> struct CursorFirst;
 template<typename Document> struct CursorNext;
 
 template<typename T>
-struct DocumentExtractor
+struct UserDataExtractor
 {
-    using Doc = T;
+    using UserData = T;
 };
 
 template<typename Document>
-struct DocumentExtractor<CursorFirst<Document>>
+struct UserDataExtractor<CursorFirst<Document>>
 {
-    using Doc = Document;
+    using UserData = typename CursorFirst<Document>::UserData;
 };
 
 template<typename Document>
-struct DocumentExtractor<CursorNext<Document>>
+struct UserDataExtractor<CursorNext<Document>>
 {
-    using Doc = Document;
+    using UserData = typename CursorNext<Document>::UserData;
 };
 
 template<typename Document>
 struct CursorFirst
 {
-    CursorFirst(std::vector<Document>& container)
+    using UserData = std::vector<Document>;
+    using Reference = std::reference_wrapper<UserData>;
+
+    CursorFirst(UserData& container)
         : firstBatch(container)
     {}
 
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::reference_wrapper<std::vector<Document>>  firstBatch;
+    Reference               firstBatch;
 };
 
 template<typename Document>
 struct CursorNext
 {
-    CursorNext(std::vector<Document>& container)
+    using UserData = std::vector<Document>;
+    using Reference = std::reference_wrapper<UserData>;
+
+    CursorNext(UserData& container)
         : nextBatch(container)
     {}
 
     bool                    partialResultsReturned  = true;
     CursorId                id                      = 0;
     std::string             ns;
-    std::reference_wrapper<std::vector<Document>>  nextBatch;
+    Reference               nextBatch;
 };
 
 struct Signature
@@ -71,21 +77,17 @@ struct ClusterTime
 };
 
 template<typename Cursor>
-struct FindReply
+struct FindReply: public CmdReplyBase
 {
-    using Document = typename DocumentExtractor<Cursor>::Doc;
-    using Options  = Document;
-    FindReply(std::vector<Options>& container)
+    using UserData  = typename UserDataExtractor<Cursor>::UserData;
+
+    FindReply(UserData& container)
         : cursor(container)
     {}
 
     Cursor                  cursor;
-    double                  ok                      = 0.0;
     std::time_t             operationTime           = 0;
     ClusterTime             $clusterTime;
-
-    bool isOk() const                       {return ok;}
-    std::string getHRErrorMessage() const   {return "XX";}
 };
 
 template<typename Cursor>
@@ -95,5 +97,13 @@ using CmdDB_FindReplyBase   = CmdDB_Reply<FindReply<Cursor>>;
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindAll);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DefaultSort);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::NoUpdate);
+
+// Result Info
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorFirst,     partialResultsReturned, id, ns, firstBatch);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorNext,      partialResultsReturned, id, ns, nextBatch);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
+ThorsAnvil_Template_ExpandTrait(1, ThorsAnvil::DB::Mongo::CmdReplyBase,
+                                ThorsAnvil::DB::Mongo::FindReply,       cursor, operationTime, $clusterTime);
 
 #endif

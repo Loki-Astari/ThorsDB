@@ -183,12 +183,6 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindOptional,               projecti
 ThorsAnvil_Template_MakeFilter(2, ThorsAnvil::DB::Mongo::Find,          findFilter);
 ThorsAnvil_Template_ExpandTrait(2,ThorsAnvil::DB::Mongo::FindOptional,
                                   ThorsAnvil::DB::Mongo::Find,          find, filter, sort);
-// Result Info
-ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorFirst,     partialResultsReturned, id, ns, firstBatch);
-ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorNext,      partialResultsReturned, id, ns, nextBatch);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
-ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::FindReply,       cursor, ok, operationTime, $clusterTime);
 
 #include "CmdDB_Find.tpp"
 
