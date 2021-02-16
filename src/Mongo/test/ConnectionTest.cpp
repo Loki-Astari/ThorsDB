@@ -1,5 +1,6 @@
 
 #include <gtest/gtest.h>
+#include "UnitTestWithConnection.h"
 // Ye-Old Wire Protocol
 #include "Op_Insert.h"
 #include "Op_Delete.h"
@@ -29,30 +30,6 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
-
-struct TestFindAll {};
-ThorsAnvil_MakeTrait(TestFindAll);
-
-struct StringAndIntNoConstructorReply: public StringAndIntNoConstructor
-{
-    std::string         $err    = "Not Initialized";
-    std::int32_t        code    = 404;
-    double              ok      = 1.0;
-};
-
-struct FindValue
-{
-    int value;
-};
-
-struct UpdateMessage
-{
-    std::string message;
-};
-
-ThorsAnvil_ExpandTrait(StringAndIntNoConstructor, StringAndIntNoConstructorReply, $err, code, ok);
-ThorsAnvil_MakeTrait(FindValue, value);
-ThorsAnvil_MakeTrait(UpdateMessage, message);
 
 TEST(ConnectionTest, YeOldWireProtocol)
 {
@@ -249,83 +226,14 @@ TEST(ConnectionTest, YeOldWireProtocol)
     }
 }
 
-static bool checkTheNumberofObjectsIs(std::string const& message, MongoConnection& connection, int expected)
+class ConnectionTestMiddleWireAction: public UnitTestWithConnection
 {
-    std::vector<StringAndIntNoConstructor>      data;
-
-    try
-    {
-        connection << send_CmdDB_Find("test", "ConnectionTest");
-        connection >> get_CmdDB_FindReply(data);
-    }
-    catch(MongoException const& e)
-    {
-        EXPECT_TRUE(false);
-        std::cerr << "Fail in: " << message
-                  << " Exception: " << e
-                  << "\n\n";
-        return false;
-    }
-
-    EXPECT_EQ(expected,   data.size());
-
-    if (data.size() != expected)
-    {
-        std::cerr << "Fail in: " << message
-                  << "Bad Result Size\n";
-        return false;
-    }
-    return true;
-}
-
-static bool zeroOutCollection(MongoConnection& connection)
-{
-    connection << send_CmdDB_Delete("test", "ConnectionTest", TestFindAll{});
-
-    std::size_t     size;
-    CmdDB_DeleteReply   reply(size);
-    connection >> reply;
-
-    EXPECT_TRUE(reply.isOk());
-
-    if (!reply.isOk())
-    {
-        std::cerr << make_hr(reply);
-        return false;
-    }
-    return true;
-}
-
-static bool setTheDefaultCollectinState(MongoConnection& connection)
-{
-    std::vector<StringAndIntNoConstructor>               objects{{"DataString"s, 48},
-                                                                 {"Another"s, 22},
-                                                                 {"ThirdAndLast"s, 0xFF},
-                                                                 {"ThisAndThat", 48},
-                                                                 {"Bit The Dust", 22},
-                                                                };
-
-    std::size_t count;
-    try
-    {
-        connection << send_CmdDB_Insert("test", "ConnectionTest", objects);
-        connection >> get_CmdDB_InsertReply(count);
-    }
-    catch(MongoException const& e)
-    {
-        EXPECT_TRUE(false);
-        std::cerr << e;
-        return false;
-    }
-
-    EXPECT_EQ(5, count);
-
-    if (count != 5)
-    {
-        return false;
-    }
-    return true;
-}
+    public:
+        ConnectionTestMiddleWireAction()
+        {
+            setCollectionToBaseLine(getConnection());
+        };
+};
 
 /*
  * This test just verifies that Delete/Insert/Find work.
@@ -341,48 +249,13 @@ TEST(ConnectionTest, MiddleWireProtocol)
     MongoConnection  connection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
 
     bool ok = true;
-    ok = ok && zeroOutCollection(connection);
-    ok = ok && checkTheNumberofObjectsIs("MiddleWireProtocol:1", connection, 0);
-    ok = ok && setTheDefaultCollectinState(connection);
-    ok = ok && checkTheNumberofObjectsIs("MiddleWireProtocol:2", connection, 5);
+    ok = ok && ConnectionTestMiddleWireAction::zeroOutCollection(connection);
+    ok = ok && ConnectionTestMiddleWireAction::checkTheNumberofObjectsIs("ConnectionTestMiddleWireAction:1", connection, 0);
+    ok = ok && ConnectionTestMiddleWireAction::setTheDefaultCollectinState(connection);
+    ok = ok && ConnectionTestMiddleWireAction::checkTheNumberofObjectsIs("ConnectionTestMiddleWireAction:2", connection, 5);
 
     ASSERT_TRUE(ok);
 }
-
-class ConnectionTestMiddleWireAction : public ::testing::Test
-{
-    public:
-        ConnectionTestMiddleWireAction()
-        {
-            setCollectionToBaseLine(getConnection());
-        }
-        static void SetUpTestCase()
-        {
-            connection.reset(new MongoConnection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {}));
-        }
-        static void TearDownTestCase()
-        {
-            connection.reset();
-        }
-
-        static MongoConnection& getConnection() {return *connection;}
-    private:
-        static std::unique_ptr<MongoConnection> connection;
-        static void setCollectionToBaseLine(MongoConnection& connection)
-        {
-            bool ok = true;
-            ok = ok && zeroOutCollection(connection);
-            ok = ok &&  checkTheNumberofObjectsIs("setCollectionToBaseLine:1", connection, 0);
-            ok = ok &&  setTheDefaultCollectinState(connection);
-            ok = ok &&  checkTheNumberofObjectsIs("setCollectionToBaseLine:2", connection, 5);
-
-            // If this fails.
-            // Make sure the "MiddleWireProtocol" is working correctly.
-            ASSERT_TRUE(ok);
-        }
-};
-
-std::unique_ptr<MongoConnection> ConnectionTestMiddleWireAction::connection;
 
 TEST_F(ConnectionTestMiddleWireAction, CmdDB_Delete_2_Items)
 {
