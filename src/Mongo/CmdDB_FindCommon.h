@@ -71,7 +71,7 @@ struct ClusterTime
 };
 
 template<typename Cursor>
-struct FindReply
+struct FindReply: public CmdReplyBase
 {
     using Document = typename DocumentExtractor<Cursor>::Doc;
     using Options  = Document;
@@ -80,12 +80,8 @@ struct FindReply
     {}
 
     Cursor                  cursor;
-    double                  ok                      = 0.0;
     std::time_t             operationTime           = 0;
     ClusterTime             $clusterTime;
-
-    bool isOk() const                       {return ok;}
-    std::string getHRErrorMessage() const   {return "XX";}
 };
 
 template<typename Cursor>
@@ -95,5 +91,13 @@ using CmdDB_FindReplyBase   = CmdDB_Reply<FindReply<Cursor>>;
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::FindAll);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::DefaultSort);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::NoUpdate);
+
+// Result Info
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorFirst,     partialResultsReturned, id, ns, firstBatch);
+ThorsAnvil_Template_MakeTrait(1,ThorsAnvil::DB::Mongo::CursorNext,      partialResultsReturned, id, ns, nextBatch);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Signature,                  keyIdP, hash);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ClusterTime,                clusterTime, signature);
+ThorsAnvil_Template_ExpandTrait(1, ThorsAnvil::DB::Mongo::CmdReplyBase,
+                                ThorsAnvil::DB::Mongo::FindReply,       cursor, operationTime, $clusterTime);
 
 #endif

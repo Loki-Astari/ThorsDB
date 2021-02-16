@@ -71,7 +71,7 @@ std::string GetLastErrorReply::getHRErrorMessage() const
     filter["writtenTo"]         = writtenTo.get() != nullptr && writtenTo->size() != 0;
 
     std::stringstream   errorMsg;
-    errorMsg << ThorsAnvil::Serialize::jsonExporter(*this);
+    errorMsg << CmdReplyBase::getHRErrorMessage() << " " << ThorsAnvil::Serialize::jsonExporter(*this);
 
     return errorMsg.str();
 }

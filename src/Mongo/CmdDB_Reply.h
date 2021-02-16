@@ -19,17 +19,23 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-struct CmdReply
+struct CmdReplyBase
 {
-    double                      ok              = 0;
-    std::size_t                 n               = 0;
+    double                      ok              = 0.0;
     std::string                 errmsg;
     std::string                 codeName;
     int                         code            = 0;
+
+    bool isOk() const;
+    std::string getHRErrorMessage() const;
+};
+
+struct CmdReply: public CmdReplyBase
+{
+    std::size_t                 n               = 0;
     std::vector<WriteErrors>    writeErrors;
     WriteConcernError           writeConcernError;
 
-    bool isOk() const;
     std::string getHRErrorMessage() const;
 };
 
@@ -61,7 +67,9 @@ class CmdDB_Reply: public Op_Reply<ViewType<Document>>
 
 }
 
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReply,           ok, n, writeErrors, writeConcernError, errmsg, codeName, code);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,       ok, errmsg, codeName, code);
+ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,
+                       ThorsAnvil::DB::Mongo::CmdReply,         n, writeErrors, writeConcernError);
 
 #include "CmdDB_Reply.tpp"
 
