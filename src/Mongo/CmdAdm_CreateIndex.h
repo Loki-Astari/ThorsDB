@@ -17,6 +17,8 @@ namespace ThorsAnvil::DB::Mongo
 
 struct Index
 {
+    Index()
+    {}
     Index(std::string name, std::string key, bool asc = true)
         : key{{std::move(key), asc ? 1 : -1}}
         , name{std::move(name)}

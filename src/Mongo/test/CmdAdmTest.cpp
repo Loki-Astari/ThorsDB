@@ -7,6 +7,7 @@
 #include "CmdDB_GetLastError.h"
 #include "CmdAdm_ListDataBases.h"
 #include "CmdAdm_ListCollections.h"
+#include "CmdAdm_ListIndexes.h"
 #include "CmdAdm_Compact.h"
 #include "CmdAdm_Create.h"
 #include "CmdAdm_Drop.h"
@@ -104,7 +105,7 @@ TEST_F(CmdAdmTest, Create_List_Drop_Collection)
     }
     EXPECT_EQ(1, dropReply.reply.ok);
 }
-TEST_F(CmdAdmTest, Create_Drop_Index)
+TEST_F(CmdAdmTest, Create_List_Drop_Index)
 {
     MongoConnection&  connection    = CmdAdmTest::getConnection();
 
@@ -117,6 +118,24 @@ TEST_F(CmdAdmTest, Create_Drop_Index)
         std::cerr << replyCreate.getHRErrorMessage();
     }
     EXPECT_EQ(1, replyCreate.reply.ok);
+
+    connection << CmdAdm_ListIndexes{"ConnectionCreateCollection"};
+    CmdAdm_ListIndexesReply    replyList;
+    connection >> replyList;
+
+    EXPECT_LE(2, replyList.reply.data.size());
+
+    bool ok = false;
+    for(auto const& idx: replyList.reply.data)
+    {
+        if (idx.name == "NameIndex")
+        {
+            ok = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(ok);
+
 
     connection << CmdAdm_DropIndex{"ConnectionCreateCollection"s, "NameIndex"s};
     CmdAdm_DropIndexReply  replyDrop;
