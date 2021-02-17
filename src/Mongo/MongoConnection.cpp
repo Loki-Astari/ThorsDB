@@ -1,6 +1,6 @@
 #include "MongoConnection.h"
 
-#include "HandShake.h"
+#include "CmdAdm_Auth.h"
 #include "ThorsCrypto/scram.h"
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -38,9 +38,9 @@ MongoConnection::MongoConnection(
     // Send Handshake
     auto findAppName = options.find("AppName");
     std::string const& appName = findAppName == options.end() ? "ThorsAnvil::Mongo Lib v1.0" : findAppName->second;
-    stream << Op_QueryHandShake(appName) << std::flush;
+    stream << CmdAdm_HandShake(appName) << std::flush;
 
-    Op_ReplyHandShake   handShakeReply;
+    CmdAdm_HandShakeReply   handShakeReply;
     stream >> handShakeReply;
 
     if (handShakeReply.handshake.ok != 1)

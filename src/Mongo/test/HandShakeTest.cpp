@@ -1,6 +1,6 @@
 
 #include <gtest/gtest.h>
-#include "HandShake.h"
+#include "CmdAdm_Auth.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
 #include "ThorsCrypto/scram.h"
@@ -266,7 +266,7 @@ BSON
         "\x00"s;
 
     Op_MsgHeader::messageIdSetForTest(0);
-    Op_QueryHandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
+    CmdAdm_HandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
 
     std::stringstream   stream;
     stream << handShakeMessage;
@@ -370,7 +370,7 @@ BSON
                         "\x00\x00\x00\x00\x00\xf0\x3f\x00"s;
     std::stringstream   stream(input);
 
-    Op_ReplyHandShake   reply;
+    CmdAdm_HandShakeReply   reply;
     stream >> reply;
 
     EXPECT_EQ(reply.handshake.ok,                   1.0);

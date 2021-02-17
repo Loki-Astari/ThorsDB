@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_MSG_HANDSHAKE_H
-#define THORSANVIL_DB_MONGO_OP_MSG_HANDSHAKE_H
+#ifndef THORSANVIL_DB_MONGO_CMD_ADM_AUTH_H
+#define THORSANVIL_DB_MONGO_CMD_ADM_AUTH_H
 
 // https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst
 
@@ -88,7 +88,7 @@ struct Version
     std::int64_t        counter;
 };
 
-struct HandShakeReplyDoc
+struct HandShakeReply
 {
     double          ok;
     // If ok is zero
@@ -208,21 +208,21 @@ struct AuthReply
     Binary              payload;
 };
 
-class Op_QueryHandShake: public Op_Query<HandShake>
+class CmdAdm_HandShake: public Op_Query<HandShake>
 {
     public:
         template<typename... Args>
-        Op_QueryHandShake(Args&&... args)
+        CmdAdm_HandShake(Args&&... args)
             : Op_Query("admin.$cmd", {}, std::forward<Args>(args)...)
         {}
-        friend std::ostream& operator<<(std::ostream& stream, Op_QueryHandShake const& data) {return stream << static_cast<Op_Query<HandShake>>(data);}
+        friend std::ostream& operator<<(std::ostream& stream, CmdAdm_HandShake const& data) {return stream << static_cast<Op_Query<HandShake>>(data);}
 };
 
-class Op_ReplyHandShake: public Op_Reply<ViewType<HandShakeReplyDoc>>
+class CmdAdm_HandShakeReply: public Op_Reply<ViewType<HandShakeReply>>
 {
     public:
-        HandShakeReplyDoc   handshake;
-        Op_ReplyHandShake()
+        HandShakeReply      handshake;
+        CmdAdm_HandShakeReply()
             : Op_Reply(make_XView(handshake))
         {}
 };
@@ -241,7 +241,7 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Application,        name);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Client,             application, driver, os);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,          isMaster, saslSupportedMechs, hostInfo, client);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, counter);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReplyDoc,  ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShakeReply,     ok, code, errmsg, codeName, topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,          ok, code, errmsg, codeName, conversationId, done, payload);
