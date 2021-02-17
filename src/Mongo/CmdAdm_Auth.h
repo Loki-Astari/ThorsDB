@@ -185,20 +185,11 @@ struct AuthCont
     Binary              payload;
 };
 
-struct AuthReply
+struct AuthReply: public CmdReplyBase
 {
     AuthReply()
-        : ok(1.0)
-        , payload(0)
+        : payload(0)
     {}
-    // When there is an error message
-    // The next four fields are used.
-    // ok is set to zero
-    double              ok;
-    std::int32_t        code;
-    std::string         errmsg;
-    std::string         codeName;
-    // When there is a good message the following are set
     std::int32_t        conversationId;
     bool                done;
     Binary              payload;
@@ -224,6 +215,7 @@ ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,
                      ThorsAnvil::DB::Mongo::HandShakeReply,     topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthReply,          ok, code, errmsg, codeName, conversationId, done, payload);
+ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,
+                     ThorsAnvil::DB::Mongo::AuthReply,          conversationId, done, payload);
 
 #endif

@@ -30,6 +30,7 @@ class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
                         std::string const& password,
                         std::string const& database,
                         ThorsAnvil::DB::Access::Options const& options);
+        ~MongoConnection();
         virtual std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> createStatementProxy(std::string const& statement) override;
 
         virtual int getSocketId() const override;

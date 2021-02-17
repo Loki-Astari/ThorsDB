@@ -1,6 +1,7 @@
 #include "MongoConnection.h"
 
 #include "CmdAdm_Auth.h"
+#include "CmdAdm_Logout.h"
 #include "ThorsCrypto/scram.h"
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -107,6 +108,11 @@ MongoConnection::MongoConnection(
                                  "Name: ", authContReply2.getDocument<0>().codeName,
                                  "Msg:  ", authContReply2.getDocument<0>().errmsg);
     }
+}
+
+MongoConnection::~MongoConnection()
+{
+    stream << CmdAdm_Logout{} << std::flush;
 }
 
 std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> MongoConnection::createStatementProxy(std::string const& /*statement*/)
