@@ -43,13 +43,13 @@ MongoConnection::MongoConnection(
     CmdAdm_HandShakeReply   handShakeReply;
     stream >> handShakeReply;
 
-    if (handShakeReply.handshake.ok != 1)
+    if (handShakeReply.reply.ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake Request Failed: ",
-                                 "Code: ", handShakeReply.handshake.codeName,
-                                 "Msg:  ", handShakeReply.handshake.errmsg);
+                                 "Code: ", handShakeReply.reply.codeName,
+                                 "Msg:  ", handShakeReply.reply.errmsg);
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
