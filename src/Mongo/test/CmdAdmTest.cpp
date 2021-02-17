@@ -6,6 +6,7 @@
 #include "ThorsSocket/Socket.h"
 #include "CmdDB_GetLastError.h"
 #include "CmdAdm_ListDataBases.h"
+#include "CmdAdm_ListCollections.h"
 #include "CmdAdm_Compact.h"
 #include "CmdAdm_Create.h"
 #include "CmdAdm_Drop.h"
@@ -62,52 +63,42 @@ TEST_F(CmdAdmTest, Compact)
     connection >> reply;
 
     EXPECT_EQ(1, reply.reply.ok);
-/*
-    connection << send_CmdDB_GetLastError("ConnectionTest");
-    CmdDB_GetLastErrorReply     lastError;
-    connection >> lastError;
-    std::cout << lastError.reply.to_String();
-*/
 }
-TEST_F(CmdAdmTest, Create)
+TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 {
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Create{"ConnectionCreateCollection"s};
     CmdAdm_CreateReply  reply;
     connection >> reply;
 
-    std::cerr << "Checking\n";
-    EXPECT_EQ(1, reply.reply.ok);
-    std::cerr << "Test\n";
     if (reply.reply.ok != 1)
     {
-        std::cerr << "Output\n";
         std::cerr << reply.reply.getHRErrorMessage() << "\n";
-        std::cerr << "Output DONE\n";
     }
+    EXPECT_EQ(1, reply.reply.ok);
 
-    connection << CmdAdm_ListDataBases{};
-    CmdAdm_ListDataBasesReply   listOfDataBases;
-    connection >> listOfDataBases;
-    std::cerr << listOfDataBases.reply.databases.size() << "\n";
+    connection << CmdAdm_ListCollections{};
+    CmdAdm_ListCollectionsReply   listOfCollections;
+    connection >> listOfCollections;
+
     bool found = false;
-    for(auto const& db: listOfDataBases.reply.databases)
+    for(auto const& db: listOfCollections.reply.collectionInfo)
     {
-        std::cerr << "Name: " << db.name << "\n";
-        if (db.name == "ConnectionCreateCollection") {
+        if (db.name == "ConnectionCreateCollection")
+        {
             found = true;
             break;
         }
     }
-    //EXPECT_TRUE(found);
+    EXPECT_TRUE(found);
 
     connection << CmdAdm_Drop("ConnectionCreateCollection"s);
     CmdAdm_DropReply    dropReply;
     connection >> dropReply;
 
-    EXPECT_TRUE(dropReply.reply.ok);
     if (dropReply.reply.ok != 1)
     {
         std::cerr << dropReply.reply.getHRErrorMessage() << "\n";
     }
+    EXPECT_EQ(1, dropReply.reply.ok);
 }
