@@ -10,6 +10,8 @@
 #include "CmdAdm_Compact.h"
 #include "CmdAdm_Create.h"
 #include "CmdAdm_Drop.h"
+#include "CmdAdm_CreateIndex.h"
+#include "CmdAdm_DropIndex.h"
 
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -101,4 +103,34 @@ TEST_F(CmdAdmTest, Create_List_Drop_Collection)
         std::cerr << dropReply.reply.getHRErrorMessage() << "\n";
     }
     EXPECT_EQ(1, dropReply.reply.ok);
+}
+TEST_F(CmdAdmTest, Create_Drop_Index)
+{
+    MongoConnection&  connection    = CmdAdmTest::getConnection();
+
+    connection << CmdAdm_CreateIndex{"ConnectionCreateCollection"s, Index("NameIndex", "Name")};
+    CmdAdm_CreateIndexReply  replyCreate;
+    connection >> replyCreate;
+
+    if (replyCreate.reply.ok != 1)
+    {
+        std::cerr << replyCreate.getHRErrorMessage();
+    }
+    EXPECT_EQ(1, replyCreate.reply.ok);
+
+    connection << CmdAdm_DropIndex{"ConnectionCreateCollection"s, "NameIndex"s};
+    CmdAdm_DropIndexReply  replyDrop;
+    connection >> replyDrop;
+
+    if (replyDrop.reply.ok != 1)
+    {
+        std::cerr << replyDrop.getHRErrorMessage();
+    }
+    EXPECT_EQ(1, replyDrop.reply.ok);
+
+    connection << CmdAdm_DropIndex{"ConnectionCreateCollection"s, "NameIndex"s};
+    CmdAdm_DropIndexReply  replyDrop2;
+    connection >> replyDrop2;
+
+    EXPECT_EQ(0, replyDrop2.reply.ok);
 }
