@@ -16,7 +16,7 @@
  * >    connection >> get_CmdDB_GetMoreReply(std::vector<Document>);    // CmdDB_Find
  */
 
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
 #include "CmdDB_Find.h"

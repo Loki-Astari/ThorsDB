@@ -14,7 +14,7 @@
  * <    connection >> get_CmdDB_DeleteReply(count);
  */
 
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
 

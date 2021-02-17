@@ -19,7 +19,7 @@
  * >    connection >> get_CmdDB_FindUpdate(std::unique_ptr<Document>);
  */
 
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "CmdDB_FindCommon.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"

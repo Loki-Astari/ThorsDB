@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_CMD_DB_H
-#define THORSANVIL_DB_MONGO_CMD_DB_H
+#ifndef THORSANVIL_DB_MONGO_BASE_CMD_H
+#define THORSANVIL_DB_MONGO_BASE_CMD_H
 
 // https://docs.mongodb.com/manual/reference/command/nav-crud/
 
@@ -57,6 +57,35 @@ struct WriteConcern
     std::time_t     wtimeout    = 0;
 };
 
+struct CmdReplyBase
+{
+    using UserData  = void;
+
+    double                      ok              = 0.0;
+    std::string                 errmsg;
+    std::string                 codeName;
+    int                         code            = 0;
+
+    bool isOk() const;
+    std::string getHRErrorMessage() const;
+};
+
+struct CmdReply: public CmdReplyBase
+{
+    using UserData  = std::size_t;
+    using Reference = std::reference_wrapper<UserData>;
+
+    CmdReply(UserData& count)
+        : n(count)
+    {}
+
+    Reference                   n;
+    std::vector<WriteErrors>    writeErrors;
+    WriteConcernError           writeConcernError;
+
+    std::string getHRErrorMessage() const;
+};
+
 }
 
 ThorsAnvil_MakeEnum(ThorsAnvil::DB::Mongo::ReadConcernLevel,    local, available, majority, linearizable);
@@ -65,6 +94,10 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcern,       w, j, wtimeout);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteErrors,        index, code, errmsg);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::WriteConcernError,  code, errmsg);
 
-#include "CmdDB.tpp"
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,       ok, errmsg, codeName, code);
+ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,
+                       ThorsAnvil::DB::Mongo::CmdReply,         n, writeErrors, writeConcernError);
+
+#include "BaseCmd.tpp"
 
 #endif

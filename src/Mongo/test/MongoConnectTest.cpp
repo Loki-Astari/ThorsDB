@@ -4,7 +4,7 @@
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
 #include "HandShake.h"
-#include "CmdAdmListDatabases.h"
+#include "CmdAdm_ListDataBases.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
@@ -59,18 +59,18 @@ TEST(MongoConnectTest, CreateReply)
 
 
     // Send Command to prove authentication worked and we have an open and working connection:
-    stream << CmdAdmListDataBases{} << std::flush;
+    stream << CmdAdm_ListDataBases{} << std::flush;
 
-    ListDataBaseReply           listDBReply;
-    CmdAdmListDataBasesReply    listOfDatabases(listDBReply);
+    //ListDataBaseReply           listDBReply;
+    CmdAdm_ListDataBasesReply   listOfDatabases;//(listDBReply);
     stream >> listOfDatabases;
 
     if (listOfDatabases)
     {
 
-        std::cerr << "ListDB TS:   " << listDBReply.totalSize << "\n";
+        std::cerr << "ListDB TS:   " << listOfDatabases.reply.totalSize << "\n";
         std::cerr << "ListDB DB: [";
-        for (auto const& db: listDBReply.databases)
+        for (auto const& db: listOfDatabases.reply.databases)
         {
             std::cerr << "{Name: " << db.name << ", Size: " << db.sizeOnDisk << ", Empty: " << db.empty << "}";
         }

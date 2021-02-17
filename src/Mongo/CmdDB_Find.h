@@ -22,7 +22,7 @@
  * >    connection >> get_CmdDB_GetMoreReply(std::vector<Document>);    // Appends
  */
 
-#include "CmdDB.h"
+#include "BaseCmd.h"
 #include "CmdDB_FindCommon.h"
 #include "CmdDB_Query.h"
 #include "CmdDB_Reply.h"
