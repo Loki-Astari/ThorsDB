@@ -11,7 +11,7 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-// TODO Add ListDataBase Options.
+// TODO Add Drop Options.
 // See CmdDB_Find for the pattern.
 
 struct Drop

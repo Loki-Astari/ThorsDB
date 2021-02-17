@@ -1,6 +1,6 @@
 
 #include <gtest/gtest.h>
-#include "HandShake.h"
+#include "CmdAdm_Auth.h"
 #include "ThorSerialize/JsonThor.h"
 #include "ThorSerialize/CustomSerialization.h"
 #include "ThorsCrypto/scram.h"
@@ -266,7 +266,7 @@ BSON
         "\x00"s;
 
     Op_MsgHeader::messageIdSetForTest(0);
-    Op_QueryHandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
+    CmdAdm_HandShake   handShakeMessage("MongoDB Shell", "MongoDB Internal Client", "4.2.0");
 
     std::stringstream   stream;
     stream << handShakeMessage;
@@ -370,25 +370,25 @@ BSON
                         "\x00\x00\x00\x00\x00\xf0\x3f\x00"s;
     std::stringstream   stream(input);
 
-    Op_ReplyHandShake   reply;
+    CmdAdm_HandShakeReply   reply;
     stream >> reply;
 
-    EXPECT_EQ(reply.handshake.ok,                   1.0);
-    EXPECT_EQ(reply.handshake.ismaster,             1);
-    EXPECT_EQ(reply.handshake.topologyVersion.processId, ThorsAnvil::Serialize::MongoUtility::ObjectID(0x5f48aa04, 0x2d1dfb1dd7L, 0x52e00));
-    EXPECT_EQ(reply.handshake.topologyVersion.counter,   0x0L);
-    EXPECT_EQ(reply.handshake.maxBsonObjectSize,    0x1000000);
-    EXPECT_EQ(reply.handshake.maxMessageSizeBytes,  0x2dc6c00);
-    EXPECT_EQ(reply.handshake.maxWriteBatchSize,    0x186a0);
-    EXPECT_EQ(reply.handshake.localTime,            0x17476af112d);
-    EXPECT_EQ(reply.handshake.logicalSessionTimeoutMinutes, 0x1e);
-    EXPECT_EQ(reply.handshake.connectionId,         0x1e);
-    EXPECT_EQ(reply.handshake.minWireVersion,       0);
-    EXPECT_EQ(reply.handshake.maxWireVersion,       0x9);
-    EXPECT_EQ(reply.handshake.readOnly,             false);
-    ASSERT_EQ(reply.handshake.saslSupportedMechs.size(), 2);
-    EXPECT_EQ(reply.handshake.saslSupportedMechs[0],"SCRAM-SHA-1");
-    EXPECT_EQ(reply.handshake.saslSupportedMechs[1],"SCRAM-SHA-256");
+    EXPECT_EQ(reply.reply.ok,                   1.0);
+    EXPECT_EQ(reply.reply.ismaster,             1);
+    EXPECT_EQ(reply.reply.topologyVersion.processId, ThorsAnvil::Serialize::MongoUtility::ObjectID(0x5f48aa04, 0x2d1dfb1dd7L, 0x52e00));
+    EXPECT_EQ(reply.reply.topologyVersion.counter,   0x0L);
+    EXPECT_EQ(reply.reply.maxBsonObjectSize,    0x1000000);
+    EXPECT_EQ(reply.reply.maxMessageSizeBytes,  0x2dc6c00);
+    EXPECT_EQ(reply.reply.maxWriteBatchSize,    0x186a0);
+    EXPECT_EQ(reply.reply.localTime,            0x17476af112d);
+    EXPECT_EQ(reply.reply.logicalSessionTimeoutMinutes, 0x1e);
+    EXPECT_EQ(reply.reply.connectionId,         0x1e);
+    EXPECT_EQ(reply.reply.minWireVersion,       0);
+    EXPECT_EQ(reply.reply.maxWireVersion,       0x9);
+    EXPECT_EQ(reply.reply.readOnly,             false);
+    ASSERT_EQ(reply.reply.saslSupportedMechs.size(), 2);
+    EXPECT_EQ(reply.reply.saslSupportedMechs[0],"SCRAM-SHA-1");
+    EXPECT_EQ(reply.reply.saslSupportedMechs[1],"SCRAM-SHA-256");
 }
 
 TEST(HandShakeTest, CreateSASLFirstMessage)

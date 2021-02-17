@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 #include "ThorsSocket/SocketStream.h"
 #include "ThorsSocket/Socket.h"
-#include "HandShake.h"
+#include "CmdAdm_Auth.h"
 #include "CmdAdm_ListDataBases.h"
 #include "ThorsCrypto/scram.h"
 #include "ThorSerialize/JsonThor.h"
@@ -22,9 +22,9 @@ TEST(MongoConnectTest, CreateReply)
     socket.makeSocketNonBlocking();
 
     // Send Handshake
-    stream << Op_QueryHandShake("Test App") << std::flush;
+    stream << CmdAdm_HandShake("Test App") << std::flush;
 
-    Op_ReplyHandShake   handShakeReplyMessage;
+    CmdAdm_HandShakeReply   handShakeReplyMessage;
     stream >> handShakeReplyMessage;
 
     ASSERT_TRUE(handShakeReplyMessage.isOk());

@@ -1,6 +1,7 @@
 #include "MongoConnection.h"
 
-#include "HandShake.h"
+#include "CmdAdm_Auth.h"
+#include "CmdAdm_Logout.h"
 #include "ThorsCrypto/scram.h"
 
 using namespace ThorsAnvil::DB::Mongo;
@@ -38,18 +39,18 @@ MongoConnection::MongoConnection(
     // Send Handshake
     auto findAppName = options.find("AppName");
     std::string const& appName = findAppName == options.end() ? "ThorsAnvil::Mongo Lib v1.0" : findAppName->second;
-    stream << Op_QueryHandShake(appName) << std::flush;
+    stream << CmdAdm_HandShake(appName) << std::flush;
 
-    Op_ReplyHandShake   handShakeReply;
+    CmdAdm_HandShakeReply   handShakeReply;
     stream >> handShakeReply;
 
-    if (handShakeReply.handshake.ok != 1)
+    if (handShakeReply.reply.ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake Request Failed: ",
-                                 "Code: ", handShakeReply.handshake.codeName,
-                                 "Msg:  ", handShakeReply.handshake.errmsg);
+                                 "Code: ", handShakeReply.reply.codeName,
+                                 "Msg:  ", handShakeReply.reply.errmsg);
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
@@ -107,6 +108,11 @@ MongoConnection::MongoConnection(
                                  "Name: ", authContReply2.getDocument<0>().codeName,
                                  "Msg:  ", authContReply2.getDocument<0>().errmsg);
     }
+}
+
+MongoConnection::~MongoConnection()
+{
+    stream << CmdAdm_Logout{} << std::flush;
 }
 
 std::unique_ptr<ThorsAnvil::DB::Access::Lib::StatementProxy> MongoConnection::createStatementProxy(std::string const& /*statement*/)
