@@ -16,9 +16,6 @@ namespace ThorsAnvil::DB::Mongo
 
 struct Compact
 {
-    Compact(std::string compact)
-        : compact(std::move(compact))
-    {}
     std::string    compact;
 };
 

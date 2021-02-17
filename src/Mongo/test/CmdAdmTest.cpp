@@ -123,10 +123,10 @@ TEST_F(CmdAdmTest, Create_List_Drop_Index)
     CmdAdm_ListIndexesReply    replyList;
     connection >> replyList;
 
-    EXPECT_LE(2, replyList.reply.data.size());
+    EXPECT_LE(2, replyList.reply.indexInfo.size());
 
     bool ok = false;
-    for(auto const& idx: replyList.reply.data)
+    for(auto const& idx: replyList.reply.indexInfo)
     {
         if (idx.name == "NameIndex")
         {
@@ -152,4 +152,10 @@ TEST_F(CmdAdmTest, Create_List_Drop_Index)
     connection >> replyDrop2;
 
     EXPECT_EQ(0, replyDrop2.reply.ok);
+
+    connection << CmdAdm_Drop("ConnectionCreateCollection"s);
+    CmdAdm_DropReply    dropReply;
+    connection >> dropReply;
+
+    EXPECT_EQ(1, dropReply.reply.ok);
 }

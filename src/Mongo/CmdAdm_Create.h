@@ -16,9 +16,6 @@ namespace ThorsAnvil::DB::Mongo
 
 struct Create
 {
-    Create(std::string create)
-        : create(std::move(create))
-    {}
     std::string    create;
 };
 

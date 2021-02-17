@@ -16,9 +16,6 @@ namespace ThorsAnvil::DB::Mongo
 
 struct Drop
 {
-    Drop(std::string drop)
-        : drop(std::move(drop))
-    {}
     std::string    drop;
 };
 

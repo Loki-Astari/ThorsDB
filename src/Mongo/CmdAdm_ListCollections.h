@@ -23,6 +23,7 @@ struct ListCollections
 struct CollectionInfo
 {
 };
+
 struct CollectionIndex
 {
     bool                readOnly;

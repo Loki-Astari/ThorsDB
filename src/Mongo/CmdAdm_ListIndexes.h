@@ -25,10 +25,10 @@ struct ListIndexesReply: public CmdReplyBase
     using UserData = void;
 
     ListIndexesReply()
-        : cursor(data)
+        : cursor(indexInfo)
     {}
 
-    std::vector<Index>      data;
+    std::vector<Index>      indexInfo;
     CursorFirst<Index>      cursor;
 };
 
