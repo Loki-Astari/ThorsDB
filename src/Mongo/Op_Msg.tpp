@@ -137,7 +137,7 @@ std::istream& Op_Msg<Kind...>::parse(std::istream& stream)
     bool expectCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (expectCheckSum)
     {
-        stream >> checksum;
+        stream >> make_LE(checksum);
     }
     return stream;
 }
