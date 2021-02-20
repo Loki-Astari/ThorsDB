@@ -83,6 +83,8 @@ class Op_Msg
         template<std::size_t I>
         auto const& getDocument() const {return std::get<I>(sections).getDocument();}
 
+        void setCompression(std::int8_t compressionType)     {header.setCompression(compressionType);}
+
         std::ostream& print(std::ostream& stream)       const;
         std::ostream& printHR(std::ostream& stream)     const;
         std::istream& parse(std::istream& stream);

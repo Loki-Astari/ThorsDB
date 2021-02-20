@@ -69,6 +69,8 @@ class Op_Query: public Op_QueryOptions
 
         Document& getQuery();
 
+        void setCompression(std::int8_t compressionType)     {header.setCompression(compressionType);}
+
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
     private:

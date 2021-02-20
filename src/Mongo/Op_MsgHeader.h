@@ -17,6 +17,7 @@ class Op_MsgHeader
     std::int32_t            requestID;              // identifier for this message
     std::int32_t            responseTo;             // requestID from the original request (used in responses from db)
     OpCode                  opCode;                 // request type - see table below for details
+    std::int8_t             compression;
 
     public:
         Op_MsgHeader(OpCode opCode = OpCode::OP_REPLY);
@@ -28,6 +29,9 @@ class Op_MsgHeader
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
         std::istream& parse(std::istream& stream);
+
+        void setCompression(std::int8_t compressionType)                                                   {compression = compressionType;}
+
         friend std::ostream& operator<<(std::ostream& stream, Op_MsgHeader const& header)                  {return header.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Op_MsgHeader& header)                        {return header.parse(stream);}
 
