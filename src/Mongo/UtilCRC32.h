@@ -6,25 +6,43 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-extern std::uint32_t crcTable[256];
+class CRC32
+{
+    protected:
+        static const std::uint32_t table[256];
+};
 
-inline
-std::uint32_t crc32CheckSum(char const* buffer, std::size_t count)
+class CRC32C
+{
+    protected:
+        static const std::uint32_t table[256];
+};
+
+template<typename Type>
+class CheckSum: public Type
 {
     static constexpr std::uint32_t mask         = 0xFFFFFFFFul;
     static constexpr std::uint32_t tableMask    = 0x000000FFul;
 
-    std::uint32_t checkSum = 0xFFFFFFFFul;
-    unsigned char const*    data = reinterpret_cast<unsigned char const*>(buffer);
+    std::uint32_t   checkSum;
+    public:
+        CheckSum()                      {reset();}
+        void          reset()           {checkSum = 0xFFFFFFFFul;}
+        std::uint32_t checksum() const  {return (checkSum ^ mask);}
+        void append(char const* buffer, std::size_t count)
+        {
+            unsigned char const*    data = reinterpret_cast<unsigned char const*>(buffer);
 
-    for (std::size_t loop = 0; loop < count; ++loop)
-    {
-        checkSum = (checkSum >> 8) ^ crcTable[ (checkSum ^ static_cast<std::uint32_t>(*data)) & tableMask ];
-        ++data;
-    }
+            for (std::size_t loop = 0; loop < count; ++loop)
+            {
+                checkSum = (checkSum >> 8) ^ Type::table[(checkSum ^ static_cast<std::uint32_t>(*data)) & tableMask];
+                ++data;
+            }
+        }
+};
 
-    return (checkSum ^ mask);
-}
+using CRC32_Checksum    = CheckSum<CRC32>;
+using CRC32C_Checksum   = CheckSum<CRC32C>;
 
 }
 
