@@ -87,7 +87,8 @@ struct Op_Reply
         virtual bool        isOk()              const;
         virtual std::string getHRErrorMessage() const;
 
-        void setCompression(std::int8_t compressionType)     {header.setCompression(compressionType);}
+        std::int32_t getMessageLength() const                    {return header.getMessageLength();}
+        void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
 
         std::istream& parse(std::istream& stream);
         std::istream& parseAndThrow(std::istream& stream);

@@ -39,7 +39,8 @@ class Op_GetMore
         Op_GetMore(std::string fullCollectionName, Op_Reply<Document> const& reply, std::int32_t ret = 101);
         Op_GetMore(std::string fillCollectionName, std::int32_t ret = 101);
 
-        void setCompression(std::int8_t compressionType)     {header.setCompression(compressionType);}
+        std::int32_t getMessageLength() const                    {return header.getMessageLength();}
+        void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
 
         std::ostream& print(std::ostream& stream)   const;
         std::ostream& printHR(std::ostream& stream) const;

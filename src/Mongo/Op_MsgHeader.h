@@ -30,7 +30,8 @@ class Op_MsgHeader
         std::ostream& printHR(std::ostream& stream) const;
         std::istream& parse(std::istream& stream);
 
-        void setCompression(std::int8_t compressionType)                                                   {compression = compressionType;}
+        bool        isCompressed() const                                                                   {return compression != 0;}
+        void        setCompression(std::int8_t compressionType)                                            {compression = compressionType;}
 
         friend std::ostream& operator<<(std::ostream& stream, Op_MsgHeader const& header)                  {return header.print(stream);}
         friend std::istream& operator>>(std::istream& stream, Op_MsgHeader& header)                        {return header.parse(stream);}

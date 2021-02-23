@@ -105,6 +105,12 @@ template<typename T>
 MongoConnection& MongoConnection::operator<<(T&& value)
 {
     CursorExtractor<T>  setCursor(value, *this);
+
+    // Make sure there is enough room in the stream buffer
+    // so that we don't flush before compression or crc calculations.
+    MongoBuffer& buffer = dynamic_cast<MongoBuffer&>(*stream.rdbuf());
+    buffer.resizeOutputBuffer(value.getMessageLength());
+
     stream << std::forward<T>(value) << std::flush;
     return *this;
 }
