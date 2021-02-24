@@ -1,4 +1,5 @@
 #include "Op_MsgHeader.h"
+#include "MongoBuffer.h"
 
 using namespace ThorsAnvil::DB::Mongo;
 
@@ -9,6 +10,7 @@ Op_MsgHeader::Op_MsgHeader(OpCode opCode)
     , requestID(-1)//uniqueMessageId++)
     , responseTo(0)
     , opCode(opCode)
+    , compression(0)
 {}
 
 void Op_MsgHeader::prepareToSend(std::size_t dataSize)
@@ -37,10 +39,30 @@ std::ostream& Op_MsgHeader::print(std::ostream& stream) const
 
 std::istream& Op_MsgHeader::parse(std::istream& stream)
 {
-    return stream >> make_LE(messageLength)
-                  >> make_LE(requestID)
-                  >> make_LE(responseTo)
-                  >> make_LE(opCode);
+    stream >> make_LE(messageLength)
+           >> make_LE(requestID)
+           >> make_LE(responseTo)
+           >> make_LE(opCode);
+    if (opCode == OpCode::OP_COMPRESSED)
+    {
+        std::uint32_t   uncompressedSize;
+        std::uint8_t    compression;
+        stream >> make_LE(opCode)
+               >> make_LE(uncompressedSize)
+               >> compression;
+
+        if (compression == 1)
+        {
+            MongoBufferSnappy& buffer = dynamic_cast<MongoBufferSnappy&>(*stream.rdbuf());
+            buffer.decompress(messageLength - 25, uncompressedSize);
+        }
+        else
+        {
+            throw int(56);
+        }
+    }
+
+    return stream;
 }
 
 std::ostream& Op_MsgHeader::printHR(std::ostream& stream) const

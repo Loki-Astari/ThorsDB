@@ -41,6 +41,9 @@ class Op_KillCursors
         Op_KillCursors(Op_Reply<Docs> const&... replys);
         Op_KillCursors(bool all = false);
 
+        std::int32_t getMessageLength() const                    {return header.getMessageLength();}
+        void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
+
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
         friend std::ostream& operator<<(std::ostream& stream, Op_KillCursors const& data) {return data.print(stream);}

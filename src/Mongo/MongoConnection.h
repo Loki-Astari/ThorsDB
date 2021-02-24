@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_DB_MONGO_MONGO_CONNECTION_H
 #define THORS_ANVIL_DB_MONGO_MONGO_CONNECTION_H
 
+#include "MongoBuffer.h"
 #include "Op_Reply.h"
 #include "ThorsSocket/Socket.h"
 #include "ThorsSocket/SocketStream.h"
@@ -14,14 +15,19 @@ namespace ThorsAnvil::DB::Mongo
 
 class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
 {
-    using CursorInfo  = std::pair<std::int32_t, std::int32_t>;
+    using CursorInfo    = std::pair<std::int32_t, std::int32_t>;
+    using StreamBuffer  = ThorsIO::SocketStreamBuffer;
+    using ConnectSocket = ThorsIO::ConnectSocket;
+    using IOSocketStream= ThorsIO::IOSocketStream<MongoBuffer>;
 
     private:
         using CursorMap   = std::map<CursorId, CursorInfo>;
 
-        ThorsAnvil::ThorsIO::ConnectSocket      socket;
-        ThorsAnvil::ThorsIO::IOSocketStream     stream;
+        ConnectSocket                           socket;
+        IOSocketStream                          stream;
+        std::unique_ptr<MongoBuffer>            buffer;
         std::string                             dbName;
+        std::int8_t                             compression;
         CursorMap                               openCursors;
         CursorId                                lastCursor = -1;
     public:

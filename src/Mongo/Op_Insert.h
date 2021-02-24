@@ -44,6 +44,9 @@ struct Op_Insert
     public:
         Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& range);
 
+        std::int32_t getMessageLength() const                    {return header.getMessageLength();}
+        void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
+
         std::ostream& print(std::ostream& stream) const;
         std::ostream& printHR(std::ostream& stream) const;
     private:

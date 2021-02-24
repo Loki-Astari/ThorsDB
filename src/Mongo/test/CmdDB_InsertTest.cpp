@@ -20,7 +20,6 @@ TEST(CmdDB_InsertTest, BaseSingleItem)
 
     std::stringstream stream;
     stream << make_hr(insert);
-    std::cerr << make_hr(insert);
 
     std::string result = stream.str();
     EXPECT_EQ(18, std::count(std::begin(result), std::end(result), '\n'));

@@ -70,7 +70,7 @@ class Op_Msg
     Op_MsgHeader            header;             // standard message header
     OP_MsgFlag              flags;              // Flags
     std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
-    std::int32_t            checksum;           // checksum of message;
+    mutable std::int32_t    checksum;           // checksum of message;
 
     public:
         template<typename... Args>
@@ -82,6 +82,9 @@ class Op_Msg
         auto&       getDocument()       {return std::get<I>(sections).getDocument();}
         template<std::size_t I>
         auto const& getDocument() const {return std::get<I>(sections).getDocument();}
+
+        std::int32_t getMessageLength() const                    {return header.getMessageLength();}
+        void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
 
         std::ostream& print(std::ostream& stream)       const;
         std::ostream& printHR(std::ostream& stream)     const;

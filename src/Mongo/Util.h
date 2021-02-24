@@ -118,7 +118,7 @@ struct BinaryDump
         BinaryDump(Streamable const& object)
             : object(object)
         {}
-        std::ostream& print(std::ostream& stream)
+        std::ostream& print(std::ostream& stream) const
         {
             std::stringstream tmp;
             tmp << object;

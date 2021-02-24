@@ -64,19 +64,17 @@ class Client
 
 class HandShake
 {
+    using Compression = std::vector<std::string>;
+
     friend ThorsAnvil::Serialize::Traits<HandShake>;
     std::int32_t    isMaster;
     std::string     saslSupportedMechs;
     std::string     hostInfo;
     Client          client;
+    Compression     compression;
     public:
-        HandShake(std::string const& application);  // Normal
-        HandShake(std::string const& application, std::string const& dname, std::string const& dversion)
-            : isMaster(true)
-            , saslSupportedMechs("thor.loki")
-            , hostInfo("BatCave.local:27017")
-            , client(application, dname, dversion)
-        {}
+        HandShake(std::string const& application, std::string const& comp = "");  // Normal
+        HandShake(std::string const& application, std::string const& dname, std::string const& dversion, std::string const& comp = "");
 };
 
 using ObjectID      = ThorsAnvil::Serialize::MongoUtility::ObjectID;
@@ -104,6 +102,7 @@ struct HandShakeReply: public CmdReplyBase
     bool            ismaster;
     bool            readOnly;
     std::vector<std::string>    saslSupportedMechs;
+    std::vector<std::string>    compression;
 };
 
 struct Binary
@@ -209,10 +208,10 @@ ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Driver,             name, version);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::OS,                 type, name, architecture, version);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Application,        name);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Client,             application, driver, os);
-ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,          isMaster, saslSupportedMechs, hostInfo, client);
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::HandShake,          isMaster, saslSupportedMechs, hostInfo, client, compression);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::Version,            processId, counter);
 ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,
-                     ThorsAnvil::DB::Mongo::HandShakeReply,     topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs);
+                     ThorsAnvil::DB::Mongo::HandShakeReply,     topologyVersion, localTime, maxBsonObjectSize, maxMessageSizeBytes, maxWriteBatchSize, logicalSessionTimeoutMinutes, connectionId, minWireVersion, maxWireVersion, ismaster, readOnly, saslSupportedMechs, compression);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthInit,           saslStart, mechanism, payload, $db);
 ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::AuthCont,           saslContinue, payload, conversationId, $db);
 ThorsAnvil_ExpandTrait(ThorsAnvil::DB::Mongo::CmdReplyBase,

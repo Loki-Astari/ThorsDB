@@ -5,6 +5,8 @@
 #error  "This should only be included from Op_Msg.h"
 #endif
 
+#include "MongoBuffer.h"
+#include "ThorsCrypto/crc.h"
 #include "ThorSerialize/BsonThor.h"
 #include "ThorSerialize/JsonThor.h"
 
@@ -101,6 +103,13 @@ inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream) const
     bool showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (showCheckSum)
     {
+        MongoBuffer*    buffer      = dynamic_cast<MongoBuffer*>(stream.rdbuf());
+        if (buffer != nullptr)
+        {
+            Crypto::CRC32C_Checksum     value;
+            buffer->apply(value);
+            checksum = value.checksum();
+        }
         stream << make_LE(checksum);
     }
     return stream;
@@ -137,7 +146,7 @@ std::istream& Op_Msg<Kind...>::parse(std::istream& stream)
     bool expectCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (expectCheckSum)
     {
-        stream >> checksum;
+        stream >> make_LE(checksum);
     }
     return stream;
 }
