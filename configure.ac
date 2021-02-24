@@ -113,6 +113,26 @@ AX_CHECK_COMPILE_FLAG([-ansi], [AC_SUBST([CXXFLAGS], ["$CXXFLAGS -ansi"])])
 
 AX_THOR_FUNC_LANG_FLAG(17)
 
+AC_DEFUN([AX_THOR_CHECK_SMARTY_AVAILABLE],
+    AC_CHECK_LIB(
+        [smarty],
+        [__ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE]
+        [],
+        [
+AC_MSG_ERROR([
+Error: Could not find libsnappy
+
+    On mac this can be installed with:
+        brew install snappy
+
+    On ubuntu this can be installed with:
+        sudo apt-get install libsnappy-dev
+
+])
+        ]
+    )
+)
+
 AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE],
 [
     AC_ARG_WITH([Test$2Host], AS_HELP_STRING([--with-Test$2Host=<Host>], [Use an alternative $3 host for testing with Default(127.0.0.1)]))
@@ -176,6 +196,7 @@ AC_DEFUN([AX_THOR_CHECKDB_AVAILABLE_MONGO],
 
 AX_THOR_CHECKDB_AVAILABLE_MYSQL
 AX_THOR_CHECKDB_AVAILABLE_MONGO
+AX_THOR_CHECK_SMARTY_AVAILABLE
 
 export cwd=`pwd`
 pushd third/ThorsIOUtil
