@@ -18029,6 +18029,8 @@ fi
 
 
 
+
+
 # Check whether --with-TestMySQLHost was given.
 if test "${with_TestMySQLHost+set}" = set; then :
   withval=$with_TestMySQLHost;
@@ -18209,6 +18211,63 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for __ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE
+         in -lsmarty" >&5
+$as_echo_n "checking for __ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE
+         in -lsmarty... " >&6; }
+if ${ac_cv_lib_smarty___ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE_________+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsmarty  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char __ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE
+         ();
+int
+main ()
+{
+return __ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE
+         ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_smarty___ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE_________=yes
+else
+  ac_cv_lib_smarty___ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE_________=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_smarty___ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE_________" >&5
+$as_echo "$ac_cv_lib_smarty___ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE_________" >&6; }
+if test "x$ac_cv_lib_smarty___ZN6snappy10UncompressEPNS_6SourceEPNS_4SinkE_________" = xyes; then :
+
+as_fn_error $? "
+Error: Could not find libsnappy
+
+    On mac this can be installed with:
+        brew install snappy
+
+    On ubuntu this can be installed with:
+        sudo apt-get install libsnappy-dev
+
+" "$LINENO" 5
+
+
+fi
 
 
 
