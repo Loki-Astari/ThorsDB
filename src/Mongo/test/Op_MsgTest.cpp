@@ -10,8 +10,8 @@ using std::string_literals::operator""s;
 
 struct CRCTest
 {
-    int             whatsmyuri;
-    std::string     $db;
+    int             whatsmyuri  = 0;
+    std::string     $db         = "Bob";
 };
 ThorsAnvil_MakeTrait(CRCTest, whatsmyuri, $db);
 
@@ -78,8 +78,60 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
                 "\x00"
                 "\xbd\xac\xb0\x42"s
     );
-    // "=\0\0\0\x89g\xAF\0\0\0\0\0\xDD\a\0\0\x1\0\0\0\0$\0\0\0\x10whatsmyuri\0\x1\0\0\0\x2$db\0\x6\0\0\0admin\0\0\0\0\0\0"
-    // "=\0\0\0\x89g\xAF\0\0\0\0\0\xDD\a\0\0\x1\0\0\0\0$\0\0\0\x10whatsmyuri\0\x1\0\0\0\x2$db\0\x6\0\0\0admin\0\0\xBD\xAC\xB0" "B"
+}
+
+TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompression)
+{
+    using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
+    using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
+
+    {
+        Op_MsgHeader::messageIdSetForTest(1);
+        Op_Msg<Kind0<CRCTest>>           message1(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"});
+
+        int                 socket  = open("test/data/CompCRCTest", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
+        DataSocket          dataSocket(socket);
+        IOSocketStream      stream(dataSocket);
+
+        // Add the compression buffer.
+        MongoBuffer&        origBuffer = dynamic_cast<MongoBuffer&>(*stream.rdbuf());
+        MongoBufferSnappy   buffer(std::move(origBuffer));
+        stream.rdbuf(&buffer);
+
+        // Make sure we don't sync the buffer until we have compressed the data.
+        buffer.resizeOutputBuffer(message1.getMessageLength() + 9 + 5);
+
+        // Make sure the object knows it is going to be compressed.
+        message1.setCompression(1); // Snappy compression
+
+        // Now Send the object to the stream.
+        stream << message1 << std::flush;
+    }
+    std::string result;
+    {
+        std::ifstream   test("test/data/CompCRCTest");
+        std::string     line(std::istreambuf_iterator<char>{test}, std::istreambuf_iterator<char>{});
+        result = line;
+    }
+
+    // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
+    EXPECT_EQ(result,
+                                                // Header
+                "\x47\x00\x00\x00"              //      Size
+                "\x01\x00\x00\x00"              //      ID
+                "\x00\x00\x00\x00"              //      Reply
+                "\xdc\x07\x00\x00"              //      opCode: OP_COMPRESS
+                                                // OP_COMPRESS MSG
+                "\xdd\x07\x00\x00"              //      Original OpCode: OP_MSG
+                "\x2d\x00\x00\x00"              //      Uncompressed Size
+                "\x01"                          //      Compression Type (1 => Snappy)
+                // Compressed Data
+                "\x2d\x50\x01\x00\x00\x00\x00\x24\x00\x00\x00\x10\x77\x68\x61"
+                "\x74\x73\x6d\x79\x75\x72\x69\x00\x01\x15\x4c\x02\x24\x64\x62"
+                "\x00\x06\x00\x00\x00\x61\x64\x6d\x69\x6e\x00\x00"
+                // CRC checksum
+                "\xbd\xac\xb0\x42"s
+    );
 }
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
@@ -99,6 +151,30 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
         ++lineCount;
     }
     EXPECT_EQ(lineCount, 11);
+}
+
+TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompressionReadFromServer)
+{
+    using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
+    using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
+
+    Op_Msg<Kind0<CRCTest>>           message1;
+    {
+
+        int                 socket  = open("test/data/CompCRCTest-Read", O_RDONLY);
+        DataSocket          dataSocket(socket);
+        IOSocketStream      stream(dataSocket);
+
+        // Add the compression buffer.
+        MongoBuffer&        origBuffer = dynamic_cast<MongoBuffer&>(*stream.rdbuf());
+        MongoBufferSnappy   buffer(std::move(origBuffer));
+        stream.rdbuf(&buffer);
+
+        // Now Send the object to the stream.
+        stream >> message1;
+    }
+    EXPECT_EQ(message1.getDocument<0>().whatsmyuri, 1);
+    EXPECT_EQ(message1.getDocument<0>().$db, "admin");
 }
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumHumanReadable)

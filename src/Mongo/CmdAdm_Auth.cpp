@@ -61,9 +61,20 @@ Client::Client(std::string const& application)
     // , platform("ThorDB-Build")
 {}
 
-HandShake::HandShake(std::string const& application)
+HandShake::HandShake(std::string const& application, std::string const& comp)
     : isMaster(true)
     , saslSupportedMechs("thor.loki")
     , hostInfo("BatCave.local:27017")
     , client(application)
-{}
+{
+    compression.push_back(comp);
+}
+
+HandShake::HandShake(std::string const& application, std::string const& dname, std::string const& dversion, std::string const& comp)
+    : isMaster(true)
+    , saslSupportedMechs("thor.loki")
+    , hostInfo("BatCave.local:27017")
+    , client(application, dname, dversion)
+{
+    compression.push_back(comp);
+}

@@ -109,7 +109,9 @@ MongoConnection& MongoConnection::operator<<(T&& value)
     // Make sure there is enough room in the stream buffer
     // so that we don't flush before compression or crc calculations.
     MongoBuffer& buffer = dynamic_cast<MongoBuffer&>(*stream.rdbuf());
-    buffer.resizeOutputBuffer(value.getMessageLength());
+    buffer.resizeOutputBuffer(value.getMessageLength() + 5);
+
+    value.setCompression(compression);
 
     stream << std::forward<T>(value) << std::flush;
     return *this;

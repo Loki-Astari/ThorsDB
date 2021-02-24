@@ -206,8 +206,8 @@ BSON
     std::uint32_t osVerSz         = osVerVal.size() + 1;
     std::uint32_t osInfoSize      = 0x53  - 0x1b + typeSz + osSz + archSz + osVerSz;
     std::uint32_t allInfoSize     = 0xc8  - 0x53 + osInfoSize;
-    std::uint32_t bsonInfoSize    = 0x127 - 0xc8 + allInfoSize;
-    std::uint32_t msgSize         = 0x14e - 0xc8 + allInfoSize;
+    std::uint32_t bsonInfoSize    = 0x127 - 0xc8 + allInfoSize + 26;
+    std::uint32_t msgSize         = 0x14e - 0xc8 + allInfoSize + 26;
     std::string   typeSzStr       = createSizeString(typeSz);
     std::string   osSzStr         = createSizeString(osSz);
     std::string   archSzStr       = createSizeString(archSz);
@@ -262,6 +262,9 @@ BSON
                             // "\x07\x00\x00\x00"  "\x32\x30\x2e\x32\x2e\x30\x00"  // 20.2.0
                          +  osVerSzStr + osVerVal.c_str() + "\x00"s +
                     "\x00"
+            "\x00"
+            "\x04" "compression\x00" "\x0D\x00\x00\x00"
+                "\x02" "0\x00" "\x01\x00\x00\x00"  "\x00"
             "\x00"
         "\x00"s;
 

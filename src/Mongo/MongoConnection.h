@@ -8,6 +8,7 @@
 #include "ThorsDB/Connection.h"
 #include "ThorsDB/Statement.h"
 #include <string>
+#include <memory>
 
 namespace ThorsAnvil::DB::Mongo
 {
@@ -24,7 +25,9 @@ class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
 
         ConnectSocket                           socket;
         IOSocketStream                          stream;
+        std::unique_ptr<MongoBuffer>            buffer;
         std::string                             dbName;
+        std::int8_t                             compression;
         CursorMap                               openCursors;
         CursorId                                lastCursor = -1;
     public:

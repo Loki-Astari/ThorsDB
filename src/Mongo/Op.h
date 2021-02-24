@@ -16,6 +16,7 @@ enum class OpCode : std::int32_t
     OP_GET_MORE     = 2005,                 // Get more data from a query. See Cursors.
     OP_DELETE       = 2006,                 // Delete documents.
     OP_KILL_CURSORS = 2007,                 // Notify database that the client has finished with the cursor.
+    OP_COMPRESSED   = 2012,                 // Handled specially (see Op_MSgHeader.cpp)
     OP_MSG          = 2013,                 // Send a message using the format introduced in MongoDB 3.6.
 };
 

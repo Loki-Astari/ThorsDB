@@ -23,6 +23,15 @@ TEST(MongoConnectionTest, CreateConnection)
     EXPECT_NO_THROW(action());
 }
 
+TEST(MongoConnectionTest, CreateConnectionWithSnappy)
+{
+    auto action = [](){
+        using namespace ThorsAnvil::DB::Mongo;
+        MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {{"compressors", "snappy"}});
+    };
+    EXPECT_NO_THROW(action());
+}
+
 TEST(MongoConnectionTest, CreateConnectionAppNameSet)
 {
     auto action = [](){

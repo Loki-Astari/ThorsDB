@@ -1,7 +1,10 @@
 #ifndef THORS_ANVIL_DB_MONGO_MONGO_BUFFER_H
 #define THORS_ANVIL_DB_MONGO_MONGO_BUFFER_H
 
+#include "Util.h"
 #include "ThorsSocket/SocketStream.h"
+#include "snappy.h"
+#include <boost/endian/conversion.hpp>
 #include <string>
 #include <vector>
 
@@ -10,7 +13,7 @@ namespace ThorsAnvil::DB::Mongo
 
 class MongoBuffer: public ThorsIO::SocketStreamBufferBase
 {
-    private:
+    protected:
         std::vector<char>       in;
         std::vector<char>       out;
 
@@ -18,36 +21,25 @@ class MongoBuffer: public ThorsIO::SocketStreamBufferBase
         MongoBuffer(ThorsIO::DataSocket& stream,
                     ThorsIO::Notifier noAvailableData, ThorsIO::Notifier flushing,
                     std::vector<char>&& bufData = std::vector<char>(4000),
-                    char const* currentStart = nullptr, char const* currentEnd = nullptr)
-            : ThorsIO::SocketStreamBufferBase(stream, std::move(noAvailableData), std::move(flushing), in, out)
-            , in(std::move(bufData))
-            , out(4000)
-        {
-            char* newStart = const_cast<char*>(currentStart);
-            char* newEnd   = const_cast<char*>(currentEnd);
-            if (newStart == nullptr || newEnd == nullptr)
-            {
-                newStart = &in[0];
-                newEnd   = &in[0];
-            }
-
-            setg(&in[0], newStart, newEnd);
-            setp(&out[0], &out[out.size() - 1]);
-        }
-        MongoBuffer(MongoBuffer&& move) noexcept
-            : ThorsIO::SocketStreamBufferBase(std::move(move), in, out)
-            , in(std::move(move.in))
-            , out(std::move(move.out))
-        {
-            move.setg(nullptr, nullptr, nullptr);
-            move.setp(nullptr, nullptr);
-        }
+                    char const* currentStart = nullptr, char const* currentEnd = nullptr);
+        MongoBuffer(MongoBuffer&& move) noexcept;
 
         template<typename Func>
         void apply(Func& func)
         {
             func.append(std::string_view(pbase(), pptr() - pbase()));
         }
+};
+
+class MongoBufferSnappy: public MongoBuffer
+{
+    std::string   uncompressedBuffer;
+    public:
+        MongoBufferSnappy(MongoBuffer&& move);
+        virtual int sync() override;
+        virtual std::streamsize xsputn(char const* s,std::streamsize count) override;
+
+        void decompress(std::uint32_t compressedSize, std::uint32_t uncompressedSize);
 };
 
 }
