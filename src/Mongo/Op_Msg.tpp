@@ -147,8 +147,46 @@ std::istream& Op_Msg<Kind...>::parse(std::istream& stream)
     if (expectCheckSum)
     {
         stream >> make_LE(checksum);
+        // TODO Check the checksum.
+        // Need to make the stream understand the concept of CRC32C
+        // and append the data to the checksum as it is read.
+    }
+    if (!stream)
+    {
+        errorInfo.ok  = 0;
+        errorInfo.codeName += "Error On Input Stream";
     }
     return stream;
+}
+
+template<typename... Kind>
+Op_Msg<Kind...>::operator bool() const
+{
+    return this->isOk();
+}
+
+template<typename... Kind>
+bool Op_Msg<Kind...>::isOk()  const
+{
+    bool ok = errorInfo.ok;
+    //std::apply([&ok](auto const& item){ok = ok && item.isOk();}, sections);
+    return ok;
+}
+
+template<typename... Kind>
+std::string Op_Msg<Kind...>::getHRErrorMessage() const
+{
+    std::string result = "Op_Msg: ";
+    if (!this->isOk())
+    {
+        result += errorInfo.getHRErrorMessage();
+        //std::apply([&result](auto const& item){result += item.getHRErrorMessage();}, sections);
+    }
+    else
+    {
+        result += "OK";
+    }
+    return result;
 }
 
 }

@@ -36,6 +36,10 @@ class MongoBufferSnappy: public MongoBuffer
     std::string   uncompressedBuffer;
     char*         inputBufferSave[3];
     public:
+        typedef std::streambuf::traits_type traits;
+        typedef traits::int_type            int_type;
+        typedef traits::char_type           char_type;
+
         MongoBufferSnappy(MongoBuffer&& move);
         virtual int sync() override;
         virtual std::streamsize xsputn(char const* s,std::streamsize count) override;

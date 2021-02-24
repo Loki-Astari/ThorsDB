@@ -145,8 +145,8 @@ void MongoBufferSnappy::decompress(std::uint32_t compressedSize, std::uint32_t u
     gbump(compressedSize);
     // Save the current input buffer.
     // When we have finished reading the uncompressed data we need to switch back to this.
-    inputBufferSave[0] = gbase();
-    inputBufferSave[1] = gtr();
+    inputBufferSave[0] = eback();
+    inputBufferSave[1] = gptr();
     inputBufferSave[2] = egptr();
 
     // Set the input buffer to the uncompressed version of the data.

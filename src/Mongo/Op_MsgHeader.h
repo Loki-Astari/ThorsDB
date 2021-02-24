@@ -3,11 +3,37 @@
 
 #include "Op.h"         // Includes std::<integer>_t
 #include "Util.h"
+#include "ThorSerialize/Traits.h"
+#include "ThorSerialize/JsonThor.h"
 
 #include <iostream>
 
 namespace ThorsAnvil::DB::Mongo
 {
+
+struct ErrorInfo
+{
+#pragma vera-pushoff
+    double              ok          = 1.0;
+    int                 code        = 0;
+    std::string         $err        = "";
+    std::string         codeName    = "";
+#pragma vera-pop
+    std::string         getHRErrorMessage() const;
+};
+
+struct MongoException: public std::runtime_error
+{
+    ErrorInfo   info;
+    MongoException(std::string const& message, ErrorInfo const& info)
+        : runtime_error(message)
+        , info(info)
+    {}
+    friend std::ostream& operator<<(std::ostream& stream, MongoException const& data)
+    {
+        return stream << data.what() << "\n" << ThorsAnvil::Serialize::jsonExporter(data.info);
+    }
+};
 
 class Op_MsgHeader
 {
@@ -41,5 +67,7 @@ class Op_MsgHeader
 };
 
 }
+
+ThorsAnvil_MakeTrait(ThorsAnvil::DB::Mongo::ErrorInfo,  ok, code, codeName, $err);
 
 #endif

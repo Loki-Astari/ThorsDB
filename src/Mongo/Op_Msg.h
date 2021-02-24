@@ -71,6 +71,7 @@ class Op_Msg
     OP_MsgFlag              flags;              // Flags
     std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
     mutable std::int32_t    checksum;           // checksum of message;
+    ErrorInfo               errorInfo;
 
     public:
         template<typename... Args>
@@ -82,6 +83,10 @@ class Op_Msg
         auto&       getDocument()       {return std::get<I>(sections).getDocument();}
         template<std::size_t I>
         auto const& getDocument() const {return std::get<I>(sections).getDocument();}
+
+        explicit operator   bool()              const;
+        virtual bool        isOk()              const;
+        virtual std::string getHRErrorMessage() const;
 
         std::int32_t getMessageLength() const                    {return header.getMessageLength();}
         void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
