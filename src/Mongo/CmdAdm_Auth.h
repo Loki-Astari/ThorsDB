@@ -198,7 +198,7 @@ using CmdAdm_HandShake          = CmdAdm_Query<HandShake>;
 using CmdAdm_HandShakeReply     = CmdAdm_Reply<HandShakeReply>;
 using Op_MsgAuthInit            = Op_Msg<AuthInit>;
 using Op_MsgAuthCont            = Op_Msg<AuthCont>;
-using Op_MsgAuthReply           = Op_Msg<AuthReply>;
+using Op_MsgAuthReply           = Op_MsgReply<AuthReply>;
 
 }
 

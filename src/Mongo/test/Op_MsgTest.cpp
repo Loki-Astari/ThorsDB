@@ -1,5 +1,6 @@
 
 #include <gtest/gtest.h>
+#include "BaseCmd.h"
 #include "Op_Msg.h"
 #include "test/OpTest.h"
 #include <fstream>
@@ -8,12 +9,18 @@
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-struct CRCTest
+struct CRCTestReply: public CmdReplyBase
 {
-    int             whatsmyuri  = 0;
-    std::string     $db         = "Bob";
+    int             whatsmyuri;
+    std::string     $db;
 };
-ThorsAnvil_MakeTrait(CRCTest, whatsmyuri, $db);
+struct CRCTestOutput
+{
+    int             whatsmyuri;
+    std::string     $db;
+};
+ThorsAnvil_ExpandTrait(CmdReplyBase, CRCTestReply, whatsmyuri, $db);
+ThorsAnvil_MakeTrait(CRCTestOutput, whatsmyuri, $db);
 
 TEST(Op_MsgTest, Op_MsgSerializeMessage)
 {
@@ -50,7 +57,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
         DataSocket      dataSocket(socket);
         IOSocketStream  stream(dataSocket);
 
-        stream << send_Op_Msg(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"}) << std::flush;
+        stream << send_Op_Msg(OP_MsgFlag::checksumPresent, CRCTestOutput{1, "admin"}) << std::flush;
     }
     std::string result;
     {
@@ -84,7 +91,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompression)
 
     {
         Op_MsgHeader::messageIdSetForTest(1);
-        Op_Msg<CRCTest>           message1(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"});
+        Op_Msg<CRCTestOutput>           message1(OP_MsgFlag::checksumPresent, CRCTestOutput{1, "admin"});
 
         int                 socket  = open("test/data/CompCRCTest", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
         DataSocket          dataSocket(socket);
@@ -154,7 +161,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompressionReadFromSer
     using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
     using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
 
-    Op_Msg<CRCTest>           message1;
+    Op_MsgReply<CRCTestReply>           message1;
     {
 
         int                 socket  = open("test/data/CompCRCTest-Read", O_RDONLY);

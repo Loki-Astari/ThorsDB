@@ -170,12 +170,12 @@ std::uint32_t parseKind1(std::istream& stream, SectionInfo const& sectionInfo)
     return 0;
 }
 template<typename Section0, typename... Section1>
-std::istream& Op_Msg<Section0, Section1...>::parse(std::istream& stream)
+std::istream& Op_MsgReply<Section0, Section1...>::parse(std::istream& stream)
 {
     std::uint8_t    kindMark = -1;
-    stream >> header
-           >> make_LE(flags)
-           >> kindMark >> ThorsAnvil::Serialize::bsonImporter(section0);
+    stream >> Op_Msg<Section0, Section1...>::header
+           >> make_LE(Op_Msg<Section0, Section1...>::flags)
+           >> kindMark >> ThorsAnvil::Serialize::bsonImporter(Op_Msg<Section0, Section1...>::section0);
 
     if (kindMark != 0)
     {
@@ -184,52 +184,40 @@ std::istream& Op_Msg<Section0, Section1...>::parse(std::istream& stream)
     std::apply([&stream](auto&... sectionInfo)
     {
         std::make_tuple(parseKind1(stream, sectionInfo)...);
-    }, sections);
+    }, Op_Msg<Section0, Section1...>::sections);
 
-    bool expectCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
+    bool expectCheckSum = (Op_Msg<Section0, Section1...>::flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (expectCheckSum)
     {
-        stream >> make_LE(checksum);
+        stream >> make_LE(Op_Msg<Section0, Section1...>::checksum);
         // TODO Check the checksum.
         // Need to make the stream understand the concept of CRC32C
         // and append the data to the checksum as it is read.
     }
     if (!stream)
     {
-        errorInfo.ok  = 0;
-        errorInfo.codeName += "Error On Input Stream";
+        Op_Msg<Section0, Section1...>::section0.ok  = 0;
+        Op_Msg<Section0, Section1...>::section0.codeName += "Error On Input Stream";
     }
     return stream;
 }
 
 template<typename Section0, typename... Section1>
-Op_Msg<Section0, Section1...>::operator bool() const
+Op_MsgReply<Section0, Section1...>::operator bool() const
 {
     return this->isOk();
 }
 
 template<typename Section0, typename... Section1>
-bool Op_Msg<Section0, Section1...>::isOk()  const
+bool Op_MsgReply<Section0, Section1...>::isOk()  const
 {
-    bool ok = errorInfo.ok;
-    //std::apply([&ok](auto const& item){ok = ok && item.isOk();}, sections);
-    return ok;
+    return Op_Msg<Section0, Section1...>::getAction().ok;
 }
 
 template<typename Section0, typename... Section1>
-std::string Op_Msg<Section0, Section1...>::getHRErrorMessage() const
+std::string Op_MsgReply<Section0, Section1...>::getHRErrorMessage() const
 {
-    std::string result = "Op_Msg: ";
-    if (!this->isOk())
-    {
-        result += errorInfo.getHRErrorMessage();
-        //std::apply([&result](auto const& item){result += item.getHRErrorMessage();}, sections);
-    }
-    else
-    {
-        result += "OK";
-    }
-    return result;
+    return Op_Msg<Section0, Section1...>::getAction().getHRErrorMessage();
 }
 
 }
