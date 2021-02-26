@@ -13,91 +13,75 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-// ---- Kind0
-
-template<typename Data>
-template<typename... Args>
-inline Kind0<Data>::Kind0(Args&&... args)
-    : data{std::forward<Args>(args)...}
-{}
-
-template<typename Data>
-inline std::size_t Kind0<Data>::getSize() const
-{
-    return 1 + ThorsAnvil::Serialize::bsonGetPrintSize(data);
-}
-
-template<typename Data>
-inline std::ostream& Kind0<Data>::print(std::ostream& stream) const
-{
-    stream.write("\x00", 1);
-    stream << ThorsAnvil::Serialize::bsonExporter(data);
-    return stream;
-}
-
-template<typename Data>
-std::istream& Kind0<Data>::parse(std::istream& stream)
-{
-    char val;
-    stream.read(&val, 1);
-    // assert val == 0
-    stream >> ThorsAnvil::Serialize::bsonImporter(data);
-    return stream;
-}
-
-template<typename Data>
-inline std::ostream& Kind0<Data>::printHR(std::ostream& stream) const
-{
-    return stream << "Kind: 0\n"
-                  << ThorsAnvil::Serialize::jsonExporter(data) << "\n";
-}
-
-// ---- Kind1
-
-// ---- Op_Msg
-
-template<typename... Kind>
-template<typename... Args>
-inline Op_Msg<Kind...>::Op_Msg(Args&&... args)
-    : Op_Msg(OP_MsgFlag::empty, std::forward<Args>(args)...)
-{}
-
-template<typename... Kind>
-template<typename... Args>
-inline Op_Msg<Kind...>::Op_Msg(OP_MsgFlag flags, Args&&... args)
+template<typename Section0, typename... Section1>
+template<typename... Views>
+Op_Msg<Section0, Section1...>::Op_Msg(OP_MsgFlag flags, Section0 action, Views&&... views)
     : header(OpCode::OP_MSG)
     , flags(flags)
-    , sections(std::forward<Args>(args)...)
+    , section0(std::move(action))
+    , sections(std::forward<Views>(views)...)
     , checksum(0)
 {
     header.prepareToSend(getSize());
 }
 
-template<typename... Kind>
-std::size_t Op_Msg<Kind...>::getSize() const
+template<typename Kind1>
+std::uint32_t getSizeOfKind1(std::uint32_t& sum, Kind1 const& kind1)
 {
-    std::size_t sectionSize = 0;
-    std::apply([&sectionSize](auto const& section){sectionSize += section.getSize();}, sections);
+    std::uint32_t docSize = 0;
+    for (auto const& doc: kind1.second)
+    {
+        docSize += ThorsAnvil::Serialize::bsonGetPrintSize(doc);
+    }
+    sum += (1 + sizeof(uint32_t) + (kind1.first.size() + 1) + docSize);
+    return sum;
+}
+
+template<typename Section0, typename... Section1>
+std::size_t Op_Msg<Section0, Section1...>::getSize() const
+{
+    std::size_t section0Size = (1 + ThorsAnvil::Serialize::bsonGetPrintSize(section0));
+    std::size_t sectionsSize = 0;
+    std::apply([&sectionsSize](auto const&... kind1)
+    {
+        std::make_tuple(getSizeOfKind1(sectionsSize, kind1)...);
+    }, sections);
 
     bool        showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
-    std::size_t dataSize     = sizeof(flags) + sectionSize + (showCheckSum ? sizeof(checksum) : 0);
+    std::size_t dataSize     = sizeof(flags) + section0Size + sectionsSize + (showCheckSum ? sizeof(checksum) : 0);
     return dataSize;
 }
 
-template<typename... Kind>
-template<typename... Args>
-inline Op_MsgReply<Kind...>::Op_MsgReply(Args&&... args)
-    : Op_Msg<Kind...>({}, std::forward<Args>(args)...)
-{}
+template<typename Kind1>
+std::uint32_t printKind1(std::ostream& stream, Kind1 const& kind1)
+{
+    std::uint32_t docSize = sizeof(uint32_t) + kind1.first.size() + 1;;
+    for (auto const& doc: kind1.second)
+    {
+        docSize += ThorsAnvil::Serialize::bsonGetPrintSize(doc);
+    }
+    stream << std::uint8_t(1)
+           << make_LE(docSize)
+           << kind1.first << '\0';
+    for (auto const& doc: kind1.second)
+    {
+        stream << ThorsAnvil::Serialize::bsonExporter(doc);
+    }
+    return 0;
+}
 
-template<typename... Kind>
-inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream) const
+template<typename Section0, typename... Section1>
+inline std::ostream& Op_Msg<Section0, Section1...>::print(std::ostream& stream) const
 {
     stream << header
-           << make_LE(flags);
+           << make_LE(flags)
+           << std::uint8_t(0) << ThorsAnvil::Serialize::bsonExporter(section0);
 
     // Stream the sections;
-    std::apply([&stream](auto& section){stream << section;}, sections);
+    std::apply([&stream](auto const&... kind1)
+    {
+        std::make_tuple(printKind1(stream, kind1)...);
+    }, sections);
 
     // Output the checksum only if we said it would be there.
     bool showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
@@ -115,14 +99,27 @@ inline std::ostream& Op_Msg<Kind...>::print(std::ostream& stream) const
     return stream;
 }
 
-template<typename... Kind>
-inline std::ostream& Op_Msg<Kind...>::printHR(std::ostream& stream) const
+template<typename Kind1>
+std::uint32_t streamKind1(std::ostream& stream, Kind1 const& kind1)
+{
+    stream << ThorsAnvil::Serialize::jsonExporter(kind1);
+    return 0;
+}
+
+template<typename Section0, typename... Section1>
+inline std::ostream& Op_Msg<Section0, Section1...>::printHR(std::ostream& stream) const
 {
     stream << make_hr(header)
-           << "flagBits:    " << flags << "\n";
+           << "flagBits:    " << flags << "\n"
+           << "Section:     [" << ThorsAnvil::Serialize::jsonExporter(section0);
 
     // Stream the sections;
-    std::apply([&stream](auto& section){stream << make_hr(section);}, sections);
+    std::apply([&stream](auto const&... kind1)
+    {
+        std::make_tuple(printHRKind1(stream, kind1)...);
+    }, sections);
+
+    stream << "\n]\n";
 
     // Output the checksum only if we said it would be there.
     bool showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
@@ -137,11 +134,53 @@ inline std::ostream& Op_Msg<Kind...>::printHR(std::ostream& stream) const
     return stream;
 }
 
-template<typename... Kind>
-std::istream& Op_Msg<Kind...>::parse(std::istream& stream)
+template<typename Kind1>
+std::uint32_t parseKind1(std::istream& stream, Kind1 const& kind1)
 {
-    stream >> header >> make_LE(flags);
-    std::apply([&stream](auto& section){stream >> section;}, sections);
+    std::uint8_t    kindMark = -1;
+    std::uint32_t   size     = 0;
+    stream >> kindMark
+           >> make_LE(size);
+    std::getline(stream, kind1.first, '\0');
+
+    if (kindMark != 1)
+    {
+        // Bad Kind marker
+        throw int(8);
+    }
+
+    size -= (sizeof(std::uint32_t) + kind1.first.size() + 1);;
+    while (size != 0)
+    {
+        std::uint32_t oldSize = size;
+        std::uint32_t index   = kind1.second.size();
+        stream >> ThorsAnvil::Serialize::bsonImporter(kind1.second[index]);
+        size -= ThorsAnvil::Serialize::bsonGetPrintSize(kind1.second[index]);
+
+        if (size > oldSize)
+        {
+            // Wrap around error.
+            throw int(5);
+        }
+    }
+    return 0;
+}
+template<typename Section0, typename... Section1>
+std::istream& Op_Msg<Section0, Section1...>::parse(std::istream& stream)
+{
+    std::uint8_t    kindMark = -1;
+    stream >> header
+           >> make_LE(flags)
+           >> kindMark >> ThorsAnvil::Serialize::bsonImporter(section0);
+
+    if (kindMark != 0)
+    {
+        throw int(9);
+    }
+    std::apply([&stream](auto&... kind1)
+    {
+        std::make_tuple(parseKind1(stream, kind1)...);
+    }, sections);
 
     bool expectCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
     if (expectCheckSum)
@@ -159,22 +198,22 @@ std::istream& Op_Msg<Kind...>::parse(std::istream& stream)
     return stream;
 }
 
-template<typename... Kind>
-Op_Msg<Kind...>::operator bool() const
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>::operator bool() const
 {
     return this->isOk();
 }
 
-template<typename... Kind>
-bool Op_Msg<Kind...>::isOk()  const
+template<typename Section0, typename... Section1>
+bool Op_Msg<Section0, Section1...>::isOk()  const
 {
     bool ok = errorInfo.ok;
     //std::apply([&ok](auto const& item){ok = ok && item.isOk();}, sections);
     return ok;
 }
 
-template<typename... Kind>
-std::string Op_Msg<Kind...>::getHRErrorMessage() const
+template<typename Section0, typename... Section1>
+std::string Op_Msg<Section0, Section1...>::getHRErrorMessage() const
 {
     std::string result = "Op_Msg: ";
     if (!this->isOk())

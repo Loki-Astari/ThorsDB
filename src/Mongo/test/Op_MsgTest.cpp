@@ -18,11 +18,9 @@ ThorsAnvil_MakeTrait(CRCTest, whatsmyuri, $db);
 TEST(Op_MsgTest, Op_MsgSerializeMessage)
 {
     Op_MsgHeader::messageIdSetForTest(0xAF6789);
-    SimpleStringNoConstructor                       object{"The String data"s};
-    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{Kind0<SimpleStringNoConstructor>(object)};
 
     std::stringstream   stream;
-    stream << message1 << std::flush;
+    stream << send_Op_Msg(SimpleStringNoConstructor{"The String data"s}) << std::flush;
 
     // https://docs.mongodb.com/manual/reference/mongodb-wire-protocol/#op-msg
     EXPECT_EQ(stream.str(),                     // Op_MsgHeader
@@ -47,13 +45,12 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 
     {
         Op_MsgHeader::messageIdSetForTest(1);
-        Op_Msg<Kind0<CRCTest>>           message1(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"});
 
         int             socket  = open("test/data/CRCTest", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
         DataSocket      dataSocket(socket);
         IOSocketStream  stream(dataSocket);
 
-        stream << message1 << std::flush;
+        stream << send_Op_Msg(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"}) << std::flush;
     }
     std::string result;
     {
@@ -87,7 +84,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompression)
 
     {
         Op_MsgHeader::messageIdSetForTest(1);
-        Op_Msg<Kind0<CRCTest>>           message1(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"});
+        Op_Msg<CRCTest>           message1(OP_MsgFlag::checksumPresent, CRCTest{1, "admin"});
 
         int                 socket  = open("test/data/CompCRCTest", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
         DataSocket          dataSocket(socket);
@@ -137,8 +134,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompression)
 TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0xAF6789);
-    SimpleStringNoConstructor                       object{"The String data"s};
-    Op_Msg<Kind0<SimpleStringNoConstructor>>        message1{Kind0<SimpleStringNoConstructor>(object)};
+    Op_Msg<SimpleStringNoConstructor>       message1{OP_MsgFlag::empty, SimpleStringNoConstructor{"The String data"s}};
 
     std::stringstream   stream;
     stream << make_hr(message1);
@@ -158,7 +154,7 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompressionReadFromSer
     using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
     using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
 
-    Op_Msg<Kind0<CRCTest>>           message1;
+    Op_Msg<CRCTest>           message1;
     {
 
         int                 socket  = open("test/data/CompCRCTest-Read", O_RDONLY);
@@ -173,14 +169,14 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompressionReadFromSer
         // Now Send the object to the stream.
         stream >> message1;
     }
-    EXPECT_EQ(message1.getDocument<0>().whatsmyuri, 1);
-    EXPECT_EQ(message1.getDocument<0>().$db, "admin");
+    EXPECT_EQ(message1.getAction().whatsmyuri, 1);
+    EXPECT_EQ(message1.getAction().$db, "admin");
 }
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumHumanReadable)
 {
     Op_MsgHeader::messageIdSetForTest(0xAF6789);
-    Op_Msg<Kind0<SimpleStringNoConstructor>>           message1(OP_MsgFlag::checksumPresent, "The String data"s);
+    Op_Msg<SimpleStringNoConstructor>           message1(OP_MsgFlag::checksumPresent, SimpleStringNoConstructor{"The String data"s});
 
     std::stringstream   stream;
     stream << make_hr(message1);

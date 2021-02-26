@@ -73,26 +73,26 @@ MongoConnection::MongoConnection(
     }
 
     // Send Auth Init: We can use SHA-256 Send scram package
-    (*this) << Op_MsgAuthInit({}, AuthInit(database, "SCRAM-SHA-256"s, client.getFirstMessage()));// << std::flush;
+    (*this) << send_Op_Msg(AuthInit(database, "SCRAM-SHA-256"s, client.getFirstMessage()));// << std::flush;
 
     Op_MsgAuthReply         authInitReply;
     // TODO Should stream from this
     /* (*this) */stream >> authInitReply;
 
-    if (authInitReply.getDocument<0>().ok != 1)
+    if (authInitReply.getAction().ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake FirstMessage: ",
-                                 "Code: ", authInitReply.getDocument<0>().code,
-                                 "Name: ", authInitReply.getDocument<0>().codeName,
-                                 "Msg:  ", authInitReply.getDocument<0>().errmsg);
+                                 "Code: ", authInitReply.getAction().code,
+                                 "Name: ", authInitReply.getAction().codeName,
+                                 "Msg:  ", authInitReply.getAction().errmsg);
     }
 
     // Send Auth Cont: Send proof we know the password
-    (*this) << Op_MsgAuthCont({}, AuthCont(authInitReply.getDocument<0>().conversationId,
+    (*this) << Op_MsgAuthCont({}, AuthCont(authInitReply.getAction().conversationId,
                                       database,
-                                      client.getProofMessage(password, authInitReply.getDocument<0>().payload.data)
+                                      client.getProofMessage(password, authInitReply.getAction().payload.data)
                                      )
                             );// << std::flush;
 
@@ -100,18 +100,18 @@ MongoConnection::MongoConnection(
     // TODO Should stream from this
     /* (*this) */stream>> authContReply;
 
-    if (authContReply.getDocument<0>().ok != 1)
+    if (authContReply.getAction().ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake Proof: ",
-                                 "Code: ", authContReply.getDocument<0>().code,
-                                 "Name: ", authContReply.getDocument<0>().codeName,
-                                 "Msg:  ", authContReply.getDocument<0>().errmsg);
+                                 "Code: ", authContReply.getAction().code,
+                                 "Name: ", authContReply.getAction().codeName,
+                                 "Msg:  ", authContReply.getAction().errmsg);
     }
 
     // Send Auth Cont 2: Send the DB Info
-    (*this) << Op_MsgAuthCont({}, AuthCont(authContReply.getDocument<0>().conversationId,
+    (*this) << Op_MsgAuthCont({}, AuthCont(authContReply.getAction().conversationId,
                                       database,
                                       ""s
                                      )
@@ -121,14 +121,14 @@ MongoConnection::MongoConnection(
     // TODO Should stream from this
     /*(*this)*/stream >> authContReply2;
 
-    if (authContReply2.getDocument<0>().ok != 1)
+    if (authContReply2.getAction().ok != 1)
     {
         ThorsLogAndThrowCritical("ThorsAnvil::DB::Mongo::MongoConnection",
                                  "MongoConnection",
                                  "Handshake DB Connect: ",
-                                 "Code: ", authContReply2.getDocument<0>().code,
-                                 "Name: ", authContReply2.getDocument<0>().codeName,
-                                 "Msg:  ", authContReply2.getDocument<0>().errmsg);
+                                 "Code: ", authContReply2.getAction().code,
+                                 "Name: ", authContReply2.getAction().codeName,
+                                 "Msg:  ", authContReply2.getAction().errmsg);
     }
 }
 

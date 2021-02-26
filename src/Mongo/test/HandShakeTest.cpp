@@ -514,7 +514,7 @@ af 00 00 00     // Size
     std::stringstream stream(input);
     stream >> authReplyMessage;
 
-    AuthReply const& authReply = authReplyMessage.getDocument<0>();
+    AuthReply const& authReply = authReplyMessage.getAction();
     EXPECT_EQ(authReply.conversationId,   1);
     EXPECT_EQ(authReply.done,             false);
     EXPECT_EQ(authReply.payload.data,     "r=JSyRHD7sc9RgDCDzJJNVdkA2GlSeMJPV5n95p0wdZzxjPt7zyLENf1To8hYTbKEQ,s=4L0xAznFguS1rcZnj4WQnxLe1F570S+FQdKzOw==,i=15000"s);
@@ -663,7 +663,7 @@ BSON
     std::stringstream stream(input);
     stream >> authReplyMessage;
 
-    AuthReply const& authReply = authReplyMessage.getDocument<0>();
+    AuthReply const& authReply = authReplyMessage.getAction();
     EXPECT_EQ(authReply.conversationId,   1);
     EXPECT_EQ(authReply.done,             false);
     EXPECT_EQ(authReply.payload.data,     "v=FzE/v4f5Dce98GoW5wfKRrQaBQsjj3H976opXx4IfgI="s);
@@ -776,7 +776,7 @@ BSON
     std::stringstream stream(input);
     stream >> authReplyMessage;
 
-    AuthReply const& authReply = authReplyMessage.getDocument<0>();
+    AuthReply const& authReply = authReplyMessage.getAction();
     EXPECT_EQ(authReply.conversationId,   1);
     EXPECT_EQ(authReply.done,             true);
     EXPECT_EQ(authReply.payload.data,     "");

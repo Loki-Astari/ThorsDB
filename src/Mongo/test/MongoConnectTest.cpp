@@ -35,7 +35,7 @@ TEST(MongoConnectTest, CreateReply)
     Op_MsgAuthReply         authInitReplyMessage;
     stream >> authInitReplyMessage;
 
-    AuthReply const&    authInitReply = authInitReplyMessage.getDocument<0>();
+    AuthReply const&    authInitReply = authInitReplyMessage.getAction();
     ASSERT_EQ(authInitReply.ok,     1);
 
     // Send Auth Cont: Send proof we know the password
@@ -44,7 +44,7 @@ TEST(MongoConnectTest, CreateReply)
     Op_MsgAuthReply         authContReplyMessage;
     stream >> authContReplyMessage;
 
-    AuthReply const&    authContReply = authContReplyMessage.getDocument<0>();
+    AuthReply const&    authContReply = authContReplyMessage.getAction();
     ASSERT_EQ(authContReply.ok,     1);
 
     // Send Auth Cont 2: Send the DB Info
@@ -53,7 +53,7 @@ TEST(MongoConnectTest, CreateReply)
     Op_MsgAuthReply         authContReply2Message;
     stream >> authContReply2Message;
 
-    AuthReply const&    authContReply2 = authContReply2Message.getDocument<0>();
+    AuthReply const&    authContReply2 = authContReply2Message.getAction();
     ASSERT_EQ(authContReply.ok,     1);
     // If everything is OK then we should now be connected.
 

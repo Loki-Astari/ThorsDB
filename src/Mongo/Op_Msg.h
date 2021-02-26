@@ -9,6 +9,8 @@
  */
 
 #include "Op.h"
+#include "Util.h"
+#include "View.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 
@@ -32,57 +34,40 @@ enum class OP_MsgFlag: std::int32_t
 };
 ThorsAnvil_MakeEnumFlag(OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
 
-template<typename Data>
-struct Kind0
-{
-    Data        data;
-    public:
-        template<typename... Args>
-        Kind0(Args&&... args);
-        std::size_t getSize()                           const;
-
-        Data&       getDocument()       {return data;}
-        Data const& getDocument() const {return data;}
-
-        std::istream& parse(std::istream& stream);
-        std::ostream& print(std::ostream& stream)       const;
-        std::ostream& printHR(std::ostream& stream)     const;
-
-};
-
-template<typename Data>
-std::ostream& operator<<(std::ostream& stream, Kind0<Data> const& msg)
-{
-    return msg.print(stream);
-}
-
-template<typename Data>
-std::istream& operator>>(std::istream& stream, Kind0<Data>& msg)
-{
-    return msg.parse(stream);
-}
-
-// TODO Kind1
-
-template<typename... Kind>
+template<typename Section0, typename... Section1>
 class Op_Msg
 {
+    template<typename S1>
+    using Kind1 = std::pair<std::string, ViewType<S1>>;
+    using Sections = std::tuple<Kind1<Section1>...>;
+
     Op_MsgHeader            header;             // standard message header
     OP_MsgFlag              flags;              // Flags
-    std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
-    mutable std::int32_t    checksum;           // checksum of message;
-    ErrorInfo               errorInfo;
+    // See: https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst
+    // Here I have explicitly separated the two types of sections into
+    //  * section0:     Which will be serialized as Kind0
+    //  * sections:     Which will be serialized as Kind1
+    //
+    // Because of C++ strong typing each member of "sections" can have its own "C++" type.
+    // Though each member of sections can potentially have a distinct type.
+    //
+    // Note 1: The section 0 object will be stored inside the message.
+    // Note 2: To prevent copying sections data will not be store here.
+    //         A reference to the objects will be stored in the object so the
+    //         user should ensure lifetimes live beyond this object
+    //
+    Section0                section0;           // Data sections of the message
+    Sections                sections;           // The data of the message
+    mutable std::int32_t    checksum;           // checksum of message (calculated on serialization)
+    ErrorInfo               errorInfo;          // used when an error is returned from the server.
 
     public:
-        template<typename... Args>
-        Op_Msg(Args&&... args);
-        template<typename... Args>
-        Op_Msg(OP_MsgFlag flags, Args&&... args);
+        template<typename... Views>
+        Op_Msg(OP_MsgFlag flags, Section0 action, Views&&... views);
 
-        template<std::size_t I>
-        auto&       getDocument()       {return std::get<I>(sections).getDocument();}
-        template<std::size_t I>
-        auto const& getDocument() const {return std::get<I>(sections).getDocument();}
+        Op_Msg() {}
+
+        Section0 const& getAction()             const           {return section0;}
 
         explicit operator   bool()              const;
         virtual bool        isOk()              const;
@@ -110,13 +95,18 @@ std::istream& operator>>(std::istream& stream, Op_Msg<Kind...>& msg)
     return msg.parse(stream);
 }
 
-template<typename... Kind>
-class Op_MsgReply: public Op_Msg<Kind...>
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...> send_Op_Msg(Section0 action, Section1&... data)
 {
-    public:
-        template<typename... Args>
-        Op_MsgReply(Args&&... args);
-};
+    return Op_Msg<Section0, Section1...>(OP_MsgFlag::empty, std::move(action), ViewType<Section1>(data)...);
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...> send_Op_Msg(OP_MsgFlag flags, Section0 action, Section1&... data)
+{
+    return Op_Msg<Section0, Section1...>(flags, std::move(action), ViewType<Section1>(data)...);
+}
+
 
 }
 
