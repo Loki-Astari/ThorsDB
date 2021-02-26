@@ -19,21 +19,24 @@ Op_Msg<Section0, Section1...>::Op_Msg(OP_MsgFlag flags, Section0 action, Views&&
     : header(OpCode::OP_MSG)
     , flags(flags)
     , section0(std::move(action))
-    , sections(std::forward<Views>(views)...)
+    , sections(std::make_pair(std::forward<Views>(views), std::uint32_t(0))...)
     , checksum(0)
 {
     header.prepareToSend(getSize());
 }
 
-template<typename Kind1>
-std::uint32_t getSizeOfKind1(std::uint32_t& sum, Kind1 const& kind1)
+template<typename SectionInfo>
+std::uint32_t getSizeOfKind1(std::uint32_t& sum, SectionInfo const& sectionInfo)
 {
+    auto const& kind1 = sectionInfo.first;
+
     std::uint32_t docSize = 0;
     for (auto const& doc: kind1.second)
     {
         docSize += ThorsAnvil::Serialize::bsonGetPrintSize(doc);
     }
-    sum += (1 + sizeof(uint32_t) + (kind1.first.size() + 1) + docSize);
+    sectionInfo.second = (1 + sizeof(uint32_t) + (kind1.first.size() + 1) + docSize);
+    sum += sectionInfo.second;
     return sum;
 }
 
@@ -42,9 +45,9 @@ std::size_t Op_Msg<Section0, Section1...>::getSize() const
 {
     std::size_t section0Size = (1 + ThorsAnvil::Serialize::bsonGetPrintSize(section0));
     std::size_t sectionsSize = 0;
-    std::apply([&sectionsSize](auto const&... kind1)
+    std::apply([&sectionsSize](auto const&... sectionInfor)
     {
-        std::make_tuple(getSizeOfKind1(sectionsSize, kind1)...);
+        std::make_tuple(getSizeOfKind1(sectionsSize, sectionInfor)...);
     }, sections);
 
     bool        showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
@@ -52,16 +55,13 @@ std::size_t Op_Msg<Section0, Section1...>::getSize() const
     return dataSize;
 }
 
-template<typename Kind1>
-std::uint32_t printKind1(std::ostream& stream, Kind1 const& kind1)
+template<typename SectionInfo>
+std::uint32_t printKind1(std::ostream& stream, SectionInfo const& sectionInfo)
 {
-    std::uint32_t docSize = sizeof(uint32_t) + kind1.first.size() + 1;;
-    for (auto const& doc: kind1.second)
-    {
-        docSize += ThorsAnvil::Serialize::bsonGetPrintSize(doc);
-    }
+    auto const& kind1 = sectionInfo.first;
+
     stream << std::uint8_t(1)
-           << make_LE(docSize)
+           << make_LE(sectionInfo.second)
            << kind1.first << '\0';
     for (auto const& doc: kind1.second)
     {
@@ -78,9 +78,9 @@ inline std::ostream& Op_Msg<Section0, Section1...>::print(std::ostream& stream) 
            << std::uint8_t(0) << ThorsAnvil::Serialize::bsonExporter(section0);
 
     // Stream the sections;
-    std::apply([&stream](auto const&... kind1)
+    std::apply([&stream](auto const&... sectionInfo)
     {
-        std::make_tuple(printKind1(stream, kind1)...);
+        std::make_tuple(printKind1(stream, sectionInfo)...);
     }, sections);
 
     // Output the checksum only if we said it would be there.
@@ -99,9 +99,11 @@ inline std::ostream& Op_Msg<Section0, Section1...>::print(std::ostream& stream) 
     return stream;
 }
 
-template<typename Kind1>
-std::uint32_t streamKind1(std::ostream& stream, Kind1 const& kind1)
+template<typename SectionInfo>
+std::uint32_t streamKind1(std::ostream& stream, SectionInfo const& sectionInfo)
 {
+    auto const& kind1 = sectionInfo.first;
+
     stream << ThorsAnvil::Serialize::jsonExporter(kind1);
     return 0;
 }
@@ -114,9 +116,9 @@ inline std::ostream& Op_Msg<Section0, Section1...>::printHR(std::ostream& stream
            << "Section:     [" << ThorsAnvil::Serialize::jsonExporter(section0);
 
     // Stream the sections;
-    std::apply([&stream](auto const&... kind1)
+    std::apply([&stream](auto const&... sectionInfo)
     {
-        std::make_tuple(printHRKind1(stream, kind1)...);
+        std::make_tuple(printHRKind1(stream, sectionInfo)...);
     }, sections);
 
     stream << "\n]\n";
@@ -134,13 +136,14 @@ inline std::ostream& Op_Msg<Section0, Section1...>::printHR(std::ostream& stream
     return stream;
 }
 
-template<typename Kind1>
-std::uint32_t parseKind1(std::istream& stream, Kind1 const& kind1)
+template<typename SectionInfo>
+std::uint32_t parseKind1(std::istream& stream, SectionInfo const& sectionInfo)
 {
+    auto const& kind1 = sectionInfo.first;
+
     std::uint8_t    kindMark = -1;
-    std::uint32_t   size     = 0;
     stream >> kindMark
-           >> make_LE(size);
+           >> make_LE(sectionInfo.second);
     std::getline(stream, kind1.first, '\0');
 
     if (kindMark != 1)
@@ -149,6 +152,7 @@ std::uint32_t parseKind1(std::istream& stream, Kind1 const& kind1)
         throw int(8);
     }
 
+    std::uint32_t   size     = 0;
     size -= (sizeof(std::uint32_t) + kind1.first.size() + 1);;
     while (size != 0)
     {
@@ -177,9 +181,9 @@ std::istream& Op_Msg<Section0, Section1...>::parse(std::istream& stream)
     {
         throw int(9);
     }
-    std::apply([&stream](auto&... kind1)
+    std::apply([&stream](auto&... sectionInfo)
     {
-        std::make_tuple(parseKind1(stream, kind1)...);
+        std::make_tuple(parseKind1(stream, sectionInfo)...);
     }, sections);
 
     bool expectCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;

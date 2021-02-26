@@ -38,8 +38,8 @@ template<typename Section0, typename... Section1>
 class Op_Msg
 {
     template<typename S1>
-    using Kind1 = std::pair<std::string, ViewType<S1>>;
-    using Sections = std::tuple<Kind1<Section1>...>;
+    using Kind1     = std::pair<std::pair<std::string, ViewType<S1>>, std::uint32_t>;
+    using Sections  = std::tuple<Kind1<Section1>...>;
 
     Op_MsgHeader            header;             // standard message header
     OP_MsgFlag              flags;              // Flags
