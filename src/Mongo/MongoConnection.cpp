@@ -77,7 +77,7 @@ MongoConnection::MongoConnection(
 
     Op_MsgAuthReply         authInitReply;
     // TODO Should stream from this
-    /* (*this) */stream >> authInitReply;
+    (*this) >> authInitReply;
 
     if (authInitReply.getAction().ok != 1)
     {
@@ -98,7 +98,7 @@ MongoConnection::MongoConnection(
 
     Op_MsgAuthReply         authContReply;
     // TODO Should stream from this
-    /* (*this) */stream>> authContReply;
+    (*this) >> authContReply;
 
     if (authContReply.getAction().ok != 1)
     {
@@ -119,7 +119,7 @@ MongoConnection::MongoConnection(
 
     Op_MsgAuthReply         authContReply2;
     // TODO Should stream from this
-    /*(*this)*/stream >> authContReply2;
+    (*this) >> authContReply2;
 
     if (authContReply2.getAction().ok != 1)
     {

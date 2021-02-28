@@ -117,21 +117,26 @@ MongoConnection& MongoConnection::operator<<(T&& value)
     return *this;
 }
 
-template<typename Reply>
+template<typename T>
 struct CursorRetriever
 {
-    static CursorId getCursorId(Reply const& reply)
-    {
-        return reply.cursorID;
-    }
+    static CursorId getCursorId(T const& /*reply*/)                         {return 0;}
+    static std::uint32_t begin(T const&)                                    {return 0;}
+    static std::uint32_t end(T const&)                                      {return 0;}
+};
+template<typename Reply>
+struct CursorRetriever<Op_Reply<Reply>>
+{
+    static CursorId getCursorId(Op_Reply<Reply> const& reply)               {return reply.cursorID;}
+    static std::uint32_t begin(Op_Reply<Reply> const& reply)                {return reply.startingFrom;}
+    static std::uint32_t end(Op_Reply<Reply> const& reply)                  {return reply.startingFrom + reply.numberReturned;}
 };
 template<typename Cursor>
 struct CursorRetriever<CmdDB_FindReplyBase<Cursor>>
 {
-    static CursorId getCursorId(CmdDB_FindReplyBase<Cursor> const& reply)
-    {
-        return reply.reply.cursor.id;
-    }
+    static CursorId getCursorId(CmdDB_FindReplyBase<Cursor> const& reply)   {return reply.reply.cursor.id;}
+    static std::uint32_t begin(CmdDB_FindReplyBase<Cursor> const&)          {return 0;}
+    static std::uint32_t end(CmdDB_FindReplyBase<Cursor> const&)            {return 0;}
 };
 
 template<typename T>
@@ -146,8 +151,8 @@ MongoConnection& MongoConnection::operator>>(T&& value)
         lastCursor = cursor;
         auto& find = openCursors[lastCursor];
 
-        find.first     = std::min(find.first, value.startingFrom);
-        find.second    = std::max(find.second, (value.startingFrom + value.numberReturned));
+        find.first     = std::min(find.first, CursorRetriever<T>::begin(value));
+        find.second    = std::max(find.second, CursorRetriever<T>::end(value));
     }
     return *this;
 }
