@@ -201,6 +201,190 @@ std::istream& Op_MsgReply<Section0, Section1...>::parse(std::istream& stream)
 }
 
 template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::unordered()
+{
+    section0.unordered();
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::byPass()
+{
+    section0.byPass();
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setComment(std::string val)
+{
+    section0.setComment(std::move(val));
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setWrieConcern(int w, bool j, std::time_t wtimeout)
+{
+    section0.setWrieConcern(w, j, wtimeout);
+    return *this;
+}
+
+#if 0
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::addFileds(std::initializer_list<std::string> fieldNames)
+{
+    section0.addFileds(std::move(fieldNames));
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::addHint(std::string hint)
+{
+    section0.addHint(std::move(hint));
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setSkip(std::size_t val)
+{
+    section0.setSkip(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setLimit(std::size_t val)
+{
+    section0.setLimit(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setBatchSize(std::size_t val)
+{
+    section0.setBatchSize(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::oneBatch(bool val)
+{
+    section0.oneBatch(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setMaxTimeout(std::size_t val)
+{
+    section0.setMaxTimeout(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::addReadConcern(ReadConcernLevel val)
+{
+    section0.addReadConcern(std::move(val));
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::addMax(std::string field, int val)
+{
+    section0.addMax(std::move(field), val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::addMin(std::string field, int val)
+{
+    section0.addMin(std::move(field), val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::justKeys(bool val)
+{
+    section0.justKeys(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::showId(bool val)
+{
+    section0.showId(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::tailableCursor(bool val)
+{
+    section0.tailableCursor(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::tailedCursorAwait(bool val)
+{
+    section0.tailedCursorAwait(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setNoCursorTimeout(bool val)
+{
+    section0.setNoCursorTimeout(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setAllowPartialResults(bool val)
+{
+    section0.setAllowPartialResults(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::useDisk(bool val)
+{
+    section0.useDisk(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setNew(bool val)
+{
+    section0.setNew(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setUpsert(bool val)
+{
+    section0.setUpsert(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::waitFoolDiskFlush(bool val)
+{
+    section0.waitFoolDiskFlush(val);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::waitForReplication(std::int32_t count)
+{
+    section0.waitForReplication(count);
+    return *this;
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...>& Op_Msg<Section0, Section1...>::setWaitTimeout(std::int32_t millisec)
+{
+    section0.setWaitTimeout(millisec);
+    return *this;
+}
+#endif
+
+template<typename Section0, typename... Section1>
 Op_MsgReply<Section0, Section1...>::operator bool() const
 {
     return this->isOk();

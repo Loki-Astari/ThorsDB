@@ -1,3 +1,12 @@
+/*
+ * These tests are weak.
+ * WEAK: I threw them together eyeballed the results to make sure they were correct.
+ *       The automation part was to make sure they don't change the line count of output
+ *       as we modify the code. So it will work a lot of the time but will not work
+ *       all of the time.
+ *
+ *      Yes I was lazy and threw them together
+ */
 
 #include <gtest/gtest.h>
 #include "Msg_Insert.h"
@@ -33,7 +42,6 @@ TEST(Msg_InsertTest, Base)
     EXPECT_EQ(28, std::count(std::begin(result), std::end(result), '\n'));
 }
 
-#if 0
 TEST(Msg_InsertTest, BaseUnordered)
 {
     std::vector<User>   users{User{"M1", "P1", 25}, {"M2", "P2", 56}};
@@ -43,7 +51,7 @@ TEST(Msg_InsertTest, BaseUnordered)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(24, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseBypass)
@@ -55,7 +63,7 @@ TEST(Msg_InsertTest, BaseBypass)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(24, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnordredBypass)
@@ -67,7 +75,7 @@ TEST(Msg_InsertTest, BaseUnordredBypass)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(25, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseSetWrieConcern)
@@ -79,7 +87,7 @@ TEST(Msg_InsertTest, BaseSetWrieConcern)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(34, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnorderedWrieConcern)
@@ -91,7 +99,7 @@ TEST(Msg_InsertTest, BaseUnorderedWrieConcern)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(35, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseBypassWriteConcenr)
@@ -103,7 +111,7 @@ TEST(Msg_InsertTest, BaseBypassWriteConcenr)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(35, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnorderedBypassWriteConcenr)
@@ -115,7 +123,7 @@ TEST(Msg_InsertTest, BaseUnorderedBypassWriteConcenr)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(36, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseSetComment)
@@ -127,7 +135,7 @@ TEST(Msg_InsertTest, BaseSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(24, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(29, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnorderedSetComment)
@@ -139,7 +147,7 @@ TEST(Msg_InsertTest, BaseUnorderedSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(25, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseBypassSetComment)
@@ -151,7 +159,7 @@ TEST(Msg_InsertTest, BaseBypassSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(25, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnordredBypassSetComment)
@@ -163,7 +171,7 @@ TEST(Msg_InsertTest, BaseUnordredBypassSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(26, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseSetWrieConcernSetComment)
@@ -175,7 +183,7 @@ TEST(Msg_InsertTest, BaseSetWrieConcernSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(30, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(35, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnorderedWrieConcernSetComment)
@@ -187,7 +195,7 @@ TEST(Msg_InsertTest, BaseUnorderedWrieConcernSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(36, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseBypassWriteConcenrSetComment)
@@ -199,7 +207,7 @@ TEST(Msg_InsertTest, BaseBypassWriteConcenrSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(31, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(36, std::count(std::begin(result), std::end(result), '\n'));
 }
 
 TEST(Msg_InsertTest, BaseUnorderedBypassWriteConcenrSetComment)
@@ -211,9 +219,8 @@ TEST(Msg_InsertTest, BaseUnorderedBypassWriteConcenrSetComment)
     stream << make_hr(insert);
 
     std::string result = stream.str();
-    EXPECT_EQ(32, std::count(std::begin(result), std::end(result), '\n'));
+    EXPECT_EQ(37, std::count(std::begin(result), std::end(result), '\n'));
 }
-#endif
 
 TEST(Msg_InsertTest, BaseUnorderedOption)
 {

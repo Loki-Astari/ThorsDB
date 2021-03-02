@@ -1,3 +1,12 @@
+/*
+ * These tests are weak.
+ * WEAK: I threw them together eyeballed the results to make sure they were correct.
+ *       The automation part was to make sure they don't change the line count of output
+ *       as we modify the code. So it will work a lot of the time but will not work
+ *       all of the time.
+ *
+ *      Yes I was lazy and threw them together
+ */
 
 #include <gtest/gtest.h>
 #include "CmdDB_Find.h"

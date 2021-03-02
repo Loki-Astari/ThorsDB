@@ -77,6 +77,51 @@ class Op_Msg
 
         std::ostream& print(std::ostream& stream)   const;
         std::ostream& printHR(std::ostream& stream) const;
+
+
+        // Insert & FindModify
+        Op_Msg& byPass();
+
+        // Insert & Delete
+        Op_Msg& unordered();
+
+        // Insert & Delete & FindModify
+        Op_Msg& setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+
+        // Insert & Find & FindModify & GetLastError & GetMore
+        Op_Msg& setComment(std::string c);
+
+        // Find & FindModify
+        // Op_Msg& addFileds(std::initializer_list<std::string> fieldNames);
+        // Op_Msg& addHint(std::string hint);
+
+        // Find & GetMore
+        // Op_Msg& setBatchSize(std::size_t val);
+        // Op_Msg& setMaxTimeout(std::size_t val);
+
+        // Find
+        // Op_Msg& setSkip(std::size_t val);
+        // Op_Msg& setLimit(std::size_t val);
+        // Op_Msg& oneBatch(bool val = true);
+        // Op_Msg& addReadConcern(ReadConcernLevel val);
+        // Op_Msg& addMax(std::string field, int val);
+        // Op_Msg& addMin(std::string field, int val);
+        // Op_Msg& justKeys(bool val = false);
+        // Op_Msg& showId(bool val = true);
+        // Op_Msg& tailableCursor(bool val = true);
+        // Op_Msg& tailedCursorAwait(bool val = true);
+        // Op_Msg& setNoCursorTimeout(bool val = true);
+        // Op_Msg& setAllowPartialResults(bool val = true);
+        // Op_Msg& useDisk(bool val = true);
+
+        // FindModify
+        // Op_Msg& setNew(bool val = true);
+        // Op_Msg& setUpsert(bool val = true);
+
+        // GetLastError
+        // Op_Msg& waitFoolDiskFlush(bool val = true);
+        // Op_Msg& waitForReplication(std::int32_t count);
+        // Op_Msg& setWaitTimeout(std::int32_t millisec);
     private:
         std::uint32_t   getSize();
 };
