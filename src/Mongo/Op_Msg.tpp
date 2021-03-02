@@ -14,19 +14,18 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Section0, typename... Section1>
-template<typename... Views>
-Op_Msg<Section0, Section1...>::Op_Msg(OP_MsgFlag flags, Section0 action, Views&&... views)
+Op_Msg<Section0, Section1...>::Op_Msg(OP_MsgFlag flags, Section0 action, KindB<Section1>&&... kind)
     : header(OpCode::OP_MSG)
     , flags(flags)
     , section0(std::move(action))
-    , sections(std::make_pair(std::forward<Views>(views), std::uint32_t(0))...)
+    , sections(Kind1<Section1>(std::forward<KindB<Section1>>(kind), std::uint32_t{0})...)
     , checksum(0)
 {
     header.prepareToSend(getSize());
 }
 
 template<typename SectionInfo>
-std::uint32_t getSizeOfKind1(std::uint32_t& sum, SectionInfo const& sectionInfo)
+std::uint32_t getSizeOfKind1(std::uint32_t& sum, SectionInfo& sectionInfo)
 {
     auto const& kind1 = sectionInfo.first;
 
@@ -35,23 +34,23 @@ std::uint32_t getSizeOfKind1(std::uint32_t& sum, SectionInfo const& sectionInfo)
     {
         docSize += ThorsAnvil::Serialize::bsonGetPrintSize(doc);
     }
-    sectionInfo.second = (1 + sizeof(uint32_t) + (kind1.first.size() + 1) + docSize);
+    sectionInfo.second = (1 + sizeof(std::uint32_t) + (kind1.first.size() + 1) + docSize);
     sum += sectionInfo.second;
     return sum;
 }
 
 template<typename Section0, typename... Section1>
-std::size_t Op_Msg<Section0, Section1...>::getSize() const
+std::uint32_t Op_Msg<Section0, Section1...>::getSize()
 {
-    std::size_t section0Size = (1 + ThorsAnvil::Serialize::bsonGetPrintSize(section0));
-    std::size_t sectionsSize = 0;
-    std::apply([&sectionsSize](auto const&... sectionInfor)
+    std::uint32_t section0Size = (1 + ThorsAnvil::Serialize::bsonGetPrintSize(section0));
+    std::uint32_t sectionsSize = 0;
+    std::apply([&sectionsSize](auto&... sectionInfo)
     {
-        std::make_tuple(getSizeOfKind1(sectionsSize, sectionInfor)...);
+        std::make_tuple(getSizeOfKind1(sectionsSize, sectionInfo)...);
     }, sections);
 
-    bool        showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
-    std::size_t dataSize     = sizeof(flags) + section0Size + sectionsSize + (showCheckSum ? sizeof(checksum) : 0);
+    bool          showCheckSum = (flags & OP_MsgFlag::checksumPresent) != OP_MsgFlag::empty;
+    std::uint32_t dataSize     = sizeof(flags) + section0Size + sectionsSize + (showCheckSum ? sizeof(checksum) : 0);
     return dataSize;
 }
 
@@ -102,9 +101,8 @@ inline std::ostream& Op_Msg<Section0, Section1...>::print(std::ostream& stream) 
 template<typename SectionInfo>
 std::uint32_t streamKind1(std::ostream& stream, SectionInfo const& sectionInfo)
 {
-    auto const& kind1 = sectionInfo.first;
-
-    stream << ThorsAnvil::Serialize::jsonExporter(kind1);
+    stream << "\nCount: " << sectionInfo.second << ",\n"
+           << ThorsAnvil::Serialize::jsonExporter(sectionInfo.first);
     return 0;
 }
 
@@ -118,7 +116,7 @@ inline std::ostream& Op_Msg<Section0, Section1...>::printHR(std::ostream& stream
     // Stream the sections;
     std::apply([&stream](auto const&... sectionInfo)
     {
-        std::make_tuple(printHRKind1(stream, sectionInfo)...);
+        std::make_tuple(streamKind1(stream, sectionInfo)...);
     }, sections);
 
     stream << "\n]\n";

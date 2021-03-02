@@ -1,15 +1,8 @@
 
 #include <gtest/gtest.h>
 #include "CmdDB_Insert.h"
+#include "test/CommonInsertTest.h"
 
-struct User
-{
-    std::string     user;
-    std::string     password;
-    int             age;
-};
-
-ThorsAnvil_MakeTrait(User, user, password, age);
 
 using namespace ThorsAnvil::DB::Mongo;
 

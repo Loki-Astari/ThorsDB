@@ -34,6 +34,9 @@ enum class OP_MsgFlag: std::int32_t
 };
 ThorsAnvil_MakeEnumFlag(OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
 
+template<typename S1>
+using KindB     = std::pair<std::string, ViewType<S1>>;
+
 template<typename Section0, typename... Section1>
 class Op_Msg
 {
@@ -41,7 +44,7 @@ class Op_Msg
         // Need so we can get Op_MsgReply as the way to read responses from the server
         // and differentiate between reads and writes.
         template<typename S1>
-        using Kind1     = std::pair<std::pair<std::string, ViewType<S1>>, std::uint32_t>;
+        using Kind1     = std::pair<KindB<S1>, std::uint32_t>;
         using Sections  = std::tuple<Kind1<Section1>...>;
 
         Op_MsgHeader            header;             // standard message header
@@ -64,8 +67,7 @@ class Op_Msg
         mutable std::int32_t    checksum;           // checksum of message (calculated on serialization)
 
     public:
-        template<typename... Views>
-        Op_Msg(OP_MsgFlag flags, Section0 action, Views&&... views);
+        Op_Msg(OP_MsgFlag flags, Section0 action, KindB<Section1>&&... views);
 
         Op_Msg() {}
 
@@ -76,7 +78,7 @@ class Op_Msg
         std::ostream& print(std::ostream& stream)   const;
         std::ostream& printHR(std::ostream& stream) const;
     private:
-        std::size_t   getSize()                     const;
+        std::uint32_t   getSize();
 };
 
 template<typename Section0, typename... Section1>
@@ -103,15 +105,15 @@ std::istream& operator>>(std::istream& stream, Op_MsgReply<Section0, Section1...
 }
 
 template<typename Section0, typename... Section1>
-Op_Msg<Section0, Section1...> send_Op_Msg(Section0 action, Section1&... data)
+Op_Msg<Section0, Section1...> send_Op_Msg(Section0&& action, KindB<Section1>&&... data)
 {
-    return Op_Msg<Section0, Section1...>(OP_MsgFlag::empty, std::move(action), ViewType<Section1>(data)...);
+    return Op_Msg<Section0, Section1...>(OP_MsgFlag::empty, std::move(action), std::forward<KindB<Section1>>(data)...);
 }
 
 template<typename Section0, typename... Section1>
-Op_Msg<Section0, Section1...> send_Op_Msg(OP_MsgFlag flags, Section0 action, Section1&... data)
+Op_Msg<Section0, Section1...> send_Op_Msg(OP_MsgFlag flags, Section0&& action, KindB<Section1>&&... data)
 {
-    return Op_Msg<Section0, Section1...>(flags, std::move(action), ViewType<Section1>(data)...);
+    return Op_Msg<Section0, Section1...>(flags, std::move(action), std::forward<KindB<Section1>>(data)...);
 }
 
 
