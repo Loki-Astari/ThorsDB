@@ -42,7 +42,7 @@ struct Op_Insert
     View                    documents;
 
     public:
-        Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& range);
+        Op_Insert(std::string fullCollectionName, OP_InsertFlag flags, View&& view);
 
         std::int32_t getMessageLength() const                    {return header.getMessageLength();}
         void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}

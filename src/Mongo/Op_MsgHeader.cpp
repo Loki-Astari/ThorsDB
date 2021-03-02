@@ -58,7 +58,7 @@ std::istream& Op_MsgHeader::parse(std::istream& stream)
         }
         else
         {
-            throw int(56);
+            stream.setstate(std::ios::failbit);
         }
     }
 

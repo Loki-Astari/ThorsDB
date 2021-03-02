@@ -9,6 +9,8 @@
  */
 
 #include "Op.h"
+#include "Util.h"
+#include "View.h"
 #include "Op_MsgHeader.h"
 #include "ThorSerialize/Traits.h"
 
@@ -32,86 +34,133 @@ enum class OP_MsgFlag: std::int32_t
 };
 ThorsAnvil_MakeEnumFlag(OP_MsgFlag, empty, checksumPresent, moreToCome, exhaustAllowed);
 
-template<typename Data>
-struct Kind0
-{
-    Data        data;
-    public:
-        template<typename... Args>
-        Kind0(Args&&... args);
-        std::size_t getSize()                           const;
+template<typename S1>
+using KindB     = std::pair<std::string, ViewType<S1>>;
 
-        Data&       getDocument()       {return data;}
-        Data const& getDocument() const {return data;}
-
-        std::istream& parse(std::istream& stream);
-        std::ostream& print(std::ostream& stream)       const;
-        std::ostream& printHR(std::ostream& stream)     const;
-
-};
-
-template<typename Data>
-std::ostream& operator<<(std::ostream& stream, Kind0<Data> const& msg)
-{
-    return msg.print(stream);
-}
-
-template<typename Data>
-std::istream& operator>>(std::istream& stream, Kind0<Data>& msg)
-{
-    return msg.parse(stream);
-}
-
-// TODO Kind1
-
-template<typename... Kind>
+template<typename Section0, typename... Section1>
 class Op_Msg
 {
-    Op_MsgHeader            header;             // standard message header
-    OP_MsgFlag              flags;              // Flags
-    std::tuple<Kind...>     sections;           // The data of the message (See above Kind0 and Kind1)
-    mutable std::int32_t    checksum;           // checksum of message;
+    protected:
+        // Need so we can get Op_MsgReply as the way to read responses from the server
+        // and differentiate between reads and writes.
+        template<typename S1>
+        using Kind1     = std::pair<KindB<S1>, std::uint32_t>;
+        using Sections  = std::tuple<Kind1<Section1>...>;
+
+        Op_MsgHeader            header;             // standard message header
+        OP_MsgFlag              flags;              // Flags
+        // See: https://github.com/mongodb/specifications/blob/master/source/message/OP_MSG.rst
+        // Here I have explicitly separated the two types of sections into
+        //  * section0:     Which will be serialized as Kind0
+        //  * sections:     Which will be serialized as Kind1
+        //
+        // Because of C++ strong typing each member of "sections" can have its own "C++" type.
+        // Though each member of sections can potentially have a distinct type.
+        //
+        // Note 1: The section 0 object will be stored inside the message.
+        // Note 2: To prevent copying sections data will not be store here.
+        //         A reference to the objects will be stored in the object so the
+        //         user should ensure lifetimes live beyond this object
+        //
+        Section0                section0;           // Data sections of the message
+        Sections                sections;           // The data of the message
+        mutable std::int32_t    checksum;           // checksum of message (calculated on serialization)
 
     public:
-        template<typename... Args>
-        Op_Msg(Args&&... args);
-        template<typename... Args>
-        Op_Msg(OP_MsgFlag flags, Args&&... args);
+        Op_Msg(OP_MsgFlag flags, Section0 action, KindB<Section1>&&... views);
 
-        template<std::size_t I>
-        auto&       getDocument()       {return std::get<I>(sections).getDocument();}
-        template<std::size_t I>
-        auto const& getDocument() const {return std::get<I>(sections).getDocument();}
+        Op_Msg() {}
 
-        std::int32_t getMessageLength() const                    {return header.getMessageLength();}
-        void         setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
+        Section0 const& getAction()                 const           {return section0;}
+        std::int32_t    getMessageLength()          const           {return header.getMessageLength();}
+        void            setCompression(std::int8_t compressionType) {header.setCompression(compressionType);}
 
-        std::ostream& print(std::ostream& stream)       const;
-        std::ostream& printHR(std::ostream& stream)     const;
-        std::istream& parse(std::istream& stream);
+        std::ostream& print(std::ostream& stream)   const;
+        std::ostream& printHR(std::ostream& stream) const;
+
+
+        // Insert & FindModify
+        Op_Msg& byPass();
+
+        // Insert & Delete
+        Op_Msg& unordered();
+
+        // Insert & Delete & FindModify
+        Op_Msg& setWrieConcern(int w = 1, bool j = false, std::time_t wtimeout = 0);
+
+        // Insert & Find & FindModify & GetLastError & GetMore
+        Op_Msg& setComment(std::string c);
+
+        // Find & FindModify
+        // Op_Msg& addFileds(std::initializer_list<std::string> fieldNames);
+        // Op_Msg& addHint(std::string hint);
+
+        // Find & GetMore
+        // Op_Msg& setBatchSize(std::size_t val);
+        // Op_Msg& setMaxTimeout(std::size_t val);
+
+        // Find
+        // Op_Msg& setSkip(std::size_t val);
+        // Op_Msg& setLimit(std::size_t val);
+        // Op_Msg& oneBatch(bool val = true);
+        // Op_Msg& addReadConcern(ReadConcernLevel val);
+        // Op_Msg& addMax(std::string field, int val);
+        // Op_Msg& addMin(std::string field, int val);
+        // Op_Msg& justKeys(bool val = false);
+        // Op_Msg& showId(bool val = true);
+        // Op_Msg& tailableCursor(bool val = true);
+        // Op_Msg& tailedCursorAwait(bool val = true);
+        // Op_Msg& setNoCursorTimeout(bool val = true);
+        // Op_Msg& setAllowPartialResults(bool val = true);
+        // Op_Msg& useDisk(bool val = true);
+
+        // FindModify
+        // Op_Msg& setNew(bool val = true);
+        // Op_Msg& setUpsert(bool val = true);
+
+        // GetLastError
+        // Op_Msg& waitFoolDiskFlush(bool val = true);
+        // Op_Msg& waitForReplication(std::int32_t count);
+        // Op_Msg& setWaitTimeout(std::int32_t millisec);
     private:
-        std::size_t   getSize()                     const;
+        std::uint32_t   getSize();
 };
 
-template<typename... Kind>
-std::ostream& operator<<(std::ostream& stream, Op_Msg<Kind...> const& msg)
+template<typename Section0, typename... Section1>
+class Op_MsgReply: public Op_Msg<Section0, Section1...>
+{
+    public:
+        explicit operator   bool()              const;
+        virtual bool        isOk()              const;
+        virtual std::string getHRErrorMessage() const;
+
+        std::istream& parse(std::istream& stream);
+};
+
+template<typename Section0, typename... Section1>
+std::ostream& operator<<(std::ostream& stream, Op_Msg<Section0, Section1...> const& msg)
 {
     return msg.print(stream);
 }
 
-template<typename... Kind>
-std::istream& operator>>(std::istream& stream, Op_Msg<Kind...>& msg)
+template<typename Section0, typename... Section1>
+std::istream& operator>>(std::istream& stream, Op_MsgReply<Section0, Section1...>& msg)
 {
     return msg.parse(stream);
 }
 
-template<typename... Kind>
-class Op_MsgReply: public Op_Msg<Kind...>
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...> send_Op_Msg(Section0&& action, KindB<Section1>&&... data)
 {
-    public:
-        template<typename... Args>
-        Op_MsgReply(Args&&... args);
-};
+    return Op_Msg<Section0, Section1...>(OP_MsgFlag::empty, std::move(action), std::forward<KindB<Section1>>(data)...);
+}
+
+template<typename Section0, typename... Section1>
+Op_Msg<Section0, Section1...> send_Op_Msg(OP_MsgFlag flags, Section0&& action, KindB<Section1>&&... data)
+{
+    return Op_Msg<Section0, Section1...>(flags, std::move(action), std::forward<KindB<Section1>>(data)...);
+}
+
 
 }
 

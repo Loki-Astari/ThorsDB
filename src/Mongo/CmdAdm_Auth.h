@@ -196,9 +196,9 @@ struct AuthReply: public CmdReplyBase
 
 using CmdAdm_HandShake          = CmdAdm_Query<HandShake>;
 using CmdAdm_HandShakeReply     = CmdAdm_Reply<HandShakeReply>;
-using Op_MsgAuthInit            = Op_Msg<Kind0<AuthInit>>;
-using Op_MsgAuthCont            = Op_Msg<Kind0<AuthCont>>;
-using Op_MsgAuthReply           = Op_MsgReply<Kind0<AuthReply>>;
+using Op_MsgAuthInit            = Op_Msg<AuthInit>;
+using Op_MsgAuthCont            = Op_Msg<AuthCont>;
+using Op_MsgAuthReply           = Op_MsgReply<AuthReply>;
 
 }
 
