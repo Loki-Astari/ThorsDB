@@ -43,7 +43,8 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     {
         ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
                          "StreamSimple",
-                         "::gethostbyname() Failed: ", systemErrorMessage());
+                         "::gethostbyname() Failed: ", systemErrorMessage(),
+                         "  Attempt: ", host, ":", port, " nonBlocking", nonBlocking);
     }
     bcopy((char *)serv->h_addr, (char *)&serv_addr.sin_addr.s_addr, serv->h_length);
 
@@ -51,15 +52,17 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     {
         ThorsLogAndThrow("ThrosAnvil::SQL::StreamSimple",
                          "StreamSimple",
-                         "::socket() Failed: ", systemErrorMessage());
+                         "::socket() Failed: ", systemErrorMessage(),
+                         "  Attempt: ", host, ":", port, " nonBlocking", nonBlocking);
     }
     if (nonBlocking)
     {
         if (::fcntlMYSQLWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
         {
-            ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::StreamSimple",
+            ThorsLogAndThrowCritical("ThorsAnvil::DB::SQL::StreamSimple",
                                      "StreamSimple",
-                                     "::fcntl() ", systemErrorMessage());
+                                     "::fcntl() ", systemErrorMessage(),
+                                    "  Attempt: ", host, ":", port, " nonBlocking", nonBlocking);
         }
     }
     using SockAddr = struct sockaddr;
@@ -69,9 +72,10 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
         if (errno != EINPROGRESS)
         {
             ::close(socket);
-            ThorsLogAndThrow("ThorsAnvil::DB::MySQL::StreamSimple",
+            ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
                              "StreamSimple",
-                             "::connect() Failed: ", systemErrorMessage());
+                             "::connect() Failed: ", systemErrorMessage(),
+                             "  Attempt: ", host, ":", port, " nonBlocking", nonBlocking);
         }
     }
 }
