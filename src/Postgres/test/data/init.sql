@@ -6,7 +6,7 @@ CREATE  USER test WITH PASSWORD 'testPassword';
 GRANT   ALL ON DATABASE test TO test;
 
 
-\connect test;
+\connect test test;
 
 CREATE TABLE People ( ID  INTEGER, Name VARCHAR(64), Age  SMALLINT, Sex  CHAR(1), Height DOUBLE PRECISION);
 
