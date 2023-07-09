@@ -25,4 +25,5 @@ confdefs.h
 config.h
 
 build
+makedependency
 *Config.h

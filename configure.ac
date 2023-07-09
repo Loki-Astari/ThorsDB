@@ -199,17 +199,14 @@ AX_THOR_CHECKDB_AVAILABLE_MONGO
 AX_THOR_CHECK_SMARTY_AVAILABLE
 
 export cwd=`pwd`
-pushd third/ThorsIOUtil
-./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera}
-popd
 pushd third/ThorsCrypto
 addCrypoRoot=""
 AS_IF([test "$with_cryptoroot" != ""],
       [addCrypoRoot="--with-cryptoroot=$with_cryptoroot"])
-./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigure}
 popd
 pushd third/ThorsSocket
-./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigvera} ${addCrypoRoot}
+./configure --prefix=${prefix} --with-hostbuild=${cwd}/build ${subconfigure}
 popd
 
 
