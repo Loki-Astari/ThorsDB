@@ -2,7 +2,9 @@
 THORSANVIL_ROOT				?= $(realpath ../../)
 
 TARGET						= ThorsDB.defer
-UNITTEST_LINK_LIBS			= ThorsLogging
+NAMESPACE					= ThorsAnvil::DB::Access
+
+LDLIBS_EXTERN_BUILD			= $(ThorSerialize_ROOT_LIB)
 UNITTEST_LDLIBS				= -ldl
 
 

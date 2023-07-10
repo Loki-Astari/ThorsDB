@@ -1,0 +1,64 @@
+
+/* Enable to use header only libraries */
+#undef HEADER_ONLY
+
+/* For header only convery to inline */
+#undef HEADER_ONLY_INCLUDE
+
+/* Set for Big Endian Systems */
+#undef THOR_ENDIAN_BIG
+
+/* Set for small Endian Systems */
+#undef THOR_ENDIAN_SML
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
+
+/* When on code that uses ThorsSerialize will be compiled. */
+#undef HAVE_ThorsSerialize
+
+/* "Get mongo version into #define. That way we can turn off some tests" */
+#undef MONGO_MAJOR_VERSION
+
+/* "Get mysql version into #define. That way we can turn off some tests" */
+#undef MYSQL_MAJOR_VERSION
+
+/* mongo DB for testing */
+#undef THOR_TESTING_MONGO_DB
+
+/* mongo DB host for testing */
+#undef THOR_TESTING_MONGO_HOST
+
+/* mongo DB password for testing */
+#undef THOR_TESTING_MONGO_PASS
+
+/* mongo DB user for testing */
+#undef THOR_TESTING_MONGO_USER
+
+/* mysql DB for testing */
+#undef THOR_TESTING_MYSQL_DB
+
+/* mysql DB host for testing */
+#undef THOR_TESTING_MYSQL_HOST
+
+/* mysql DB password for testing */
+#undef THOR_TESTING_MYSQL_PASS
+
+/* mysql DB user for testing */
+#undef THOR_TESTING_MYSQL_USER
+
+/* Disable tests that use timegm() */
+#undef THOR_USE_MOD_TESTS_FLASE
+
+/* Disable tests that use timegm() */
+#undef THOR_USE_TIMEGM_FLASE
+

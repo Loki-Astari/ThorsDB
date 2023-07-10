@@ -18,7 +18,7 @@ RespPackageHandShake::RespPackageHandShake(int firstbyte, ConectReader& reader)
     , charset(0)
 {
     // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::HandshakeV10
-    assert(firstbyte = 0x0A);
+    assert(firstbyte == 0x0A);
 
     if (reader.isEmpty())
     {

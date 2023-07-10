@@ -1,0 +1,142 @@
+name:       Build
+run-name:   ${{ github.actor }} Building
+on:         [push]
+env:
+    HOMEBREW_NO_AUTO_UPDATE:    1
+jobs:
+        #  windows-latest
+        #  windows-2022
+        #  windows-2019
+        #  ubuntu-latest
+        #  ubuntu-22.04
+        #  ubuntu-20.04
+        #  ubuntu-18.04
+        #  macos-latest
+        #  macos-13
+        #  macos-12
+        #  macos-11
+    Build_on_Mac:
+        runs-on:    macos-latest
+        steps:
+            - name: Setup Dependencies
+              run: |
+                    brew install mongosh
+                    brew install vera++
+                    brew install thors-serializer
+                    brew install boost
+                    brew install snappy
+            - name: Start MySQL
+              uses: ankane/setup-mysql@v1
+            - name: Start Mongo
+              uses: ankane/setup-mongodb@v1
+            - uses: actions/checkout@master
+              with:
+                    submodules: recursive
+                    token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Set up Test Data
+              run: |
+                    cat ./src/MySQL/test/data/init.sql | mysql -B --user=root
+                    cat ./src/MySQL/test/data/data.sql | mysql -B --user=test --password=testPassword test
+                    cat ./src/Mongo/test/data/init.mongo | mongosh --verbose
+                    cat ./src/Mongo/test/data/data.mongo | mongosh --verbose -u test -p testPassword test
+            - name: Build
+              run: |
+                    rootPath=$(brew config | awk '/HOMEBREW_PREFIX/ {print $2}')
+                    cellPath=$(brew info --json openssl | jq -r '.[0].name + "/" + .[0].versions.stable')
+                    openSSLPath=$(echo ${rootPath}/Cellar/${cellPath} | sed -e 's/@/\@/')
+                    echo "openSSLPath: ${openSSLPath}"
+                    ./configure --disable-colour --without-timegm --without-modtests --with-cryptoroot=${openSSLPath}
+                    make
+    Build_on_Linux:
+        runs-on:    ubuntu-latest
+        steps:
+            - name: Setup Dependencies
+              run: |
+                    echo "Getting Brew"
+                    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+                    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+                    echo
+                    echo "Getting tools"
+                    brew install mongosh
+                    brew install vera++
+                    brew install thors-serializer
+                    brew install boost
+                    brew install snappy
+            - name: Start MySQL
+              uses: ankane/setup-mysql@v1
+            - name: Start Mongo
+              uses: ankane/setup-mongodb@v1
+            - uses: actions/checkout@master
+              with:
+                    submodules: recursive
+                    token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Set up Test Data
+              run: |
+                    export PATH="${PATH}:/home/linuxbrew/.linuxbrew/bin"
+                    cat ./src/MySQL/test/data/init.sql | mysql -B --user=root
+                    cat ./src/MySQL/test/data/data.sql | mysql -B --user=test --password=testPassword test
+                    cat ./src/Mongo/test/data/init.mongo | mongosh --verbose
+                    cat ./src/Mongo/test/data/data.mongo | mongosh --verbose -u test -p testPassword test
+            - name: Build
+              run: |
+                    export PATH="${PATH}:/home/linuxbrew/.linuxbrew/bin"
+                    ./configure --enable-dark-mode --with-magicenumroot=/tmp/magic_enum --with-thorserializeroot=/home/linuxbrew/.linuxbrew/ --with-snappyroot=/home/linuxbrew/.linuxbrew/
+                    make
+    #Build_on_Windows:
+        #runs-on:    windows-latest
+        #steps:
+        #    - run:  git config --global core.autocrlf input
+        #    - uses: actions/checkout@master
+        #      with:
+        #        submodules: recursive
+        #        token: ${{ secrets.GITHUB_TOKEN }}
+        #    - name: Install MSYS2
+        #      uses: msys2/setup-msys2@v2
+        #      with:
+        #        install: >-
+        #            autoconf
+        #            automake
+        #            make
+        #            git
+        #            gperf
+        #            coreutils
+        #            vim
+        #            mingw-w64-x86_64-gcc
+        #            mingw-w64-x86_64-gdb
+        #            mingw-w64-x86_64-boost
+        #            mingw-w64-x86_64-libyaml
+        #            mingw-w64-x86_64-dlfcn
+        #    - name: GetInfo
+        #      shell: msys2 {0}
+        #      run: |
+        #        uname -a
+        #        uname -s
+        #        uname -s | sed 's/-.*//'
+        #    - name: Clone Magic Enum
+        #      shell: msys2 {0}
+        #      run:   git clone https://github.com/Neargye/magic_enum.git /tmp/magic_enum
+        #    - uses: actions/checkout@master
+        #    - name: Configure
+        #      shell: msys2 {0}
+        #      env:
+        #             MSYS:  winsymlinks:nativestrict
+        #      run:  ./configure --disable-colour --disable-vera --with-magicenumroot=/tmp/magic_enum --with-yamlroot=/mingw64/ || cat config.log
+        #    - name: Make
+        #      shell: msys2 {0}
+        #      run:   make
+    #Build_Header_Only_Version:
+        #needs:      [Build_on_Mac, Build_on_Linux, Build_on_Windows]
+        #runs-on:    macos-latest
+        ##- if:         github.ref == 'refs/heads/master'
+        #steps:
+        #    - run: echo "Building Header Only"
+        #    - run: env HOMEBREW_NO_AUTO_UPDATE=1 brew install vera++
+        #    - run: env HOMEBREW_NO_AUTO_UPDATE=1 brew install boost
+        #    - run: env HOMEBREW_NO_AUTO_UPDATE=1 brew install magic_enum
+        #    - uses: actions/checkout@master
+        #      with:
+        #        submodules: recursive
+        #        token: ${{ secrets.GITHUB_TOKEN }}
+        #    - run: ./configure --disable-colour
+        #    - run: make header-only
+

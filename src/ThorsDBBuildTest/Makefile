@@ -2,9 +2,10 @@
 THORSANVIL_ROOT				?= $(realpath ../../)
 
 TARGET						= ThorsDBTest.test
-UNITTEST_LINK_LIBS			= ThorsDB ThorsLogging
-UNITTEST_RUNTIME_PATH		= $(ThorsSerialize_ROOT_DIR)/lib
+LDLIBS_EXTERN_BUILD			= $(ThorSerialize_ROOT_LIB)
 NO_HEADER					= 1
+
+UNITTEST_LINK_LIBS			= ThorsDB ThorsSocket
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 

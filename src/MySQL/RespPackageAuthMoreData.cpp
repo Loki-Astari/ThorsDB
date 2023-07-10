@@ -10,5 +10,5 @@ RespPackageAuthMoreData::RespPackageAuthMoreData(int firstbyte, ConectReader& re
     , pluginMoreData(reader.restOfPacketString())
 {
     // https://dev.mysql.com/doc/internals/en/connection-phase-packets.html#packet-Protocol::AuthMoreData
-    assert(firstbyte = 0x01);
+    assert(firstbyte == 0x01);
 }
