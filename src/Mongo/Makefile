@@ -14,6 +14,10 @@ CRYPTO_WARNINGS				= $(CRYPTO_WARNINGS_$(PLATFORM)) -Wno-deprecated-declarations
 FILE_WARNING_FLAGS			+= $(CRYPTO_WARNINGS)
 # TODO FIX
 FILE_WARNING_FLAGS			+= -Wno-dollar-in-identifier-extension
+# TODO FIX
+# After ThorsSerialized has been published with homebrew (2.2.23)
+# Then this flag can be removed.
+FILE_WARNING_FLAGS			+= -Wno-unused-parameter
 
 include $(THORSANVIL_ROOT)/build/tools/Makefile
 
