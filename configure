@@ -5506,8 +5506,33 @@ fi
     ORIG_LDFLAGS="${LDFLAGS}"
     LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
 
+    echo "Building: NotThor"
+    echo "Mark:     $BUILDING_NotThor"
     echo "Checking"
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
+    if test "x$BUILDING_NotThor" == "x1"
+then :
+
+
+    if test "x${with_yamlroot}" != "x"
+then :
+
+
+printf "%s\n" "#define HAVE_YAML 1" >>confdefs.h
+
+            yaml_ROOT_DIR=${with_yamlroot}
+
+            subconfigure="${subconfigure} --with-yamlroot=${with_yamlroot}"
+
+
+fi
+    echo "Setting: yaml_ROOT_LIB TO yaml"
+    yaml_ROOT_LIB="yaml"
+
+
+
+else $as_nop
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
 printf %s "checking for yaml_parser_initialize in -lyaml... " >&6; }
 if test ${ac_cv_lib_yaml_yaml_parser_initialize+y}
 then :
@@ -5544,26 +5569,28 @@ printf "%s\n" "$ac_cv_lib_yaml_yaml_parser_initialize" >&6; }
 if test "x$ac_cv_lib_yaml_yaml_parser_initialize" = xyes
 then :
 
-            if test "x${with_yamlroot}" != "x"
+
+    if test "x${with_yamlroot}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_YAML 1" >>confdefs.h
 
-                    yaml_ROOT_DIR=${with_yamlroot}
+            yaml_ROOT_DIR=${with_yamlroot}
 
-                    subconfigure="${subconfigure} --with-yamlroot=${with_yamlroot}"
+            subconfigure="${subconfigure} --with-yamlroot=${with_yamlroot}"
 
 
 fi
-            echo "Setting: yaml_ROOT_LIB TO yaml"
-            yaml_ROOT_LIB="yaml"
+    echo "Setting: yaml_ROOT_LIB TO yaml"
+    yaml_ROOT_LIB="yaml"
+
 
 
 else $as_nop
 
-            echo "FAIL: Using: >${with_yamlroot}<"
-            as_fn_error $? "
+                    echo "FAIL: Using: >${with_yamlroot}<"
+                    as_fn_error $? "
 Error: Could not find libyaml
 
 You can solve this by installing libyaml
@@ -5574,11 +5601,14 @@ Alternately specify install location with:
 
 
     " "$LINENO" 5
-            echo "FAIL DONE"
+                    echo "FAIL DONE"
 
 
 fi
 
+
+
+fi
     echo "Checking DONE"
 
     LDFLAGS="${ORIG_LDFLAGS}"
@@ -5604,8 +5634,33 @@ fi
     ORIG_LDFLAGS="${LDFLAGS}"
     LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
 
+    echo "Building: NotThor"
+    echo "Mark:     $BUILDING_NotThor"
     echo "Checking"
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for snappy_compress in -lsnappy" >&5
+    if test "x$BUILDING_NotThor" == "x1"
+then :
+
+
+    if test "x${with_snappyroot}" != "x"
+then :
+
+
+printf "%s\n" "#define HAVE_SNAPPY 1" >>confdefs.h
+
+            snappy_ROOT_DIR=${with_snappyroot}
+
+            subconfigure="${subconfigure} --with-snappyroot=${with_snappyroot}"
+
+
+fi
+    echo "Setting: snappy_ROOT_LIB TO snappy"
+    snappy_ROOT_LIB="snappy"
+
+
+
+else $as_nop
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for snappy_compress in -lsnappy" >&5
 printf %s "checking for snappy_compress in -lsnappy... " >&6; }
 if test ${ac_cv_lib_snappy_snappy_compress+y}
 then :
@@ -5642,26 +5697,28 @@ printf "%s\n" "$ac_cv_lib_snappy_snappy_compress" >&6; }
 if test "x$ac_cv_lib_snappy_snappy_compress" = xyes
 then :
 
-            if test "x${with_snappyroot}" != "x"
+
+    if test "x${with_snappyroot}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_SNAPPY 1" >>confdefs.h
 
-                    snappy_ROOT_DIR=${with_snappyroot}
+            snappy_ROOT_DIR=${with_snappyroot}
 
-                    subconfigure="${subconfigure} --with-snappyroot=${with_snappyroot}"
+            subconfigure="${subconfigure} --with-snappyroot=${with_snappyroot}"
 
 
 fi
-            echo "Setting: snappy_ROOT_LIB TO snappy"
-            snappy_ROOT_LIB="snappy"
+    echo "Setting: snappy_ROOT_LIB TO snappy"
+    snappy_ROOT_LIB="snappy"
+
 
 
 else $as_nop
 
-            echo "FAIL: Using: >${with_snappyroot}<"
-            as_fn_error $? "
+                    echo "FAIL: Using: >${with_snappyroot}<"
+                    as_fn_error $? "
 Error: Could not find libsnappy
 
 You can solve this by installing libsnappy
@@ -5672,11 +5729,14 @@ Alternately specify install location with:
 
 
     " "$LINENO" 5
-            echo "FAIL DONE"
+                    echo "FAIL DONE"
 
 
 fi
 
+
+
+fi
     echo "Checking DONE"
 
     LDFLAGS="${ORIG_LDFLAGS}"
@@ -5702,8 +5762,33 @@ fi
     ORIG_LDFLAGS="${LDFLAGS}"
     LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
 
+    echo "Building: NotThor"
+    echo "Mark:     $BUILDING_NotThor"
     echo "Checking"
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SHA1_Init in -lcrypto" >&5
+    if test "x$BUILDING_NotThor" == "x1"
+then :
+
+
+    if test "x${with_cryptoroot}" != "x"
+then :
+
+
+printf "%s\n" "#define HAVE_CRYPTO 1" >>confdefs.h
+
+            crypto_ROOT_DIR=${with_cryptoroot}
+
+            subconfigure="${subconfigure} --with-cryptoroot=${with_cryptoroot}"
+
+
+fi
+    echo "Setting: crypto_ROOT_LIB TO ssl crypto"
+    crypto_ROOT_LIB="ssl crypto"
+
+
+
+else $as_nop
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SHA1_Init in -lcrypto" >&5
 printf %s "checking for SHA1_Init in -lcrypto... " >&6; }
 if test ${ac_cv_lib_crypto_SHA1_Init+y}
 then :
@@ -5740,26 +5825,28 @@ printf "%s\n" "$ac_cv_lib_crypto_SHA1_Init" >&6; }
 if test "x$ac_cv_lib_crypto_SHA1_Init" = xyes
 then :
 
-            if test "x${with_cryptoroot}" != "x"
+
+    if test "x${with_cryptoroot}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_CRYPTO 1" >>confdefs.h
 
-                    crypto_ROOT_DIR=${with_cryptoroot}
+            crypto_ROOT_DIR=${with_cryptoroot}
 
-                    subconfigure="${subconfigure} --with-cryptoroot=${with_cryptoroot}"
+            subconfigure="${subconfigure} --with-cryptoroot=${with_cryptoroot}"
 
 
 fi
-            echo "Setting: crypto_ROOT_LIB TO ssl crypto"
-            crypto_ROOT_LIB="ssl crypto"
+    echo "Setting: crypto_ROOT_LIB TO ssl crypto"
+    crypto_ROOT_LIB="ssl crypto"
+
 
 
 else $as_nop
 
-            echo "FAIL: Using: >${with_cryptoroot}<"
-            as_fn_error $? "
+                    echo "FAIL: Using: >${with_cryptoroot}<"
+                    as_fn_error $? "
 
 Error: Could not find libcrypto
 
@@ -5777,11 +5864,14 @@ Error: Could not find libcrypto
 
 
     " "$LINENO" 5
-            echo "FAIL DONE"
+                    echo "FAIL DONE"
 
 
 fi
 
+
+
+fi
     echo "Checking DONE"
 
     LDFLAGS="${ORIG_LDFLAGS}"
@@ -5807,8 +5897,33 @@ fi
     ORIG_LDFLAGS="${LDFLAGS}"
     LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
 
+    echo "Building: ThorsSerializer"
+    echo "Mark:     $BUILDING_ThorsSerializer"
     echo "Checking"
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17" >&5
+    if test "x$BUILDING_ThorsSerializer" == "x1"
+then :
+
+
+    if test "x${with_thorserializeroot}" != "x"
+then :
+
+
+printf "%s\n" "#define HAVE_THORSSERIALIZER 1" >>confdefs.h
+
+            ThorSerialize_ROOT_DIR=${with_thorserializeroot}
+
+            subconfigure="${subconfigure} --with-thorserializeroot=${with_thorserializeroot}"
+
+
+fi
+    echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsLogging"
+    ThorSerialize_ROOT_LIB="ThorSerialize ThorsLogging"
+
+
+
+else $as_nop
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17" >&5
 printf %s "checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17... " >&6; }
 if test ${ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv+y}
 then :
@@ -5845,26 +5960,28 @@ printf "%s\n" "$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser1
 if test "x$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv" = xyes
 then :
 
-            if test "x${with_thorserializeroot}" != "x"
+
+    if test "x${with_thorserializeroot}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_THORSSERIALIZER 1" >>confdefs.h
 
-                    ThorSerialize_ROOT_DIR=${with_thorserializeroot}
+            ThorSerialize_ROOT_DIR=${with_thorserializeroot}
 
-                    subconfigure="${subconfigure} --with-thorserializeroot=${with_thorserializeroot}"
+            subconfigure="${subconfigure} --with-thorserializeroot=${with_thorserializeroot}"
 
 
 fi
-            echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsLogging"
-            ThorSerialize_ROOT_LIB="ThorSerialize ThorsLogging"
+    echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsLogging"
+    ThorSerialize_ROOT_LIB="ThorSerialize ThorsLogging"
+
 
 
 else $as_nop
 
-            echo "FAIL: Using: >${with_thorserializeroot}<"
-            as_fn_error $? "
+                    echo "FAIL: Using: >${with_thorserializeroot}<"
+                    as_fn_error $? "
 Error: Could not find libThorSerialize17
 
 You can solve this by installing Thors Serializer
@@ -5875,11 +5992,14 @@ Alternately specify install location with:
 
 
     " "$LINENO" 5
-            echo "FAIL DONE"
+                    echo "FAIL DONE"
 
 
 fi
 
+
+
+fi
     echo "Checking DONE"
 
     LDFLAGS="${ORIG_LDFLAGS}"

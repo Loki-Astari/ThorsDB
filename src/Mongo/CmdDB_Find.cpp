@@ -12,10 +12,8 @@ FindOptional::FindOptional(FindOptions const& options)
     , comment(std::move(options.comment))
     , maxTimeMS(std::move(options.maxTimeMS))
     , readConcern(std::move(options.readConcern))
-#pragma vera-pushoff
     , max(std::move(options.max))
     , min(std::move(options.min))
-#pragma vera-pop
     , returnKey(std::move(options.returnKey))
     , showRecordId(std::move(options.showRecordId))
     , tailable(std::move(options.tailable))

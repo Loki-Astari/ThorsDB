@@ -1,0 +1,30 @@
+
+#
+# Need to use min/max as that is the name of the JSON fields that we serialize to.
+# Disable this warning for just this file.
+#
+set ruleExclusions(T016) {
+    CmdDB_Find.cpp
+}
+
+#
+# Need to use std::string_literals to get the ""s effeciency
+# using namespace std::string_literals;
+set ruleExclusions(M003) {
+    CmdDB_GetLastError.cpp
+    CmdDB_GetMore.cpp
+}
+
+set ruleExclusions(M001) {
+    #
+    # This structure needs to have a field named "$err"
+    Op_MsgHeader.h
+
+    #
+    # Not sure why this is broken
+    # Should fix the vera rule:
+    CmdAdm_Reply.tpp
+    CmdDB_Reply.tpp
+
+}
+

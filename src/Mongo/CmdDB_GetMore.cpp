@@ -41,7 +41,6 @@ GetMore::GetMore(GetMoreOptions const& options, std::string collection, CursorId
 namespace ThorsAnvil::DB::Mongo
 {
 
-#pragma vera-pushoff
 CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, GetMoreOptions const& getMoreOpt)
 {
     using namespace std::string_literals;
@@ -53,6 +52,5 @@ CmdDB_GetMore send_CmdDB_GetMore(std::string db, std::string collection, Op_Quer
     using namespace std::string_literals;
     return CmdDB_GetMore(std::move(db), std::move(collection), options, getMoreOpt, -1);
 }
-#pragma vera-pop
 
 }

@@ -13,12 +13,10 @@ namespace ThorsAnvil::DB::Mongo
 
 struct ErrorInfo
 {
-#pragma vera-pushoff
     double              ok          = 1.0;
     int                 code        = 0;
     std::string         $err        = "";
     std::string         codeName    = "";
-#pragma vera-pop
     std::string         getHRErrorMessage() const;
 };
 

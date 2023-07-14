@@ -79,7 +79,6 @@ std::string GetLastErrorReply::to_String() const
 namespace ThorsAnvil::DB::Mongo
 {
 
-#pragma vera-pushoff
 CmdDB_GetLastError send_CmdDB_GetLastError(std::string db, GetLastErrorOptions const& getLastErrorOpt)
 {
     using namespace std::string_literals;
@@ -91,6 +90,5 @@ CmdDB_GetLastError send_CmdDB_GetLastError(std::string db, Op_QueryOptions const
     using namespace std::string_literals;
     return CmdDB_GetLastError(std::move(db), ""s, options, getLastErrorOpt);
 }
-#pragma vera-pop
 
 }

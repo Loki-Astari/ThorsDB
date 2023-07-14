@@ -9,9 +9,7 @@ namespace ThorsAnvil::DB::Mongo
 {
 
 template<typename Document>
-#pragma vera-pushoff
 bool CmdAdm_Reply<Document>::isOk() const
-#pragma vera-pop
 {
     return Op_Reply<ViewType<Document>>::isOk() && reply.isOk();
 }

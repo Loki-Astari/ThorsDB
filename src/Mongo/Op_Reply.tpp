@@ -22,9 +22,7 @@ Op_Reply<View>::Op_Reply(View&& view)
 {}
 
 template<typename View>
-#pragma vera-pushoff
 std::istream& Op_Reply<View>::parse(std::istream& stream)
-#pragma vera-pop
 {
     stream >> header
            >> make_LE(responseFlags)
