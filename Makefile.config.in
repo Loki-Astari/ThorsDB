@@ -1,7 +1,13 @@
 
-ThorsSerialize_ROOT_DIR=@ThorsSerialize_ROOT_DIR@
-ThorsSerialize_ROOT_LIB=@ThorsSerialize_ROOT_LIB@
+yaml_ROOT_DIR=@yaml_ROOT_DIR@
+yaml_ROOT_LIB=@yaml_ROOT_LIB@
+
+snappy_ROOT_DIR=@snappy_ROOT_DIR@
+snappy_ROOT_LIB=@snappy_ROOT_LIB@
 
 crypto_ROOT_DIR=@crypto_ROOT_DIR@
 crypto_ROOT_LIB=@crypto_ROOT_LIB@
+
+ThorSerialize_ROOT_DIR=@ThorSerialize_ROOT_DIR@
+ThorSerialize_ROOT_LIB=@ThorSerialize_ROOT_LIB@
 

@@ -59,6 +59,8 @@ TEST_F(CmdAdmTest, ListDataBasesB)
 
 TEST_F(CmdAdmTest, Compact)
 {
+    GTEST_SKIP() << "Skip for building on Linux";
+
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Compact{"ConnectionTest"s};
 
@@ -69,6 +71,7 @@ TEST_F(CmdAdmTest, Compact)
 }
 TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Create{"ConnectionCreateCollection"s};
     CmdAdm_CreateReply  reply;
@@ -107,6 +110,7 @@ TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 }
 TEST_F(CmdAdmTest, Create_List_Drop_Index)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     MongoConnection&  connection    = CmdAdmTest::getConnection();
 
     connection << CmdAdm_CreateIndex{"ConnectionCreateCollection"s, Index("NameIndex", "Name")};

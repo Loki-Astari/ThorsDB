@@ -1,13 +1,29 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+
+
+#ifndef  THORS_THORSDB_CONFIG_H
+#define  THORS_THORSDB_CONFIG_H
+
+    
+
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
+
+/* define if the Boost library is available */
+#undef HAVE_BOOST
+
+/* We have found package CRYPTO */
+#undef HAVE_CRYPTO
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* We have found package SNAPPY */
+#undef HAVE_SNAPPY
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -30,14 +46,17 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* We have found package Thors Serializer */
+#undef HAVE_THORSSERIALIZER
+
 /* Define to 1 if you have the `timegm' function. */
 #undef HAVE_TIMEGM
 
-/* When on code that uses ThorsSerialize will be compiled. */
-#undef HAVE_ThorsSerialize
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* We have found package YAML */
+#undef HAVE_YAML
 
 /* Enable to use header only libraries */
 #undef HEADER_ONLY
@@ -48,7 +67,7 @@
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
-/* "Get mongo version into #define. That way we can turn off some tests" */
+/* "Get mongosh version into #define. That way we can turn off some tests" */
 #undef MONGO_MAJOR_VERSION
 
 /* "Get mysql version into #define. That way we can turn off some tests" */
@@ -86,16 +105,16 @@
 /* Set for small Endian Systems */
 #undef THOR_ENDIAN_SML
 
-/* mongo DB for testing */
+/* mongosh DB for testing */
 #undef THOR_TESTING_MONGO_DB
 
-/* mongo DB host for testing */
+/* mongosh DB host for testing */
 #undef THOR_TESTING_MONGO_HOST
 
-/* mongo DB password for testing */
+/* mongosh DB password for testing */
 #undef THOR_TESTING_MONGO_PASS
 
-/* mongo DB user for testing */
+/* mongosh DB user for testing */
 #undef THOR_TESTING_MONGO_USER
 
 /* mysql DB for testing */
@@ -130,3 +149,9 @@
 #  undef WORDS_BIGENDIAN
 # endif
 #endif
+
+
+
+#endif
+
+    

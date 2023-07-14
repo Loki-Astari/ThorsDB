@@ -35,6 +35,10 @@ using std::string_literals::operator""s;
 class CmdDBTest: public UnitTestWithConnection
 {
     public:
+        void SetUp() override
+        {
+            GTEST_SKIP() << " Old Protocol Not Valid";
+        }
         CmdDBTest()
         {
             setCollectionToBaseLine(getConnection());
@@ -49,6 +53,7 @@ class CmdDBTest: public UnitTestWithConnection
  */
 TEST(ConnectionTest, MiddleWireProtocol)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     using std::string_literals::operator""s;
     using namespace ThorsAnvil::DB::Mongo;
 
@@ -65,6 +70,7 @@ TEST(ConnectionTest, MiddleWireProtocol)
 
 TEST_F(CmdDBTest, CmdDB_Delete_2_Items)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // Delete 2 item for the collection
     CmdDBTest::getConnection() << send_CmdDB_Delete("test", "ConnectionTest", FindValue{22});   // 22 matches 2 items
 
@@ -84,6 +90,7 @@ TEST_F(CmdDBTest, CmdDB_Delete_2_Items)
 }
 TEST_F(CmdDBTest, CmdDB_Delete_2_Items_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // Delete 2 item for the collection
     bool ok = false;
     std::size_t count;
@@ -106,6 +113,7 @@ TEST_F(CmdDBTest, CmdDB_Delete_2_Items_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindRemove_1_Items)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindRemove 1 item for the collection
     CmdDBTest::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{48});   // 2 items have 48 values this should remove one
     std::unique_ptr<StringAndIntNoConstructor>         result;
@@ -130,6 +138,7 @@ TEST_F(CmdDBTest, CmdDB_FindRemove_1_Items)
 
 TEST_F(CmdDBTest, CmdDB_FindRemove_0_Items)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindRemove Remove an item that is not there.
     CmdDBTest::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{112});
     std::unique_ptr<StringAndIntNoConstructor>         result;
@@ -150,6 +159,7 @@ TEST_F(CmdDBTest, CmdDB_FindRemove_0_Items)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 1 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
@@ -175,6 +185,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -196,6 +207,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -217,6 +229,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items_ReturnUpdated)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 1 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
@@ -240,6 +253,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items_ReturnUpdated)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items_ReturnNull)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -261,6 +275,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items_ReturnNull)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -284,6 +299,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted)
 
 TEST_F(CmdDBTest, CmdDB_FindRemove_1_Items_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindRemove 1 item for the collection
     CmdDBTest::getConnection() << send_CmdDB_FindDelete("test", "ConnectionTest", FindValue{48});   // 2 items have 48 values this should remove one
     std::unique_ptr<StringAndIntNoConstructor>         result;
@@ -322,6 +338,7 @@ TEST_F(CmdDBTest, CmdDB_FindRemove_0_Items_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 1 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
@@ -344,6 +361,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -362,6 +380,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -380,6 +399,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items_ReturnUpdated_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 1 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{48});   // 1 items has 48 value Update the message.
@@ -400,6 +420,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_1_Items_ReturnUpdated_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items_ReturnNull_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -418,6 +439,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Items_ReturnNull_RValue)
 
 TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     // FindUpdate 0 item for the collection
 
     CmdDBTest::getConnection() << send_CmdDB_FindUpdate("test", "ConnectionTest", {.returnModified=true,.upsert=true}, UpdateMessage{"Bad Things Happen if you don't test"}, FindValue{66});   // 1 items has 48 value Update the message.
@@ -438,6 +460,7 @@ TEST_F(CmdDBTest, CmdDB_FindUpdate_Miss_Item_And_Upsert_ReturnUpserted_RValue)
 
 TEST_F(CmdDBTest, CmdDB_GetLastError_NoError)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     CmdDBTest::getConnection() << send_CmdDB_GetLastError("test");
     CmdDB_GetLastErrorReply   reply;
     CmdDBTest::getConnection() >> reply;
@@ -456,6 +479,7 @@ TEST_F(CmdDBTest, CmdDB_GetLastError_NoError)
 
 TEST_F(CmdDBTest, CmdDB_GetMore)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     MongoConnection& connection = CmdDBTest::getConnection();
 
     std::vector<StringAndIntNoConstructor>      data;
@@ -495,6 +519,7 @@ TEST_F(CmdDBTest, CmdDB_GetMore)
 
 TEST_F(CmdDBTest, CmdDB_GetMoreUsing_RValue)
 {
+    GTEST_SKIP() << " Old Protocol Not Valid";
     MongoConnection& connection = CmdDBTest::getConnection();
 
     std::vector<StringAndIntNoConstructor>      data;

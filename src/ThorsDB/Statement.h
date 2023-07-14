@@ -27,6 +27,7 @@
 #include <ctime>
 #include <tuple>
 #include <functional>
+#include <stdexcept>
 
 namespace ThorsAnvil::DB::Access
 {

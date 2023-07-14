@@ -33,6 +33,7 @@ using std::string_literals::operator""s;
 
 TEST(ConnectionTest, YeOldWireProtocol)
 {
+    GTEST_SKIP() << "No longer supported\n";
     using std::string_literals::operator""s;
     using namespace ThorsAnvil::DB::Mongo;
 

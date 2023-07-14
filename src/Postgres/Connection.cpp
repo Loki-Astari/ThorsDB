@@ -61,8 +61,8 @@ void Connection::sendMessage(std::unique_ptr<Message> message)
 
 std::unique_ptr<Message> Connection::getMessage()
 {
-    char message = packageReader.getMessage();
-    switch (message)
+    char messageTypeInfo = packageReader.getMessage();
+    switch (messageTypeInfo)
     {
         case 'R':   return getAuthenticationMessage();
         case 'E':   return std::make_unique<ErrorMessage>(packageReader);
@@ -70,7 +70,7 @@ std::unique_ptr<Message> Connection::getMessage()
         default:
             ThorsLogAndThrowCritical("ThorsAnvil::DB::Postgres::Connection",
                                      "getMessage",
-                                     "Unknown Message Type: ", message);
+                                     "Unknown Message Type: ", messageTypeInfo);
     }
 }
 
