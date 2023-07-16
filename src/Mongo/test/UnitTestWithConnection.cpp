@@ -13,12 +13,10 @@ using std::string_literals::operator""s;
 
 std::unique_ptr<MongoConnection> UnitTestWithConnection::connection;
 
-#if 0
 UnitTestWithConnection::UnitTestWithConnection()
 {
     setCollectionToBaseLine(getConnection());
 }
-#endif
 
 void UnitTestWithConnection::SetUpTestCase()
 {

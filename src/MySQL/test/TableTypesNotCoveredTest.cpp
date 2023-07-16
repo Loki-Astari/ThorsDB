@@ -4,27 +4,23 @@
 #include <arpa/inet.h>
 #include <cstdint>
 
-#if 0
-MIY TODO
-Breaks on Travis but not mac
 TEST(TableTypesNotCoveredTest, Expand)
 {
-    using namespace ThorsAnvil;
+    using namespace ThorsAnvil::DB::Access;
 
     auto test = []()
     {
-        SQL::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
+        Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                         THOR_TESTING_MYSQL_USER,
                                         THOR_TESTING_MYSQL_PASS,
                                         THOR_TESTING_MYSQL_DB,
                                         options);
 
-        SQL::Statement      statement(connection, "SELECT jsonCol from TypesNotCovered WHERE Id=1");
+        Statement      statement(connection, "SELECT jsonCol from TypesNotCovered WHERE Id=1");
     };
     ASSERT_THROW(
         test(),
-        ThorsAnvil::Logging::CriticalException
+        std::runtime_error
     );
 }
-#endif
 

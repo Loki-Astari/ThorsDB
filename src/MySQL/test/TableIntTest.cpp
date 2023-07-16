@@ -91,7 +91,7 @@ TEST(TableIntTest, ReadUMedIntoULongLong)  { typeGoodTest<unsigned long long>(0x
 TEST(TableIntTest, ReadUMedIntoChar)       { typeBadTest<char,            ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
 TEST(TableIntTest, ReadUMedIntoSChar)      { typeBadTest<signed char,     ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
 TEST(TableIntTest, ReadUMedIntoSShort)     { typeBadTest<signed short,    ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
-TEST(TableIntTest8, ReadUMedIntoSInt)      { typeBadTest<signed int,      ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
+TEST(TableIntTest, ReadUMedIntoSInt)      { typeBadTest<signed int,      ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
 TEST(TableIntTest, ReadUMedIntoSLong)      { typeBadTest<signed long,     ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
 TEST(TableIntTest, ReadUMedIntoSLongLong)  { typeBadTest<signed long long,ThorsAnvil::Logging::LogicalException>("SELECT U4 FROM IntTypes where Id=1"); }
 

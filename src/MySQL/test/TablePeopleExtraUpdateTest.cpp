@@ -10,8 +10,6 @@
  *
  */
 
-#ifndef THOR_USE_MOD_TESTS_FLASE
-
 class TablePeopleExtraUpdateTest: public ::testing::Test
 {
 	protected:
@@ -73,6 +71,3 @@ TEST_F(TablePeopleExtraUpdateTest, UpdateTomHanksWithBind)
     DB::Access::Statement      statement(connection, "UPDATE PeopleExtra SET Age=Age+1 WHERE ID = ?");
     statement.execute(DB::Access::Bind(21));
 }
-
-#endif
-

@@ -14,7 +14,9 @@ using ThorsAnvil::DB::Postgres::PostgresStream;
 
 TEST(ConnectionTest, ConnectToDB)
 {
-    GTEST_SKIP() << "DB not set up on actions";
+#if THOR_DISABLE_POSTGRESS_TEST_SERVER_NOT_INSTALLED
+    GTEST_SKIP() << "Postgress DB not installed";
+#endif
     PostgresStream  stream("localhost");
     PackageBuffer   buffer(stream);
     ConectReader    reader(buffer);

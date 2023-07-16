@@ -10,7 +10,6 @@
  *
  */
 
-#ifndef THOR_USE_MOD_TESTS_FLASE
 
 class TablePeopleExtraDeleteTest: public ::testing::Test
 {
@@ -75,6 +74,4 @@ TEST_F(TablePeopleExtraDeleteTest, DeleteTomHanksWithBind)
     DB::Access::Statement      statement(connection, "DELETE FROM PeopleExtra WHERE ID = ?");
     statement.execute(DB::Access::Bind(18));
 }
-
-#endif
 

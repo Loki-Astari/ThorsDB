@@ -49,9 +49,6 @@
 /* We have found package Thors Serializer */
 #undef HAVE_THORSSERIALIZER
 
-/* Define to 1 if you have the `timegm' function. */
-#undef HAVE_TIMEGM
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
@@ -128,12 +125,6 @@
 
 /* mysql DB user for testing */
 #undef THOR_TESTING_MYSQL_USER
-
-/* Disable tests that use timegm() */
-#undef THOR_USE_MOD_TESTS_FLASE
-
-/* Disable tests that use timegm() */
-#undef THOR_USE_TIMEGM_FLASE
 
 /* Version number of package */
 #undef VERSION

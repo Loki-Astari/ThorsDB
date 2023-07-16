@@ -115,7 +115,6 @@ TEST(HandShakeTest, CreateClient)
         auto findEndOS = output.find('}', findOS);
         output.erase(findOS, (findEndOS - findOS));
     }
-    //EXPECT_EQ(output, R"({"application":{"name":"UnitTest"},"driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{},"platform":"ThorDB-Build"})");
     EXPECT_EQ(output, R"({"application":{"name":"UnitTest"},"driver":{"name":"ThorsAnvil::Mongo::Driver","version":"v1.0"},"os":{}})");
 }
 

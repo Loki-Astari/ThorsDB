@@ -16,7 +16,7 @@ using ThorsAnvil::DB::MySQL::RequPackageAuthSwitchResponse;
 
 extern std::map<std::string, std::string>      options;
 
-TEST(RequPackageAuthSwitchRespTest, DefaultOKMessage)
+TEST(RequPackageAuthSwitchResponseTest, DefaultOKMessage)
 {
     // See test/RespPackageAuthSwitchRequestTest.cpp
     // To show this is OK to create the RespPackageAuthSwitchRequest

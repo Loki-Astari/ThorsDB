@@ -30,7 +30,9 @@ class CmdAdmTest: public UnitTestWithConnection
 
 TEST_F(CmdAdmTest, ListDataBasesB)
 {
-    GTEST_SKIP() << "Skip for building on Linux";
+#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
+    GTEST_SKIP() << "OP_QUERY No longer supported";
+#endif
     MongoConnection&  connection    = CmdAdmTest::getConnection();
 
     // Send Command to prove authentication worked and we have an open and working connection:
@@ -60,7 +62,9 @@ TEST_F(CmdAdmTest, ListDataBasesB)
 
 TEST_F(CmdAdmTest, Compact)
 {
-    GTEST_SKIP() << "Skip for building on Linux";
+#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
+    GTEST_SKIP() << "OP_QUERY No longer supported";
+#endif
 
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Compact{"ConnectionTest"s};
@@ -72,7 +76,9 @@ TEST_F(CmdAdmTest, Compact)
 }
 TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 {
-    GTEST_SKIP() << " Old Protocol Not Valid";
+#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
+    GTEST_SKIP() << "OP_QUERY No longer supported";
+#endif
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Create{"ConnectionCreateCollection"s};
     CmdAdm_CreateReply  reply;
@@ -111,7 +117,9 @@ TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 }
 TEST_F(CmdAdmTest, Create_List_Drop_Index)
 {
-    GTEST_SKIP() << " Old Protocol Not Valid";
+#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
+    GTEST_SKIP() << "OP_QUERY No longer supported";
+#endif
     MongoConnection&  connection    = CmdAdmTest::getConnection();
 
     connection << CmdAdm_CreateIndex{"ConnectionCreateCollection"s, Index("NameIndex", "Name")};

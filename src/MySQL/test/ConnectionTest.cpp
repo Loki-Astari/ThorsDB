@@ -82,9 +82,16 @@ TEST(ConnectionTest, MySQLNativePassword)
                                     options);
 }
 
-#if MYSQL_MAJOR_VERSION >= 6
+/*
+ * To disable these test:
+ *      --disable-mysql-test-server-version-below-5
+ */
 TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
+#if THOR_DISABLE_MYSQL_TEST_SERVER_VERSION_BELOW_5
+    GTEST_SKIP << "MySQL Server is below version 5. Thus does not support SHA2 Password";
+#endif
+
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -95,6 +102,10 @@ TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 }
 TEST(ConnectionTest, CachingSHA2Password)
 {
+#if THOR_DISABLE_MYSQL_TEST_SERVER_VERSION_BELOW_5
+    GTEST_SKIP << "MySQL Server is below version 5. Thus does not support SHA2 Password";
+#endif
+
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -103,6 +114,5 @@ TEST(ConnectionTest, CachingSHA2Password)
                                     THOR_TESTING_MYSQL_DB,
                                     options);
 }
-#endif
 
 

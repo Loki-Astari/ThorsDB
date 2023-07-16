@@ -35,6 +35,7 @@ ThorsAnvil_MakeTrait(UpdateMessage, message);
 class UnitTestWithConnection : public ::testing::Test
 {
     public:
+        UnitTestWithConnection();
         static void SetUpTestCase();
         static void TearDownTestCase();
 
