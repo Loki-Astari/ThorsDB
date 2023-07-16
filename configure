@@ -18425,9 +18425,47 @@ fi
 
 
 
+# Before MYSQL-5 SSH was not supported for authentication
 #--disable-mysql-test-server-version-below-5     X_THOR_DISABLE_MYSQL_TEST_SERVER_VERSION_BELOW_5
+
+
+#
+# Version up to 3.6 supported:
+#   OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)/ OP_COMPRESSED (2012)
+#define THOR_DISABLE_MONGO_TEST_SERVER_VERSION_BELOW_3_6
+
+#
+# Versions from 3.6 to 4.4 supported:
+#   Primary:
+#       OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)/ OP_COMPRESSED (2012)
+#   Alternative:
+#       OP_MSG (2013)
+
+# Versions from 4.0 to 5.0 supported:
+#   Primary:
+#       OP_MSG (2013)
+#       OP_COMPRESSED (2012)
+#   Alternative:
+#       OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)
+
+# Version 5.0:
+#   Primary:
+#       OP_MSG (2013)
+#       OP_COMPRESSED (2012)
+#   Deprecated:
+#       OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)/ OP_COMPRESSED (2012)
+
+# Version 5.1 Onwards:
+#   Primary:
+#       OP_MSG (2013)
+#       OP_COMPRESSED (2012)
+
+#--disable-mogo-test-server-op-codes            X_THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES
+
+#                                               X_THOR_DISABLE_MONGO_TEST_SERVER_PROTOCOL_VERSION_7
 #X_AX_THOR_CHECK_DISABLE_MODTEST                   X_THOR_USE_MOD_TESTS_FLASE
 #X_AX_THOR_CHECK_DISABLE_TIMEGM                    X_THOR_USE_TIMEGM_FLASE
+#                                               X_THOR_DISABLE_POSTGRESS_TEST_SERVER_NOT_INSTALLED
 
 am__api_version='1.16'
 
@@ -18941,10 +18979,17 @@ AM_BACKSLASH='\'
     if test "x${UNAME}" = "xMSYS_NT" || test "x${UNAME}" = "xMINGW64_NT"
 then :
 
-        echo "    Fixing"
-        git config --local core.symlinks true
-        find src/ -type f | xargs -I^ git restore --source=HEAD ^
-        echo "    Fixing DONE"
+        if test ! -e .windows.fix
+then :
+
+                echo "    Fixing"
+                git config --local core.symlinks true
+                find src/ -type f | xargs -I^ git restore --source=HEAD ^
+                echo "    Fixing DONE"
+                touch .windows.fix
+
+
+fi
 
 else $as_nop
 
