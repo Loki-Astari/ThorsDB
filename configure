@@ -705,6 +705,8 @@ CC
 LIBTOOL
 ThorSerialize_ROOT_LIB
 ThorSerialize_ROOT_DIR
+ThorSerializeHeaderOnly_ROOT_DIR
+MagicEnumHeaderOnly_ROOT_DIR
 crypto_ROOT_LIB
 crypto_ROOT_DIR
 snappy_ROOT_LIB
@@ -804,10 +806,12 @@ enable_dark_mode
 with_standard
 with_boost
 with_boost_libdir
-with_yamlroot
-with_snappyroot
-with_cryptoroot
-with_thorserializeroot
+with_yaml_root
+with_snappy_root
+with_crypto_root
+with_magicenum_header_only_root
+with_thorserialize_header_only_root
+with_thorserialize_root
 enable_shared
 enable_static
 with_pic
@@ -820,10 +824,19 @@ with_TestMySQLHost
 with_TestMySQLUser
 with_TestMySQLPass
 with_TestMySQLDatabase
+with_mysql_tool
+with_TestPostgressHost
+with_TestPostgressUser
+with_TestPostgressPass
+with_TestPostgressDatabase
+with_psql_tool
 with_TestMongoHost
 with_TestMongoUser
 with_TestMongoPass
 with_TestMongoDatabase
+with_mongosh_tool
+enable_test_with_postgress_auth
+enable_test_with_mongo_query
 enable_dependency_tracking
 enable_silent_rules
 '
@@ -1479,6 +1492,22 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --disable-test-with-postgress-auth
+                          The postgress functionality is still nacent (not
+                          much work completed here). As a result the
+                          authentication protocol is not working and so no
+                          tests that connect to the server can complete unless
+                          authentication has been completely turned off.
+                          Disable tests on Postgress where authentication
+                          required.
+
+  --disable-test-with-mongo-query
+                          There are three versions of the mongo wire protocol.
+                          Newer versions of Mongo do not support the older
+                          protocols. This flags disables tests that use the
+                          older wire protocol and only performs tests that use
+                          the now standard OP_MSG protocol.
+
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -1502,16 +1531,24 @@ Optional Packages:
                           this parameter only if default library detection
                           fails and you know exactly where your boost
                           libraries are located.
-  --with-yamlroot=<location>
+  --with-yaml-root=<location>
                           Define the root directory of package YAML
 
-  --with-snappyroot=<location>
+  --with-snappy-root=<location>
                           Define the root directory of package SNAPPY
 
-  --with-cryptoroot=<location>
+  --with-crypto-root=<location>
                           Define the root directory of package CRYPTO
 
-  --with-thorserializeroot=<location>
+  --with-magicenum-header-only-root=<location>
+                          Directory of MagicEnumHeaderOnly include folder: the
+                          folder that has the include file
+
+  --with-thorserialize-header-only-root=<location>
+                          Directory of ThorSerializeHeaderOnly include folder:
+                          the folder that has the include file
+
+  --with-thorserialize-root=<location>
                           Define the root directory of package Thors
                           Serializer
 
@@ -1535,6 +1572,25 @@ Optional Packages:
   --with-TestMySQLDatabase=<DB>
                           Use an alternative mysql database for testing with
                           (test)
+  --with-mysql-tool=<alternative cli>
+                          The default tool name is mysql. But this can be
+                          overridden with this flag
+
+  --with-TestPostgressHost=<Host>
+                          Use an alternative psql host for testing with
+                          Default(127.0.0.1)
+  --with-TestPostgressUser=<User>
+                          Use an alternative psql user for testing with (test)
+  --with-TestPostgressPass=<Pass>
+                          Use an alternative psql password for testing with
+                          (testPassword)
+  --with-TestPostgressDatabase=<DB>
+                          Use an alternative psql database for testing with
+                          (test)
+  --with-psql-tool=<alternative cli>
+                          The default tool name is psql. But this can be
+                          overridden with this flag
+
   --with-TestMongoHost=<Host>
                           Use an alternative mongosh host for testing with
                           Default(127.0.0.1)
@@ -1547,6 +1603,10 @@ Optional Packages:
   --with-TestMongoDatabase=<DB>
                           Use an alternative mongosh database for testing with
                           (test)
+  --with-mongosh-tool=<alternative cli>
+                          The default tool name is mongosh. But this can be
+                          overridden with this flag
+
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -3016,6 +3076,8 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
 
 
 
@@ -5418,39 +5480,42 @@ fi
 
 
 
-# Check whether --with-yamlroot was given.
-if test ${with_yamlroot+y}
+# Check whether --with-yaml-root was given.
+if test ${with_yaml_root+y}
 then :
-  withval=$with_yamlroot;
+  withval=$with_yaml_root;
 fi
 
 
-    LIBRARY_DIR="-L ${with_yamlroot}/lib"
-    if test "x${with_yamlroot}" == "x"
+    LIBRARY_DIR="-L ${with_yaml_root}/lib"
+    if test "x${with_yaml_root}" == "x"
 then :
   LIBRARY_DIR="-L ${DefaultLinkDir}/lib"
 
 fi
 
-    ORIG_LDFLAGS="${LDFLAGS}"
-    LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+    if test "x${yaml_header_only_defined}" == "x"
+then :
 
-    echo "Building: NotThor"
-    echo "Mark:     $BUILDING_NotThor"
-    echo "Checking"
-    if test "x$BUILDING_NotThor" == "x1"
+            ORIG_LDFLAGS="${LDFLAGS}"
+            LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+
+            echo "Building: NotThor"
+            echo "Mark:     $BUILDING_NotThor"
+            echo "Checking"
+            if test "x$BUILDING_NotThor" == "x1"
 then :
 
 
-    if test "x${with_yamlroot}" != "x"
+    if test "x${with_yaml_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_YAML 1" >>confdefs.h
 
-            yaml_ROOT_DIR=${with_yamlroot}
+            yaml_ROOT_DIR=${with_yaml_root}
 
-            subconfigure="${subconfigure} --with-yamlroot=${with_yamlroot}"
+            subconfigure="${subconfigure} --with-yaml-root=${with_yaml_root}"
 
 
 fi
@@ -5461,7 +5526,7 @@ fi
 
 else $as_nop
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
+                    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for yaml_parser_initialize in -lyaml" >&5
 printf %s "checking for yaml_parser_initialize in -lyaml... " >&6; }
 if test ${ac_cv_lib_yaml_yaml_parser_initialize+y}
 then :
@@ -5499,15 +5564,15 @@ if test "x$ac_cv_lib_yaml_yaml_parser_initialize" = xyes
 then :
 
 
-    if test "x${with_yamlroot}" != "x"
+    if test "x${with_yaml_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_YAML 1" >>confdefs.h
 
-            yaml_ROOT_DIR=${with_yamlroot}
+            yaml_ROOT_DIR=${with_yaml_root}
 
-            subconfigure="${subconfigure} --with-yamlroot=${with_yamlroot}"
+            subconfigure="${subconfigure} --with-yaml-root=${with_yaml_root}"
 
 
 fi
@@ -5518,19 +5583,19 @@ fi
 
 else $as_nop
 
-                    echo "FAIL: Using: >${with_yamlroot}<"
-                    as_fn_error $? "
+                            echo "FAIL: Using: >${with_yaml_root}<"
+                            as_fn_error $? "
 Error: Could not find libyaml
 
 You can solve this by installing libyaml
     see http://pyyaml.org/wiki/LibYAML
 
 Alternately specify install location with:
-    --with-yamlroot=<location of yaml installation>
+    --with-yaml-root=<location of yaml installation>
 
 
     " "$LINENO" 5
-                    echo "FAIL DONE"
+                            echo "FAIL DONE"
 
 
 fi
@@ -5538,47 +5603,53 @@ fi
 
 
 fi
-    echo "Checking DONE"
+            echo "Checking DONE"
 
-    LDFLAGS="${ORIG_LDFLAGS}"
-
-
+            LDFLAGS="${ORIG_LDFLAGS}"
 
 
+fi
 
-# Check whether --with-snappyroot was given.
-if test ${with_snappyroot+y}
+
+
+
+
+# Check whether --with-snappy-root was given.
+if test ${with_snappy_root+y}
 then :
-  withval=$with_snappyroot;
+  withval=$with_snappy_root;
 fi
 
 
-    LIBRARY_DIR="-L ${with_snappyroot}/lib"
-    if test "x${with_snappyroot}" == "x"
+    LIBRARY_DIR="-L ${with_snappy_root}/lib"
+    if test "x${with_snappy_root}" == "x"
 then :
   LIBRARY_DIR="-L ${DefaultLinkDir}/lib"
 
 fi
 
-    ORIG_LDFLAGS="${LDFLAGS}"
-    LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+    if test "x${snappy_header_only_defined}" == "x"
+then :
 
-    echo "Building: NotThor"
-    echo "Mark:     $BUILDING_NotThor"
-    echo "Checking"
-    if test "x$BUILDING_NotThor" == "x1"
+            ORIG_LDFLAGS="${LDFLAGS}"
+            LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+
+            echo "Building: NotThor"
+            echo "Mark:     $BUILDING_NotThor"
+            echo "Checking"
+            if test "x$BUILDING_NotThor" == "x1"
 then :
 
 
-    if test "x${with_snappyroot}" != "x"
+    if test "x${with_snappy_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_SNAPPY 1" >>confdefs.h
 
-            snappy_ROOT_DIR=${with_snappyroot}
+            snappy_ROOT_DIR=${with_snappy_root}
 
-            subconfigure="${subconfigure} --with-snappyroot=${with_snappyroot}"
+            subconfigure="${subconfigure} --with-snappy-root=${with_snappy_root}"
 
 
 fi
@@ -5589,7 +5660,7 @@ fi
 
 else $as_nop
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for snappy_compress in -lsnappy" >&5
+                    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for snappy_compress in -lsnappy" >&5
 printf %s "checking for snappy_compress in -lsnappy... " >&6; }
 if test ${ac_cv_lib_snappy_snappy_compress+y}
 then :
@@ -5627,15 +5698,15 @@ if test "x$ac_cv_lib_snappy_snappy_compress" = xyes
 then :
 
 
-    if test "x${with_snappyroot}" != "x"
+    if test "x${with_snappy_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_SNAPPY 1" >>confdefs.h
 
-            snappy_ROOT_DIR=${with_snappyroot}
+            snappy_ROOT_DIR=${with_snappy_root}
 
-            subconfigure="${subconfigure} --with-snappyroot=${with_snappyroot}"
+            subconfigure="${subconfigure} --with-snappy-root=${with_snappy_root}"
 
 
 fi
@@ -5646,19 +5717,19 @@ fi
 
 else $as_nop
 
-                    echo "FAIL: Using: >${with_snappyroot}<"
-                    as_fn_error $? "
+                            echo "FAIL: Using: >${with_snappy_root}<"
+                            as_fn_error $? "
 Error: Could not find libsnappy
 
 You can solve this by installing libsnappy
     brew install snappy
 
 Alternately specify install location with:
-    --with-snappyroot=<location of snappy installation>
+    --with-snappy-root=<location of snappy installation>
 
 
     " "$LINENO" 5
-                    echo "FAIL DONE"
+                            echo "FAIL DONE"
 
 
 fi
@@ -5666,47 +5737,53 @@ fi
 
 
 fi
-    echo "Checking DONE"
+            echo "Checking DONE"
 
-    LDFLAGS="${ORIG_LDFLAGS}"
-
-
+            LDFLAGS="${ORIG_LDFLAGS}"
 
 
+fi
 
-# Check whether --with-cryptoroot was given.
-if test ${with_cryptoroot+y}
+
+
+
+
+# Check whether --with-crypto-root was given.
+if test ${with_crypto_root+y}
 then :
-  withval=$with_cryptoroot;
+  withval=$with_crypto_root;
 fi
 
 
-    LIBRARY_DIR="-L ${with_cryptoroot}/lib"
-    if test "x${with_cryptoroot}" == "x"
+    LIBRARY_DIR="-L ${with_crypto_root}/lib"
+    if test "x${with_crypto_root}" == "x"
 then :
   LIBRARY_DIR="-L ${DefaultLinkDir}/lib"
 
 fi
 
-    ORIG_LDFLAGS="${LDFLAGS}"
-    LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+    if test "x${crypto_header_only_defined}" == "x"
+then :
 
-    echo "Building: NotThor"
-    echo "Mark:     $BUILDING_NotThor"
-    echo "Checking"
-    if test "x$BUILDING_NotThor" == "x1"
+            ORIG_LDFLAGS="${LDFLAGS}"
+            LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+
+            echo "Building: NotThor"
+            echo "Mark:     $BUILDING_NotThor"
+            echo "Checking"
+            if test "x$BUILDING_NotThor" == "x1"
 then :
 
 
-    if test "x${with_cryptoroot}" != "x"
+    if test "x${with_crypto_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_CRYPTO 1" >>confdefs.h
 
-            crypto_ROOT_DIR=${with_cryptoroot}
+            crypto_ROOT_DIR=${with_crypto_root}
 
-            subconfigure="${subconfigure} --with-cryptoroot=${with_cryptoroot}"
+            subconfigure="${subconfigure} --with-crypto-root=${with_crypto_root}"
 
 
 fi
@@ -5717,7 +5794,7 @@ fi
 
 else $as_nop
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SHA1_Init in -lcrypto" >&5
+                    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for SHA1_Init in -lcrypto" >&5
 printf %s "checking for SHA1_Init in -lcrypto... " >&6; }
 if test ${ac_cv_lib_crypto_SHA1_Init+y}
 then :
@@ -5755,15 +5832,15 @@ if test "x$ac_cv_lib_crypto_SHA1_Init" = xyes
 then :
 
 
-    if test "x${with_cryptoroot}" != "x"
+    if test "x${with_crypto_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_CRYPTO 1" >>confdefs.h
 
-            crypto_ROOT_DIR=${with_cryptoroot}
+            crypto_ROOT_DIR=${with_crypto_root}
 
-            subconfigure="${subconfigure} --with-cryptoroot=${with_cryptoroot}"
+            subconfigure="${subconfigure} --with-crypto-root=${with_crypto_root}"
 
 
 fi
@@ -5774,8 +5851,8 @@ fi
 
 else $as_nop
 
-                    echo "FAIL: Using: >${with_cryptoroot}<"
-                    as_fn_error $? "
+                            echo "FAIL: Using: >${with_crypto_root}<"
+                            as_fn_error $? "
 
 Error: Could not find libcrypto
 
@@ -5783,7 +5860,7 @@ Error: Could not find libcrypto
         and define the crypto root directory to configuration.
 
             brew install openssl
-            ./configure --with-cryptoroot=/usr/local/Cellar/openssl/1.0.2j/
+            ./configure --with-crypto-root=/usr/local/Cellar/openssl/1.0.2j/
 
         On Linux you will need to install openssl
 
@@ -5793,7 +5870,7 @@ Error: Could not find libcrypto
 
 
     " "$LINENO" 5
-                    echo "FAIL DONE"
+                            echo "FAIL DONE"
 
 
 fi
@@ -5801,47 +5878,181 @@ fi
 
 
 fi
-    echo "Checking DONE"
+            echo "Checking DONE"
 
-    LDFLAGS="${ORIG_LDFLAGS}"
-
-
+            LDFLAGS="${ORIG_LDFLAGS}"
 
 
+fi
 
-# Check whether --with-thorserializeroot was given.
-if test ${with_thorserializeroot+y}
+
+
+
+
+
+# Check whether --with-magicenum-header-only-root was given.
+if test ${with_magicenum_header_only_root+y}
 then :
-  withval=$with_thorserializeroot;
+  withval=$with_magicenum_header_only_root;
 fi
 
 
-    LIBRARY_DIR="-L ${with_thorserializeroot}/lib"
-    if test "x${with_thorserializeroot}" == "x"
+    INCLUDE_DIR="-I${with_magicenum_header_only_root}"
+    if test "x${with_magicenum_header_only_root}" == "x"
+then :
+  INCLUDE_DIR="-I${DefaultLinkDir}"
+
+fi
+
+    ORIG_CXXFLAGS="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${CXX_STD_FLAG} ${INCLUDE_DIR}"
+
+    ac_fn_cxx_check_header_compile "$LINENO" "magic_enum.hpp" "ac_cv_header_magic_enum_hpp" "$ac_includes_default"
+if test "x$ac_cv_header_magic_enum_hpp" = xyes
+then :
+
+            if test "x${with_magicenum_header_only_root}" != "x"
+then :
+
+
+printf "%s\n" "#define HAVE_MagicEnumHeaderOnly 1" >>confdefs.h
+
+                    magicenum_header_only_defined=1
+                    MagicEnumHeaderOnly_ROOT_DIR=${with_magicenum_header_only_root}
+
+                    subconfigure="${subconfigure} --with-magicenum-header-only-root=${with_magicenum_header_only_root}"
+
+
+fi
+
+else $as_nop
+
+            if test "1" == "1"
+then :
+  as_fn_error $? "
+Could not find the header file <magic-enum.hpp>.
+You can install this with
+
+    brew install magic_enum
+
+Alternately if you have manually installed magic_enum you can specify its location with
+    --with-magicenum-root=<location of magic_enum installation>
+
+            " "$LINENO" 5
+
+fi
+
+
+fi
+
+
+    CXXFLAGS="${ORIG_CXXFLAGS}"
+
+
+
+
+
+
+
+# Check whether --with-thorserialize-header-only-root was given.
+if test ${with_thorserialize_header_only_root+y}
+then :
+  withval=$with_thorserialize_header_only_root;
+fi
+
+
+    INCLUDE_DIR="-I${with_thorserialize_header_only_root}"
+    if test "x${with_thorserialize_header_only_root}" == "x"
+then :
+  INCLUDE_DIR="-I${DefaultLinkDir}"
+
+fi
+
+    ORIG_CXXFLAGS="${CXXFLAGS}"
+    CXXFLAGS="${CXXFLAGS} ${CXX_STD_FLAG} ${INCLUDE_DIR}"
+
+    ac_fn_cxx_check_header_compile "$LINENO" "ThorSerialize/ThorsSerializerUtil.h" "ac_cv_header_ThorSerialize_ThorsSerializerUtil_h" "$ac_includes_default"
+if test "x$ac_cv_header_ThorSerialize_ThorsSerializerUtil_h" = xyes
+then :
+
+            if test "x${with_thorserialize_header_only_root}" != "x"
+then :
+
+
+printf "%s\n" "#define HAVE_ThorSerializeHeaderOnly 1" >>confdefs.h
+
+                    thorserialize_header_only_defined=1
+                    ThorSerializeHeaderOnly_ROOT_DIR=${with_thorserialize_header_only_root}
+
+                    subconfigure="${subconfigure} --with-thorserialize-header-only-root=${with_thorserialize_header_only_root}"
+
+
+fi
+
+else $as_nop
+
+            if test "0" == "1"
+then :
+  as_fn_error $? "
+Could not find the header file <ThorSerialize/ThorsSerializerUtil.h>
+
+    You can install this with:
+
+        git clone --single-branch --branch header-only https://github.com/Loki-Astari/ThorsSerializer.git <Location>
+
+        ./configure --with-thorserialize-header-only-root=<Location>
+
+
+    " "$LINENO" 5
+
+fi
+
+
+fi
+
+
+    CXXFLAGS="${ORIG_CXXFLAGS}"
+
+
+
+
+
+# Check whether --with-thorserialize-root was given.
+if test ${with_thorserialize_root+y}
+then :
+  withval=$with_thorserialize_root;
+fi
+
+
+    LIBRARY_DIR="-L ${with_thorserialize_root}/lib"
+    if test "x${with_thorserialize_root}" == "x"
 then :
   LIBRARY_DIR="-L ${DefaultLinkDir}/lib"
 
 fi
 
-    ORIG_LDFLAGS="${LDFLAGS}"
-    LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+    if test "x${thorserialize_header_only_defined}" == "x"
+then :
 
-    echo "Building: ThorsSerializer"
-    echo "Mark:     $BUILDING_ThorsSerializer"
-    echo "Checking"
-    if test "x$BUILDING_ThorsSerializer" == "x1"
+            ORIG_LDFLAGS="${LDFLAGS}"
+            LDFLAGS="$LDFLAGS ${LIBRARY_DIR}"
+
+            echo "Building: ThorsSerializer"
+            echo "Mark:     $BUILDING_ThorsSerializer"
+            echo "Checking"
+            if test "x$BUILDING_ThorsSerializer" == "x1"
 then :
 
 
-    if test "x${with_thorserializeroot}" != "x"
+    if test "x${with_thorserialize_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_THORSSERIALIZER 1" >>confdefs.h
 
-            ThorSerialize_ROOT_DIR=${with_thorserializeroot}
+            ThorSerialize_ROOT_DIR=${with_thorserialize_root}
 
-            subconfigure="${subconfigure} --with-thorserializeroot=${with_thorserializeroot}"
+            subconfigure="${subconfigure} --with-thorserialize-root=${with_thorserialize_root}"
 
 
 fi
@@ -5852,7 +6063,7 @@ fi
 
 else $as_nop
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17" >&5
+                    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17" >&5
 printf %s "checking for _ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv in -lThorSerialize17... " >&6; }
 if test ${ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getNextTokenEv+y}
 then :
@@ -5890,15 +6101,15 @@ if test "x$ac_cv_lib_ThorSerialize17__ZN10ThorsAnvil9Serialize10JsonParser12getN
 then :
 
 
-    if test "x${with_thorserializeroot}" != "x"
+    if test "x${with_thorserialize_root}" != "x"
 then :
 
 
 printf "%s\n" "#define HAVE_THORSSERIALIZER 1" >>confdefs.h
 
-            ThorSerialize_ROOT_DIR=${with_thorserializeroot}
+            ThorSerialize_ROOT_DIR=${with_thorserialize_root}
 
-            subconfigure="${subconfigure} --with-thorserializeroot=${with_thorserializeroot}"
+            subconfigure="${subconfigure} --with-thorserialize-root=${with_thorserialize_root}"
 
 
 fi
@@ -5909,19 +6120,19 @@ fi
 
 else $as_nop
 
-                    echo "FAIL: Using: >${with_thorserializeroot}<"
-                    as_fn_error $? "
+                            echo "FAIL: Using: >${with_thorserialize_root}<"
+                            as_fn_error $? "
 Error: Could not find libThorSerialize17
 
 You can solve this by installing Thors Serializer
     brew install thors-serializer
 
 Alternately specify install location with:
-    --with-thorserializeroot=<location of snappy installation>
+    --with-thorserialize-root=<location of snappy installation>
 
 
     " "$LINENO" 5
-                    echo "FAIL DONE"
+                            echo "FAIL DONE"
 
 
 fi
@@ -5929,9 +6140,12 @@ fi
 
 
 fi
-    echo "Checking DONE"
+            echo "Checking DONE"
 
-    LDFLAGS="${ORIG_LDFLAGS}"
+            LDFLAGS="${ORIG_LDFLAGS}"
+
+
+fi
 
 
 
@@ -18178,6 +18392,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 
+
 # Check whether --with-TestMySQLHost was given.
 if test ${with_TestMySQLHost+y}
 then :
@@ -18241,33 +18456,163 @@ printf "%s\n" "#define THOR_TESTING_MYSQL_PASS \"$mysql_test_pw\"" >>confdefs.h
 printf "%s\n" "#define THOR_TESTING_MYSQL_DB \"$mysql_test_db\"" >>confdefs.h
 
 
+    cli_tool=mysql
+
+
+# Check whether --with-mysql-tool was given.
+if test ${with_mysql_tool+y}
+then :
+  withval=$with_mysql_tool;
+fi
+
+
+    if test "x${with_mysql_tool}" != "x"
+then :
+  cli_tool=${with_mysql_tool}
+
+fi
+
     echo "COMMAND: >select 3+4 from dual<"
-    echo "DB LINK: >mysql -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db<" | sed -e 's/Ppass/aasp/g'
-    echo "select 3+4 from dual" | mysql -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db
-    test_connect=`echo "select 3+4 from dual" | mysql -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1 | head -1 | sed -e 's/test>//' | xargs`
+    echo "DB LINK: >${cli_tool} -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db<" | sed -e 's/Ppass/aasp/g'
+    echo "select 3+4 from dual" |  ${cli_tool} -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db
+    test_connect=`echo "select 3+4 from dual" |  ${cli_tool} -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db 2> /dev/null | tail -1 | head -1 | sed -e 's/test>//' | xargs`
     echo "RESULT:  >${test_connect}<"
     if test "x$test_connect" != "x7"
 then :
 
             as_fn_error $? "
 
-    Error: Can not connect to mysql server for testing.
+    Error: Can not connect to server(MYSQL) using ${cli_tool} (Note: Default mysql).
 
             This may be because the mysql server is not running or the test data has not been created.
 
             1: Install MySQL server
             2: Make sure MySQL is running
             3: Install the test data and users.
-                    cat ./src/MySQL/test/data/init.sql | mysql -B -h $mysql_test_host --user=root --password=
-                    cat ./src/MySQL/test/data/data.sql | mysql -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db
+                    cat ./src/MySQL/test/data/init.sql | ${cli_tool} -B -h $mysql_test_host --user=root --password=
+                    cat ./src/MySQL/test/data/data.sql | ${cli_tool} -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db
 
             " "$LINENO" 5
 
 fi
 
-    version=`mysql -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' $mysql_test_db | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
+    version=` ${cli_tool} -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw -e 'SHOW VARIABLES LIKE "innodb_version"' $mysql_test_db | tail -1 | awk '{print $2}' | awk -F\. '{print $1}'`
 
 printf "%s\n" "#define MYSQL_MAJOR_VERSION ${version}" >>confdefs.h
+
+
+
+
+
+
+
+# Check whether --with-TestPostgressHost was given.
+if test ${with_TestPostgressHost+y}
+then :
+  withval=$with_TestPostgressHost;
+fi
+
+
+# Check whether --with-TestPostgressUser was given.
+if test ${with_TestPostgressUser+y}
+then :
+  withval=$with_TestPostgressUser;
+fi
+
+
+# Check whether --with-TestPostgressPass was given.
+if test ${with_TestPostgressPass+y}
+then :
+  withval=$with_TestPostgressPass;
+fi
+
+
+# Check whether --with-TestPostgressDatabase was given.
+if test ${with_TestPostgressDatabase+y}
+then :
+  withval=$with_TestPostgressDatabase;
+fi
+
+
+    psql_test_host="127.0.0.1"
+    psql_test_user="test"
+    psql_test_pw="testPassword"
+    psql_test_db="test"
+
+    if test "x$have_TestPostgressHost" = "xyes"
+then :
+  psql_test_host=$with_TestPostgressHost
+fi
+    if test "x$have_TestPostgressUser" = "xyes"
+then :
+  psql_test_user=$with_TestPostgressUser
+fi
+    if test "x$have_TestPostgressPass" = "xyes"
+then :
+  psql_test_pw=$with_TestPostgressPass
+fi
+    if test "x$have_TestPostgressDatabase" = "xyes"
+then :
+  psql_test_db=$with_TestPostgressDatabase
+fi
+
+
+printf "%s\n" "#define THOR_TESTING_POSTGRESS_HOST \"$psql_test_host\"" >>confdefs.h
+
+
+printf "%s\n" "#define THOR_TESTING_POSTGRESS_USER \"$psql_test_user\"" >>confdefs.h
+
+
+printf "%s\n" "#define THOR_TESTING_POSTGRESS_PASS \"$psql_test_pw\"" >>confdefs.h
+
+
+printf "%s\n" "#define THOR_TESTING_POSTGRESS_DB \"$psql_test_db\"" >>confdefs.h
+
+
+    cli_tool=psql
+
+
+# Check whether --with-psql-tool was given.
+if test ${with_psql_tool+y}
+then :
+  withval=$with_psql_tool;
+fi
+
+
+    if test "x${with_psql_tool}" != "x"
+then :
+  cli_tool=${with_psql_tool}
+
+fi
+
+    echo "COMMAND: >select 3+4<"
+    echo "DB LINK: >${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db<" | sed -e 's/Ppass/aasp/g'
+    echo "select 3+4" | PGPASSWORD=$psql_test_pw ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db
+    test_connect=`echo "select 3+4" | PGPASSWORD=$psql_test_pw ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db 2> /dev/null | tail -3 | head -1 | sed -e 's/test>//' | xargs`
+    echo "RESULT:  >${test_connect}<"
+    if test "x$test_connect" != "x7"
+then :
+
+            as_fn_error $? "
+
+    Error: Can not connect to server(POSTGRESS) using ${cli_tool} (Note: Default psql).
+
+            This may be because the psql server is not running or the test data has not been created.
+
+            1: Install Postgress server
+            2: Make sure Postgress is running
+            3: Install the test data and users.
+                    cat ./src/Postgress/test/data/init.sql | ${cli_tool} -h $psql_test_host --username=root --variable=NAME=
+                    cat ./src/Postgress/test/data/data.sql | ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db
+
+            " "$LINENO" 5
+
+fi
+
+    version=`PGPASSWORD=$psql_test_pw ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw --version $psql_test_db | tail -2 | awk '{print $3}' | awk -F\. '{print $1}'`
+
+printf "%s\n" "#define POSTGRESS_MAJOR_VERSION ${version}" >>confdefs.h
+
 
 
 
@@ -18337,31 +18682,47 @@ printf "%s\n" "#define THOR_TESTING_MONGO_PASS \"$mongosh_test_pw\"" >>confdefs.
 printf "%s\n" "#define THOR_TESTING_MONGO_DB \"$mongosh_test_db\"" >>confdefs.h
 
 
+    cli_tool=mongosh
+
+
+# Check whether --with-mongosh-tool was given.
+if test ${with_mongosh_tool+y}
+then :
+  withval=$with_mongosh_tool;
+fi
+
+
+    if test "x${with_mongosh_tool}" != "x"
+then :
+  cli_tool=${with_mongosh_tool}
+
+fi
+
     echo "COMMAND: >db.Blob.stats().nindexes<"
-    echo "DB LINK: >mongosh --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db<" | sed -e 's/Ppass/aasp/g'
-    echo "db.Blob.stats().nindexes" | mongosh --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db
-    test_connect=`echo "db.Blob.stats().nindexes" | mongosh --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db 2> /dev/null | tail -2 | head -1 | sed -e 's/test>//' | xargs`
+    echo "DB LINK: >${cli_tool} --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db<" | sed -e 's/Ppass/aasp/g'
+    echo "db.Blob.stats().nindexes" |  ${cli_tool} --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db
+    test_connect=`echo "db.Blob.stats().nindexes" |  ${cli_tool} --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db 2> /dev/null | tail -2 | head -1 | sed -e 's/test>//' | xargs`
     echo "RESULT:  >${test_connect}<"
     if test "x$test_connect" != "x1"
 then :
 
             as_fn_error $? "
 
-    Error: Can not connect to mongosh server for testing.
+    Error: Can not connect to server(MONGO) using ${cli_tool} (Note: Default mongosh).
 
             This may be because the mongosh server is not running or the test data has not been created.
 
             1: Install Mongo server
             2: Make sure Mongo is running
             3: Install the test data and users.
-                    cat ./src/Mongo/test/data/init.mongo | mongosh --host $mongosh_test_host --username root --password
-                    cat ./src/Mongo/test/data/data.mongo | mongosh --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db
+                    cat ./src/Mongo/test/data/init.mongo | ${cli_tool} --host $mongosh_test_host --username root --password
+                    cat ./src/Mongo/test/data/data.mongo | ${cli_tool} --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db
 
             " "$LINENO" 5
 
 fi
 
-    version=`mongosh --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw --eval 'db.version()' $mongosh_test_db | tail -1 | awk '{print $1}' | awk -F\. '{print $1}'`
+    version=` ${cli_tool} --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw --eval 'db.version()' $mongosh_test_db | tail -1 | awk '{print $1}' | awk -F\. '{print $1}'`
 
 printf "%s\n" "#define MONGO_MAJOR_VERSION ${version}" >>confdefs.h
 
@@ -18425,47 +18786,60 @@ fi
 
 
 
-# Before MYSQL-5 SSH was not supported for authentication
-#--disable-mysql-test-server-version-below-5     X_THOR_DISABLE_MYSQL_TEST_SERVER_VERSION_BELOW_5
 
 
-#
-# Version up to 3.6 supported:
-#   OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)/ OP_COMPRESSED (2012)
-#define THOR_DISABLE_MONGO_TEST_SERVER_VERSION_BELOW_3_6
+    # Check whether --enable-test-with-postgress-auth was given.
+if test ${enable_test_with_postgress_auth+y}
+then :
+  enableval=$enable_test_with_postgress_auth;
+fi
 
-#
-# Versions from 3.6 to 4.4 supported:
-#   Primary:
-#       OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)/ OP_COMPRESSED (2012)
-#   Alternative:
-#       OP_MSG (2013)
 
-# Versions from 4.0 to 5.0 supported:
-#   Primary:
-#       OP_MSG (2013)
-#       OP_COMPRESSED (2012)
-#   Alternative:
-#       OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)
+    if test "x${enable_test_with_postgress_auth}" == "xno"
+then :
 
-# Version 5.0:
-#   Primary:
-#       OP_MSG (2013)
-#       OP_COMPRESSED (2012)
-#   Deprecated:
-#       OP_REPLY (1)/ OP_UPDATE (2001)/ OP_INSERT (2002)/ OP_QUERY (2004)/ OP_GET_MORE (2005)/ OP_DELETE (2006)/ OP_KILL_CURSOR (2007)/ OP_COMPRESSED (2012)
 
-# Version 5.1 Onwards:
-#   Primary:
-#       OP_MSG (2013)
-#       OP_COMPRESSED (2012)
+printf "%s\n" "#define THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH 1" >>confdefs.h
 
-#--disable-mogo-test-server-op-codes            X_THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES
+            subconfigure="${subconfigure} --disable-test-with-postgress-auth";
 
-#                                               X_THOR_DISABLE_MONGO_TEST_SERVER_PROTOCOL_VERSION_7
-#X_AX_THOR_CHECK_DISABLE_MODTEST                   X_THOR_USE_MOD_TESTS_FLASE
-#X_AX_THOR_CHECK_DISABLE_TIMEGM                    X_THOR_USE_TIMEGM_FLASE
-#                                               X_THOR_DISABLE_POSTGRESS_TEST_SERVER_NOT_INSTALLED
+else $as_nop
+
+
+printf "%s\n" "#define THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH 0" >>confdefs.h
+
+
+
+fi
+
+
+
+
+    # Check whether --enable-test-with-mongo-query was given.
+if test ${enable_test_with_mongo_query+y}
+then :
+  enableval=$enable_test_with_mongo_query;
+fi
+
+
+    if test "x${enable_test_with_mongo_query}" == "xno"
+then :
+
+
+printf "%s\n" "#define THOR_DISABLE_TEST_WITH_MONGO_QUERY 1" >>confdefs.h
+
+            subconfigure="${subconfigure} --disable-test-with-mongo-query";
+
+else $as_nop
+
+
+printf "%s\n" "#define THOR_DISABLE_TEST_WITH_MONGO_QUERY 0" >>confdefs.h
+
+
+
+fi
+
+
 
 am__api_version='1.16'
 

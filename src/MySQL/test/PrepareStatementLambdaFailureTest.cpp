@@ -12,6 +12,8 @@
 
 TEST(PrepareStatementLambdaFailureTest, ExecuteToFewArguments)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -29,6 +31,8 @@ TEST(PrepareStatementLambdaFailureTest, ExecuteToFewArguments)
 }
 TEST(PrepareStatementLambdaFailureTest, ExecuteToManyArguments)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -46,6 +50,8 @@ TEST(PrepareStatementLambdaFailureTest, ExecuteToManyArguments)
 }
 TEST(PrepareStatementLambdaFailureTest, ExecuteThrowWhenCalledBack)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,

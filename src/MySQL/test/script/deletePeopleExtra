@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function mysqlTry {
+    working=1
+
+    while [[ "${working}" == "1" ]]; do
+        echo $4 | mysql --user=$1 --password=$2 $3 2> /dev/null > /tmp/out
+        if ( test $(cat /tmp/out | wc -l) -ge $5); then
+            working=0
+        fi
+    done
+    cat /tmp/out
+}
+
+mysqlTry test testPassword test "DELETE FROM PeopleExtra" 0
+

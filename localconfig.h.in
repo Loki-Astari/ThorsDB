@@ -1,9 +1,5 @@
-
-/* Enable to use header only libraries */
-#undef HEADER_ONLY
-
-/* For header only convery to inline */
-#undef HEADER_ONLY_INCLUDE
+#ifndef  THORS_THORSDB_CONFIG_H
+#define  THORS_THORSDB_CONFIG_H
 
 /* Set for Big Endian Systems */
 #undef THOR_ENDIAN_BIG
@@ -31,6 +27,9 @@
 
 /* "Get mysql version into #define. That way we can turn off some tests" */
 #undef MYSQL_MAJOR_VERSION
+
+/* "Get psql version into #define. That way we can turn off some tests" */
+#undef POSTGRESS_MAJOR_VERSION
 
 /* mongo DB for testing */
 #undef THOR_TESTING_MONGO_DB
@@ -62,3 +61,23 @@
 /* Disable tests that use timegm() */
 #undef THOR_USE_TIMEGM_FLASE
 
+/* psql DB for testing */
+#undef THOR_TESTING_POSTGRESS_DB
+
+/* psql DB host for testing */
+#undef THOR_TESTING_POSTGRESS_HOST
+
+/* psql DB password for testing */
+#undef THOR_TESTING_POSTGRESS_PASS
+
+/* psql DB user for testing */
+#undef THOR_TESTING_POSTGRESS_USER
+
+/* Disable test that require Authentication with Postgress server */
+#undef THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH
+
+/* Disable test that require the Mongo server to support the OP_QUERY command
+   */
+#undef THOR_DISABLE_TEST_WITH_MONGO_QUERY
+
+#endif

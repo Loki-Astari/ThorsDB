@@ -10,16 +10,67 @@
 #include <utility>
 #include <memory>
 #include <sys/types.h>
-#include <sys/uio.h>
 #include <unistd.h>
 #include <fcntl.h>
-//#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
+#ifdef __WINNT__
+#include <winsock2.h>
+#include <windows.h>
+#include <ws2tcpip.h>
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <sys/uio.h>
+#include <sys/resource.h>
+#endif
 
 static std::size_t constexpr ErrorResult = static_cast<std::size_t>(-1);
 
-inline int fcntlMYSQLWrapper(int fd, int cmd, int value)         {return fcntl(fd, cmd, value);}
-inline ssize_t readMYSQLWrapper(int fd, void* buf, size_t count) {return ::read(fd, buf, count);}
-inline ssize_t writeMYSQLWrapper(int fd, void const* buf, size_t count){return ::write(fd, buf, count);}
+#ifdef __WINNT__
+inline ssize_t readMYSQLWrapper(int fd, void* buf, size_t count)
+{
+    ssize_t r = ::recv(fd, reinterpret_cast<char*>(buf), count, 0);
+    if (r == SOCKET_ERROR)
+    {
+        if (WSAGetLastError() == WSAENOTSOCK)
+        {
+            return ::_read(fd, reinterpret_cast<char*>(buf), count);
+        }
+        return -1;
+    }
+    return r;
+}
+inline ssize_t writeMYSQLWrapper(int fd, void const* buf, size_t count)
+{
+    ssize_t w = ::send(fd, reinterpret_cast<char const*>(buf), count, 0);
+    if (w == SOCKET_ERROR)
+    {
+        if (WSAGetLastError() == WSAENOTSOCK)
+        {
+            return ::_write(fd, reinterpret_cast<char const*>(buf), count);
+        }
+        return -1;
+    }
+    return w;
+}
+inline int nonBlockingMySQLWrapper(int fd)
+{
+    u_long mode = 1;
+    int e = ::ioctlsocket(fd, FIONBIO, &mode);
+    if ((e == 0) || (WSAGetLastError() == WSAENOTSOCK))
+    {
+        // If not an error
+        // Or the error was because it was not a socket (that we ignore).
+        return 0;
+    }
+    return -1;
+}
+#else
+inline ssize_t readMYSQLWrapper(int fd, void* buf, size_t count)        {return ::read(fd, buf, count);}
+inline ssize_t writeMYSQLWrapper(int fd, void const* buf, size_t count) {return ::write(fd, buf, count);}
+inline int     nonBlockingMySQLWrapper(int fd)                          {return ::fcntl(fd, F_SETFL, O_NONBLOCK);}
+#endif
 
 namespace ThorsAnvil::DB::Common
 {

@@ -5,6 +5,8 @@
 
 TEST(BindParametersReadTest, BindFloatTestAgainstDouble)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -22,6 +24,8 @@ TEST(BindParametersReadTest, BindFloatTestAgainstDouble)
 
 TEST(BindParametersReadTest, BindFloatTestAgainstFloat)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -39,6 +43,8 @@ TEST(BindParametersReadTest, BindFloatTestAgainstFloat)
 
 TEST(BindParametersReadTest, BindFloatTestAgainstReal)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -56,6 +62,8 @@ TEST(BindParametersReadTest, BindFloatTestAgainstReal)
 
 TEST(BindParametersReadTest, BindFloatTestAgainstDecimal)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -73,6 +81,8 @@ TEST(BindParametersReadTest, BindFloatTestAgainstDecimal)
 
 TEST(BindParametersReadTest, BindFloatTestAgainstNumeric)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -90,6 +100,8 @@ TEST(BindParametersReadTest, BindFloatTestAgainstNumeric)
 
 TEST(BindParametersReadTest, BindDoubleTestAgainstDouble)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -106,6 +118,8 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstDouble)
 }
 TEST(BindParametersReadTest, BindDoubleTestAgainstReal)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -123,6 +137,8 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstReal)
 
 TEST(BindParametersReadTest, BindDoubleTestAgainstFloat)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -140,6 +156,8 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstFloat)
 
 TEST(BindParametersReadTest, BindDoubleTestAgainstDecimal)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -157,6 +175,8 @@ TEST(BindParametersReadTest, BindDoubleTestAgainstDecimal)
 
 TEST(BindParametersReadTest, BindDoubleTestAgainstNumeric)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,

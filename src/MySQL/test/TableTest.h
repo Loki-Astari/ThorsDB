@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_MYSQL_TEST_TABLETEST_H
 #define THORS_ANVIL_MYSQL_TEST_TABLETEST_H
 
+#include "test/pipe.h"
 #include "ThorsDB/Connection.h"
 #include "ThorsDB/Statement.h"
 #include "MySQLConfig.h"
@@ -12,6 +13,8 @@ extern std::map<std::string, std::string>      options;
 template<typename T>
 inline void typeGoodTest(T expected, std::string const& expr)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -28,6 +31,8 @@ inline void typeGoodTest(T expected, std::string const& expr)
 template<>
 inline void typeGoodTest(std::vector<char> expected, std::string const& expr)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -48,6 +53,8 @@ inline void typeGoodTest(std::vector<char> expected, std::string const& expr)
 template<typename T, typename ExceptionType>
 inline void typeBadTest(std::string const& expr)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -71,13 +78,23 @@ inline std::string getMySQL()
                                        "mysql --user=", THOR_TESTING_MYSQL_USER,
                                         " --password=", THOR_TESTING_MYSQL_PASS,
                                         " ", THOR_TESTING_MYSQL_DB,
-                                        " 2> /dev/null");
+#ifdef __WINNT__
+                                        " 2> .ignore"
+#else
+                                        " 2> /dev/null"
+#endif
+    );
 }
 
 inline std::string getSelectCount(std::string const& select)
 {
     return ThorsAnvil::Utility::buildStringFromParts(
-                                    "echo '", select, "'",
+                                    "echo ",
+#ifdef  __WINNT__
+                                    select,
+#else
+                                    "'", select, "'",
+#endif
                                     " | ",
                                     getMySQL(),
                                     " | ",
@@ -100,7 +117,14 @@ inline void checkSelectCount(std::string const& select, int row)
 
 static void executeModification(std::string const& mod)
 {
-    std::string modString = ThorsAnvil::Utility::buildStringFromParts("echo '", mod , "' | ", getMySQL());
+    std::string modString = ThorsAnvil::Utility::buildStringFromParts(
+        "echo ",
+#ifdef __WINNT__
+        mod ,
+#else
+        "'", mod, "'",
+#endif
+        " | ", getMySQL());
     ASSERT_EQ(
         0,
         system(modString.c_str())

@@ -1,4 +1,4 @@
-
+#include "test/pipe.h"
 #include <gtest/gtest.h>
 #include "ThorsDBConfig.h"
 #include "ThorsDB/SQLUtil.h"
@@ -9,6 +9,8 @@ std::map<std::string, std::string>      options {{"default-auth", "mysql_native_
 
 TEST(BindParametersCharTest, BindCharTestAgainstBit4)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,

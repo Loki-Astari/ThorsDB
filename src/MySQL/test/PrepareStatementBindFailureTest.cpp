@@ -12,6 +12,8 @@
 
 TEST(PrepareStatementBindFailureTest, TwoBindBointsThreeProvided)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -27,6 +29,8 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsThreeProvided)
 }
 TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -42,6 +46,8 @@ TEST(PrepareStatementBindFailureTest, TwoBindBointsOneProvided)
 }
 TEST(PrepareStatementBindFailureTest, ZeroBindBointsTwoProvided)
 {
+    SocketSetUp     setupSocket;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,

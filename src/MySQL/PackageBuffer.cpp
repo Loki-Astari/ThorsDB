@@ -3,6 +3,7 @@
 #include "ThorsIOUtil/Utility.h"
 #include "ThorsLogging/ThorsLogging.h"
 #include <iomanip>
+#include <cstdint>
 
 using namespace ThorsAnvil::DB::MySQL;
 

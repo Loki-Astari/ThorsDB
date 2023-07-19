@@ -22,6 +22,8 @@ ThorsAnvil::DB::Access::Lib::ConnectionCreatorRegister<DefaultMySQLConnection>  
  */
 TEST(ConnectionTest, CreateMySQLOnGeneric)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -32,6 +34,8 @@ TEST(ConnectionTest, CreateMySQLOnGeneric)
 
 TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -43,6 +47,8 @@ TEST(ConnectionTest, CreateMySQLOnGenericGetSocket)
 
 TEST(ConnectionTest, CreateMySQLOnGenericSetYield)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -55,6 +61,8 @@ TEST(ConnectionTest, CreateMySQLOnGenericSetYield)
 
 TEST(ConnectionTest, Create)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     using Buffer=DB::MySQL::PackageBuffer;
     std::map<std::string, std::string>      options;
@@ -73,6 +81,8 @@ TEST(ConnectionTest, Create)
 
 TEST(ConnectionTest, MySQLNativePassword)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     std::map<std::string, std::string>      options;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -88,6 +98,8 @@ TEST(ConnectionTest, MySQLNativePassword)
  */
 TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 {
+    SocketSetUp     setupSockets;
+
 #if THOR_DISABLE_MYSQL_TEST_SERVER_VERSION_BELOW_5
     GTEST_SKIP << "MySQL Server is below version 5. Thus does not support SHA2 Password";
 #endif
@@ -102,6 +114,8 @@ TEST(ConnectionTest, CachingSHA2PasswordEmpty)
 }
 TEST(ConnectionTest, CachingSHA2Password)
 {
+    SocketSetUp     setupSockets;
+
 #if THOR_DISABLE_MYSQL_TEST_SERVER_VERSION_BELOW_5
     GTEST_SKIP << "MySQL Server is below version 5. Thus does not support SHA2 Password";
 #endif

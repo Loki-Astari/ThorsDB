@@ -1,4 +1,4 @@
-
+#include "test/pipe.h"
 #include "MongoConfig.h"
 #include <gtest/gtest.h>
 #include "ThorsSocket/SocketStream.h"
@@ -15,6 +15,8 @@ using std::string_literals::operator""s;
 
 TEST(MongoConnectTest, CreateReply)
 {
+    SocketSetUp         setupSocket;
+
     // Connect
     ThorsAnvil::Crypto::ScramClientSha256   client(THOR_TESTING_MONGO_USER);
     ThorsAnvil::ThorsIO::ConnectSocket      socket(THOR_TESTING_MONGO_HOST, 27017);

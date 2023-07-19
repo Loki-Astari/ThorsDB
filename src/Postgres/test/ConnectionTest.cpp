@@ -1,4 +1,4 @@
-
+#include "pipe.h"
 #include "Connection.h"
 #include "ConectReader.h"
 #include "ConectWriter.h"
@@ -14,9 +14,12 @@ using ThorsAnvil::DB::Postgres::PostgresStream;
 
 TEST(ConnectionTest, ConnectToDB)
 {
-#if THOR_DISABLE_POSTGRESS_TEST_SERVER_NOT_INSTALLED
-    GTEST_SKIP() << "Postgress DB not installed";
+#if THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH
+    GTEST_SKIP() << "Postgress Authentication not finished";
 #endif
+
+    SocketSetUp     setupSocket;
+
     PostgresStream  stream("localhost");
     PackageBuffer   buffer(stream);
     ConectReader    reader(buffer);

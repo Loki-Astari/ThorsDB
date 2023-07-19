@@ -1,4 +1,4 @@
-
+#include "test/pipe.h"
 #include "MongoConfig.h"
 #include <gtest/gtest.h>
 #include "UnitTestWithConnection.h"
@@ -18,21 +18,11 @@
 using namespace ThorsAnvil::DB::Mongo;
 using std::string_literals::operator""s;
 
-class CmdAdmTest: public UnitTestWithConnection
-{
-    public:
-        CmdAdmTest()
-        {
-            setCollectionToBaseLine(getConnection());
-        };
-};
+using CmdAdmTest = UnitTestWithConnection;
 
 
 TEST_F(CmdAdmTest, ListDataBasesB)
 {
-#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
-    GTEST_SKIP() << "OP_QUERY No longer supported";
-#endif
     MongoConnection&  connection    = CmdAdmTest::getConnection();
 
     // Send Command to prove authentication worked and we have an open and working connection:
@@ -62,10 +52,6 @@ TEST_F(CmdAdmTest, ListDataBasesB)
 
 TEST_F(CmdAdmTest, Compact)
 {
-#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
-    GTEST_SKIP() << "OP_QUERY No longer supported";
-#endif
-
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Compact{"ConnectionTest"s};
 
@@ -76,9 +62,6 @@ TEST_F(CmdAdmTest, Compact)
 }
 TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 {
-#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
-    GTEST_SKIP() << "OP_QUERY No longer supported";
-#endif
     MongoConnection&  connection    = CmdAdmTest::getConnection();
     connection << CmdAdm_Create{"ConnectionCreateCollection"s};
     CmdAdm_CreateReply  reply;
@@ -117,9 +100,6 @@ TEST_F(CmdAdmTest, Create_List_Drop_Collection)
 }
 TEST_F(CmdAdmTest, Create_List_Drop_Index)
 {
-#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
-    GTEST_SKIP() << "OP_QUERY No longer supported";
-#endif
     MongoConnection&  connection    = CmdAdmTest::getConnection();
 
     connection << CmdAdm_CreateIndex{"ConnectionCreateCollection"s, Index("NameIndex", "Name")};

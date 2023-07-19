@@ -35,17 +35,18 @@ ThorsAnvil_MakeTrait(UpdateMessage, message);
 class UnitTestWithConnection : public ::testing::Test
 {
     public:
-        UnitTestWithConnection();
-        static void SetUpTestCase();
-        static void TearDownTestCase();
+        static  void SetUpTestSuite()           {}
+        static  void TearDownTestSuite()        {}
+        virtual void SetUp()    override;
+        virtual void TearDown()  override;
 
         static ThorsAnvil::DB::Mongo::MongoConnection& getConnection();
         static bool checkTheNumberofObjectsIs(std::string const& message, ThorsAnvil::DB::Mongo::MongoConnection& connection, int expected);
+
+    private:
         static bool zeroOutCollection(ThorsAnvil::DB::Mongo::MongoConnection& connection);
         static bool setTheDefaultCollectinState(ThorsAnvil::DB::Mongo::MongoConnection& connection);
-    protected:
         static void setCollectionToBaseLine(ThorsAnvil::DB::Mongo::MongoConnection& connection);
-    private:
         static std::unique_ptr<ThorsAnvil::DB::Mongo::MongoConnection> connection;
 };
 

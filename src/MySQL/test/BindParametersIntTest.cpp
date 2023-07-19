@@ -5,6 +5,8 @@
 
 TEST(BindParametersIntTest, BindIntTestAgainstBit4)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -24,6 +26,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstBit4)
 
 TEST(BindParametersIntTest, BindIntTestAgainstBit12)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -43,6 +47,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstBit12)
 
 TEST(BindParametersIntTest, BindIntTestAgainstBit24)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -62,6 +68,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstBit24)
 
 TEST(BindParametersIntTest, BindIntTestAgainstBit48)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -81,6 +89,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstBit48)
 
 TEST(BindParametersIntTest, BindIntTestAgainstUTinyInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -100,6 +110,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstUTinyInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstTinyInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -119,6 +131,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstTinyInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstUSmallInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -138,6 +152,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstUSmallInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstSmallInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -157,6 +173,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstSmallInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstUMedInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -176,6 +194,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstUMedInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstMedInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -195,6 +215,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstMedInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstUInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -214,6 +236,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstUInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -233,6 +257,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstULongInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -252,6 +278,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstULongInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstLongInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -271,6 +299,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstLongInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstULongLongInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -290,6 +320,8 @@ TEST(BindParametersIntTest, BindIntTestAgainstULongLongInt)
 
 TEST(BindParametersIntTest, BindIntTestAgainstLongLongInt)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,

@@ -2,8 +2,6 @@
 #include "ThorsIOUtil/Utility.h"
 #include "ThorsLogging/ThorsLogging.h"
 #include <stdexcept>
-#include <sys/socket.h>
-#include <netdb.h>
 #ifndef EWOULDBLOCK
 #define EWOULDBLOCK EAGAIN
 #endif
@@ -14,7 +12,6 @@
 
 // C
 #include <errno.h>
-#include <string.h> // needed for memset() / bcopy()
 #include <fcntl.h>
 #include <iostream>
 
@@ -45,7 +42,9 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
                          "StreamSimple",
                          "::gethostbyname() Failed: ", systemErrorMessage());
     }
-    bcopy((char *)serv->h_addr, (char *)&serv_addr.sin_addr.s_addr, serv->h_length);
+    char* src = reinterpret_cast<char*>(serv->h_addr);
+    char* dst = reinterpret_cast<char*>(&serv_addr.sin_addr.s_addr);
+    std::copy(src, src + serv->h_length, dst);
 
     if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -55,7 +54,7 @@ StreamSimple::StreamSimple(std::string const& host, int port, bool nonBlocking)
     }
     if (nonBlocking)
     {
-        if (::fcntlMYSQLWrapper(socket, F_SETFL, O_NONBLOCK) == -1)
+        if (::nonBlockingMySQLWrapper(socket) == -1)
         {
             ThorsLogAndThrowCritical("ThorsAnvil::DB::MySQL::StreamSimple",
                                      "StreamSimple",
@@ -181,13 +180,15 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
 }
 void StreamSimple::readSSL(char* buffer, std::size_t len)
 {
+    using ThorsAnvil::ThorsIO::IOInfo;
+
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
     {
-        int read = ssl->read(socket, buffer + readSoFar, len - readSoFar);
-        if (read < 0)
+        IOInfo read = ssl->read(socket, buffer + readSoFar, len - readSoFar);
+        if (read.first < 0)
         {
-            int errorCode = ssl->errorCode(read);
+            int errorCode = ssl->nativeErrorCode(read.first);
             if (errorCode == SSL_ERROR_WANT_READ)
             {
                 readYield();
@@ -201,7 +202,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
                                  "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage());
             }
         }
-        else if (read == 0)
+        else if (read.first == 0)
         {
             ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
                              "readSSL",
@@ -209,18 +210,20 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
                              "Tried to read ", len, "bytes but only found ", readSoFar, " before EOF");
         }
 
-        readSoFar += read;
+        readSoFar += read.first;
     }
 }
 void StreamSimple::writeSSL(char const* buffer, std::size_t len)
 {
+    using ThorsAnvil::ThorsIO::IOInfo;
+
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
     {
-        int writen = ssl->write(socket, buffer + writenSoFar, len - writenSoFar);
-        if (writen < 0)
+        IOInfo writen = ssl->write(socket, buffer + writenSoFar, len - writenSoFar);
+        if (writen.first < 0)
         {
-            int errorCode = ssl->errorCode(writen);
+            int errorCode = ssl->nativeErrorCode(writen.first);
             if (errorCode == SSL_ERROR_WANT_WRITE)
             {
                 writeYield();
@@ -234,7 +237,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
                                  "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage());
             }
         }
-        else if (writen == 0)
+        else if (writen.first == 0)
         {
             ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
                              "writeSSL",
@@ -242,7 +245,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
                              "Tried to write ", len, "bytes but only found ", writenSoFar, " before EOF");
         }
 
-        writenSoFar += writen;
+        writenSoFar += writen.first;
     }
 }
 

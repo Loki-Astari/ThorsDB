@@ -339,8 +339,6 @@ TEST(RequPackageHandShakeResponseTest, UsingSecureConnection)
                                                                       handShake.getCapabilities(),
                                                                       auth->getPluginName(),
                                                                       authResponse);
-    std::cerr << handShakeResp << "\n\n";
-
     std::stringstream message;
     message << handShakeResp;
     auto findusername = message.str().find("username(test)");

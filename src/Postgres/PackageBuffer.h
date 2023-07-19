@@ -1,10 +1,12 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_PACKAGE_BUFFER_H
 #define THORS_ANVIL_DB_POSTGRESS_PACKAGE_BUFFER_H
 
+#include "PostgresConfig.h"
 #include "ThorsDBCommon/StreamInterface.h"
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <cstdint>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis
 
 namespace ThorsAnvil::DB::Postgres

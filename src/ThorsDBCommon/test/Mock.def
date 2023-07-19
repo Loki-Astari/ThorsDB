@@ -3,8 +3,8 @@
 #include "StreamSimple.h"
 
 
-MOCK_SYSTEM_FUNC(fcntlMYSQLWrapper)
 MOCK_SYSTEM_FUNC(readMYSQLWrapper)
 MOCK_SYSTEM_FUNC(writeMYSQLWrapper)
+MOCK_SYSTEM_FUNC(nonBlockingMySQLWrapper)
 
 

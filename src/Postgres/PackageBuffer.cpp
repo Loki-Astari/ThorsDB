@@ -3,7 +3,12 @@
 #include "ThorsLogging/ThorsLogging.h"
 #include <iomanip>
 #include <algorithm>
+#ifdef __WINNT__
+#include <winsock2.h>
+#include <windows.h>
+#else
 #include <arpa/inet.h>
+#endif
 #include <iostream>
 
 using namespace ThorsAnvil::DB::Postgres;
@@ -56,7 +61,7 @@ void PackageBuffer::drop()
     char buffer[1024];
     while (!isEmpty())
     {
-        std::size_t toRead = std::min(1024UL, (messageSize - messageRead));
+        std::size_t toRead = std::min(static_cast<std::size_t>(1024), (messageSize - messageRead));
         read(buffer, toRead);
     }
 }

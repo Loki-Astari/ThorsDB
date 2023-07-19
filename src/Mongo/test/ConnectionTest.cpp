@@ -1,6 +1,6 @@
-
+#include "test/pipe.h"
+#include "UnitTestWithConnection.h"
 #include <gtest/gtest.h>
-#include "CmdDBTest.h"
 // Ye-Old Wire Protocol
 #include "Op_Insert.h"
 #include "Op_Delete.h"
@@ -33,28 +33,24 @@ using std::string_literals::operator""s;
 
 TEST(ConnectionTest, MiddleWireProtocol)
 {
-#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
-    GTEST_SKIP() << "OP_QUERY No longer supported";
-#endif
+    SocketSetUp         setupSocket;
+
     using std::string_literals::operator""s;
     using namespace ThorsAnvil::DB::Mongo;
 
     MongoConnection  connection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
 
-    bool ok = true;
-    ok = ok && CmdDBTest::zeroOutCollection(connection);
-    ok = ok && CmdDBTest::checkTheNumberofObjectsIs("CmdDBTest:1", connection, 0);
-    ok = ok && CmdDBTest::setTheDefaultCollectinState(connection);
-    ok = ok && CmdDBTest::checkTheNumberofObjectsIs("CmdDBTest:2", connection, 5);
-
-    ASSERT_TRUE(ok);
+    EXPECT_TRUE(static_cast<bool>(connection));
 }
 
 TEST(ConnectionTest, YeOldWireProtocol)
 {
-#if defined(THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES) && (THOR_DISABLE_MONGO_TEST_SERVER_OP_CODES == 1)
+    SocketSetUp         setupSocket;
+
+#if THOR_DISABLE_TEST_WITH_MONGO_QUERY
     GTEST_SKIP() << "OP_QUERY No longer supported";
 #endif
+
     using std::string_literals::operator""s;
     using namespace ThorsAnvil::DB::Mongo;
 

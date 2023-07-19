@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function mysqlTry {
+    working=1
+
+    while [[ "${working}" == "1" ]]; do
+        echo $4 | mysql --user=$1 --password=$2 $3 2> /dev/null > /tmp/out
+        if ( test $(cat /tmp/out | wc -l) -ge $5); then
+            working=0
+        fi
+    done
+    cat /tmp/out
+}
+
+
+c1=$(mysqlTry test testPassword test 'SELECT COUNT(ID) FROM PeopleExtra WHERE ID=21'           1 | tail -1)
+c2=$(mysqlTry test testPassword test 'SELECT COUNT(ID) FROM PeopleExtra WHERE ID=21 && Age=91' 1 | tail -1)
+c3=$(mysqlTry test testPassword test 'SELECT COUNT(ID) FROM PeopleExtra WHERE ID=21 && Age=92' 1 | tail -1)
+mysqlTry test testPassword test 'DELETE FROM PeopleExtra' 0
+
+if [[ "$c1" != "1" || "$c2" != "0" || "$c3" != "1" ]]; then
+    echo "updateTestTearDown Failed:"
+    echo "Expected: c1 => 1  Got (${c1})"
+    echo "Expected: c2 => 0  Got (${c2})"
+    echo "Expected: c3 => 1  Got (${c3})"
+    exit 1
+fi
+

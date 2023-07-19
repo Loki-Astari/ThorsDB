@@ -1,7 +1,10 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
+#ifdef __WINNT__
+#else
 #include <arpa/inet.h>
+#endif
 #include <cstdint>
 
 /*
@@ -12,30 +15,42 @@
 
 class TablePeopleExtraLastInsertIDTest: public ::testing::Test
 {
-	protected:
-		// Per-test-case set-up.
-		// Called before the first test in this test case.
-		// Can be omitted if not needed.
-		static void SetUpTestCase()
-		{
+    protected:
+        // Per-test-case set-up.
+        // Called before the first test in this test case.
+        // Can be omitted if not needed.
+        static void SetUpTestCase()
+        {
+#ifdef __WINNT__
+            WSADATA wsaData;
+            WORD wVersionRequested = MAKEWORD(2, 2);
+            int err = WSAStartup(wVersionRequested, &wsaData);
+            if (err != 0) {
+                printf("WSAStartup failed with error: %d\n", err);
+                throw std::runtime_error("Failed to set up Sockets");
+            }
+#endif
             executeModification("DELETE FROM PeopleExtra");
-		}
+        }
 
-		// Per-test-case tear-down.
-		// Called after the last test in this test case.
-		// Can be omitted if not needed.
-		static void TearDownTestCase()
-		{
+        // Per-test-case tear-down.
+        // Called after the last test in this test case.
+        // Can be omitted if not needed.
+        static void TearDownTestCase()
+        {
             executeModification("DELETE FROM PeopleExtra");
-		}
+#ifdef  __WINNT__
+            WSACleanup();
+#endif
+        }
 
-		// You can define per-test set-up and tear-down logic as usual.
-		virtual void SetUp()
-		{
-		}
-		virtual void TearDown()
-		{
-		}
+        // You can define per-test set-up and tear-down logic as usual.
+        virtual void SetUp()
+        {
+        }
+        virtual void TearDown()
+        {
+        }
 };
 
 TEST_F(TablePeopleExtraLastInsertIDTest, ModTomHanks)

@@ -1,9 +1,11 @@
 #ifndef THORS_ANVIL_DB_POSTGRES_CONECT_READER_H
 #define THORS_ANVIL_DB_POSTGRES_CONECT_READER_H
 
+#include "PostgresConfig.h"
 #include "PackageBuffer.h"
 #include <vector>
 #include <string>
+#include <cstdint>
 
 namespace ThorsAnvil::DB::Postgres
 {

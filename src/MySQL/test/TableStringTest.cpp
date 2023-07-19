@@ -1,7 +1,10 @@
 
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
+#ifdef __WINNT__
+#else
 #include <arpa/inet.h>
+#endif
 #include <cstdint>
 
 /*

@@ -1,4 +1,4 @@
-
+#include "test/pipe.h"
 #include "StreamSimple.h"
 #include "ThorsSocket/SSLUtil.h"
 #include "ThorsIOUtil/Utility.h"
@@ -10,23 +10,17 @@
 
 #define _GNU_SOURCE
 
-#include <fcntl.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/resource.h>
-#include <sys/types.h>          /* See NOTES */
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
 
-
-using ThorsAnvil::DB::Common::StreamSimple;
 using ThorsAnvil::Utility::buildErrorMessage;
 using ThorsAnvil::Utility::systemErrorMessage;
+using ThorsAnvil::DB::Common::StreamSimple;
 
 TEST(StreamSimpleTest, ReadNormal)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -37,7 +31,9 @@ TEST(StreamSimpleTest, ReadNormal)
 }
 TEST(StreamSimpleTest, ReadInterupt)
 {
-    MOCK_SYS(readMYSQLWrapper, [](int socket, void* buffer, std::size_t len)
+    SocketSetUp     setupSockets;
+
+    MOCK_SYS(readMYSQLWrapper, [](int socket, void* buffer, std::size_t len) -> ssize_t
     {
         static bool firstTime = true;
         if (firstTime)
@@ -46,7 +42,7 @@ TEST(StreamSimpleTest, ReadInterupt)
             errno = EINTR;
             return -1L;
         }
-        return ::read(socket, buffer, len);
+        return ::read(socket, reinterpret_cast<char*>(buffer), len);
     });
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
@@ -58,11 +54,15 @@ TEST(StreamSimpleTest, ReadInterupt)
 }
 TEST(StreamSimpleTest, ReadGoodHost)
 {
+    SocketSetUp     setupSockets;
+
     StreamSimple stream("google.com", 80);
 }
 TEST(StreamSimpleTest, NonBlockingFail)
 {
-    MOCK_SYS(fcntlMYSQLWrapper, [](int, int, int){return -1;});
+    SocketSetUp     setupSockets;
+
+    MOCK_SYS(nonBlockingMySQLWrapper, [](int){return -1;});
     auto test = []()
     {
         StreamSimple stream("google.com", 80, true);
@@ -75,15 +75,21 @@ TEST(StreamSimpleTest, NonBlockingFail)
 }
 TEST(StreamSimpleTest, NonBlockingOK)
 {
-    MOCK_SYS(fcntlMYSQLWrapper, [](int, int, int){return 0;});
+    SocketSetUp     setupSockets;
+
+    MOCK_SYS(nonBlockingMySQLWrapper, [](int){return 0;});
     StreamSimple stream("google.com", 80, true);
 }
 TEST(StreamSimpleTest, GetCoverageOnTheWrapper)
 {
-    fcntlMYSQLWrapper(-1, 0, 0);
+    SocketSetUp     setupSockets;
+
+    nonBlockingMySQLWrapper(-1);
 }
 TEST(StreamSimpleTest, ReadGoodHostBadPort)
 {
+    SocketSetUp     setupSockets;
+
     // ::connect should fail
     ASSERT_THROW(
         StreamSimple stream("127.0.0.1", 1),
@@ -92,6 +98,12 @@ TEST(StreamSimpleTest, ReadGoodHostBadPort)
 }
 TEST(StreamSimpleTest, ReadGoodHostSocketFail)
 {
+#ifdef __WINNT__
+    GTEST_SKIP() << "Windows does not support getrlimit";
+#else
+
+    SocketSetUp     setupSockets;
+
     int sysres;
 
     struct rlimit   curLimit;
@@ -110,9 +122,15 @@ TEST(StreamSimpleTest, ReadGoodHostSocketFail)
 
     sysres = setrlimit(RLIMIT_NOFILE, &curLimit);
     ASSERT_EQ(0, sysres);
+#endif
 }
 TEST(StreamSimpleTest, ReadFromSlowStreamToGetEAGAIN)
 {
+#ifdef __WINNT__
+    GTEST_SKIP() << "Windows does not support non blocking pipes";
+#else
+    SocketSetUp     setupSockets;
+
     int sysres;
     int testData   = 5;
     int resultData = 0;
@@ -139,9 +157,12 @@ TEST(StreamSimpleTest, ReadFromSlowStreamToGetEAGAIN)
     //::close(pipes[0]);  // closed by stream
     ::close(pipes[1]);
     slowStream.join();
+#endif
 }
 TEST(StreamSimpleTest, ReadBadHost)
 {
+    SocketSetUp     setupSockets;
+
     ASSERT_THROW(
         StreamSimple stream("BadHostNotGoingToWork.com", 99872),
         std::runtime_error
@@ -149,6 +170,8 @@ TEST(StreamSimpleTest, ReadBadHost)
 }
 TEST(StreamSimpleTest, ReadPastEOF)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -158,6 +181,8 @@ TEST(StreamSimpleTest, ReadPastEOF)
 }
 TEST(StreamSimpleTest, ReadFail)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
     close(socket);
@@ -167,6 +192,8 @@ TEST(StreamSimpleTest, ReadFail)
 }
 TEST(StreamSimpleTest, WriteNormal)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     {
         StreamSimple stream(socket);
@@ -184,7 +211,9 @@ TEST(StreamSimpleTest, WriteNormal)
 }
 TEST(StreamSimpleTest, WriteNormalWithContinue)
 {
-    MOCK_SYS(writeMYSQLWrapper, [](int socket, void const* buffer, std::size_t len)
+    SocketSetUp     setupSockets;
+
+    MOCK_SYS(writeMYSQLWrapper, [](int socket, void const* buffer, std::size_t len) -> ssize_t
     {
         static bool firstTime = true;
         if (firstTime)
@@ -212,6 +241,8 @@ TEST(StreamSimpleTest, WriteNormalWithContinue)
 }
 TEST(StreamSimpleTest, WriteFail)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     StreamSimple stream(socket);
     close(socket);
@@ -222,6 +253,8 @@ TEST(StreamSimpleTest, WriteFail)
 }
 TEST(StreamSimpleTest, WriteFailMocked)
 {
+    SocketSetUp     setupSockets;
+
     MOCK_SYS(writeMYSQLWrapper, [](int socket, void const* buffer, std::size_t len) {return 0;});
     int         socket  = open("test/data/StreamSimpleTest-WriteNormal", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
     StreamSimple stream(socket);
@@ -232,6 +265,11 @@ TEST(StreamSimpleTest, WriteFailMocked)
 }
 TEST(StreamSimpleTest, WriteToSlowStreamToGetEAGAIN)
 {
+#ifdef __WINNT__
+    GTEST_SKIP() << "Windows does not support non blocking pipes";
+#else
+    SocketSetUp     setupSockets;
+
     int sysres;
     int const blocks   = 4;
     int const actCount = 46;
@@ -287,10 +325,13 @@ TEST(StreamSimpleTest, WriteToSlowStreamToGetEAGAIN)
     }
     ::close(pipes[0]);
     //::close(pipes[1]); // closed by stream
+#endif
 }
 
 class ServerSocket
 {
+    SocketSetUp     setupSockets;
+
     int socketId;
     public:
         static constexpr int maxConnectionBacklog = 5;
@@ -335,6 +376,8 @@ class ServerSocket
 
 class ConnectSocket
 {
+    SocketSetUp     setupSockets;
+
     int socketId;
     public:
         ConnectSocket(std::string const& host, int port)
@@ -355,7 +398,9 @@ class ConnectSocket
             struct sockaddr_in serverAddr{};
             serverAddr.sin_family       = AF_INET;
             serverAddr.sin_port         = htons(port);
-            bcopy((char *)serv->h_addr, (char *)&serverAddr.sin_addr.s_addr, serv->h_length);
+            char* src = reinterpret_cast<char*>(serv->h_addr);
+            char* dst = reinterpret_cast<char*>(&serverAddr.sin_addr.s_addr);
+            std::copy(src, src + serv->h_length, dst);
 
             if (::connect(socketId, reinterpret_cast<struct sockaddr*>(&serverAddr), sizeof(serverAddr)) != 0)
             {
@@ -376,6 +421,8 @@ class ConnectSocket
 
 TEST(StreamSimpleTest, OpenSSLConnection)
 {
+    SocketSetUp     setupSockets;
+
     int port    = 2022;
 
     std::thread sslServer([port]() {
@@ -407,6 +454,8 @@ TEST(StreamSimpleTest, OpenSSLConnection)
 
 TEST(StreamSimpleTest, startNewConversationNothingTrue)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -414,6 +463,8 @@ TEST(StreamSimpleTest, startNewConversationNothingTrue)
 }
 TEST(StreamSimpleTest, startNewConversationNothingFalse)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -421,6 +472,8 @@ TEST(StreamSimpleTest, startNewConversationNothingFalse)
 }
 TEST(StreamSimpleTest, flushNothing)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -428,6 +481,8 @@ TEST(StreamSimpleTest, flushNothing)
 }
 TEST(StreamSimpleTest, resetNothing)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -435,6 +490,8 @@ TEST(StreamSimpleTest, resetNothing)
 }
 TEST(StreamSimpleTest, dropNothing)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -442,6 +499,8 @@ TEST(StreamSimpleTest, dropNothing)
 }
 TEST(StreamSimpleTest, isEmptyNothing)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 
@@ -449,6 +508,8 @@ TEST(StreamSimpleTest, isEmptyNothing)
 }
 TEST(StreamSimpleTest, readRemainingDataNothing)
 {
+    SocketSetUp     setupSockets;
+
     int         socket  = open("test/data/StreamSimpleTest-ReadNormal", O_RDONLY);
     StreamSimple stream(socket);
 

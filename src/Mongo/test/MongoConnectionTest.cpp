@@ -1,4 +1,4 @@
-
+#include "test/pipe.h"
 #include <gtest/gtest.h>
 #include "MongoConnection.h"
 #include "MongoConfig.h"
@@ -6,6 +6,8 @@
 
 TEST(MongoConnectionTest, CreateThorConnection)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using std::string_literals::operator""s;
         using namespace ThorsAnvil::DB::Access;
@@ -16,6 +18,8 @@ TEST(MongoConnectionTest, CreateThorConnection)
 
 TEST(MongoConnectionTest, CreateConnection)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
         MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
@@ -25,6 +29,8 @@ TEST(MongoConnectionTest, CreateConnection)
 
 TEST(MongoConnectionTest, CreateConnectionWithSnappy)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
         MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {{"compressors", "snappy"}});
@@ -34,6 +40,8 @@ TEST(MongoConnectionTest, CreateConnectionWithSnappy)
 
 TEST(MongoConnectionTest, CreateConnectionAppNameSet)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
         MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {{"AppName", "UnitTest"}});
@@ -43,6 +51,8 @@ TEST(MongoConnectionTest, CreateConnectionAppNameSet)
 
 TEST(MongoConnectionTest, CreateConnectionBadUser)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
         MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, "Bad", THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {});
@@ -52,6 +62,8 @@ TEST(MongoConnectionTest, CreateConnectionBadUser)
 
 TEST(MongoConnectionTest, CreateConnectionBadPass)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
         MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, "Bad", THOR_TESTING_MONGO_DB, {});
@@ -61,6 +73,8 @@ TEST(MongoConnectionTest, CreateConnectionBadPass)
 
 TEST(MongoConnectionTest, CreateConnectionBadDB)
 {
+    SocketSetUp         setupSocket;
+
     auto action = [](){
         using namespace ThorsAnvil::DB::Mongo;
         MongoConnection  connection(THOR_TESTING_MONGO_HOST, 0, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, "Bad", {});

@@ -151,10 +151,15 @@ std::time_t ConectReader::readDate()
     time.tm_mon     = timeBag.month - 1;
     time.tm_year    = timeBag.year - 1900;
     time.tm_isdst   = false;
+#ifdef __WINNT__
+    return _mkgmtime(&time);
+#else
     time.tm_zone    = NULL;
     time.tm_gmtoff  = 0;
 
     return timegm(&time);
+#endif
+
 }
 
 MySQLTimeBag ConectReader::readDateIntoTimeBag()

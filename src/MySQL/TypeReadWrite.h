@@ -159,13 +159,13 @@ T getBitField(ConectReader& p)
                                 "getBitField",
                                 "Bitfield to large for destination\n",
                                 "   From DB:     ", bitField.size(), " bytes\n",
-                                "   Output Type: ", typeid(T).name(), "\n");
+                                "   Output Type: ", typeid(T).name(), " Size: ", sizeof(T), "\n");
     }
 
     char const* valuePtr    = bitField.data();
     T           result      = 0;
     char*       resultPtr   = reinterpret_cast<char*>(&result);
-    for (std::size_t loop=0;loop < sizeof(signed long) && loop < bitField.size(); ++loop)
+    for (std::size_t loop=0;loop < sizeof(T) && loop < bitField.size(); ++loop)
     {
         resultPtr[loop] = valuePtr[loop];
     }
@@ -197,7 +197,7 @@ inline unsigned long long maskBuild(int length)
     return mask ^ shield;
 }
 
-inline unsigned long signExtend(unsigned long value, int length)
+inline unsigned long long signExtend(unsigned long long value, int length)
 {
     return ((length != sizeof(unsigned long long)) && ((value >> (length * 8 - 1)) & 0x1))
         ? maskBuild(length) | value     // negative value

@@ -1,4 +1,4 @@
-
+#include "test/pipe.h"
 #include <gtest/gtest.h>
 #include "BaseCmd.h"
 #include "Op_Msg.h"
@@ -47,6 +47,8 @@ TEST(Op_MsgTest, Op_MsgSerializeMessage)
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 {
+    SocketSetUp         setupSocket;
+
     using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
     using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
 
@@ -86,6 +88,8 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompression)
 {
+    SocketSetUp         setupSocket;
+
     using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
     using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
 
@@ -158,6 +162,8 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageHumanReadable)
 
 TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompressionReadFromServer)
 {
+    SocketSetUp         setupSocket;
+
     using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
     using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
 

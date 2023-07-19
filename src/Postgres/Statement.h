@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRESS_STATEMENT_H
 #define THORS_ANVIL_DB_POSTGRESS_STATEMENT_H
 
+#include "PostgresConfig.h"
 #include "ThorsDB/Statement.h"
 #include <string>
 #include <vector>

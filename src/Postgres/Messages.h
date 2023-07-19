@@ -1,6 +1,7 @@
 #ifndef THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 #define THORS_ANVIL_DB_POSTGRES_MESSAGES_H
 
+#include "PostgresConfig.h"
 //#include "ThorsDB/MD5.h"
 #include "ThorsCrypto/hash.h"
 #include "ThorsIOUtil/Utility.h"

@@ -13,19 +13,33 @@ using std::string_literals::operator""s;
 
 std::unique_ptr<MongoConnection> UnitTestWithConnection::connection;
 
-UnitTestWithConnection::UnitTestWithConnection()
+void UnitTestWithConnection::SetUp()
 {
+#if THOR_DISABLE_TEST_WITH_MONGO_QUERY
+    GTEST_SKIP() << "Unsupported OP_QUERY command";
+#endif
+
+#ifdef  __WINNT__
+    WSADATA wsaData;
+    WORD wVersionRequested = MAKEWORD(2, 2);
+    int err = WSAStartup(wVersionRequested, &wsaData);
+    if (err != 0) {
+        printf("WSAStartup failed with error: %d\n", err);
+        throw std::runtime_error("Failed to set up Sockets");
+    }
+#endif
+
+    connection.reset(new MongoConnection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {}));
     setCollectionToBaseLine(getConnection());
 }
 
-void UnitTestWithConnection::SetUpTestCase()
-{
-    connection.reset(new MongoConnection(THOR_TESTING_MONGO_HOST, 27017, THOR_TESTING_MONGO_USER, THOR_TESTING_MONGO_PASS, THOR_TESTING_MONGO_DB, {}));
-}
-
-void UnitTestWithConnection::TearDownTestCase()
+void UnitTestWithConnection::TearDown()
 {
     connection.reset();
+
+#ifdef  __WINNT__
+    WSACleanup();
+#endif
 }
 
 MongoConnection& UnitTestWithConnection::getConnection()

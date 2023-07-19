@@ -5,6 +5,8 @@
 
 TEST(BindParametersVectorTest, BindVectorTestAgainstChar1)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -22,6 +24,8 @@ TEST(BindParametersVectorTest, BindVectorTestAgainstChar1)
 
 TEST(BindParametersVectorTest, BindVectorTestAgainstVarChar32)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -39,6 +43,8 @@ TEST(BindParametersVectorTest, BindVectorTestAgainstVarChar32)
 
 TEST(BindParametersVectorTest, BindVectorTestAgainstTinyText)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -56,6 +62,8 @@ TEST(BindParametersVectorTest, BindVectorTestAgainstTinyText)
 
 TEST(BindParametersVectorTest, BindVectorTestAgainstText)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -73,6 +81,8 @@ TEST(BindParametersVectorTest, BindVectorTestAgainstText)
 
 TEST(BindParametersVectorTest, BindVectorTestAgainstMediumText)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -90,6 +100,8 @@ TEST(BindParametersVectorTest, BindVectorTestAgainstMediumText)
 
 TEST(BindParametersVectorTest, BindVectorTestAgainstLongText)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,

@@ -10,7 +10,10 @@
 #include "ThorSerialize/MongoUtility.h"
 #include "ThorSerialize/JsonPrinter.h"
 #include <string>
+#ifdef __WINNT__
+#else
 #include <sys/utsname.h>
+#endif
 
 namespace ThorsAnvil::DB::Mongo
 {

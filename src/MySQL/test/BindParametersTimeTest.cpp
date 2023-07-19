@@ -17,6 +17,8 @@ CREATE TABLE TimeStampTypes(
 
 TEST(BindParametersTimeTest, BindTimeTestAgainstDate)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -32,6 +34,8 @@ TEST(BindParametersTimeTest, BindTimeTestAgainstDate)
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstTime)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -47,6 +51,8 @@ TEST(BindParametersTimeTest, BindTimeTestAgainstTime)
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstTimeStamp)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -63,6 +69,8 @@ TEST(BindParametersTimeTest, BindTimeTestAgainstTimeStamp)
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstDateTime)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
                                     THOR_TESTING_MYSQL_USER,
@@ -79,6 +87,8 @@ TEST(BindParametersTimeTest, BindTimeTestAgainstDateTime)
 }
 TEST(BindParametersTimeTest, BindTimeTestAgainstYear)
 {
+    SocketSetUp     setupSockets;
+
     // TODO -Fix
     using namespace ThorsAnvil;
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,

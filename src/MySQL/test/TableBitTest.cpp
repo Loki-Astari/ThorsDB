@@ -2,7 +2,10 @@
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
 //#include "ThorsDB/Endian.h"
+#ifdef __WINNT__
+#else
 #include <arpa/inet.h>
+#endif
 #include <cstdint>
 #include <boost/endian/conversion.hpp>
 
@@ -66,7 +69,15 @@ TEST(TableBitTest, ReadBit24IntoULongLong){ typeGoodTest<unsigned long long>(sta
 TEST(TableBitTest, ReadBit48IntoUChar)    { typeBadTest<unsigned char,   ThorsAnvil::Logging::LogicalException>("SELECT B3 FROM IntTypes where Id=1"); }
 TEST(TableBitTest, ReadBit48IntoUShort)   { typeBadTest<unsigned short,  ThorsAnvil::Logging::LogicalException>("SELECT B3 FROM IntTypes where Id=1"); }
 TEST(TableBitTest, ReadBit48IntoUInt)     { typeBadTest<unsigned int,    ThorsAnvil::Logging::LogicalException>("SELECT B3 FROM IntTypes where Id=1"); }
-TEST(TableBitTest, ReadBit48IntoULong)    { typeGoodTest<unsigned long>  (static_cast<unsigned long>(native_to_big(0xFEDCBA987654) >> 16), "SELECT B3 FROM IntTypes where Id=1"); }
+TEST(TableBitTest, ReadBit48IntoULong)
+{
+    if (sizeof(unsigned long) < 48)
+    {
+        GTEST_SKIP() << "Unsigned long not large enough for test";
+    }
+
+    typeGoodTest<unsigned long>  (static_cast<unsigned long>(native_to_big(0xFEDCBA987654) >> 16), "SELECT B3 FROM IntTypes where Id=1");
+}
 TEST(TableBitTest, ReadBit48IntoULongLong){ typeGoodTest<unsigned long long>(static_cast<unsigned long long>(native_to_big(0xFEDCBA987654) >> 16), "SELECT B3 FROM IntTypes where Id=1"); }
 
 

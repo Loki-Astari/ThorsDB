@@ -87,7 +87,6 @@ class Connection
 template<typename T>
 Lib::ConnectionCreatorRegister<T>::ConnectionCreatorRegister(std::string const& schema)
 {
-    std::cerr << "Register: " << schema << "\n";
     Connection::registerConnectionType(schema, [](std::string const& host, int port,
                                                   std::string const& username,
                                                   std::string const& password,

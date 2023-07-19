@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function mysqlTry {
+    working=1
+
+    while [[ "${working}" == "1" ]]; do
+        echo $4 | mysql --user=$1 --password=$2 $3 2> /dev/null > /tmp/out
+        if ( test $(cat /tmp/out | wc -l) -ge $5); then
+            working=0
+        fi
+    done
+    cat /tmp/out
+}
+
+mysqlTry test testPassword test 'INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (18, "Tom Hanks", 35, "M", 56.89)' 0
+mysqlTry test testPassword test 'INSERT INTO PeopleExtra(ID, Name, Age, Sex, Height) VALUES (19, "Tom Hanks", 35, "M", 56.89)' 0
+
+c1=$(mysqlTry test testPassword test 'SELECT COUNT(ID) FROM PeopleExtra'               1 | tail -1)
+c2=$(mysqlTry test testPassword test 'SELECT COUNT(ID) FROM PeopleExtra WHERE ID = 18' 1 | tail -1)
+
+if [[ "$c1" != "2" || "$c2" != "1" ]]; then
+    echo "deleteTestSetUp Failed:"
+    echo "Expected: c1 => 2  Got (${c1})"
+    echo "Expected: c2 => 1  Got (${c2})"
+    exit 1
+fi
+

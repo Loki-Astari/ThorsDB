@@ -1,8 +1,11 @@
-
+#include "test/pipe.h"
 #include "gtest/gtest.h"
 #include "test/TableTest.h"
 #include "ThorsIOUtil/Utility.h"
+#ifdef __WINNT__
+#else
 #include <arpa/inet.h>
+#endif
 #include <cstdint>
 
 /*
@@ -45,6 +48,8 @@ class TablePeopleExtraRowsAffectedTest: public ::testing::Test
 
 TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanks)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -63,6 +68,8 @@ TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanks)
 
 TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksWithBind)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -81,6 +88,8 @@ TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksWithBind)
 
 TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksNoHits)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
@@ -99,6 +108,8 @@ TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksNoHits)
 
 TEST_F(TablePeopleExtraRowsAffectedTest, ModTomHanksWithBindNoHits)
 {
+    SocketSetUp     setupSockets;
+
     using namespace ThorsAnvil;
 
     DB::Access::Connection     connection("mysql://" THOR_TESTING_MYSQL_HOST,
