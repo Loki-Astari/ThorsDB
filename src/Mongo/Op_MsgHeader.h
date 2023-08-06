@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_MESSAGE_HEADER_H
-#define THORS_ANVIL_DB_MONGO_MESSAGE_HEADER_H
+#ifndef THORSANVIL_DB_MONGO_MESSAGE_HEADER_H
+#define THORSANVIL_DB_MONGO_MESSAGE_HEADER_H
 
 #include "Op.h"         // Includes std::<integer>_t
 #include "Util.h"

@@ -2,7 +2,7 @@
 THORSANVIL_ROOT				?= $(realpath ../../)
 
 TARGET						= ThorsDB.lib
-DEFER_LIBS					= ThorsDB ThorsDBCommon ThorsMySQL ThorsPostgress ThorsMongo
+DEFER_LIBS					= ThorsDB ThorsDBCommon ThorsMySQL ThorsPostgres ThorsMongo
 LDLIBS_MSYS_NT				= -lws2_32 -lwsock32 -lyaml
 LDLIBS_MINGW64_NT			= -lws2_32 -lwsock32 -lyaml
 

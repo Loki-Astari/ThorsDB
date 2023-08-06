@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_TEST_OP_TEST_H
-#define THORS_ANVIL_DB_MONGO_TEST_OP_TEST_H
+#ifndef THORSANVIL_DB_MONGO_TEST_OP_TEST_H
+#define THORSANVIL_DB_MONGO_TEST_OP_TEST_H
 
 #include "ThorSerialize/Traits.h"
 #include "ThorSerialize/Serialize.tpp"

@@ -1,7 +1,7 @@
-#ifndef THORS_ANVIL_DB_MONGO_OP_INSERT_TPP
-#define THORS_ANVIL_DB_MONGO_OP_INSERT_TPP
+#ifndef THORSANVIL_DB_MONGO_OP_INSERT_TPP
+#define THORSANVIL_DB_MONGO_OP_INSERT_TPP
 
-#ifndef THORS_ANVIL_DB_MONGO_OP_INSERT_H
+#ifndef THORSANVIL_DB_MONGO_OP_INSERT_H
 #error  "This should only be included from Op_Insert.h"
 #endif
 

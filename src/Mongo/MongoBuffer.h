@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_MONGO_BUFFER_H
-#define THORS_ANVIL_DB_MONGO_MONGO_BUFFER_H
+#ifndef THORSANVIL_DB_MONGO_MONGO_BUFFER_H
+#define THORSANVIL_DB_MONGO_MONGO_BUFFER_H
 
 #include "Util.h"
 #include "ThorsSocket/SocketStream.h"

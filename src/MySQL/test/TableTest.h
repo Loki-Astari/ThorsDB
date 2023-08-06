@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_MYSQL_TEST_TABLETEST_H
-#define THORS_ANVIL_MYSQL_TEST_TABLETEST_H
+#ifndef THORSANVIL_MYSQL_TEST_TABLETEST_H
+#define THORSANVIL_MYSQL_TEST_TABLETEST_H
 
 #include "test/pipe.h"
 #include "ThorsDB/Connection.h"

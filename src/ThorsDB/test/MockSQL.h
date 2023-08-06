@@ -1,6 +1,6 @@
 
-#ifndef THORS_ANVIL_THHORDB_MOCK_MYSQL_H
-#define THORS_ANVIL_THHORDB_MOCK_MYSQL_H
+#ifndef THORSANVIL_THHORDB_MOCK_MYSQL_H
+#define THORSANVIL_THHORDB_MOCK_MYSQL_H
 
 #include "Connection.h"
 #include "Statement.h"

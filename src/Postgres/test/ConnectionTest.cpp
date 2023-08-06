@@ -14,8 +14,8 @@ using ThorsAnvil::DB::Postgres::PostgresStream;
 
 TEST(ConnectionTest, ConnectToDB)
 {
-#if THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH
-    GTEST_SKIP() << "Postgress Authentication not finished";
+#if THOR_DISABLE_TEST_WITH_POSTGRES_AUTH
+    GTEST_SKIP() << "Postgres Authentication not finished";
 #endif
 
     SocketSetUp     setupSocket;

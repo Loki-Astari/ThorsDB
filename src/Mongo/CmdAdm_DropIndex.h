@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_CMD_ADM_DROP_INDEX_H
-#define THORS_ANVIL_DB_MONGO_CMD_ADM_DROP_INDEX_H
+#ifndef THORSANVIL_DB_MONGO_CMD_ADM_DROP_INDEX_H
+#define THORSANVIL_DB_MONGO_CMD_ADM_DROP_INDEX_H
 
 // https://docs.mongodb.com/manual/reference/command/dropIndexes/
 

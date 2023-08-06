@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_COMMON_STREAM_INTERFACE_H
-#define THORS_ANVIL_DB_COMMON_STREAM_INTERFACE_H
+#ifndef THORSANVIL_DB_COMMON_STREAM_INTERFACE_H
+#define THORSANVIL_DB_COMMON_STREAM_INTERFACE_H
 
 #include <string>
 //#include <cstddef>   // for size_t (removed because it crashes clang 3.5 on travis

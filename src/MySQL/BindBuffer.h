@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MYSQL_BIND_BUFFER_H
-#define THORS_ANVIL_DB_MYSQL_BIND_BUFFER_H
+#ifndef THORSANVIL_DB_MYSQL_BIND_BUFFER_H
+#define THORSANVIL_DB_MYSQL_BIND_BUFFER_H
 
 #include "ThorsDBCommon/StreamSimple.h"
 #include "ConectWriter.h"

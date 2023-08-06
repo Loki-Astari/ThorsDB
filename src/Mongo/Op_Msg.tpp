@@ -1,7 +1,7 @@
-#ifndef THORS_ANVIL_DB_MONGO_OP_MSG_TPP
-#define THORS_ANVIL_DB_MONGO_OP_MSG_TPP
+#ifndef THORSANVIL_DB_MONGO_OP_MSG_TPP
+#define THORSANVIL_DB_MONGO_OP_MSG_TPP
 
-#ifndef THORS_ANVIL_DB_MONGO_OP_MSG_H
+#ifndef THORSANVIL_DB_MONGO_OP_MSG_H
 #error  "This should only be included from Op_Msg.h"
 #endif
 

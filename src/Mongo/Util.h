@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_UTIL_H
-#define THORS_ANVIL_DB_MONGO_UTIL_H
+#ifndef THORSANVIL_DB_MONGO_UTIL_H
+#define THORSANVIL_DB_MONGO_UTIL_H
 
 #include <boost/endian/conversion.hpp>
 

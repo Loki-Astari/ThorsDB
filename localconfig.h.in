@@ -29,7 +29,7 @@
 #undef MYSQL_MAJOR_VERSION
 
 /* "Get psql version into #define. That way we can turn off some tests" */
-#undef POSTGRESS_MAJOR_VERSION
+#undef POSTGRES_MAJOR_VERSION
 
 /* mongo DB for testing */
 #undef THOR_TESTING_MONGO_DB
@@ -62,19 +62,19 @@
 #undef THOR_USE_TIMEGM_FLASE
 
 /* psql DB for testing */
-#undef THOR_TESTING_POSTGRESS_DB
+#undef THOR_TESTING_POSTGRES_DB
 
 /* psql DB host for testing */
-#undef THOR_TESTING_POSTGRESS_HOST
+#undef THOR_TESTING_POSTGRES_HOST
 
 /* psql DB password for testing */
-#undef THOR_TESTING_POSTGRESS_PASS
+#undef THOR_TESTING_POSTGRES_PASS
 
 /* psql DB user for testing */
-#undef THOR_TESTING_POSTGRESS_USER
+#undef THOR_TESTING_POSTGRES_USER
 
-/* Disable test that require Authentication with Postgress server */
-#undef THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH
+/* Disable test that require Authentication with Postgres server */
+#undef THOR_DISABLE_TEST_WITH_POSTGRES_AUTH
 
 /* Disable test that require the Mongo server to support the OP_QUERY command
    */

@@ -827,17 +827,17 @@ with_TestMySQLUser
 with_TestMySQLPass
 with_TestMySQLDatabase
 with_mysql_tool
-with_TestPostgressHost
-with_TestPostgressUser
-with_TestPostgressPass
-with_TestPostgressDatabase
+with_TestPostgresHost
+with_TestPostgresUser
+with_TestPostgresPass
+with_TestPostgresDatabase
 with_psql_tool
 with_TestMongoHost
 with_TestMongoUser
 with_TestMongoPass
 with_TestMongoDatabase
 with_mongosh_tool
-enable_test_with_postgress_auth
+enable_test_with_postgres_auth
 enable_test_with_mongo_query
 enable_dependency_tracking
 enable_silent_rules
@@ -1494,14 +1494,13 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
-  --disable-test-with-postgress-auth
-                          The postgress functionality is still nacent (not
-                          much work completed here). As a result the
-                          authentication protocol is not working and so no
-                          tests that connect to the server can complete unless
-                          authentication has been completely turned off.
-                          Disable tests on Postgress where authentication
-                          required.
+  --disable-test-with-postgres-auth
+                          The postgres functionality is still nacent (not much
+                          work completed here). As a result the authentication
+                          protocol is not working and so no tests that connect
+                          to the server can complete unless authentication has
+                          been completely turned off. Disable tests on
+                          Postgres where authentication required.
 
   --disable-test-with-mongo-query
                           There are three versions of the mongo wire protocol.
@@ -1577,20 +1576,22 @@ Optional Packages:
   --with-mysql-tool=<alternative cli>
                           The default tool name is mysql. But this can be
                           overridden with this flag
-  --with-TestPostgressHost=<Host>
+
+  --with-TestPostgresHost=<Host>
                           Use an alternative psql host for testing with
                           Default(127.0.0.1)
-  --with-TestPostgressUser=<User>
+  --with-TestPostgresUser=<User>
                           Use an alternative psql user for testing with (test)
-  --with-TestPostgressPass=<Pass>
+  --with-TestPostgresPass=<Pass>
                           Use an alternative psql password for testing with
                           (testPassword)
-  --with-TestPostgressDatabase=<DB>
+  --with-TestPostgresDatabase=<DB>
                           Use an alternative psql database for testing with
                           (test)
   --with-psql-tool=<alternative cli>
                           The default tool name is psql. But this can be
                           overridden with this flag
+
   --with-TestMongoHost=<Host>
                           Use an alternative mongosh host for testing with
                           Default(127.0.0.1)
@@ -1606,6 +1607,7 @@ Optional Packages:
   --with-mongosh-tool=<alternative cli>
                           The default tool name is mongosh. But this can be
                           overridden with this flag
+
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -18448,8 +18450,8 @@ fi
     if test "x${with_mysql_tool}" != "x"
 then :
   cli_tool=${with_mysql_tool}
-fi
 
+fi
 
     echo "COMMAND: >select 3+4 from dual<"
     echo "DB LINK: >${cli_tool} -B -h $mysql_test_host --user=$mysql_test_user --password=$mysql_test_pw $mysql_test_db<" | sed -e 's/Ppass/aasp/g'
@@ -18485,31 +18487,31 @@ printf "%s\n" "#define MYSQL_MAJOR_VERSION ${version}" >>confdefs.h
 
 
 
-# Check whether --with-TestPostgressHost was given.
-if test ${with_TestPostgressHost+y}
+# Check whether --with-TestPostgresHost was given.
+if test ${with_TestPostgresHost+y}
 then :
-  withval=$with_TestPostgressHost;
+  withval=$with_TestPostgresHost;
 fi
 
 
-# Check whether --with-TestPostgressUser was given.
-if test ${with_TestPostgressUser+y}
+# Check whether --with-TestPostgresUser was given.
+if test ${with_TestPostgresUser+y}
 then :
-  withval=$with_TestPostgressUser;
+  withval=$with_TestPostgresUser;
 fi
 
 
-# Check whether --with-TestPostgressPass was given.
-if test ${with_TestPostgressPass+y}
+# Check whether --with-TestPostgresPass was given.
+if test ${with_TestPostgresPass+y}
 then :
-  withval=$with_TestPostgressPass;
+  withval=$with_TestPostgresPass;
 fi
 
 
-# Check whether --with-TestPostgressDatabase was given.
-if test ${with_TestPostgressDatabase+y}
+# Check whether --with-TestPostgresDatabase was given.
+if test ${with_TestPostgresDatabase+y}
 then :
-  withval=$with_TestPostgressDatabase;
+  withval=$with_TestPostgresDatabase;
 fi
 
 
@@ -18518,34 +18520,34 @@ fi
     psql_test_pw="testPassword"
     psql_test_db="test"
 
-    if test "x$have_TestPostgressHost" = "xyes"
+    if test "x$have_TestPostgresHost" = "xyes"
 then :
-  psql_test_host=$with_TestPostgressHost
+  psql_test_host=$with_TestPostgresHost
 fi
-    if test "x$have_TestPostgressUser" = "xyes"
+    if test "x$have_TestPostgresUser" = "xyes"
 then :
-  psql_test_user=$with_TestPostgressUser
+  psql_test_user=$with_TestPostgresUser
 fi
-    if test "x$have_TestPostgressPass" = "xyes"
+    if test "x$have_TestPostgresPass" = "xyes"
 then :
-  psql_test_pw=$with_TestPostgressPass
+  psql_test_pw=$with_TestPostgresPass
 fi
-    if test "x$have_TestPostgressDatabase" = "xyes"
+    if test "x$have_TestPostgresDatabase" = "xyes"
 then :
-  psql_test_db=$with_TestPostgressDatabase
+  psql_test_db=$with_TestPostgresDatabase
 fi
 
 
-printf "%s\n" "#define THOR_TESTING_POSTGRESS_HOST \"$psql_test_host\"" >>confdefs.h
+printf "%s\n" "#define THOR_TESTING_POSTGRES_HOST \"$psql_test_host\"" >>confdefs.h
 
 
-printf "%s\n" "#define THOR_TESTING_POSTGRESS_USER \"$psql_test_user\"" >>confdefs.h
+printf "%s\n" "#define THOR_TESTING_POSTGRES_USER \"$psql_test_user\"" >>confdefs.h
 
 
-printf "%s\n" "#define THOR_TESTING_POSTGRESS_PASS \"$psql_test_pw\"" >>confdefs.h
+printf "%s\n" "#define THOR_TESTING_POSTGRES_PASS \"$psql_test_pw\"" >>confdefs.h
 
 
-printf "%s\n" "#define THOR_TESTING_POSTGRESS_DB \"$psql_test_db\"" >>confdefs.h
+printf "%s\n" "#define THOR_TESTING_POSTGRES_DB \"$psql_test_db\"" >>confdefs.h
 
 
     cli_tool=psql
@@ -18561,8 +18563,8 @@ fi
     if test "x${with_psql_tool}" != "x"
 then :
   cli_tool=${with_psql_tool}
-fi
 
+fi
 
     echo "COMMAND: >select 3+4<"
     echo "DB LINK: >${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db<" | sed -e 's/Ppass/aasp/g'
@@ -18574,15 +18576,15 @@ then :
 
             as_fn_error $? "
 
-    Error: Can not connect to server(POSTGRESS) using ${cli_tool} (Note: Default psql).
+    Error: Can not connect to server(POSTGRES) using ${cli_tool} (Note: Default psql).
 
             This may be because the psql server is not running or the test data has not been created.
 
-            1: Install Postgress server
-            2: Make sure Postgress is running
+            1: Install Postgres server
+            2: Make sure Postgres is running
             3: Install the test data and users.
-                    cat ./src/Postgress/test/data/init.sql | ${cli_tool} -h $psql_test_host --username=root --variable=NAME=
-                    cat ./src/Postgress/test/data/data.sql | ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db
+                    cat ./src/Postgres/test/data/init.sql | ${cli_tool} -h $psql_test_host --username=root --variable=NAME=
+                    cat ./src/Postgres/test/data/data.sql | ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw $psql_test_db
 
             " "$LINENO" 5
 
@@ -18590,7 +18592,7 @@ fi
 
     version=`PGPASSWORD=$psql_test_pw ${cli_tool} -h $psql_test_host --username=$psql_test_user --variable=NAME=$psql_test_pw --version $psql_test_db | tail -2 | awk '{print $3}' | awk -F\. '{print $1}'`
 
-printf "%s\n" "#define POSTGRESS_MAJOR_VERSION ${version}" >>confdefs.h
+printf "%s\n" "#define POSTGRES_MAJOR_VERSION ${version}" >>confdefs.h
 
 
 
@@ -18674,8 +18676,8 @@ fi
     if test "x${with_mongosh_tool}" != "x"
 then :
   cli_tool=${with_mongosh_tool}
-fi
 
+fi
 
     echo "COMMAND: >db.Blob.stats().nindexes<"
     echo "DB LINK: >${cli_tool} --host $mongosh_test_host --username $mongosh_test_user --password $mongosh_test_pw $mongosh_test_db<" | sed -e 's/Ppass/aasp/g'
@@ -18767,25 +18769,25 @@ fi
 
 
 
-    # Check whether --enable-test-with-postgress-auth was given.
-if test ${enable_test_with_postgress_auth+y}
+    # Check whether --enable-test-with-postgres-auth was given.
+if test ${enable_test_with_postgres_auth+y}
 then :
-  enableval=$enable_test_with_postgress_auth;
+  enableval=$enable_test_with_postgres_auth;
 fi
 
 
-    if test "x${enable_test_with_postgress_auth}" == "xno"
+    if test "x${enable_test_with_postgres_auth}" == "xno"
 then :
 
 
-printf "%s\n" "#define THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH 1" >>confdefs.h
+printf "%s\n" "#define THOR_DISABLE_TEST_WITH_POSTGRES_AUTH 1" >>confdefs.h
 
-            subconfigure="${subconfigure} --disable-test-with-postgress-auth";
+            subconfigure="${subconfigure} --disable-test-with-postgres-auth";
 
 else $as_nop
 
 
-printf "%s\n" "#define THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH 0" >>confdefs.h
+printf "%s\n" "#define THOR_DISABLE_TEST_WITH_POSTGRES_AUTH 0" >>confdefs.h
 
 
 

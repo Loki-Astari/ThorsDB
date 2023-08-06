@@ -21,7 +21,7 @@ jobs:
                     brew install magic_enum
             - name: Start MySQL
               uses: ankane/setup-mysql@v1
-            - name: Start Postgress
+            - name: Start Postgres
               uses: ankane/setup-postgres@v1
               with:
                     database: testdb
@@ -41,7 +41,7 @@ jobs:
                     cellPath=$(brew info --json openssl | jq -r '.[0].name + "/" + .[0].versions.stable')
                     openSSLPath=$(echo ${rootPath}/Cellar/${cellPath} | sed -e 's/@/\@/')
                     echo "openSSLPath: ${openSSLPath}"
-                    ./configure --disable-colour --without-timegm --without-modtests --with-crypto-root=${openSSLPath} --disable-test-with-postgress-auth --disable-test-with-mongo-query
+                    ./configure --disable-colour --without-timegm --without-modtests --with-crypto-root=${openSSLPath} --disable-test-with-postgres-auth --disable-test-with-mongo-query
                     make
     Build_on_Linux:
         runs-on:    ubuntu-latest
@@ -62,7 +62,7 @@ jobs:
                     brew install magic_enum
             - name: Start MySQL
               uses: ankane/setup-mysql@v1
-            - name: Start Postgress
+            - name: Start Postgres
               uses: ankane/setup-postgres@v1
               with:
                     database: testdb
@@ -79,7 +79,7 @@ jobs:
             - name: Build
               run: |
                     export PATH="${PATH}:/home/linuxbrew/.linuxbrew/bin"
-                    ./configure --enable-dark-mode --with-magicenum-header-only-root=/home/linuxbrew/.linuxbrew/include --with-thorserialize-root=/home/linuxbrew/.linuxbrew/ --with-snappy-root=/home/linuxbrew/.linuxbrew/ --disable-test-with-postgress-auth --disable-test-with-mongo-query
+                    ./configure --enable-dark-mode --with-magicenum-header-only-root=/home/linuxbrew/.linuxbrew/include --with-thorserialize-root=/home/linuxbrew/.linuxbrew/ --with-snappy-root=/home/linuxbrew/.linuxbrew/ --disable-test-with-postgres-auth --disable-test-with-mongo-query
                     make
     Build_on_Windows:
         runs-on:    windows-latest
@@ -117,7 +117,7 @@ jobs:
                     (get-command mysql).Path
                     get-command mysql
                     which mysql
-            - name: Start Postgress
+            - name: Start Postgres
               uses: ankane/setup-postgres@v1
               with:
                     database: testdb
@@ -158,6 +158,6 @@ jobs:
                     PATH="${PATH}:/c/Program Files/MySQL/MySQL Server 8.0/bin/"
                     PATH="${PATH}:/c/Program Files/PostgreSQL/14/bin"
                     PATH="${PATH}:/c/Program Files/MongoDB/Server/5.0/bin/"
-                    ./configure --with-mongosh-tool=mongo --disable-colour --disable-vera --with-magicenum-header-only-root=/tmp/magic_enum/include --with-thorserialize-header-only-root=/tmp/ThorsSerializer --with-yaml-root=/mingw64/ --disable-test-with-postgress-auth --disable-test-with-mongo-query
+                    ./configure --with-mongosh-tool=mongo --disable-colour --disable-vera --with-magicenum-header-only-root=/tmp/magic_enum/include --with-thorserialize-header-only-root=/tmp/ThorsSerializer --with-yaml-root=/mingw64/ --disable-test-with-postgres-auth --disable-test-with-mongo-query
                     make
 

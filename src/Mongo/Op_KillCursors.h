@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_OP_KILLCURSORS_H
-#define THORS_ANVIL_DB_MONGO_OP_KILLCURSORS_H
+#ifndef THORSANVIL_DB_MONGO_OP_KILLCURSORS_H
+#define THORSANVIL_DB_MONGO_OP_KILLCURSORS_H
 
 /* $    Usage: Op_KillCursors
  * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.

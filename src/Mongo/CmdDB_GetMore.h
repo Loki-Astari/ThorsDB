@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_MONGO_CMD_DB_GET_MORE_H
-#define THORS_ANVIL_DB_MONGO_CMD_DB_GET_MORE_H
+#ifndef THORSANVIL_DB_MONGO_CMD_DB_GET_MORE_H
+#define THORSANVIL_DB_MONGO_CMD_DB_GET_MORE_H
 
 // https://docs.mongodb.com/manual/reference/command/getMore/#getmore
 

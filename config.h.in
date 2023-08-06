@@ -92,7 +92,7 @@
 #undef PACKAGE_VERSION
 
 /* "Get psql version into #define. That way we can turn off some tests" */
-#undef POSTGRESS_MAJOR_VERSION
+#undef POSTGRES_MAJOR_VERSION
 
 /* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
@@ -103,8 +103,8 @@
    */
 #undef THOR_DISABLE_TEST_WITH_MONGO_QUERY
 
-/* Disable test that require Authentication with Postgress server */
-#undef THOR_DISABLE_TEST_WITH_POSTGRESS_AUTH
+/* Disable test that require Authentication with Postgres server */
+#undef THOR_DISABLE_TEST_WITH_POSTGRES_AUTH
 
 /* Set for Big Endian Systems */
 #undef THOR_ENDIAN_BIG
@@ -137,16 +137,16 @@
 #undef THOR_TESTING_MYSQL_USER
 
 /* psql DB for testing */
-#undef THOR_TESTING_POSTGRESS_DB
+#undef THOR_TESTING_POSTGRES_DB
 
 /* psql DB host for testing */
-#undef THOR_TESTING_POSTGRESS_HOST
+#undef THOR_TESTING_POSTGRES_HOST
 
 /* psql DB password for testing */
-#undef THOR_TESTING_POSTGRESS_PASS
+#undef THOR_TESTING_POSTGRES_PASS
 
 /* psql DB user for testing */
-#undef THOR_TESTING_POSTGRESS_USER
+#undef THOR_TESTING_POSTGRES_USER
 
 /* Version number of package */
 #undef VERSION
