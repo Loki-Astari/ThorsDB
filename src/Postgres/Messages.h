@@ -81,6 +81,9 @@ class PasswordMessage: public Message
 // -------
 class ErrorMessage: public Message
 {
+    std::string type;
+    std::string message;
+
     public:
         ErrorMessage(ConectReader& reader)
         {
@@ -92,78 +95,77 @@ class ErrorMessage: public Message
                                 // Severity: in error-message: ERROR, FATAL, or PANIC
                                 //           in notice:        WARNING, NOTICE, DEBUG, INFO, or LOG
                                 // or a localized translation of one of these.
-                        std::cout << "Severity:          ";
+                        type = "Severity:          ";
                         break;
                     case 'C':   // Always present.
                                 // Code: the SQLSTATE code for the error (see Appendix A). Not localizable.
-                        std::cout << "SQLSTATE:          ";
+                        type = "SQLSTATE:          ";
                         break;
                     case 'M':   // Always present.
                                 // Message: the primary human-readable error message. This should be accurate but terse (typically one line).
-                        std::cout << "Message:           ";
+                        type = "Message:           ";
                         break;
                     case 'D':   // Detail: an optional secondary error message carrying more detail about the problem.
                                 // Might run to multiple lines.
-                        std::cout << "Detail:            ";
+                        type = "Detail:            ";
                         break;
                     case 'H':   // Hint: an optional suggestion what to do about the problem.
                                 // This is intended to differ from Detail in that it offers advice (potentially inappropriate) rather than hard facts.
                                 // Might run to multiple lines.
-                        std::cout << "Hint:              ";
+                        type = "Hint:              ";
                         break;
                     case 'P':   // Position: the field value is a decimal ASCII integer,
                                 // indicating an error cursor position as an index into the original query string.
                                 // The first character has index 1, and positions are measured in characters not bytes.
-                        std::cout << "Position:          ";
+                        type = "Position:          ";
                         break;
                     case 'p':   // Internal position: this is defined the same as the P field, but it is used when the cursor position refers
                                 // to an internally generated command rather than the one submitted by the client.
                                 // The q field will always appear when this field appears.
-                        std::cout << "Internal Position: ";
+                        type = "Internal Position: ";
                         break;
                     case 'q':   // Internal query: the text of a failed internally-generated command.
                                 // This could be, for example, a SQL query issued by a PL/pgSQL function.
-                        std::cout << "Internal Query:    ";
+                        type = "Internal Query:    ";
                         break;
                     case 'W':   // Where: an indication of the context in which the error occurred.
                                 // Presently this includes a call stack traceback of active procedural language functions and internally-generated queries.
                                 // The trace is one entry per line, most recent first.
-                        std::cout << "Where:             ";
+                        type = "Where:             ";
                         break;
                     case 's':   // Schema name: if the error was associated with a specific database object, the name of the schema containing that object, if any.
-                        std::cout << "Schema Name:       ";
+                        type = "Schema Name:       ";
                         break;
                     case 't':   // Table name: if the error was associated with a specific table, the name of the table.
                                 // (Refer to the schema name field for the name of the table's schema.)
-                        std::cout << "Table Name:        ";
+                        type = "Table Name:        ";
                         break;
                     case 'c':   // Column name: if the error was associated with a specific table column, the name of the column.
                                 // (Refer to the schema and table name fields to identify the table.)
-                        std::cout << "Column Name:       ";
+                        type = "Column Name:       ";
                         break;
                     case 'd':   // Data type name: if the error was associated with a specific data type, the name of the data type.
                                 // (Refer to the schema name field for the name of the data type's schema.)
-                        std::cout << "Data Type Name:    ";
+                        type = "Data Type Name:    ";
                         break;
                     case 'n':   // Constraint name: if the error was associated with a specific constraint, the name of the constraint.
                                 // Refer to fields listed above for the associated table or domain. (For this purpose,
                                 // indexes are treated as constraints, even if they weren't created with constraint syntax.)
-                        std::cout << "Constraint Name:   ";
+                        type = "Constraint Name:   ";
                         break;
                     case 'F':   // File: the file name of the source-code location where the error was reported.
-                        std::cout << "File:              ";
+                        type = "File:              ";
                         break;
                     case 'L':   // Line: the line number of the source-code location where the error was reported.
-                        std::cout << "Line:              ";
+                        type = "Line:              ";
                         break;
                     case 'R':   // Routine: the name of the source-code routine reporting the error.
-                        std::cout << "Routine:           ";
+                        type = "Routine:           ";
                         break;
                     default:
-                        std::cout << "Unnknown:      " << code << " : ";
+                        type = "Unnknown:      " << code << " : ";
                 }
-                std::string message = reader.readString();
-                std::cout << message << "\n";
+                message = reader.readString();
             }
         }
         virtual void send(ConectWriter&) override {}
@@ -173,7 +175,7 @@ class ErrorMessage: public Message
         }
         virtual void print(std::ostream& stream) const override
         {
-            stream << "ErrorMessage:\n";
+            stream << "ErrorMessage: " << type << message;
         }
 };
 class Authentication: public Message
