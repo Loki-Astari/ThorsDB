@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_DELETE_H
-#define THORSANVIL_DB_MONGO_OP_DELETE_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_DELETE_H
+#define THORS_ANVIL_DB_MONGO_OP_DELETE_H
 
 /* $    Usage: Op_Delete
  * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.

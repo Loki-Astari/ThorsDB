@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_CMD_DB_GET_LAST_ERROR_H
-#define THORSANVIL_DB_MONGO_CMD_DB_GET_LAST_ERROR_H
+#ifndef THORS_ANVIL_DB_MONGO_CMD_DB_GET_LAST_ERROR_H
+#define THORS_ANVIL_DB_MONGO_CMD_DB_GET_LAST_ERROR_H
 
 // https://docs.mongodb.com/manual/reference/command/getLastError/#getlasterror
 

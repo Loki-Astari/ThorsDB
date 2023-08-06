@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_VIEW_H
-#define THORSANVIL_DB_MONGO_VIEW_H
+#ifndef THORS_ANVIL_DB_MONGO_VIEW_H
+#define THORS_ANVIL_DB_MONGO_VIEW_H
 
 #include "ThorSerialize/SerUtil.h"
 

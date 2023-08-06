@@ -1,5 +1,5 @@
-#ifndef THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
-#define THORS_ANVIL_DB_POSTGRESS_CONNECTION_H
+#ifndef THORS_ANVIL_DB_POSTGRES_CONNECTION_H
+#define THORS_ANVIL_DB_POSTGRES_CONNECTION_H
 
 #include "PostgresConfig.h"
 #include "ThorsDB/SQLUtil.h"
@@ -36,9 +36,5 @@ class Connection
 };
 
 }
-
-//#ifndef COVERAGE_Postgres
-//#include "Connection.tpp"
-//#endif
 
 #endif

@@ -6,7 +6,7 @@ AC_CONFIG_AUX_DIR([build/autotools/build])
 
 
 
-AX_THOR_FUNC_INIT_BUILD([ThorsDB], [17], [src/ThorsDB/Connection.cpp])
+AX_THOR_FUNC_INIT_BUILD([ThorsDB], [src/ThorsDB/Connection.cpp])
 
 AC_C_BIGENDIAN([AC_DEFINE([THOR_ENDIAN_BIG], [1], [Set for Big Endian Systems])],
                [AC_DEFINE([THOR_ENDIAN_SML], [1], [Set for small Endian Systems])])

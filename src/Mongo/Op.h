@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_H
-#define THORSANVIL_DB_MONGO_OP_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_H
+#define THORS_ANVIL_DB_MONGO_OP_H
 
 #include <cstdint>
 

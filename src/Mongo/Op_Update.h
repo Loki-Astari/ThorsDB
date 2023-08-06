@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_UPDATE_H
-#define THORSANVIL_DB_MONGO_OP_UPDATE_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_UPDATE_H
+#define THORS_ANVIL_DB_MONGO_OP_UPDATE_H
 
 /* $    Usage: Op_Update
  * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.

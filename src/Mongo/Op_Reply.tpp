@@ -1,7 +1,7 @@
-#ifndef THORSANVIL_DB_MONGO_OP_REPLY_TPP
-#define THORSANVIL_DB_MONGO_OP_REPLY_TPP
+#ifndef THORS_ANVIL_DB_MONGO_OP_REPLY_TPP
+#define THORS_ANVIL_DB_MONGO_OP_REPLY_TPP
 
-#ifndef THORSANVIL_DB_MONGO_OP_REPLY_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_REPLY_H
 #error  "This should only be included from Op_Reply.h"
 #endif
 

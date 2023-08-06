@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_MSG_H
-#define THORSANVIL_DB_MONGO_OP_MSG_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_MSG_H
+#define THORS_ANVIL_DB_MONGO_OP_MSG_H
 
 /*
  * $    Usage:  Op_Msg

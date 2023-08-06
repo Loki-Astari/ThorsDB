@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_CMD_ADM_AUTH_H
-#define THORSANVIL_DB_MONGO_CMD_ADM_AUTH_H
+#ifndef THORS_ANVIL_DB_MONGO_CMD_ADM_AUTH_H
+#define THORS_ANVIL_DB_MONGO_CMD_ADM_AUTH_H
 
 // https://github.com/mongodb/specifications/blob/master/source/mongodb-handshake/handshake.rst
 

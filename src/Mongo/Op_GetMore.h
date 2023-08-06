@@ -1,5 +1,5 @@
-#ifndef THORSANVIL_DB_MONGO_OP_GETMORE_H
-#define THORSANVIL_DB_MONGO_OP_GETMORE_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_GETMORE_H
+#define THORS_ANVIL_DB_MONGO_OP_GETMORE_H
 
 /* $    Usage: Op_GetMore
  * $        Document:       Serializeable object that is sent/retrieved to/from Mongo.

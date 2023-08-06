@@ -1,7 +1,7 @@
-#ifndef THORSANVIL_DB_MONGO_OP_DELETE_TPP
-#define THORSANVIL_DB_MONGO_OP_DELETE_TPP
+#ifndef THORS_ANVIL_DB_MONGO_OP_DELETE_TPP
+#define THORS_ANVIL_DB_MONGO_OP_DELETE_TPP
 
-#ifndef THORSANVIL_DB_MONGO_OP_DELETE_H
+#ifndef THORS_ANVIL_DB_MONGO_OP_DELETE_H
 #error  "This should only be included from Op_Delete.h"
 #endif
 
