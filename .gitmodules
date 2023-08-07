@@ -4,9 +4,3 @@
 [submodule ".build"]
 	path = build
 	url = git@github.com:Loki-Astari/ThorMaker.git
-[submodule "third/ThorsCrypto"]
-	path = third/ThorsCrypto
-	url = git@github.com:Loki-Astari/ThorsCrypto.git
-[submodule "third/ThorsSocket"]
-	path = third/ThorsSocket
-	url = git@github.com:Loki-Astari/ThorsSocket.git
