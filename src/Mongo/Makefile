@@ -7,7 +7,7 @@ DEFER_NAME					= ThorsDB
 NO_HEADER					= 1
 
 LDLIBS_EXTERN_BUILD			= MagicEnum snappy crypto ThorSerialize
-UNITTEST_LINK_LIBS			= ThorsSocket UnitTestThorsDB UnitTestThorsDBCommon
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
 
 CRYPTO_WARNINGS_Linux		= -Wno-missing-braces
 CRYPTO_WARNINGS				= $(CRYPTO_WARNINGS_$(PLATFORM)) -Wno-deprecated-declarations

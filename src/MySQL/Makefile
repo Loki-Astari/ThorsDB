@@ -10,7 +10,7 @@ LDLIBS_EXTERN_BUILD			= crypto ThorSerialize
 LDLIBS_MSYS_NT				= -lws2_32 -lwsock32
 LDLIBS_MINGW64_NT			= -lws2_32 -lwsock32
 
-UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
 _LDLIBS						+= $(LDLIBS_$(PLATFORM))
 UNITTEST_LDLIBS				+= $(LDLIBS_$(PLATFORM))
 

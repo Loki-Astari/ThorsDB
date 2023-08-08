@@ -11,15 +11,15 @@
 namespace ThorsAnvil::DB::Mongo
 {
 
-class MongoBuffer: public ThorsIO::SocketStreamBufferBase
+class MongoBuffer: public ThorsSocket::SocketStreamBufferBase
 {
     protected:
         std::vector<char>       in;
         std::vector<char>       out;
 
     public:
-        MongoBuffer(ThorsIO::DataSocket& stream,
-                    ThorsIO::Notifier noAvailableData, ThorsIO::Notifier flushing,
+        MongoBuffer(ThorsSocket::DataSocket& stream,
+                    ThorsSocket::Notifier noAvailableData, ThorsSocket::Notifier flushing,
                     std::vector<char>&& bufData = std::vector<char>(4000),
                     char const* currentStart = nullptr, char const* currentEnd = nullptr);
         MongoBuffer(MongoBuffer&& move) noexcept;

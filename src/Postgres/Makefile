@@ -8,7 +8,7 @@ DEFER_NAME					= ThorsDB
 NO_HEADER					= 1
 
 LDLIBS_EXTERN_BUILD			= crypto ThorSerialize
-UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon ThorsSocket
+UNITTEST_LINK_LIBS			= UnitTestThorsDB UnitTestThorsDBCommon
 LDLIBS_MSYS_NT				= -lws2_32 -lwsock32
 LDLIBS_MINGW64_NT			= -lws2_32 -lwsock32
 

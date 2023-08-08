@@ -49,14 +49,14 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSum)
 {
     SocketSetUp         setupSocket;
 
-    using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
-    using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
+    using IOSocketStream = ThorsAnvil::ThorsSocket::IOSocketStream<MongoBuffer>;
+    using DataSocket     = ThorsAnvil::ThorsSocket::DataSocket;
 
     {
         Op_MsgHeader::messageIdSetForTest(1);
 
         int             socket  = open("test/data/CRCTest", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
-        DataSocket      dataSocket(socket);
+        DataSocket      dataSocket([](int fd){return std::make_unique<ThorsAnvil::ThorsSocket::ConnectionNormal>(fd);}, socket);
         IOSocketStream  stream(dataSocket);
 
         stream << send_Op_Msg(OP_MsgFlag::checksumPresent, CRCTestOutput{1, "admin"}) << std::flush;
@@ -90,15 +90,15 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompression)
 {
     SocketSetUp         setupSocket;
 
-    using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
-    using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
+    using IOSocketStream = ThorsAnvil::ThorsSocket::IOSocketStream<MongoBuffer>;
+    using DataSocket     = ThorsAnvil::ThorsSocket::DataSocket;
 
     {
         Op_MsgHeader::messageIdSetForTest(1);
         Op_Msg<CRCTestOutput>           message1(OP_MsgFlag::checksumPresent, CRCTestOutput{1, "admin"});
 
         int                 socket  = open("test/data/CompCRCTest", O_WRONLY | O_CREAT | O_TRUNC, 0777 );
-        DataSocket          dataSocket(socket);
+        DataSocket          dataSocket([](int fd){return std::make_unique<ThorsAnvil::ThorsSocket::ConnectionNormal>(fd);}, socket);
         IOSocketStream      stream(dataSocket);
 
         // Add the compression buffer.
@@ -164,14 +164,14 @@ TEST(Op_MsgTest, Op_MsgSerializeMessageValidateCheckSumAndCompressionReadFromSer
 {
     SocketSetUp         setupSocket;
 
-    using IOSocketStream = ThorsAnvil::ThorsIO::IOSocketStream<MongoBuffer>;
-    using DataSocket     = ThorsAnvil::ThorsIO::DataSocket;
+    using IOSocketStream = ThorsAnvil::ThorsSocket::IOSocketStream<MongoBuffer>;
+    using DataSocket     = ThorsAnvil::ThorsSocket::DataSocket;
 
     Op_MsgReply<CRCTestReply>           message1;
     {
 
         int                 socket  = open("test/data/CompCRCTest-Read", O_RDONLY);
-        DataSocket          dataSocket(socket);
+        DataSocket          dataSocket([](int fd){return std::make_unique<ThorsAnvil::ThorsSocket::ConnectionNormal>(fd);}, socket);
         IOSocketStream      stream(dataSocket);
 
         // Add the compression buffer.

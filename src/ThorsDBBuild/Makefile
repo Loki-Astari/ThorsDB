@@ -7,7 +7,6 @@ LDLIBS_MSYS_NT				= -lws2_32 -lwsock32 -lyaml
 LDLIBS_MINGW64_NT			= -lws2_32 -lwsock32 -lyaml
 
 LDLIBS_EXTERN_BUILD			= snappy crypto ThorSerialize
-LINK_LIBS					+= ThorsSocket
 UNITTEST_LDLIBS				+= $(LDLIBS_$(PLATFORM))
 LDLIBS						+= $(LDLIBS_$(PLATFORM))
 

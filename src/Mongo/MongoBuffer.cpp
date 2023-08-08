@@ -5,11 +5,11 @@
 
 using namespace ThorsAnvil::DB::Mongo;
 
-MongoBuffer::MongoBuffer(ThorsIO::DataSocket& stream,
-            ThorsIO::Notifier noAvailableData, ThorsIO::Notifier flushing,
+MongoBuffer::MongoBuffer(ThorsSocket::DataSocket& stream,
+            ThorsSocket::Notifier noAvailableData, ThorsSocket::Notifier flushing,
             std::vector<char>&& bufData,
             char const* currentStart, char const* currentEnd)
-    : ThorsIO::SocketStreamBufferBase(stream, std::move(noAvailableData), std::move(flushing), in, out)
+    : ThorsSocket::SocketStreamBufferBase(stream, std::move(noAvailableData), std::move(flushing), in, out)
     , in(std::move(bufData))
     , out(4000)
 {
@@ -26,7 +26,7 @@ MongoBuffer::MongoBuffer(ThorsIO::DataSocket& stream,
 }
 
 MongoBuffer::MongoBuffer(MongoBuffer&& move) noexcept
-    : ThorsIO::SocketStreamBufferBase(std::move(move), in, out)
+    : ThorsSocket::SocketStreamBufferBase(std::move(move), in, out)
     , in(std::move(move.in))
     , out(std::move(move.out))
 {

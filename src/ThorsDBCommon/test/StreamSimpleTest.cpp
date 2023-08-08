@@ -1,6 +1,6 @@
 #include "test/pipe.h"
 #include "StreamSimple.h"
-#include "ThorsSocket/SSLUtil.h"
+#include "ThorsSocket/ConnectionSSL.h"
 #include "ThorsIOUtil/Utility.h"
 #include "ThorsLogging/ThorsLogging.h"
 #include "coverage/ThorMock.h"
@@ -426,26 +426,26 @@ TEST(StreamSimpleTest, OpenSSLConnection)
     int port    = 2022;
 
     std::thread sslServer([port]() {
-        ThorsAnvil::ThorsIO::SSLMethod  method(ThorsAnvil::ThorsIO::SSLMethodType::Server);
-        ThorsAnvil::ThorsIO::SSLctx     ctx(method, "test/data/cert.pem", "test/data/key.pem");
-        ServerSocket                    server(port);
-        int                             client  = server.accept();
-        ThorsAnvil::ThorsIO::SSLObj     sslConnection(ctx, client);
+        ThorsAnvil::ThorsSocket::SSLMethod      method(ThorsAnvil::ThorsSocket::SSLMethodType::Server);
+        ThorsAnvil::ThorsSocket::SSLctx         ctx(method, "test/data/cert.pem", "test/data/key.pem");
+        ServerSocket                            server(port);
+        int                                     client  = server.accept();
+        ThorsAnvil::ThorsSocket::ConnectionSSL  sslConnection(ctx, client);
 
         sslConnection.accept();
-        sslConnection.write(client, "1234", 4);
+        sslConnection.write("1234", 4);
     });
 
     sleep(2);
 
-    ThorsAnvil::ThorsIO::SSLMethod  method(ThorsAnvil::ThorsIO::SSLMethodType::Client);
-    ThorsAnvil::ThorsIO::SSLctx     ctx(method);
-    ConnectSocket                   connection("127.0.0.1", port);
-    ThorsAnvil::ThorsIO::SSLObj     sslConnection(ctx, connection.getSocketId());
+    ThorsAnvil::ThorsSocket::SSLMethod      method(ThorsAnvil::ThorsSocket::SSLMethodType::Client);
+    ThorsAnvil::ThorsSocket::SSLctx         ctx(method);
+    ConnectSocket                           connection("127.0.0.1", port);
+    ThorsAnvil::ThorsSocket::ConnectionSSL  sslConnection(ctx, connection.getSocketId());
     sslConnection.doConnect();
 
     char buffer[10] = {0};
-    sslConnection.read(connection.getSocketId(), buffer, 4);
+    sslConnection.read(buffer, 4);
 
     ASSERT_EQ(std::string("1234"), buffer);
 

@@ -180,12 +180,12 @@ void StreamSimple::writeFD(char const* buffer, std::size_t len)
 }
 void StreamSimple::readSSL(char* buffer, std::size_t len)
 {
-    using ThorsAnvil::ThorsIO::IOInfo;
+    using ThorsAnvil::ThorsSocket::IOInfo;
 
     std::size_t     readSoFar    = 0;
     while (readSoFar != len)
     {
-        IOInfo read = ssl->read(socket, buffer + readSoFar, len - readSoFar);
+        IOInfo read = ssl->read(buffer + readSoFar, len - readSoFar);
         if (read.first < 0)
         {
             int errorCode = ssl->nativeErrorCode(read.first);
@@ -199,7 +199,7 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
                 ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
                                  "readSSL",
                                  "::SSL_read() Failed: ",
-                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage());
+                                 "errno=", errorCode, " Message=", ThorsSocket::SSLUtil::errorMessage());
             }
         }
         else if (read.first == 0)
@@ -215,12 +215,12 @@ void StreamSimple::readSSL(char* buffer, std::size_t len)
 }
 void StreamSimple::writeSSL(char const* buffer, std::size_t len)
 {
-    using ThorsAnvil::ThorsIO::IOInfo;
+    using ThorsAnvil::ThorsSocket::IOInfo;
 
     std::size_t     writenSoFar    = 0;
     while (writenSoFar != len)
     {
-        IOInfo writen = ssl->write(socket, buffer + writenSoFar, len - writenSoFar);
+        IOInfo writen = ssl->write(buffer + writenSoFar, len - writenSoFar);
         if (writen.first < 0)
         {
             int errorCode = ssl->nativeErrorCode(writen.first);
@@ -234,7 +234,7 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
                 ThorsLogAndThrow("ThorsAnvil::DB::SQL::StreamSimple",
                                  "writeSSL",
                                  "::SSL_write() Failed: ",
-                                 "errno=", errorCode, " Message=", ThorsIO::SSLUtil::errorMessage());
+                                 "errno=", errorCode, " Message=", ThorsSocket::SSLUtil::errorMessage());
             }
         }
         else if (writen.first == 0)
@@ -251,8 +251,8 @@ void StreamSimple::writeSSL(char const* buffer, std::size_t len)
 
 void StreamSimple::establishSSLConnection()
 {
-    ThorsIO::SSLMethod   method(ThorsIO::SSLMethodType::Client);
-    ctx     = std::make_unique<ThorsIO::SSLctx>(method);
-    ssl     = std::make_unique<ThorsIO::SSLObj>(*ctx, socket);
+    ThorsSocket::SSLMethod   method(ThorsSocket::SSLMethodType::Client);
+    ctx     = std::make_unique<ThorsSocket::SSLctx>(method);
+    ssl     = std::make_unique<ThorsSocket::ConnectionSSL>(*ctx, socket);
     ssl->doConnect();
 }

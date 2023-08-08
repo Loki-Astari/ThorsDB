@@ -15,15 +15,15 @@ namespace ThorsAnvil::DB::Mongo
 
 class MongoConnection: public ThorsAnvil::DB::Access::Lib::ConnectionProxy
 {
-    using CursorInfo    = std::pair<std::uint32_t, std::uint32_t>;
-    using StreamBuffer  = ThorsIO::SocketStreamBuffer;
-    using ConnectSocket = ThorsIO::ConnectSocket;
-    using IOSocketStream= ThorsIO::IOSocketStream<MongoBuffer>;
+    using CursorInfo            = std::pair<std::uint32_t, std::uint32_t>;
+    using StreamBuffer          = ThorsSocket::SocketStreamBuffer;
+    using ConnectSocketNormal   = ThorsSocket::ConnectSocketNormal;
+    using IOSocketStream        = ThorsSocket::IOSocketStream<MongoBuffer>;
 
     private:
         using CursorMap   = std::map<CursorId, CursorInfo>;
 
-        ConnectSocket                           socket;
+        ConnectSocketNormal                     socket;
         IOSocketStream                          stream;
         std::unique_ptr<MongoBuffer>            buffer;
         std::string                             dbName;

@@ -163,7 +163,9 @@ class ErrorMessage: public Message
                         type = "Routine:           ";
                         break;
                     default:
-                        type = "Unnknown:      " << code << " : ";
+                        type = "Unnknown:      ";
+                        type += code;
+                        type += " : ";
                 }
                 message = reader.readString();
             }

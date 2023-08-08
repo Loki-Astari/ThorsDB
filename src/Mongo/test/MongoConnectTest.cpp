@@ -18,9 +18,9 @@ TEST(MongoConnectTest, CreateReply)
     SocketSetUp         setupSocket;
 
     // Connect
-    ThorsAnvil::Crypto::ScramClientSha256   client(THOR_TESTING_MONGO_USER);
-    ThorsAnvil::ThorsIO::ConnectSocket      socket(THOR_TESTING_MONGO_HOST, 27017);
-    ThorsAnvil::ThorsIO::IOSocketStream     stream(socket);
+    ThorsAnvil::Crypto::ScramClientSha256           client(THOR_TESTING_MONGO_USER);
+    ThorsAnvil::ThorsSocket::ConnectSocketNormal    socket(THOR_TESTING_MONGO_HOST, 27017);
+    ThorsAnvil::ThorsSocket::IOSocketStream         stream(socket);
     socket.makeSocketNonBlocking();
 
     // Send Handshake
