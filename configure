@@ -6037,8 +6037,8 @@ printf "%s\n" "#define HAVE_THORSSERIALIZER 1" >>confdefs.h
 
 
 fi
-    echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsLogging"
-    ThorSerialize_ROOT_LIB="ThorSerialize ThorsLogging"
+    echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsSocket ThorsStorage ThorsLogging"
+    ThorSerialize_ROOT_LIB="ThorSerialize ThorsSocket ThorsStorage ThorsLogging"
 
 
 
@@ -6094,8 +6094,8 @@ printf "%s\n" "#define HAVE_THORSSERIALIZER 1" >>confdefs.h
 
 
 fi
-    echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsLogging"
-    ThorSerialize_ROOT_LIB="ThorSerialize ThorsLogging"
+    echo "Setting: ThorSerialize_ROOT_LIB TO ThorSerialize ThorsSocket ThorsStorage ThorsLogging"
+    ThorSerialize_ROOT_LIB="ThorSerialize ThorsSocket ThorsStorage ThorsLogging"
 
 
 
